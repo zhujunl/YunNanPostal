@@ -1,0 +1,82 @@
+package com.miaxis.postal.data.net;
+
+import com.miaxis.postal.data.dto.TempIdDto;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Function;
+
+import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
+import io.reactivex.schedulers.Schedulers;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import retrofit2.Call;
+
+public class PostalApi extends BaseAPI {
+
+    public static Call<ResponseEntity<TempIdDto>> savePersonFromApp(String name,
+                                                                    String nation,
+                                                                    String birthday,
+                                                                    String cardNo,
+                                                                    String cardAddress,
+                                                                    String sex,
+                                                                    String signOrg,
+                                                                    String expireTime,
+                                                                    File checkFile,
+                                                                    File cardFile) {
+        RequestBody checkRequestFile = RequestBody.create(MediaType.parse("multipart/form-data"), checkFile);
+        MultipartBody.Part checkFileBody = MultipartBody.Part.createFormData("checkFile", checkFile.getName(), checkRequestFile);
+        RequestBody cardRequestFile = RequestBody.create(MediaType.parse("multipart/form-data"), cardFile);
+        MultipartBody.Part cardFileBody = MultipartBody.Part.createFormData("cardFile", cardFile.getName(), cardRequestFile);
+        return getPostalNetSync().savePersonFromAppSync(name,
+                nation,
+                birthday,
+                cardNo,
+                cardAddress,
+                sex,
+                signOrg,
+                expireTime,
+                checkFileBody,
+                cardFileBody);
+    }
+
+    public static Call<ResponseEntity> saveOrderFromAppSync(String personId,
+                                                            String sendAddress,
+                                                            String sendPhone,
+                                                            String orderCode,
+                                                            String orderInfo,
+                                                            String addresseeName,
+                                                            String addresseeAddress,
+                                                            String addresseePhone,
+                                                            String pieceTime,
+                                                            String receipTime,
+                                                            String lat,
+                                                            String lng,
+                                                            String checkId,
+                                                            List<File> fileList) {
+        List<MultipartBody.Part> parts = new ArrayList<>(fileList.size());
+        for (File file : fileList) {
+            RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+            MultipartBody.Part part = MultipartBody.Part.createFormData("file", file.getName(), requestBody);
+            parts.add(part);
+        }
+        return getPostalNetSync().saveOrderFromAppSync(personId,
+                sendAddress,
+                sendPhone,
+                orderCode,
+                orderInfo,
+                addresseeName,
+                addresseeAddress,
+                addresseePhone,
+                pieceTime,
+                receipTime,
+                lat,
+                lng,
+                checkId,
+                parts);
+    }
+
+}
