@@ -49,9 +49,18 @@ public class ConfigManager {
                     .mac(DeviceUtil.getMacFromHardware())
                     .verifyScore(ValueUtil.DEFAULT_VERIFY_SCORE)
                     .qualityScore(ValueUtil.DEFAULT_QUALITY_SCORE)
+                    .registerQualityScore(ValueUtil.DEFAULT_REGISTER_QUALITY_SCORE)
+                    .deviceId(ValueUtil.DEFAULT_DEVICE_ID)
+                    .deviceStatus(ValueUtil.DEVICE_UNABLE)
+                    .heartBeatInterval(ValueUtil.DEFAULT_HEART_BEAT_INTERVAL)
                     .build();
             ConfigModel.saveConfig(config);
         }
+    }
+
+    public void saveConfigSync(@NonNull Config config) {
+        ConfigModel.saveConfig(config);
+        this.config = config;
     }
 
     public void saveConfig(@NonNull Config config, @NonNull OnConfigSaveListener listener) {

@@ -1,5 +1,7 @@
 package com.miaxis.postal.view.fragment;
 
+import android.view.View;
+
 import androidx.lifecycle.ViewModelProviders;
 import com.miaxis.postal.R;
 import com.miaxis.postal.databinding.FragmentPreludeBinding;
@@ -35,14 +37,15 @@ public class PreludeFragment extends BaseViewModelFragment<FragmentPreludeBindin
     protected void initData() {
         viewModel.getInitSuccess().observe(this, initResult -> {
             if (initResult) {
-                mListener.setRoot(LogisticFragment.newInstance());
+                mListener.setRoot(LoginFragment.newInstance());
             }
         });
     }
 
     @Override
     protected void initView() {
-
+        binding.btnQuit.setOnClickListener(v -> mListener.exitApp());
+        binding.btnRetry.setOnClickListener(v -> viewModel.requirePermission(PreludeFragment.this));
     }
 
     @Override

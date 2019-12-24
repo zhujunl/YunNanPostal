@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "95b00c1872437044a84abf7a52457f3f",
+    "identityHash": "10e258b637f7ac851aad76f010d490b0",
     "entities": [
       {
         "tableName": "Config",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER, `host` TEXT, `mac` TEXT, `qualityScore` INTEGER NOT NULL, `verifyScore` REAL NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER, `host` TEXT, `mac` TEXT, `qualityScore` INTEGER NOT NULL, `registerQualityScore` INTEGER NOT NULL, `verifyScore` REAL NOT NULL, `deviceId` INTEGER NOT NULL, `deviceStatus` TEXT, `heartBeatInterval` INTEGER NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -33,10 +33,102 @@
             "notNull": true
           },
           {
+            "fieldPath": "registerQualityScore",
+            "columnName": "registerQualityScore",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
             "fieldPath": "verifyScore",
             "columnName": "verifyScore",
             "affinity": "REAL",
             "notNull": true
+          },
+          {
+            "fieldPath": "deviceId",
+            "columnName": "deviceId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "deviceStatus",
+            "columnName": "deviceStatus",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "heartBeatInterval",
+            "columnName": "heartBeatInterval",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "Courier",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `name` TEXT, `cardNo` TEXT, `phone` TEXT, `photo` TEXT, `faceFeature` TEXT, `finger1Feature` TEXT, `finger2Feature` TEXT, `createTime` TEXT, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "cardNo",
+            "columnName": "cardNo",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "phone",
+            "columnName": "phone",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "photo",
+            "columnName": "photo",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "faceFeature",
+            "columnName": "faceFeature",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "finger1Feature",
+            "columnName": "finger1Feature",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "finger2Feature",
+            "columnName": "finger2Feature",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "createTime",
+            "columnName": "createTime",
+            "affinity": "TEXT",
+            "notNull": false
           }
         ],
         "primaryKey": {
@@ -52,7 +144,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '95b00c1872437044a84abf7a52457f3f')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '10e258b637f7ac851aad76f010d490b0')"
     ]
   }
 }

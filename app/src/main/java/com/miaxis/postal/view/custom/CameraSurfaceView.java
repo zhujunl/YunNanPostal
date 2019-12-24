@@ -5,7 +5,10 @@ import android.util.AttributeSet;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import com.miaxis.postal.data.event.SurfaceCreateEvent;
 import com.miaxis.postal.manager.CameraManager;
+
+import org.greenrobot.eventbus.EventBus;
 
 public class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Callback {
 
@@ -24,6 +27,7 @@ public class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Call
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
 //        CameraManager.getInstance().openCamera(holder);
+        EventBus.getDefault().post(new SurfaceCreateEvent());
     }
 
     @Override

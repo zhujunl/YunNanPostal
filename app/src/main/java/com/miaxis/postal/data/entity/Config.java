@@ -11,7 +11,11 @@ public class Config {
     private String host;
     private String mac;
     private int qualityScore;
+    private int registerQualityScore;
     private float verifyScore;
+    private int deviceId;
+    private String deviceStatus;
+    private int heartBeatInterval;
 
     public Config() {
     }
@@ -48,6 +52,14 @@ public class Config {
         this.qualityScore = qualityScore;
     }
 
+    public int getRegisterQualityScore() {
+        return registerQualityScore;
+    }
+
+    public void setRegisterQualityScore(int registerQualityScore) {
+        this.registerQualityScore = registerQualityScore;
+    }
+
     public float getVerifyScore() {
         return verifyScore;
     }
@@ -56,12 +68,40 @@ public class Config {
         this.verifyScore = verifyScore;
     }
 
+    public int getDeviceId() {
+        return deviceId;
+    }
+
+    public void setDeviceId(int deviceId) {
+        this.deviceId = deviceId;
+    }
+
+    public String getDeviceStatus() {
+        return deviceStatus;
+    }
+
+    public void setDeviceStatus(String deviceStatus) {
+        this.deviceStatus = deviceStatus;
+    }
+
+    public int getHeartBeatInterval() {
+        return heartBeatInterval;
+    }
+
+    public void setHeartBeatInterval(int heartBeatInterval) {
+        this.heartBeatInterval = heartBeatInterval;
+    }
+
     public static final class ConfigBuilder {
         private Long id;
         private String host;
         private String mac;
         private int qualityScore;
+        private int registerQualityScore;
         private float verifyScore;
+        private int deviceId;
+        private String deviceStatus;
+        private int heartBeatInterval;
 
         private ConfigBuilder() {
         }
@@ -90,8 +130,28 @@ public class Config {
             return this;
         }
 
+        public ConfigBuilder registerQualityScore(int registerQualityScore) {
+            this.registerQualityScore = registerQualityScore;
+            return this;
+        }
+
         public ConfigBuilder verifyScore(float verifyScore) {
             this.verifyScore = verifyScore;
+            return this;
+        }
+
+        public ConfigBuilder deviceId(int deviceId) {
+            this.deviceId = deviceId;
+            return this;
+        }
+
+        public ConfigBuilder deviceStatus(String deviceStatus) {
+            this.deviceStatus = deviceStatus;
+            return this;
+        }
+
+        public ConfigBuilder heartBeatInterval(int heartBeatInterval) {
+            this.heartBeatInterval = heartBeatInterval;
             return this;
         }
 
@@ -101,7 +161,11 @@ public class Config {
             config.setHost(host);
             config.setMac(mac);
             config.setQualityScore(qualityScore);
+            config.setRegisterQualityScore(registerQualityScore);
             config.setVerifyScore(verifyScore);
+            config.setDeviceId(deviceId);
+            config.setDeviceStatus(deviceStatus);
+            config.setHeartBeatInterval(heartBeatInterval);
             return config;
         }
     }

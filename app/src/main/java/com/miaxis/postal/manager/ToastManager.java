@@ -15,7 +15,7 @@ public class ToastManager {
     public static final String INFO = "INFO";
 
     private static Toast toast;
-
+    private static ToastBody toastBody = new ToastBody();
     private static Handler handler = new Handler(Looper.getMainLooper());
 
     public static void toast(String message, String toastMode) {
@@ -36,6 +36,37 @@ public class ToastManager {
             }
             toast.show();
         });
+    }
+
+    public static ToastBody getToastBody(String message, String mode) {
+        toastBody.setMessage(message);
+        toastBody.setMode(mode);
+        return toastBody;
+    }
+
+    public static class ToastBody {
+
+        private String message = "";
+        private String mode = "";
+
+        private ToastBody() {
+        }
+
+        public String getMessage() {
+            return message;
+        }
+
+        public void setMessage(String message) {
+            this.message = message;
+        }
+
+        public String getMode() {
+            return mode;
+        }
+
+        public void setMode(String mode) {
+            this.mode = mode;
+        }
     }
 
 }

@@ -25,6 +25,7 @@ import java.util.List;
 public class MainActivity extends BaseActivity<ActivityMainBinding> implements OnFragmentInteractionListener {
 
     private MaterialDialog waitDialog;
+    private MaterialDialog resultDialog;
     private MaterialDialog quitDialog;
 
     private String root;
@@ -128,6 +129,19 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
     }
 
     @Override
+    public void showResultDialog(String message) {
+        resultDialog.getContentView().setText(message);
+        resultDialog.show();
+    }
+
+    @Override
+    public void dismissResultDialog() {
+        if (resultDialog.isShowing()) {
+            resultDialog.dismiss();
+        }
+    }
+
+    @Override
     public void exitApp() {
         quitDialog.show();
     }
@@ -149,6 +163,10 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
                     System.exit(0);
                 })
                 .negativeText("取消")
+                .build();
+        resultDialog = new MaterialDialog.Builder(this)
+                .content("")
+                .positiveText("确认")
                 .build();
     }
 

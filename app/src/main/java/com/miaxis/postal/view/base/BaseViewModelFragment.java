@@ -2,6 +2,7 @@ package com.miaxis.postal.view.base;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +12,9 @@ import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ViewDataBinding;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 
+import com.miaxis.postal.manager.ToastManager;
 import com.miaxis.postal.viewModel.BaseViewModel;
 
 public abstract class BaseViewModelFragment<V extends ViewDataBinding, VM extends BaseViewModel> extends Fragment {
@@ -44,6 +47,21 @@ public abstract class BaseViewModelFragment<V extends ViewDataBinding, VM extend
         viewModelId = initVariableId();
         binding.setLifecycleOwner(this);
         binding.setVariable(viewModelId, viewModel);
+        viewModel.waitMessage.observe(this, s -> {
+            if (TextUtils.isEmpty(s)) {
+                mListener.dismissWaitDialog();
+            } else {
+                mListener.showWaitDialog(s);
+            }
+        });
+        viewModel.resultMessage.observe(this, s -> {
+            if (TextUtils.isEmpty(s)) {
+                mListener.dismissResultDialog();
+            } else {
+                mListener.showResultDialog(s);
+            }
+        });
+        viewModel.toast.observe(this, toastBody -> ToastManager.toast(toastBody.getMessage(), toastBody.getMode()));
         initData();
         initView();
     }

@@ -4,6 +4,7 @@ import android.app.Application;
 
 import androidx.annotation.NonNull;
 
+import com.miaxis.postal.MyEventBusIndex;
 import com.miaxis.postal.data.dao.AppDatabase;
 import com.miaxis.postal.manager.ConfigManager;
 import com.miaxis.postal.manager.CrashExceptionManager;
@@ -20,7 +21,7 @@ public class PostalApp extends Application {
     public void onCreate() {
         super.onCreate();
         instance = this;
-//        EventBus.builder().addIndex(new MyEventBusIndex()).installDefaultEventBus();
+        EventBus.builder().addIndex(new MyEventBusIndex()).installDefaultEventBus();
     }
 
     public static PostalApp getInstance() {

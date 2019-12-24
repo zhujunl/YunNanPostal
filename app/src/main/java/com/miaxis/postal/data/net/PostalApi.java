@@ -1,21 +1,48 @@
 package com.miaxis.postal.data.net;
 
 import com.miaxis.postal.data.dto.TempIdDto;
+import com.miaxis.postal.data.entity.Courier;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
 
-import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
-import io.reactivex.schedulers.Schedulers;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.Call;
 
 public class PostalApi extends BaseAPI {
+
+    public static Call<ResponseEntity<Integer>> registerDeviceSync(String macAddress) {
+        return getPostalNetSync().registerDeviceSync(macAddress);
+    }
+
+    public static Call<ResponseEntity<String>> getDeviceStatusSync(String macAddress) {
+        return getPostalNetSync().getDeviceStatusSync(macAddress);
+    }
+
+    public static Call<ResponseEntity<Courier>> getExpressmanByPhoneSync(String macAddress) {
+        return getPostalNetSync().getExpressmanByPhoneSync(macAddress);
+    }
+
+    public static Call<ResponseEntity> registerExpressmanSync(String name,
+                                                              String cardNo,
+                                                              String phone,
+                                                              String faceFeature,
+                                                              String finger1Feature,
+                                                              String finger2Feature,
+                                                              File file) {
+        RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+        MultipartBody.Part fileBody = MultipartBody.Part.createFormData("file", file.getName(), requestBody);
+        return getPostalNetSync().registerExpressmanSync(name,
+                cardNo,
+                phone,
+                faceFeature,
+                finger1Feature,
+                finger2Feature,
+                fileBody);
+    }
 
     public static Call<ResponseEntity<TempIdDto>> savePersonFromApp(String name,
                                                                     String nation,

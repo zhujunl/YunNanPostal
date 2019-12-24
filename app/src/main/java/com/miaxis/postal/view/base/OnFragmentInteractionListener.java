@@ -10,5 +10,7 @@ public interface OnFragmentInteractionListener {
     void addFragment(Fragment lastFragment, Fragment fragment);
     void showWaitDialog(String message);
     void dismissWaitDialog();
+    void showResultDialog(String message);
+    void dismissResultDialog();
     void exitApp();
 }

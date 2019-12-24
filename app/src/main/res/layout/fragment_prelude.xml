@@ -16,23 +16,17 @@
         android:layout_height="match_parent"
         android:background="@color/white">
 
-        <Button
-            android:id="@+id/btn_config"
+        <ImageView
+            android:id="@+id/iv_config"
             android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:background="@drawable/rounded_button_green"
-            android:gravity="center"
-            android:text="设置"
-            android:textColor="@color/white"
-            app:layout_constraintDimensionRatio="1000:618"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_settings_grey"
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"
+            android:padding="12dp"
+            app:layout_constraintWidth_percent="0.15"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.95"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.05"
-            app:layout_constraintWidth_percent="0.2"
-            style="@style/Widget.AppCompat.Button"
             viewadapter:isInvisible="@{viewModel.errorMode}"/>
 
         <TextView
@@ -42,7 +36,7 @@
             android:gravity="center"
             android:text="@{viewModel.hint}"
             android:textColor="@color/main_color_dark"
-            android:textSize="25sp"
+            android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -54,7 +48,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.7" />
+            app:layout_constraintGuide_percent="0.8" />
 
         <Button
             android:id="@+id/btn_retry"

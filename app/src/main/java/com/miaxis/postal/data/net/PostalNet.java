@@ -1,6 +1,7 @@
 package com.miaxis.postal.data.net;
 
 import com.miaxis.postal.data.dto.TempIdDto;
+import com.miaxis.postal.data.entity.Courier;
 
 import java.util.List;
 
@@ -14,6 +15,28 @@ import retrofit2.http.POST;
 import retrofit2.http.Part;
 
 public interface PostalNet {
+
+    @FormUrlEncoded
+    @POST("api/v1/device/registerDevice")
+    Call<ResponseEntity<Integer>> registerDeviceSync(@Field("macAddress") String macAddress);
+
+    @FormUrlEncoded
+    @POST("api/v1/device/getDeviceStatus")
+    Call<ResponseEntity<String>> getDeviceStatusSync(@Field("macAddress") String macAddress);
+
+    @FormUrlEncoded
+    @POST("api/v1/expressman/getExpressmanByPhone")
+    Call<ResponseEntity<Courier>> getExpressmanByPhoneSync(@Field("phone") String phone);
+
+    @FormUrlEncoded
+    @POST("api/v1/expressman/registerExpressman")
+    Call<ResponseEntity> registerExpressmanSync(@Part("name") String name,
+                                                @Part("cardNo") String cardNo,
+                                                @Part("phone") String phone,
+                                                @Part("faceFeature") String faceFeature,
+                                                @Part("finger1Feature") String finger1Feature,
+                                                @Part("finger2Feature") String finger2Feature,
+                                                @Part MultipartBody.Part file);
 
     @Multipart
     @POST("api/v1/person/savePersonFromApp")
