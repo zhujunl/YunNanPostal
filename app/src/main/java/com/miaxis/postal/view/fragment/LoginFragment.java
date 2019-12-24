@@ -56,10 +56,11 @@ public class LoginFragment extends BaseViewModelFragment<FragmentLoginBinding, L
             viewModel.phone.set("");
             binding.etAccount.requestFocus();
         });
+        binding.tvRegister.setOnClickListener(v -> mListener.replaceFragment(RegisterFragment.newInstance()));
     }
 
     private Observer<Boolean> loginFaceFlagObserver = flag -> {
-        mListener.replaceFragment(FrontFaceFragment.newInstance(viewModel.courierLiveData.getValue()));
+        mListener.replaceFragment(FaceLoginFragment.newInstance(viewModel.courierLiveData.getValue()));
     };
 
 }

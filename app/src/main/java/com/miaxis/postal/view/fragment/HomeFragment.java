@@ -1,5 +1,7 @@
 package com.miaxis.postal.view.fragment;
 
+import androidx.lifecycle.ViewModelProviders;
+
 import com.miaxis.postal.BR;
 import com.miaxis.postal.R;
 import com.miaxis.postal.databinding.FragmentHomeBinding;
@@ -23,7 +25,7 @@ public class HomeFragment extends BaseViewModelFragment<FragmentHomeBinding, Hom
 
     @Override
     protected HomeViewModel initViewModel() {
-        return null;
+        return ViewModelProviders.of(this).get(HomeViewModel.class);
     }
 
     @Override

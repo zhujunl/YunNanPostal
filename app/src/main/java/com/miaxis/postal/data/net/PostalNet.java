@@ -28,7 +28,7 @@ public interface PostalNet {
     @POST("api/v1/expressman/getExpressmanByPhone")
     Call<ResponseEntity<Courier>> getExpressmanByPhoneSync(@Field("phone") String phone);
 
-    @FormUrlEncoded
+    @Multipart
     @POST("api/v1/expressman/registerExpressman")
     Call<ResponseEntity> registerExpressmanSync(@Part("name") String name,
                                                 @Part("cardNo") String cardNo,

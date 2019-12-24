@@ -110,6 +110,10 @@ public class CameraManager {
         }
     }
 
+    public Camera getFrontCamera() {
+        return frontCamera;
+    }
+
     private TextureView.SurfaceTextureListener textureListener = new TextureView.SurfaceTextureListener() {
         @Override
         public void onSurfaceTextureAvailable(SurfaceTexture surfaceTexture, int width, int height) {

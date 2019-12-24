@@ -2,7 +2,6 @@ package com.miaxis.postal.manager;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Message;
@@ -45,27 +44,31 @@ public class FaceManager {
     public static final int ERR_LICENCE         = -2009;
     public static final int ERR_FILE_COMPARE    = -101;
     public static final int INIT_SUCCESS        = 0;
+    public static final int ZOOM_WIDTH = 480;
+    public static final int ZOOM_HEIGHT = 640;
 
     private static final int MAX_FACE_NUM = 50;
     private static final Byte lock1 = 1;
     private static final Byte lock2 = 2;
-    public static final int ZOOM_WIDTH = 480;
-    public static final int ZOOM_HEIGHT = 640;
 
     private MXFaceAPI mxFaceAPI;
     private mxImageTool dtTool;
+
     private HandlerThread asyncDetectThread;
     private Handler asyncDetectHandler;
     private volatile boolean detectLoop = true;
+
     private HandlerThread asyncExtractThread;
     private Handler asyncExtractHandler;
     private volatile boolean extractLoop = true;
-
     private volatile boolean needNextFeature = false;
     private volatile boolean nova = false;
     private volatile Intermediary intermediaryData;
 
     private byte[] lastPreviewData;
+    private int orientation = 270;
+
+    private OnFeatureExtractListener featureListener;
 
     /**
      * 初始化人脸算法
@@ -174,6 +177,10 @@ public class FaceManager {
         this.needNextFeature = needNextFeature;
     }
 
+    public void setOrientation(int orientation) {
+        this.orientation = orientation;
+    }
+
     private void sendEvent(Object object) {
         if (detectLoop) {
             EventBus.getDefault().post(object);
@@ -202,7 +209,7 @@ public class FaceManager {
     private void verify(byte[] detectData) {
         try {
             long time = System.currentTimeMillis();
-            byte[] zoomedRgbData = cameraPreviewConvert(detectData, CameraManager.PRE_WIDTH, CameraManager.PRE_HEIGHT, 270, ZOOM_WIDTH, ZOOM_HEIGHT);
+            byte[] zoomedRgbData = cameraPreviewConvert(detectData, CameraManager.PRE_WIDTH, CameraManager.PRE_HEIGHT, orientation, ZOOM_WIDTH, ZOOM_HEIGHT);
             if (zoomedRgbData == null) {
                 sendEvent(new DrawRectEvent(0, null));
                 return;
@@ -252,13 +259,14 @@ public class FaceManager {
     private void extract(Intermediary intermediary) {
         try {
             if (needNextFeature) {
-                long time = System.currentTimeMillis();
-                long livenessTime = 0L;
                 if (intermediary.mxFaceInfoEx.quality > ConfigManager.getInstance().getConfig().getQualityScore()) {
                     byte[] feature = extractFeature(intermediary.data, ZOOM_WIDTH, ZOOM_HEIGHT, intermediary.mxFaceInfoEx);
                     if (feature != null) {
                         needNextFeature = false;
-                        sendEvent(new FeatureEvent(FeatureEvent.CAMERA_FACE, new MxRGBImage(intermediary.data, ZOOM_WIDTH, ZOOM_HEIGHT), feature, intermediary.mxFaceInfoEx, "camera"));
+                        if (featureListener != null) {
+                            featureListener.onFeatureExtract(new MxRGBImage(intermediary.data, ZOOM_WIDTH, ZOOM_HEIGHT), intermediary.mxFaceInfoEx, feature);
+                        }
+//                        sendEvent(new FeatureEvent(FeatureEvent.CAMERA_FACE, new MxRGBImage(intermediary.data, ZOOM_WIDTH, ZOOM_HEIGHT), feature, intermediary.mxFaceInfoEx, "camera"));
                     }
                 } else {
                     sendEvent(new DrawRectEvent(-1, null));
@@ -267,6 +275,14 @@ public class FaceManager {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public interface OnFeatureExtractListener {
+        void onFeatureExtract(MxRGBImage mxRGBImage, MXFaceInfoEx mxFaceInfoEx, byte[] feature);
+    }
+
+    public void setFeatureListener(OnFeatureExtractListener featureListener) {
+        this.featureListener = featureListener;
     }
 
     /**
@@ -378,13 +394,13 @@ public class FaceManager {
             return null;
         }
         int[] pFaceNum = new int[]{0};
-        MXFaceInfoEx[] pFaceBuffer = makeFaceContainer(3);
+        MXFaceInfoEx[] pFaceBuffer = makeFaceContainer(MAX_FACE_NUM);
         boolean result = faceDetect(rgbData, bitmap.getWidth(), bitmap.getHeight(), pFaceNum, pFaceBuffer);
         if (result && pFaceNum[0] > 0) {
             if (pFaceNum[0] == 1) {
                 result = faceQuality(rgbData, bitmap.getWidth(), bitmap.getHeight(), pFaceNum[0], pFaceBuffer);
                 MXFaceInfoEx mxFaceInfoEx = sortMXFaceInfoEx(pFaceBuffer);
-                if (result && mxFaceInfoEx.quality > 80) {
+                if (result && mxFaceInfoEx.quality > 70) {
                     byte[] feature = extractFeature(rgbData, bitmap.getWidth(), bitmap.getHeight(), mxFaceInfoEx);
                     if (feature != null) {
                         return feature;

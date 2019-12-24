@@ -1,22 +1,25 @@
 package com.miaxis.postal.view.fragment;
 
-import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProviders;
-
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 
-import com.miaxis.postal.BR;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import com.miaxis.postal.R;
+import com.miaxis.postal.data.event.FaceRegisterEvent;
 import com.miaxis.postal.databinding.FragmentRegisterBinding;
+import com.miaxis.postal.manager.ToastManager;
 import com.miaxis.postal.view.base.BaseViewModelFragment;
 import com.miaxis.postal.viewModel.RegisterViewModel;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 public class RegisterFragment extends BaseViewModelFragment<FragmentRegisterBinding, RegisterViewModel> {
 
+    public static RegisterFragment newInstance() {
+        return new RegisterFragment();
+    }
 
     public RegisterFragment() {
         // Required empty public constructor
@@ -39,11 +42,37 @@ public class RegisterFragment extends BaseViewModelFragment<FragmentRegisterBind
 
     @Override
     protected void initData() {
+        viewModel.registerFlag.observe(this, flag -> {
 
+        });
     }
 
     @Override
     protected void initView() {
+        binding.ivBack.setOnClickListener(v -> mListener.backToStack(null));
+        binding.tvHeader.setOnClickListener(v -> mListener.replaceFragment(FaceRegisterFragment.newInstance()));
+        binding.btnRegister.setOnClickListener(v -> {
+            if (viewModel.checkInput()) {
+                viewModel.getCourierByPhone();
+            } else {
+                ToastManager.toast("请输入全部信息", ToastManager.INFO);
+            }
+        });
+        EventBus.getDefault().register(this);
+    }
 
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    public void onFaceRegisterEvent(FaceRegisterEvent event) {
+        binding.tvHeader.setText("已采集");
+        binding.tvHeader.setOnClickListener(null);
+        viewModel.setFeatureCache(event.getFeature());
+        viewModel.setHeaderCache(event.getBitmap());
+        EventBus.getDefault().removeStickyEvent(event);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        EventBus.getDefault().unregister(this);
     }
 }

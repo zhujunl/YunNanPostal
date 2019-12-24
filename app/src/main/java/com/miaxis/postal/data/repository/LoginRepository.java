@@ -71,7 +71,9 @@ public class LoginRepository extends BaseRepository {
         try {
             ResponseEntity body = execute.body();
             if (body != null) {
-                if (!TextUtils.equals(body.getCode(), ValueUtil.SUCCESS)) {
+                if (TextUtils.equals(body.getCode(), ValueUtil.SUCCESS)) {
+                    return;
+                } else {
                     throw new MyException("服务端返回，" + body.getMessage());
                 }
             }

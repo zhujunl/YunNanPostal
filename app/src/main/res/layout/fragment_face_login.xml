@@ -7,14 +7,14 @@
 
         <variable
             name="viewModel"
-            type="com.miaxis.postal.viewModel.FrontFaceViewModel" />
+            type="com.miaxis.postal.viewModel.FaceLoginViewModel" />
 
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".view.fragment.FrontFaceFragment">
+        tools:context=".view.fragment.FaceLoginFragment">
 
         <ImageView
             android:id="@+id/iv_back"
@@ -53,6 +53,7 @@
             android:layout_height="0dp"
             android:textSize="24sp"
             android:gravity="center"
+            android:text="@{viewModel.hint}"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toTopOf="@id/v_space"
