@@ -102,16 +102,7 @@ public class PreludeViewModel extends BaseViewModel {
                     getDeviceStatus();
                 }, throwable -> {
                     errorMode.set(Boolean.TRUE);
-                    throwable.printStackTrace();
-                    Log.e("asd", "" + throwable.getMessage());
-                    if (ValueUtil.isNetException(throwable)) {
-                        hint.set("联网错误");
-                    } else if (throwable instanceof MyException) {
-                        hint.set(throwable.getMessage());
-                    } else {
-                        Log.e("asd", "" + throwable.getMessage());
-                        hint.set("出现错误");
-                    }
+                    hint.set(hanleError(throwable));
                 });
     }
 
@@ -131,17 +122,8 @@ public class PreludeViewModel extends BaseViewModel {
                 .subscribe(this::initResult, throwable -> {
                     Config config = ConfigManager.getInstance().getConfig();
                     initResult(config.getDeviceStatus());
+                    hint.set(hanleError(throwable));
                     ToastManager.toast("脱机模式", ToastManager.INFO);
-                    throwable.printStackTrace();
-                    Log.e("asd", "" + throwable.getMessage());
-                    if (ValueUtil.isNetException(throwable)) {
-                        hint.set("联网错误");
-                    } else if (throwable instanceof MyException) {
-                        hint.set(throwable.getMessage());
-                    } else {
-                        Log.e("asd", "" + throwable.getMessage());
-                        hint.set("出现错误");
-                    }
                 });
     }
 

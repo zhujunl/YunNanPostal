@@ -4,8 +4,10 @@ import android.util.Log;
 
 import androidx.databinding.ObservableBoolean;
 import androidx.databinding.ObservableField;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.miaxis.postal.bridge.SingleLiveEvent;
 import com.miaxis.postal.data.entity.Courier;
 import com.miaxis.postal.data.exception.MyException;
 import com.miaxis.postal.data.model.CourierModel;
@@ -25,6 +27,7 @@ public class LoginViewModel extends BaseViewModel {
     public MutableLiveData<Courier> courierLiveData = new MutableLiveData<>();
     public ObservableBoolean editMode = new ObservableBoolean(false);
     public ObservableField<String> phone = new ObservableField<>();
+    public MutableLiveData<Boolean> loginFaceFlag = new SingleLiveEvent<>();
 
     public LoginViewModel() {
         loadCourier();
@@ -60,18 +63,10 @@ public class LoginViewModel extends BaseViewModel {
                 .subscribe(courier -> {
                     waitMessage.setValue("");
                     courierLiveData.setValue(courier);
+                    loginFaceFlag.setValue(Boolean.TRUE);
                 }, throwable -> {
                     waitMessage.setValue("");
-                    throwable.printStackTrace();
-                    Log.e("asd", "" + throwable.getMessage());
-                    if (ValueUtil.isNetException(throwable)) {
-                        resultMessage.setValue("联网错误");
-                    } else if (throwable instanceof MyException) {
-                        resultMessage.setValue(throwable.getMessage());
-                    } else {
-                        Log.e("asd", "" + throwable.getMessage());
-                        resultMessage.setValue("出现错误");
-                    }
+                    resultMessage.setValue(hanleError(throwable));
                 });
     }
 

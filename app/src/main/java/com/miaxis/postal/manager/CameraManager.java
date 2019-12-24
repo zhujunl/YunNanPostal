@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
 import android.net.Uri;
 import android.os.Build;
@@ -12,7 +13,9 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.SurfaceHolder;
+import android.view.TextureView;
 
+import androidx.annotation.NonNull;
 import androidx.core.content.FileProvider;
 
 import com.miaxis.postal.data.event.OpenCameraEvent;
@@ -51,7 +54,88 @@ public class CameraManager {
     private static final int RETRY_TIMES = 3;
 
     private Camera mCamera;
+    private Camera frontCamera;
+
     private int retryTime = 0;
+
+    public interface OnCameraOpenListener {
+        void onCameraOpen(Camera.Size previewSize);
+    }
+
+    public void openFrontCamera(@NonNull TextureView holder, OnCameraOpenListener listener) {
+        if (frontCamera != null) return;
+        try {
+            frontCamera = Camera.open(Camera.CameraInfo.CAMERA_FACING_FRONT);
+            Camera.Parameters parameters = frontCamera.getParameters();
+            parameters.setPreviewSize(PRE_WIDTH, PRE_HEIGHT);
+            parameters.setPictureSize(PIC_WIDTH, PIC_HEIGHT);
+            //对焦模式设置
+            List<String> supportedFocusModes = parameters.getSupportedFocusModes();
+            if (supportedFocusModes != null && supportedFocusModes.size() > 0) {
+                if (supportedFocusModes.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
+                    parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+                } else if (supportedFocusModes.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO)) {
+                    parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
+                } else if (supportedFocusModes.contains(Camera.Parameters.FOCUS_MODE_AUTO)) {
+                    parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
+                }
+            }
+            frontCamera.setParameters(parameters);
+            frontCamera.setDisplayOrientation(90);
+            holder.setSurfaceTextureListener(textureListener);
+            frontCamera.setPreviewCallback(previewCallback);
+            frontCamera.startPreview();
+            listener.onCameraOpen(parameters.getPreviewSize());
+        } catch (Exception e) {
+            e.printStackTrace();
+            new Thread(() -> {
+                if (retryTime <= RETRY_TIMES) {
+                    retryTime++;
+                    openFrontCamera(holder, listener);
+                }
+            }).start();
+        }
+    }
+
+    public void closeFrontCamera() {
+        try {
+            if (frontCamera != null) {
+                frontCamera.setPreviewCallback(null);
+                frontCamera.stopPreview();
+                frontCamera.release();
+                frontCamera = null;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private TextureView.SurfaceTextureListener textureListener = new TextureView.SurfaceTextureListener() {
+        @Override
+        public void onSurfaceTextureAvailable(SurfaceTexture surfaceTexture, int width, int height) {
+            if (frontCamera != null) {
+                try {
+                    frontCamera.setPreviewTexture(surfaceTexture);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        @Override
+        public void onSurfaceTextureSizeChanged(SurfaceTexture surfaceTexture, int width, int height) {
+        }
+
+        @Override
+        public boolean onSurfaceTextureDestroyed(SurfaceTexture surfaceTexture) {
+            closeFrontCamera();
+            return false;
+        }
+
+        @Override
+        public void onSurfaceTextureUpdated(SurfaceTexture surfaceTexture) {
+        }
+    };
 
     public void resetRetryTime() {
         this.retryTime = 0;
@@ -140,16 +224,6 @@ public class CameraManager {
         } else {
             return Uri.fromFile(mediaFile);//或者 Uri.isPaise("file://"+file.toString()
         }
-    }
-
-    public static void takeSystemCamera(Activity activity) {
-        //打开照相机
-        Intent openCameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        Uri imageUri = getOutputMediaFileUri(activity);
-        openCameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
-        //Android7.0添加临时权限标记，此步千万别忘了
-        openCameraIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-        activity.startActivityForResult(openCameraIntent, 11);
     }
 
     public static Bitmap getBitmapFormUri(Context context, Uri uri) {

@@ -3,6 +3,7 @@ package com.miaxis.postal.view.fragment;
 import android.text.TextUtils;
 import android.view.View;
 
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.miaxis.postal.R;
@@ -38,7 +39,7 @@ public class LoginFragment extends BaseViewModelFragment<FragmentLoginBinding, L
 
     @Override
     protected void initData() {
-
+        viewModel.loginFaceFlag.observe(this, loginFaceFlagObserver);
     }
 
     @Override
@@ -56,4 +57,9 @@ public class LoginFragment extends BaseViewModelFragment<FragmentLoginBinding, L
             binding.etAccount.requestFocus();
         });
     }
+
+    private Observer<Boolean> loginFaceFlagObserver = flag -> {
+        mListener.replaceFragment(FrontFaceFragment.newInstance(viewModel.courierLiveData.getValue()));
+    };
+
 }
