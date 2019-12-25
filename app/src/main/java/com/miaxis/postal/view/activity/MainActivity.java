@@ -67,7 +67,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         Log.e("asd", "onActivityResult");
-        List<Fragment> visibleFragment = getVisibleFragment(getSupportFragmentManager());
+        List<Fragment> visibleFragment = getVisibleFragmentList(getSupportFragmentManager());
         for (Fragment fragment : visibleFragment) {
             if (requestCode == OrderFragment.REQUEST_CODE && fragment instanceof OrderFragment) {
                 fragment.onActivityResult(requestCode, resultCode, data);
@@ -105,15 +105,15 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
         }
     }
 
-    @Override
-    public void addFragment(Fragment lastFragment, Fragment fragment) {
-        getSupportFragmentManager().beginTransaction()
-                .hide(lastFragment)
-                .add(R.id.cl_container, fragment)
-                .show(fragment)
-                .addToBackStack(fragment.getClass().getName())
-                .commit();
-    }
+//    @Override
+//    public void addFragment(Fragment lastFragment, Fragment fragment) {
+//        getSupportFragmentManager().beginTransaction()
+//                .hide(lastFragment)
+//                .add(R.id.cl_container, fragment)
+//                .show(fragment)
+//                .addToBackStack(fragment.getClass().getName())
+//                .commit();
+//    }
 
     @Override
     public void showWaitDialog(String message) {

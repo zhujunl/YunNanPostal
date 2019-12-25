@@ -31,16 +31,26 @@ public abstract class BaseActivity<V extends ViewDataBinding> extends AppCompatA
 
     protected abstract void initView();
 
-    protected List<Fragment> getVisibleFragment(FragmentManager fragmentManager){
+    protected List<Fragment> getVisibleFragmentList(FragmentManager fragmentManager){
         List<Fragment> visible = new ArrayList<>();
         List<Fragment> fragments = fragmentManager.getFragments();
         for(Fragment fragment : fragments){
             if(fragment != null && fragment.isVisible()) {
                 visible.add(fragment);
-                visible.addAll(getVisibleFragment(fragment.getChildFragmentManager()));
+                visible.addAll(getVisibleFragmentList(fragment.getChildFragmentManager()));
             }
         }
         return visible;
+    }
+
+    protected Fragment getVisibleFragment(){
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        List<Fragment> fragments = fragmentManager.getFragments();
+        for(Fragment fragment : fragments){
+            if(fragment != null && fragment.isVisible())
+                return fragment;
+        }
+        return null;
     }
 
 }

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
@@ -15,6 +16,86 @@
         android:layout_height="match_parent"
         tools:context=".view.fragment.HomeFragment">
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_logistic"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/main_button_green"
+            app:layout_constraintVertical_bias="0.1"
+            app:layout_constraintHeight_percent="0.17"
+            app:layout_constraintWidth_percent="0.8"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <ImageView
+                android:id="@+id/iv_logistic"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:src="@drawable/ic_fullscreen_white"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"
+                app:layout_constraintWidth_percent="0.3"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+            <TextView
+                android:id="@+id/tv_logistic"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:text="快    递"
+                android:textSize="40sp"
+                android:textColor="@color/white"
+                android:gravity="center"
+                app:layout_constraintStart_toEndOf="@id/iv_logistic"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_record"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/main_button_blue"
+            app:layout_constraintVertical_bias="0.4"
+            app:layout_constraintHeight_percent="0.17"
+            app:layout_constraintWidth_percent="0.8"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <ImageView
+                android:id="@+id/iv_record"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:padding="8dp"
+                android:src="@drawable/ic_format_list_bulleted_white"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"
+                app:layout_constraintWidth_percent="0.3"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+            <TextView
+                android:id="@+id/tv_record"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:text="日    志"
+                android:textSize="40sp"
+                android:textColor="@color/white"
+                android:gravity="center"
+                app:layout_constraintStart_toEndOf="@id/iv_record"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

@@ -363,21 +363,21 @@ public class FaceManager {
             return null;
         }
         int[] pFaceNum = new int[]{0};
-        MXFaceInfoEx[] pFaceBuffer = makeFaceContainer(1);
+        MXFaceInfoEx[] pFaceBuffer = makeFaceContainer(MAX_FACE_NUM);
         boolean result = faceDetect(rgbData, bitmap.getWidth(), bitmap.getHeight(), pFaceNum, pFaceBuffer);
         if (result) {
             result = faceQuality(rgbData, bitmap.getWidth(), bitmap.getHeight(), pFaceNum[0], pFaceBuffer);
             MXFaceInfoEx mxFaceInfoEx = sortMXFaceInfoEx(pFaceBuffer);
-            if (result && mxFaceInfoEx.quality > 50) {
+//            if (result && mxFaceInfoEx.quality > 50) {
                 byte[] feature = extractFeature(rgbData, bitmap.getWidth(), bitmap.getHeight(), mxFaceInfoEx);
                 if (feature != null) {
                     return feature;
                 } else {
                     errorMessage = "提取特征失败";
                 }
-            } else {
-                errorMessage = "人脸质量过低";
-            }
+//            } else {
+//                errorMessage = "人脸质量过低";
+//            }
         } else {
             errorMessage = "未检测到人脸";
         }

@@ -7,7 +7,7 @@ public interface OnFragmentInteractionListener {
     void backToRoot();
     void replaceFragment(Fragment fragment);
     void backToStack(Class<? extends Fragment> fragment);
-    void addFragment(Fragment lastFragment, Fragment fragment);
+//    void addFragment(Fragment lastFragment, Fragment fragment);
     void showWaitDialog(String message);
     void dismissWaitDialog();
     void showResultDialog(String message);

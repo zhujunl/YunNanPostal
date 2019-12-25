@@ -1,49 +1,56 @@
 package com.miaxis.postal.view.fragment;
 
+import android.graphics.Bitmap;
+import android.os.Bundle;
+
+import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 
+import com.miaxis.postal.BR;
 import com.miaxis.postal.R;
-import com.miaxis.postal.data.entity.Courier;
-import com.miaxis.postal.databinding.FragmentFaceLoginBinding;
+import com.miaxis.postal.data.dto.TempIdDto;
+import com.miaxis.postal.databinding.FragmentFaceVerifyBinding;
 import com.miaxis.postal.manager.CameraManager;
 import com.miaxis.postal.view.base.BaseViewModelFragment;
 import com.miaxis.postal.view.custom.RoundBorderView;
 import com.miaxis.postal.view.custom.RoundFrameLayout;
-import com.miaxis.postal.viewModel.FaceLoginViewModel;
+import com.miaxis.postal.viewModel.FaceVerifyViewModel;
+import com.speedata.libid2.IDInfor;
 
-public class FaceLoginFragment extends BaseViewModelFragment<FragmentFaceLoginBinding, FaceLoginViewModel> {
+public class FaceVerifyFragment extends BaseViewModelFragment<FragmentFaceVerifyBinding, FaceVerifyViewModel> {
 
-    private Courier courier;
+    private IDInfor idInfor;
 
     private RoundBorderView roundBorderView;
     private RoundFrameLayout roundFrameLayout;
 
-    public static FaceLoginFragment newInstance(Courier courier) {
-        FaceLoginFragment fragment = new FaceLoginFragment();
-        fragment.setCourier(courier);
+    public static FaceVerifyFragment newInstance(IDInfor idInfor) {
+        FaceVerifyFragment fragment = new FaceVerifyFragment();
+        fragment.setIdInfor(idInfor);
         return fragment;
     }
 
-    public FaceLoginFragment() {
+    public FaceVerifyFragment() {
         // Required empty public constructor
     }
 
     @Override
     protected int setContentView() {
-        return R.layout.fragment_face_login;
+        return R.layout.fragment_face_verify;
     }
 
     @Override
-    protected FaceLoginViewModel initViewModel() {
-        return ViewModelProviders.of(this).get(FaceLoginViewModel.class);
+    protected FaceVerifyViewModel initViewModel() {
+        return ViewModelProviders.of(this).get(FaceVerifyViewModel.class);
     }
 
     @Override
@@ -53,9 +60,9 @@ public class FaceLoginFragment extends BaseViewModelFragment<FragmentFaceLoginBi
 
     @Override
     protected void initData() {
-        viewModel.courierLiveData.setValue(courier);
-        viewModel.courierLiveData.observe(this, courierObserver);
-        viewModel.verifyFlag.observe(this, verifyFlagObserver);
+        viewModel.idInforLiveData.setValue(idInfor);
+        viewModel.idInforLiveData.observe(this, idInforObserver);
+        viewModel.tempIdLiveData.observe(this, tempIdObserver);
         binding.rtvCamera.getViewTreeObserver().addOnGlobalLayoutListener(globalListener);
     }
 
@@ -68,12 +75,14 @@ public class FaceLoginFragment extends BaseViewModelFragment<FragmentFaceLoginBi
     public void onDestroyView() {
         super.onDestroyView();
         viewModel.stopFaceVerify();
-        CameraManager.getInstance().closeFrontCamera();
+        CameraManager.getInstance().closeBackCamera();
     }
 
-    private Observer<Courier> courierObserver = courier -> viewModel.startFaceVerify();
+    private Observer<IDInfor> idInforObserver = mIdInfor -> viewModel.startFaceVerify(idInfor);
 
-    private Observer<Boolean> verifyFlagObserver = flag -> mListener.replaceFragment(HomeFragment.newInstance());
+    private Observer<TempIdDto> tempIdObserver = tempIdDto ->
+            mListener.replaceFragment(ExpressFragment.newInstance(
+                    viewModel.idInforLiveData.getValue(), viewModel.headerCache, tempIdDto));
 
     private ViewTreeObserver.OnGlobalLayoutListener globalListener = new ViewTreeObserver.OnGlobalLayoutListener() {
         @Override
@@ -84,7 +93,7 @@ public class FaceLoginFragment extends BaseViewModelFragment<FragmentFaceLoginBi
             layoutParams.height = binding.flCamera.getHeight();
             binding.rtvCamera.setLayoutParams(layoutParams);
             binding.rtvCamera.turnRound();
-            CameraManager.getInstance().openFrontCamera(binding.rtvCamera, cameraListener);
+            CameraManager.getInstance().openBackCamera(binding.rtvCamera, cameraListener);
         }
     };
 
@@ -118,7 +127,7 @@ public class FaceLoginFragment extends BaseViewModelFragment<FragmentFaceLoginBi
         });
     };
 
-    public void setCourier(Courier courier) {
-        this.courier = courier;
+    public void setIdInfor(IDInfor idInfor) {
+        this.idInfor = idInfor;
     }
 }

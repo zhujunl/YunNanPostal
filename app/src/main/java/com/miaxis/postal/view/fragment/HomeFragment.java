@@ -1,5 +1,7 @@
 package com.miaxis.postal.view.fragment;
 
+import android.view.View;
+
 import androidx.lifecycle.ViewModelProviders;
 
 import com.miaxis.postal.BR;
@@ -40,6 +42,6 @@ public class HomeFragment extends BaseViewModelFragment<FragmentHomeBinding, Hom
 
     @Override
     protected void initView() {
-
+        binding.clLogistic.setOnClickListener(v -> mListener.replaceFragment(CardFragment.newInstance()));
     }
 }

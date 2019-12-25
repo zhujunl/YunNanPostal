@@ -55,6 +55,7 @@ public class CameraManager {
 
     private Camera mCamera;
     private Camera frontCamera;
+    private Camera backCamera;
 
     private int retryTime = 0;
 
@@ -62,7 +63,7 @@ public class CameraManager {
         void onCameraOpen(Camera.Size previewSize);
     }
 
-    public void openFrontCamera(@NonNull TextureView holder, OnCameraOpenListener listener) {
+    public void openFrontCamera(@NonNull TextureView textureView, OnCameraOpenListener listener) {
         if (frontCamera != null) return;
         try {
             frontCamera = Camera.open(Camera.CameraInfo.CAMERA_FACING_FRONT);
@@ -82,16 +83,18 @@ public class CameraManager {
             }
             frontCamera.setParameters(parameters);
             frontCamera.setDisplayOrientation(90);
-            holder.setSurfaceTextureListener(textureListener);
+            textureView.setSurfaceTextureListener(textureListener);
             frontCamera.setPreviewCallback(previewCallback);
             frontCamera.startPreview();
-            listener.onCameraOpen(parameters.getPreviewSize());
+            if (listener != null) {
+                listener.onCameraOpen(parameters.getPreviewSize());
+            }
         } catch (Exception e) {
             e.printStackTrace();
             new Thread(() -> {
                 if (retryTime <= RETRY_TIMES) {
                     retryTime++;
-                    openFrontCamera(holder, listener);
+                    openFrontCamera(textureView, listener);
                 }
             }).start();
         }
@@ -140,6 +143,60 @@ public class CameraManager {
         public void onSurfaceTextureUpdated(SurfaceTexture surfaceTexture) {
         }
     };
+
+    public void openBackCamera(@NonNull TextureView textureView, OnCameraOpenListener listener) {
+        if (backCamera != null) return;
+        try {
+            backCamera = Camera.open(Camera.CameraInfo.CAMERA_FACING_FRONT);
+            Camera.Parameters parameters = backCamera.getParameters();
+            parameters.setPreviewSize(PRE_WIDTH, PRE_HEIGHT);
+            parameters.setPictureSize(PIC_WIDTH, PIC_HEIGHT);
+            //对焦模式设置
+            List<String> supportedFocusModes = parameters.getSupportedFocusModes();
+            if (supportedFocusModes != null && supportedFocusModes.size() > 0) {
+                if (supportedFocusModes.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
+                    parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+                } else if (supportedFocusModes.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO)) {
+                    parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
+                } else if (supportedFocusModes.contains(Camera.Parameters.FOCUS_MODE_AUTO)) {
+                    parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
+                }
+            }
+            backCamera.setParameters(parameters);
+            backCamera.setDisplayOrientation(90);
+            textureView.setSurfaceTextureListener(textureListener);
+            backCamera.setPreviewCallback(previewCallback);
+            backCamera.startPreview();
+            if (listener != null) {
+                listener.onCameraOpen(parameters.getPreviewSize());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            new Thread(() -> {
+                if (retryTime <= RETRY_TIMES) {
+                    retryTime++;
+                    openBackCamera(textureView, listener);
+                }
+            }).start();
+        }
+    }
+
+    public void closeBackCamera() {
+        try {
+            if (backCamera != null) {
+                backCamera.setPreviewCallback(null);
+                backCamera.stopPreview();
+                backCamera.release();
+                backCamera = null;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public Camera getBackCamera() {
+        return backCamera;
+    }
 
     public void resetRetryTime() {
         this.retryTime = 0;
