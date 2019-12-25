@@ -73,7 +73,7 @@ public class FaceLoginFragment extends BaseViewModelFragment<FragmentFaceLoginBi
     public void onDestroyView() {
         super.onDestroyView();
         viewModel.stopFaceVerify();
-        CameraManager.getInstance().closeBackCamera();
+        CameraManager.getInstance().closeFrontCamera();
     }
 
     private Observer<Courier> courierObserver = courier -> viewModel.startFaceVerify();
@@ -89,7 +89,7 @@ public class FaceLoginFragment extends BaseViewModelFragment<FragmentFaceLoginBi
             layoutParams.height = binding.flCamera.getHeight();
             binding.rtvCamera.setLayoutParams(layoutParams);
             binding.rtvCamera.turnRound();
-            CameraManager.getInstance().openBackCamera(binding.rtvCamera, cameraListener);
+            CameraManager.getInstance().openFrontCamera(binding.rtvCamera, cameraListener);
         }
     };
 

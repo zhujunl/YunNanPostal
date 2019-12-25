@@ -12,6 +12,7 @@ import com.miaxis.postal.data.dto.TempIdDto;
 import com.miaxis.postal.data.entity.MxRGBImage;
 import com.miaxis.postal.data.exception.MyException;
 import com.miaxis.postal.data.repository.PostalRepository;
+import com.miaxis.postal.manager.CameraManager;
 import com.miaxis.postal.manager.ConfigManager;
 import com.miaxis.postal.manager.FaceManager;
 import com.speedata.libid2.IDInfor;
@@ -54,7 +55,7 @@ public class FaceVerifyViewModel extends BaseViewModel {
                     cardFeature = bytes;
                     FaceManager.getInstance().setFeatureListener(faceListener);
                     FaceManager.getInstance().setNeedNextFeature(true);
-                    FaceManager.getInstance().setOrientation(270);
+                    FaceManager.getInstance().setOrientation(CameraManager.getInstance().getPreviewOrientation());
                     FaceManager.getInstance().startLoop();
                     hint.set("请将镜头朝向寄件人");
                 }, throwable -> {

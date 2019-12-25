@@ -74,7 +74,7 @@ public class FaceRegisterFragment extends BaseViewModelFragment<FragmentFaceRegi
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        CameraManager.getInstance().closeBackCamera();
+        CameraManager.getInstance().closeFrontCamera();
     }
 
     private ViewTreeObserver.OnGlobalLayoutListener globalListener = new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -86,7 +86,7 @@ public class FaceRegisterFragment extends BaseViewModelFragment<FragmentFaceRegi
             layoutParams.height = binding.flCamera.getHeight();
             binding.rtvCamera.setLayoutParams(layoutParams);
             binding.rtvCamera.turnRound();
-            CameraManager.getInstance().openBackCamera(binding.rtvCamera, cameraListener);
+            CameraManager.getInstance().openFrontCamera(binding.rtvCamera, cameraListener);
         }
     };
 

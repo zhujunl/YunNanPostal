@@ -46,7 +46,7 @@ public class FaceRegisterViewModel extends BaseViewModel {
     public void takePicture() {
         shootFlag.setValue(Status.LOADING);
         hint.set("处理中");
-        Camera frontCamera = CameraManager.getInstance().getBackCamera();
+        Camera frontCamera = CameraManager.getInstance().getFrontCamera();
         if (frontCamera != null) {
             frontCamera.takePicture(null, null, this::handlePhoto);
         } else {
@@ -59,7 +59,7 @@ public class FaceRegisterViewModel extends BaseViewModel {
         headerCache = null;
         shootFlag.setValue(Status.FAILED);
         hint.set("请自拍一张大头照");
-        Camera frontCamera = CameraManager.getInstance().getBackCamera();
+        Camera frontCamera = CameraManager.getInstance().getFrontCamera();
         if (frontCamera != null) {
             frontCamera.startPreview();
         } else {
@@ -78,7 +78,7 @@ public class FaceRegisterViewModel extends BaseViewModel {
         Observable.create((ObservableOnSubscribe<Bitmap>) emitter -> {
             Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
             Matrix matrix = new Matrix();
-            matrix.postRotate(90);
+            matrix.postRotate(CameraManager.getInstance().getPictureOrientation());
             bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
             emitter.onNext(bitmap);
         })

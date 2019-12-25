@@ -10,6 +10,7 @@ import com.miaxis.postal.manager.AmapManager;
 import com.miaxis.postal.manager.ConfigManager;
 import com.miaxis.postal.manager.CrashExceptionManager;
 import com.miaxis.postal.manager.FaceManager;
+import com.miaxis.postal.manager.TTSManager;
 import com.miaxis.postal.util.FileUtil;
 
 import org.greenrobot.eventbus.EventBus;
@@ -36,6 +37,7 @@ public class PostalApp extends Application {
             ConfigManager.getInstance().checkConfig();
             CrashExceptionManager.getInstance().init(this);
             AmapManager.getInstance().startLocation(this);
+            TTSManager.getInstance().init(getApplicationContext());
             int result = FaceManager.getInstance().initFaceST(getApplicationContext(), FileUtil.MODEL_PATH, FileUtil.LICENCE_PATH);
             listener.onInit(result == FaceManager.INIT_SUCCESS, FaceManager.getFaceInitResultDetail(result));
 //            listener.onInit(true, "");

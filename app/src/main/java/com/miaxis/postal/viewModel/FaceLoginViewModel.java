@@ -11,6 +11,7 @@ import androidx.lifecycle.Observer;
 import com.miaxis.postal.bridge.SingleLiveEvent;
 import com.miaxis.postal.data.entity.Courier;
 import com.miaxis.postal.data.entity.MxRGBImage;
+import com.miaxis.postal.manager.CameraManager;
 import com.miaxis.postal.manager.ConfigManager;
 import com.miaxis.postal.manager.FaceManager;
 
@@ -27,7 +28,7 @@ public class FaceLoginViewModel extends BaseViewModel {
         if (courierLiveData.getValue() != null) {
             FaceManager.getInstance().setFeatureListener(faceListener);
             FaceManager.getInstance().setNeedNextFeature(true);
-            FaceManager.getInstance().setOrientation(270);
+            FaceManager.getInstance().setOrientation(CameraManager.getInstance().getPreviewOrientation());
             FaceManager.getInstance().startLoop();
         }
     }
