@@ -71,8 +71,8 @@ public class ConfigManager {
         })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(aBoolean -> listener.onConfigSave(true, "")
-                        , throwable -> listener.onConfigSave(false, "" + throwable.getMessage()));
+                .subscribe(aBoolean -> listener.onConfigSave(true, "保存成功")
+                        , throwable -> listener.onConfigSave(false, "保存失败，" + throwable.getMessage()));
     }
 
     public interface OnConfigSaveListener {

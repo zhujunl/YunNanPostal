@@ -3,6 +3,7 @@ package com.miaxis.postal.view.base;
 import android.content.Context;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -62,6 +63,7 @@ public abstract class BaseViewModelFragment<V extends ViewDataBinding, VM extend
             }
         });
         viewModel.toast.observe(this, toastBody -> ToastManager.toast(toastBody.getMessage(), toastBody.getMode()));
+        view.setOnTouchListener((v, motionEvent) -> getActivity().onTouchEvent(motionEvent));
         initData();
         initView();
     }
@@ -75,6 +77,13 @@ public abstract class BaseViewModelFragment<V extends ViewDataBinding, VM extend
     protected abstract void initData();
 
     protected abstract void initView();
+
+    public abstract void onBackPressed();
+
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
 
     @Override
     public void onDestroyView() {

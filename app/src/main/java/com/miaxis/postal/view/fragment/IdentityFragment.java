@@ -80,6 +80,11 @@ public class IdentityFragment extends BaseViewModelFragment<FragmentIdentityBind
     }
 
     @Override
+    public void onBackPressed() {
+
+    }
+
+    @Override
     public void onDestroyView() {
         super.onDestroyView();
         EventBus.getDefault().unregister(this);

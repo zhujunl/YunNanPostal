@@ -11,7 +11,7 @@ public class ValueUtil {
 
     public final static Gson GSON = new Gson();
 
-    public static final String DEFAULT_BASE_HOST = "http://192.168.5.110:8088/policebus/";
+    public static final String DEFAULT_BASE_HOST = "http://183.129.171.153:9194/policebus/";
     public static final float DEFAULT_VERIFY_SCORE = 0.70f;
     public static final int DEFAULT_QUALITY_SCORE = 50;
     public static final int DEFAULT_REGISTER_QUALITY_SCORE = 80;

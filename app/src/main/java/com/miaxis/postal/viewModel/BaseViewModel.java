@@ -5,15 +5,16 @@ import android.util.Log;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.miaxis.postal.bridge.SingleLiveEvent;
 import com.miaxis.postal.data.exception.MyException;
 import com.miaxis.postal.manager.ToastManager;
 import com.miaxis.postal.util.ValueUtil;
 
 public class BaseViewModel extends ViewModel {
 
-    public MutableLiveData<String> waitMessage = new MutableLiveData<>("");
-    public MutableLiveData<String> resultMessage = new MutableLiveData<>("");
-    public MutableLiveData<ToastManager.ToastBody> toast = new MutableLiveData<>();
+    public MutableLiveData<String> waitMessage = new SingleLiveEvent<>();
+    public MutableLiveData<String> resultMessage = new SingleLiveEvent<>();
+    public MutableLiveData<ToastManager.ToastBody> toast = new SingleLiveEvent<>();
 
     protected String hanleError(Throwable throwable) {
         throwable.printStackTrace();

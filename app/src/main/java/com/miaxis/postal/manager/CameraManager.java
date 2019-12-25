@@ -66,7 +66,7 @@ public class CameraManager {
     public void openFrontCamera(@NonNull TextureView textureView, OnCameraOpenListener listener) {
         if (frontCamera != null) return;
         try {
-            frontCamera = Camera.open(Camera.CameraInfo.CAMERA_FACING_FRONT);
+            frontCamera = Camera.open(1);
             Camera.Parameters parameters = frontCamera.getParameters();
             parameters.setPreviewSize(PRE_WIDTH, PRE_HEIGHT);
             parameters.setPictureSize(PIC_WIDTH, PIC_HEIGHT);
@@ -83,7 +83,7 @@ public class CameraManager {
             }
             frontCamera.setParameters(parameters);
             frontCamera.setDisplayOrientation(90);
-            textureView.setSurfaceTextureListener(textureListener);
+            textureView.setSurfaceTextureListener(frontTextureListener);
             frontCamera.setPreviewCallback(previewCallback);
             frontCamera.startPreview();
             if (listener != null) {
@@ -117,7 +117,7 @@ public class CameraManager {
         return frontCamera;
     }
 
-    private TextureView.SurfaceTextureListener textureListener = new TextureView.SurfaceTextureListener() {
+    private TextureView.SurfaceTextureListener frontTextureListener = new TextureView.SurfaceTextureListener() {
         @Override
         public void onSurfaceTextureAvailable(SurfaceTexture surfaceTexture, int width, int height) {
             if (frontCamera != null) {
@@ -147,7 +147,7 @@ public class CameraManager {
     public void openBackCamera(@NonNull TextureView textureView, OnCameraOpenListener listener) {
         if (backCamera != null) return;
         try {
-            backCamera = Camera.open(Camera.CameraInfo.CAMERA_FACING_FRONT);
+            backCamera = Camera.open();
             Camera.Parameters parameters = backCamera.getParameters();
             parameters.setPreviewSize(PRE_WIDTH, PRE_HEIGHT);
             parameters.setPictureSize(PIC_WIDTH, PIC_HEIGHT);
@@ -164,7 +164,7 @@ public class CameraManager {
             }
             backCamera.setParameters(parameters);
             backCamera.setDisplayOrientation(90);
-            textureView.setSurfaceTextureListener(textureListener);
+            textureView.setSurfaceTextureListener(backTextureListener);
             backCamera.setPreviewCallback(previewCallback);
             backCamera.startPreview();
             if (listener != null) {
@@ -198,13 +198,40 @@ public class CameraManager {
         return backCamera;
     }
 
+    private TextureView.SurfaceTextureListener backTextureListener = new TextureView.SurfaceTextureListener() {
+        @Override
+        public void onSurfaceTextureAvailable(SurfaceTexture surfaceTexture, int width, int height) {
+            if (backCamera != null) {
+                try {
+                    backCamera.setPreviewTexture(surfaceTexture);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        @Override
+        public void onSurfaceTextureSizeChanged(SurfaceTexture surfaceTexture, int width, int height) {
+        }
+
+        @Override
+        public boolean onSurfaceTextureDestroyed(SurfaceTexture surfaceTexture) {
+            closeBackCamera();
+            return false;
+        }
+
+        @Override
+        public void onSurfaceTextureUpdated(SurfaceTexture surfaceTexture) {
+        }
+    };
+
     public void resetRetryTime() {
         this.retryTime = 0;
     }
 
     public void openCamera(SurfaceHolder holder) {
         try {
-            mCamera = Camera.open();
+            mCamera = Camera.open(0);
             Camera.Parameters parameters = mCamera.getParameters();
             EventBus.getDefault().post(new OpenCameraEvent(PRE_WIDTH, PRE_HEIGHT));
 //            List<Camera.Size> sizeList = parameters.getSupportedPreviewSizes();
@@ -302,10 +329,8 @@ public class CameraManager {
             int originalHeight = onlyBoundsOptions.outHeight;
             if ((originalWidth == -1) || (originalHeight == -1))
                 return null;
-
-            //图片分辨率以480x800为标准
-            float hh = 800f;//这里设置高度为800f
-            float ww = 480f;//这里设置宽度为480f
+            float hh = 640f;
+            float ww = 360f;
             //缩放比，由于是固定比例缩放，只用高或者宽其中一个数据进行计算即可
             int be = 1;//be=1表示不缩放
             if (originalWidth > originalHeight && originalWidth > ww) {//如果宽度大的话根据宽度固定大小缩放

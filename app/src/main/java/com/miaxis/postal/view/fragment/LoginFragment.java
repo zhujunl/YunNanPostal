@@ -44,6 +44,7 @@ public class LoginFragment extends BaseViewModelFragment<FragmentLoginBinding, L
 
     @Override
     protected void initView() {
+        binding.ivConfig.setOnClickListener(v -> mListener.replaceFragment(ConfigFragment.newInstance()));
         binding.btnLogin.setOnClickListener(v -> {
             if (TextUtils.isEmpty(viewModel.phone.get())) {
                 ToastManager.toast("请输入手机号码", ToastManager.INFO);
@@ -57,6 +58,11 @@ public class LoginFragment extends BaseViewModelFragment<FragmentLoginBinding, L
             binding.etAccount.requestFocus();
         });
         binding.tvRegister.setOnClickListener(v -> mListener.replaceFragment(RegisterFragment.newInstance()));
+    }
+
+    @Override
+    public void onBackPressed() {
+        mListener.exitApp();
     }
 
     private Observer<Boolean> loginFaceFlagObserver = flag -> {

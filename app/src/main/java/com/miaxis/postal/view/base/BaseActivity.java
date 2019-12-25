@@ -1,6 +1,9 @@
 package com.miaxis.postal.view.base;
 
+import android.content.Context;
 import android.os.Bundle;
+import android.view.MotionEvent;
+import android.view.inputmethod.InputMethodManager;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
@@ -30,6 +33,21 @@ public abstract class BaseActivity<V extends ViewDataBinding> extends AppCompatA
     protected abstract void initData();
 
     protected abstract void initView();
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        if(event.getAction() == MotionEvent.ACTION_DOWN){
+            hideInputMethod();
+        }
+        return super.onTouchEvent(event);
+    }
+
+    public void hideInputMethod() {
+        if (getCurrentFocus() != null && getCurrentFocus().getWindowToken() != null){
+            InputMethodManager manager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            manager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        }
+    }
 
     protected List<Fragment> getVisibleFragmentList(FragmentManager fragmentManager){
         List<Fragment> visible = new ArrayList<>();

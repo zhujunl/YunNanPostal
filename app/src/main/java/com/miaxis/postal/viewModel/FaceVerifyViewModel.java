@@ -54,7 +54,7 @@ public class FaceVerifyViewModel extends BaseViewModel {
                     cardFeature = bytes;
                     FaceManager.getInstance().setFeatureListener(faceListener);
                     FaceManager.getInstance().setNeedNextFeature(true);
-                    FaceManager.getInstance().setOrientation(90);
+                    FaceManager.getInstance().setOrientation(270);
                     FaceManager.getInstance().startLoop();
                     hint.set("请将镜头朝向寄件人");
                 }, throwable -> {
@@ -108,6 +108,7 @@ public class FaceVerifyViewModel extends BaseViewModel {
                     }, throwable -> {
                         waitMessage.setValue("");
                         resultMessage.setValue(hanleError(throwable));
+                        hint.set("核验结果上传失败");
                     });
         }
     }

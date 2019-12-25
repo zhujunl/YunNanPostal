@@ -81,7 +81,7 @@ public class OrderFragment extends BaseViewModelFragment<FragmentOrderBinding, O
     protected void initView() {
         initDialog();
         if (orderAdapter == null) {
-            orderAdapter = new OrderAdapter(getContext(), viewModel);
+//            orderAdapter = new OrderAdapter(getContext(), viewModel);
         }
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);
         binding.rvOrder.setLayoutManager(gridLayoutManager);
@@ -96,6 +96,11 @@ public class OrderFragment extends BaseViewModelFragment<FragmentOrderBinding, O
         });
         viewModel.orderList.observe(this, orderListObserver);
         viewModel.newOrder.observe(this, newOrderObserver);
+    }
+
+    @Override
+    public void onBackPressed() {
+        mListener.backToStack(null);
     }
 
     @Override

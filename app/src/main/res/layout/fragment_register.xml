@@ -61,7 +61,7 @@
                 android:id="@+id/tv_name_hint"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:text="姓名"
+                android:text="姓        名"
                 android:textSize="14sp"
                 android:gravity="center"
                 app:layout_constraintWidth_percent="0.2"

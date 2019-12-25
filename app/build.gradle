@@ -80,12 +80,14 @@ dependencies {
     annotationProcessor "androidx.room:room-compiler:2.2.3"
     implementation 'androidx.room:room-rxjava2:2.2.3'
     //Navigation
-    implementation "androidx.navigation:navigation-fragment:2.1.0"
-    implementation "androidx.navigation:navigation-ui:2.1.0"
+    implementation 'androidx.navigation:navigation-fragment:2.1.0'
+    implementation 'androidx.navigation:navigation-ui:2.1.0'
     //Speedata:idcard
     implementation 'com.github.SpeedataG:IdentityCard:2.6.1'
     implementation 'com.github.SpeedataG:Device:1.6.8'
     //FastJson
     implementation 'com.alibaba:fastjson:1.1.71.android'
     implementation files('src/main/libs/scandecode.jar')
+    implementation files('src/main/libs/AMap_Location_V4.5.0_20190121.jar')
+    implementation files('src/main/libs/AMap_Search_V6.5.0_20180930.jar')
 }

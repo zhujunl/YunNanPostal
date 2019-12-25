@@ -67,15 +67,15 @@ public class PostalRepository extends BaseRepository {
         throw new MyException("服务端返回，空数据");
     }
 
-    public boolean saveOrderFromAppSync(Order order, TempIdDto tempIdDto) throws IOException, MyException {
+    public void saveOrderFromAppSync(Order order, TempIdDto tempIdDto, String sendAddress, String sendPhone) throws IOException, MyException {
         List<File> fileList = new ArrayList<>();
         for (String path : order.getPhotoList()) {
             fileList.add(new File(path));
         }
         Response<ResponseEntity> execute = PostalApi.saveOrderFromAppSync(
                 tempIdDto.getPersonId(),
-                "",
-                "",
+                sendAddress,
+                sendPhone,
                 order.getBarCode(),
                 "",
                 "",
@@ -86,13 +86,12 @@ public class PostalRepository extends BaseRepository {
                 "",
                 "",
                 tempIdDto.getCheckId(),
-                fileList)
-                .execute();
+                fileList).execute();
         try {
-            ResponseEntity<TempIdDto> body = execute.body();
+            ResponseEntity body = execute.body();
             if (body != null) {
                 if (TextUtils.equals(body.getCode(), ValueUtil.SUCCESS)) {
-                    return true;
+                    return;
                 } else {
                     throw new MyException("服务端返回，" + body.getMessage());
                 }

@@ -32,6 +32,10 @@
             android:name="com.miaxis.postal.bridge.MyGlideAppModule"
             android:value="GlideModule" />
 
+        <meta-data
+            android:name="com.amap.api.v2.apikey"
+            android:value="0bb2fe9a6689e215a4074e731b948ba6" />
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"

@@ -49,7 +49,7 @@ public class RegisterFragment extends BaseViewModelFragment<FragmentRegisterBind
 
     @Override
     protected void initView() {
-        binding.ivBack.setOnClickListener(v -> mListener.backToStack(null));
+        binding.ivBack.setOnClickListener(v -> onBackPressed());
         binding.tvHeader.setOnClickListener(v -> mListener.replaceFragment(FaceRegisterFragment.newInstance()));
         binding.btnRegister.setOnClickListener(v -> {
             if (viewModel.checkInput()) {
@@ -59,6 +59,11 @@ public class RegisterFragment extends BaseViewModelFragment<FragmentRegisterBind
             }
         });
         EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onBackPressed() {
+        mListener.backToStack(null);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)

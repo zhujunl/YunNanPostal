@@ -66,6 +66,11 @@ public class InspectFragment extends BaseViewModelFragment<FragmentInspectBindin
 //        ((SimpleItemAnimator) binding.rvInspect.getItemAnimator()).setSupportsChangeAnimations(false);
     }
 
+    @Override
+    public void onBackPressed() {
+        mListener.backToStack(null);
+    }
+
     public void setOrder(Order order) {
         this.order = order;
     }

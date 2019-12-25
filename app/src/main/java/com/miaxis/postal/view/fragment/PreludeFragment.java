@@ -44,8 +44,13 @@ public class PreludeFragment extends BaseViewModelFragment<FragmentPreludeBindin
 
     @Override
     protected void initView() {
+        binding.ivConfig.setOnClickListener(v -> mListener.replaceFragment(ConfigFragment.newInstance()));
         binding.btnQuit.setOnClickListener(v -> mListener.exitApp());
         binding.btnRetry.setOnClickListener(v -> viewModel.requirePermission(PreludeFragment.this));
+    }
+
+    @Override
+    public void onBackPressed() {
     }
 
     @Override

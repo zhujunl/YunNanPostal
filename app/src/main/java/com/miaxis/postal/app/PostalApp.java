@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 
 import com.miaxis.postal.MyEventBusIndex;
 import com.miaxis.postal.data.dao.AppDatabase;
+import com.miaxis.postal.manager.AmapManager;
 import com.miaxis.postal.manager.ConfigManager;
 import com.miaxis.postal.manager.CrashExceptionManager;
 import com.miaxis.postal.manager.FaceManager;
@@ -34,6 +35,7 @@ public class PostalApp extends Application {
             AppDatabase.initDB(this);
             ConfigManager.getInstance().checkConfig();
             CrashExceptionManager.getInstance().init(this);
+            AmapManager.getInstance().startLocation(this);
             int result = FaceManager.getInstance().initFaceST(getApplicationContext(), FileUtil.MODEL_PATH, FileUtil.LICENCE_PATH);
             listener.onInit(result == FaceManager.INIT_SUCCESS, FaceManager.getFaceInitResultDetail(result));
 //            listener.onInit(true, "");

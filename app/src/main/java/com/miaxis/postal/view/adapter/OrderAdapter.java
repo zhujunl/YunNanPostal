@@ -10,6 +10,7 @@ import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.miaxis.postal.R;
+import com.miaxis.postal.bridge.GlideApp;
 import com.miaxis.postal.data.entity.Order;
 import com.miaxis.postal.data.exception.MyException;
 import com.miaxis.postal.databinding.ItemOrderBodyBinding;
@@ -17,6 +18,7 @@ import com.miaxis.postal.databinding.ItemOrderHeaderBinding;
 import com.miaxis.postal.view.auxiliary.OnLimitClickHelper;
 import com.miaxis.postal.view.auxiliary.OnLimitClickListener;
 import com.miaxis.postal.view.base.BaseViewHolder;
+import com.miaxis.postal.viewModel.ExpressViewModel;
 import com.miaxis.postal.viewModel.OrderViewModel;
 
 import java.util.ArrayList;
@@ -29,12 +31,12 @@ public class OrderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     protected Context context;
 
-    private OrderViewModel viewModel;
+    private ExpressViewModel viewModel;
 
     private OnHeaderClickListener headerListener;
     private OnBodyClickListener bodyListener;
 
-    public OrderAdapter(Context context, OrderViewModel viewModel) {
+    public OrderAdapter(Context context, ExpressViewModel viewModel) {
         this.context = context;
         this.viewModel = viewModel;
     }
@@ -77,6 +79,17 @@ public class OrderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         int i = position - 1;
         Order order = viewModel.getOrderList().get(i < 0 ? 0 : i);
         holder.getBinding().setItem(order);
+        switch (order.getStatus()) {
+            case SUCCESS:
+                GlideApp.with(holder.itemView).load(R.drawable.icon_success).into(holder.getBinding().ivUpload);
+                break;
+            case LOADING:
+                GlideApp.with(holder.itemView).load(R.drawable.icon_loading).into(holder.getBinding().ivUpload);
+                break;
+            case FAILED:
+                GlideApp.with(holder.itemView).load(R.drawable.icon_failed).into(holder.getBinding().ivUpload);
+                break;
+        }
         holder.itemView.setOnClickListener(new OnLimitClickHelper(view -> {
             if (bodyListener != null) {
                 bodyListener.onBodyClick(holder.itemView, position);

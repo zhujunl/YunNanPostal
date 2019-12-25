@@ -52,7 +52,12 @@ public class CardFragment extends BaseViewModelFragment<FragmentCardBinding, Car
 
     @Override
     protected void initView() {
+        binding.ivBack.setOnClickListener(v -> onBackPressed());
+    }
 
+    @Override
+    public void onBackPressed() {
+        mListener.backToStack(null);
     }
 
     @Override
@@ -91,7 +96,7 @@ public class CardFragment extends BaseViewModelFragment<FragmentCardBinding, Car
     };
 
     private Observer<IDInfor> idInfoObserver = idInfo -> {
-//        mListener.replaceFragment();
+        mListener.replaceFragment(FaceVerifyFragment.newInstance(viewModel.idInfoLiveData.getValue()));
     };
 
 }

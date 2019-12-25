@@ -17,17 +17,28 @@
         tools:context=".view.fragment.CardFragment">
 
         <ImageView
+            android:id="@+id/iv_back"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_navigate_before_grey"
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"
+            android:padding="12dp"
+            app:layout_constraintWidth_percent="0.15"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <ImageView
             android:id="@+id/iv_card_background_front"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:src="@drawable/background_idcard"
             android:adjustViewBounds="true"
             android:scaleType="fitCenter"
-            android:layout_marginTop="30dp"
             app:layout_constraintWidth_percent="0.9"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/iv_back"
             app:layout_constraintBottom_toTopOf="@id/iv_card_background_back"/>
 
         <ImageView
@@ -47,7 +58,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="请刷寄件人身份证"
-            android:textSize="30sp"
+            android:textSize="24sp"
             android:gravity="center"
             android:layout_marginTop="30dp"
             app:layout_constraintTop_toBottomOf="@id/iv_card_background_back"

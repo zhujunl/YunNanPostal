@@ -27,7 +27,7 @@ public class FaceLoginViewModel extends BaseViewModel {
         if (courierLiveData.getValue() != null) {
             FaceManager.getInstance().setFeatureListener(faceListener);
             FaceManager.getInstance().setNeedNextFeature(true);
-            FaceManager.getInstance().setOrientation(90);
+            FaceManager.getInstance().setOrientation(270);
             FaceManager.getInstance().startLoop();
         }
     }

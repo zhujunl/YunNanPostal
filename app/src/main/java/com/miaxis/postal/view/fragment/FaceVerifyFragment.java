@@ -68,7 +68,13 @@ public class FaceVerifyFragment extends BaseViewModelFragment<FragmentFaceVerify
 
     @Override
     protected void initView() {
+        binding.ivBack.setOnClickListener(v ->
+                onBackPressed());
+    }
 
+    @Override
+    public void onBackPressed() {
+        mListener.backToStack(HomeFragment.class);
     }
 
     @Override

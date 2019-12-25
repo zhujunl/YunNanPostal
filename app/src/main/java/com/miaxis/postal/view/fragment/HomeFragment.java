@@ -4,6 +4,7 @@ import android.view.View;
 
 import androidx.lifecycle.ViewModelProviders;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.miaxis.postal.BR;
 import com.miaxis.postal.R;
 import com.miaxis.postal.databinding.FragmentHomeBinding;
@@ -43,5 +44,15 @@ public class HomeFragment extends BaseViewModelFragment<FragmentHomeBinding, Hom
     @Override
     protected void initView() {
         binding.clLogistic.setOnClickListener(v -> mListener.replaceFragment(CardFragment.newInstance()));
+    }
+
+    @Override
+    public void onBackPressed() {
+        new MaterialDialog.Builder(getContext())
+                .title("确认退出登录？")
+                .positiveText("确认")
+                .onPositive((dialog, which) -> mListener.backToStack(LoginFragment.class))
+                .negativeText("取消")
+                .show();
     }
 }

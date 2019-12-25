@@ -118,7 +118,7 @@ public class OrderViewModel extends BaseViewModel implements LifecycleObserver {
                     .subscribeOn(Schedulers.io())
                     .observeOn(Schedulers.io())
                     .subscribe(mOrder -> {
-                        PostalRepository.getInstance().saveOrderFromAppSync(mOrder, tempIdDto);
+                        PostalRepository.getInstance().saveOrderFromAppSync(mOrder, tempIdDto, "", "");
                     }, Throwable::printStackTrace);
         }
     }

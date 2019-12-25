@@ -13,11 +13,14 @@ import com.miaxis.postal.R;
 import com.miaxis.postal.databinding.ActivityMainBinding;
 import com.miaxis.postal.manager.CameraManager;
 import com.miaxis.postal.view.base.BaseActivity;
+import com.miaxis.postal.view.base.BaseFragment;
 import com.miaxis.postal.view.base.BaseViewModelFragment;
 import com.miaxis.postal.view.base.OnFragmentInteractionListener;
+import com.miaxis.postal.view.fragment.ExpressFragment;
 import com.miaxis.postal.view.fragment.IdentityFragment;
 import com.miaxis.postal.view.fragment.OrderFragment;
 import com.miaxis.postal.view.fragment.PreludeFragment;
+import com.miaxis.postal.viewModel.BaseViewModel;
 
 import java.io.IOException;
 import java.util.List;
@@ -55,23 +58,19 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 
     @Override
     public void onBackPressed() {
-        int backStackEntryCount = getSupportFragmentManager().getBackStackEntryCount();
-        if (backStackEntryCount > 1) {
-            backToStack(null);
-        } else {
-            exitApp();
+        Fragment visibleFragment = getVisibleFragment();
+        if (visibleFragment != null) {
+            BaseViewModelFragment fragment = (BaseViewModelFragment) visibleFragment;
+            fragment.onBackPressed();
         }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.e("asd", "onActivityResult");
-        List<Fragment> visibleFragment = getVisibleFragmentList(getSupportFragmentManager());
-        for (Fragment fragment : visibleFragment) {
-            if (requestCode == OrderFragment.REQUEST_CODE && fragment instanceof OrderFragment) {
-                fragment.onActivityResult(requestCode, resultCode, data);
-            }
+        Fragment fragment = getVisibleFragment();
+        if (requestCode == OrderFragment.REQUEST_CODE && fragment instanceof ExpressFragment) {
+            fragment.onActivityResult(requestCode, resultCode, data);
         }
     }
 
@@ -98,10 +97,15 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 
     @Override
     public void backToStack(Class<? extends Fragment> fragment) {
-        if (fragment != null) {
-            getSupportFragmentManager().popBackStack(fragment.getName(), 0);
+        int backStackEntryCount = getSupportFragmentManager().getBackStackEntryCount();
+        if (backStackEntryCount > 1) {
+            if (fragment != null) {
+                getSupportFragmentManager().popBackStack(fragment.getName(), 0);
+            } else {
+                getSupportFragmentManager().popBackStack();
+            }
         } else {
-            getSupportFragmentManager().popBackStack();
+            exitApp();
         }
     }
 

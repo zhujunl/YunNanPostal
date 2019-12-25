@@ -55,4 +55,10 @@ public class LogisticFragment extends BaseViewModelFragment<FragmentLogisticBind
                 .replace(R.id.cl_order, orderFragment)
                 .commit();
     }
+
+    @Override
+    public void onBackPressed() {
+        mListener.backToStack(null);
+    }
+
 }
