@@ -11,33 +11,33 @@ import android.view.ViewGroup;
 
 import com.miaxis.postal.BR;
 import com.miaxis.postal.R;
-import com.miaxis.postal.data.entity.Order;
-import com.miaxis.postal.databinding.FragmentOrderBinding;
+import com.miaxis.postal.bridge.GlideApp;
+import com.miaxis.postal.databinding.FragmentPhotoBinding;
 import com.miaxis.postal.view.base.BaseViewModelFragment;
-import com.miaxis.postal.viewModel.OrderViewModel;
+import com.miaxis.postal.viewModel.PhotoViewModel;
 
-public class OrderFragment extends BaseViewModelFragment<FragmentOrderBinding, OrderViewModel> {
+public class PhotoFragment extends BaseViewModelFragment<FragmentPhotoBinding, PhotoViewModel> {
 
-    private Order order;
+    private Object image;
 
-    public static OrderFragment newInstance(Order order) {
-        OrderFragment fragment = new OrderFragment();
-        fragment.setOrder(order);
+    public static PhotoFragment newInstance(Object image) {
+        PhotoFragment fragment = new PhotoFragment();
+        fragment.setImage(image);
         return fragment;
     }
 
-    public OrderFragment() {
+    public PhotoFragment() {
         // Required empty public constructor
     }
 
     @Override
     protected int setContentView() {
-        return R.layout.fragment_order;
+        return R.layout.fragment_photo;
     }
 
     @Override
-    protected OrderViewModel initViewModel() {
-        return ViewModelProviders.of(this).get(OrderViewModel.class);
+    protected PhotoViewModel initViewModel() {
+        return ViewModelProviders.of(this).get(PhotoViewModel.class);
     }
 
     @Override
@@ -47,12 +47,12 @@ public class OrderFragment extends BaseViewModelFragment<FragmentOrderBinding, O
 
     @Override
     protected void initData() {
-        viewModel.order.set(order);
     }
 
     @Override
     protected void initView() {
-
+        GlideApp.with(this).load(image).into(binding.pvPhoto);
+        binding.pvPhoto.setOnClickListener(v -> onBackPressed());
     }
 
     @Override
@@ -60,7 +60,7 @@ public class OrderFragment extends BaseViewModelFragment<FragmentOrderBinding, O
         mListener.backToStack(null);
     }
 
-    public void setOrder(Order order) {
-        this.order = order;
+    public void setImage(Object image) {
+        this.image = image;
     }
 }

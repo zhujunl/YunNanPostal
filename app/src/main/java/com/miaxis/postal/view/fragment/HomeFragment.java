@@ -44,6 +44,7 @@ public class HomeFragment extends BaseViewModelFragment<FragmentHomeBinding, Hom
     @Override
     protected void initView() {
         binding.clLogistic.setOnClickListener(v -> mListener.replaceFragment(CardFragment.newInstance()));
+        binding.clRecord.setOnClickListener(v -> mListener.replaceFragment(LogisticsFragment.newInstance()));
     }
 
     @Override

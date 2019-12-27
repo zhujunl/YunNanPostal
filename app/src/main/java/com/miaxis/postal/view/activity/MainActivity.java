@@ -36,7 +36,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
     @Override
     protected void initView() {
         initDialog();
-        replaceFragment(CameraFragment.newInstance());
+        replaceFragment(PreludeFragment.newInstance());
     }
 
     @Override

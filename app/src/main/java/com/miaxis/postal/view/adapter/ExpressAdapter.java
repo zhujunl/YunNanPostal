@@ -86,7 +86,7 @@ public class ExpressAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         }
         holder.itemView.setOnClickListener(new OnLimitClickHelper(view -> {
             if (bodyListener != null) {
-                bodyListener.onBodyClick(holder.itemView, position);
+                bodyListener.onBodyClick(holder.itemView, holder.getLayoutPosition());
             }
         }));
     }

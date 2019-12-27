@@ -1,6 +1,8 @@
 package com.miaxis.postal.data.net;
 
 import com.miaxis.postal.data.dto.CourierDto;
+import com.miaxis.postal.data.dto.OrderDto;
+import com.miaxis.postal.data.dto.SimpleOrderDto;
 import com.miaxis.postal.data.dto.TempIdDto;
 import com.miaxis.postal.data.entity.Courier;
 
@@ -25,6 +27,18 @@ public class PostalApi extends BaseAPI {
 
     public static Call<ResponseEntity<CourierDto>> getExpressmanByPhoneSync(String macAddress) {
         return getPostalNetSync().getExpressmanByPhoneSync(macAddress);
+    }
+
+    public static Call<ResponseEntity<List<SimpleOrderDto>>> getOrderByCodeAndNameSync(String param,
+                                                                                       int pageNum,
+                                                                                       int pageSize) {
+        return getPostalNetSync().getOrderByCodeAndNameSync(param,
+                pageNum,
+                pageSize);
+    }
+
+    public static Call<ResponseEntity<OrderDto>> getOrderByIdSync(long id) {
+        return getPostalNetSync().getOrderByIdSync(id);
     }
 
     public static Call<ResponseEntity> registerExpressmanSync(String name,

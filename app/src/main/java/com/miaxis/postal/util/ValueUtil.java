@@ -21,6 +21,7 @@ public class ValueUtil {
     public static final String SUCCESS = "200";
     public static final String DEVICE_ENABLE = "1";
     public static final String DEVICE_UNABLE = "0";
+    public static final int PAGE_SIZE = 8;
 
     public static boolean isNetException(Throwable throwable) {
         if (throwable instanceof SocketTimeoutException

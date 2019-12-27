@@ -87,6 +87,9 @@ dependencies {
     implementation 'com.github.SpeedataG:Device:1.6.8'
     //FastJson
     implementation 'com.alibaba:fastjson:1.1.71.android'
+    //PhotoView
+    implementation 'com.github.chrisbanes:PhotoView:2.3.0'
+    //Libs
     implementation files('src/main/libs/scandecode.jar')
     implementation files('src/main/libs/AMap_Location_V4.5.0_20190121.jar')
     implementation files('src/main/libs/AMap_Search_V6.5.0_20180930.jar')
