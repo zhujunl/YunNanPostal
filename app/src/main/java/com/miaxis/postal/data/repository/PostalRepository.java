@@ -4,7 +4,8 @@ import android.graphics.Bitmap;
 import android.text.TextUtils;
 
 import com.miaxis.postal.data.dto.TempIdDto;
-import com.miaxis.postal.data.entity.Order;
+import com.miaxis.postal.data.entity.Express;
+import com.miaxis.postal.data.entity.TempId;
 import com.miaxis.postal.data.exception.MyException;
 import com.miaxis.postal.data.net.PostalApi;
 import com.miaxis.postal.data.net.ResponseEntity;
@@ -36,7 +37,7 @@ public class PostalRepository extends BaseRepository {
      * ================================ 静态内部类单例写法 ================================
      **/
 
-    public TempIdDto savePersonFromAppSync(IDInfor idInfor, Bitmap bitmap) throws IOException, MyException {
+    public TempId savePersonFromAppSync(IDInfor idInfor, Bitmap bitmap) throws IOException, MyException {
         String path = FileUtil.FACE_IMAGE_PATH + File.separator;
         String cardFileName = "card_" + idInfor.getNum() + System.currentTimeMillis() + ".jpg";
         String checkFileName = "check" + idInfor.getNum() + System.currentTimeMillis() + ".jpg";
@@ -55,7 +56,7 @@ public class PostalRepository extends BaseRepository {
             ResponseEntity<TempIdDto> body = execute.body();
             if (body != null) {
                 if (TextUtils.equals(body.getCode(), ValueUtil.SUCCESS) && body.getData() != null) {
-                    return body.getData();
+                    return body.getData().transform();
                 } else {
                     throw new MyException("服务端返回，" + body.getMessage());
                 }
@@ -67,16 +68,16 @@ public class PostalRepository extends BaseRepository {
         throw new MyException("服务端返回，空数据");
     }
 
-    public void saveOrderFromAppSync(Order order, TempIdDto tempIdDto, String sendAddress, String sendPhone) throws IOException, MyException {
+    public void saveExpressFromAppSync(Express express, TempId tempId, String sendAddress, String sendPhone) throws IOException, MyException {
         List<File> fileList = new ArrayList<>();
-        for (String path : order.getPhotoList()) {
+        for (String path : express.getPhotoList()) {
             fileList.add(new File(path));
         }
         Response<ResponseEntity> execute = PostalApi.saveOrderFromAppSync(
-                tempIdDto.getPersonId(),
+                tempId.getPersonId(),
                 sendAddress,
                 sendPhone,
-                order.getBarCode(),
+                express.getBarCode(),
                 "",
                 "",
                 "",
@@ -85,7 +86,7 @@ public class PostalRepository extends BaseRepository {
                 "",
                 "",
                 "",
-                tempIdDto.getCheckId(),
+                tempId.getCheckId(),
                 fileList).execute();
         try {
             ResponseEntity body = execute.body();

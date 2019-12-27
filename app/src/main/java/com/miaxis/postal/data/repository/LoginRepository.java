@@ -3,6 +3,7 @@ package com.miaxis.postal.data.repository;
 import android.graphics.Bitmap;
 import android.text.TextUtils;
 
+import com.miaxis.postal.data.dto.CourierDto;
 import com.miaxis.postal.data.entity.Courier;
 import com.miaxis.postal.data.exception.MyException;
 import com.miaxis.postal.data.model.CourierModel;
@@ -35,12 +36,12 @@ public class LoginRepository extends BaseRepository {
      **/
 
     public Courier getCourierByPhoneSync(String phone) throws IOException, MyException {
-        Response<ResponseEntity<Courier>> execute = PostalApi.getExpressmanByPhoneSync(phone).execute();
+        Response<ResponseEntity<CourierDto>> execute = PostalApi.getExpressmanByPhoneSync(phone).execute();
         try {
-            ResponseEntity<Courier> body = execute.body();
+            ResponseEntity<CourierDto> body = execute.body();
             if (body != null) {
                 if (TextUtils.equals(body.getCode(), ValueUtil.SUCCESS) && body.getData() != null) {
-                    return body.getData();
+                    return body.getData().transform();
                 } else {
                     throw new MyException("服务端返回，" + body.getMessage());
                 }

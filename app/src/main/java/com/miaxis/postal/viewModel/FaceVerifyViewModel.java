@@ -10,6 +10,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.miaxis.postal.bridge.SingleLiveEvent;
 import com.miaxis.postal.data.dto.TempIdDto;
 import com.miaxis.postal.data.entity.MxRGBImage;
+import com.miaxis.postal.data.entity.TempId;
 import com.miaxis.postal.data.exception.MyException;
 import com.miaxis.postal.data.repository.PostalRepository;
 import com.miaxis.postal.manager.CameraManager;
@@ -29,7 +30,7 @@ public class FaceVerifyViewModel extends BaseViewModel {
 
     public MutableLiveData<IDInfor> idInforLiveData = new MutableLiveData<>();
     public ObservableField<String> hint = new ObservableField<>("");
-    public MutableLiveData<TempIdDto> tempIdLiveData = new SingleLiveEvent<>();
+    public MutableLiveData<TempId> tempIdLiveData = new SingleLiveEvent<>();
 
     private byte[] cardFeature;
     public Bitmap headerCache;
@@ -97,15 +98,15 @@ public class FaceVerifyViewModel extends BaseViewModel {
         IDInfor idInfor = idInforLiveData.getValue();
         if (idInfor != null && headerCache != null) {
             waitMessage.postValue("正在上传，请稍后...");
-            Observable.create((ObservableOnSubscribe<TempIdDto>) emitter -> {
-                TempIdDto tempIdDto = PostalRepository.getInstance().savePersonFromAppSync(idInfor, headerCache);
-                emitter.onNext(tempIdDto);
+            Observable.create((ObservableOnSubscribe<TempId>) emitter -> {
+                TempId tempId = PostalRepository.getInstance().savePersonFromAppSync(idInfor, headerCache);
+                emitter.onNext(tempId);
             })
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(tempIdDto -> {
+                    .subscribe(tempId -> {
                         waitMessage.setValue("");
-                        tempIdLiveData.setValue(tempIdDto);
+                        tempIdLiveData.setValue(tempId);
                     }, throwable -> {
                         waitMessage.setValue("");
                         resultMessage.setValue(hanleError(throwable));

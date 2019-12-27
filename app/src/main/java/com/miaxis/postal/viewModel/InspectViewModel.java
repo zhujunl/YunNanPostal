@@ -2,8 +2,6 @@ package com.miaxis.postal.viewModel;
 
 import androidx.lifecycle.MutableLiveData;
 
-import com.miaxis.postal.data.entity.Order;
-
 import java.util.ArrayList;
 import java.util.List;
 

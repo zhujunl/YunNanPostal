@@ -9,12 +9,12 @@ public class Courier {
     @PrimaryKey
     private long id;
     private String name;
-    private String cardNo;
+    private String cardNumber;
     private String phone;
     private String photo;
     private String faceFeature;
-    private String finger1Feature;
-    private String finger2Feature;
+    private String fingerFeature1;
+    private String fingerFeature2;
     private String createTime;
 
     public Courier() {
@@ -36,12 +36,12 @@ public class Courier {
         this.name = name;
     }
 
-    public String getCardNo() {
-        return cardNo;
+    public String getCardNumber() {
+        return cardNumber;
     }
 
-    public void setCardNo(String cardNo) {
-        this.cardNo = cardNo;
+    public void setCardNumber(String cardNumber) {
+        this.cardNumber = cardNumber;
     }
 
     public String getPhone() {
@@ -68,20 +68,20 @@ public class Courier {
         this.faceFeature = faceFeature;
     }
 
-    public String getFinger1Feature() {
-        return finger1Feature;
+    public String getFingerFeature1() {
+        return fingerFeature1;
     }
 
-    public void setFinger1Feature(String finger1Feature) {
-        this.finger1Feature = finger1Feature;
+    public void setFingerFeature1(String fingerFeature1) {
+        this.fingerFeature1 = fingerFeature1;
     }
 
-    public String getFinger2Feature() {
-        return finger2Feature;
+    public String getFingerFeature2() {
+        return fingerFeature2;
     }
 
-    public void setFinger2Feature(String finger2Feature) {
-        this.finger2Feature = finger2Feature;
+    public void setFingerFeature2(String fingerFeature2) {
+        this.fingerFeature2 = fingerFeature2;
     }
 
     public String getCreateTime() {
@@ -95,12 +95,12 @@ public class Courier {
     public static final class CourierBuilder {
         private long id;
         private String name;
-        private String cardNo;
+        private String cardNumber;
         private String phone;
         private String photo;
         private String faceFeature;
-        private String finger1Feature;
-        private String finger2Feature;
+        private String fingerFeature1;
+        private String fingerFeature2;
         private String createTime;
 
         private CourierBuilder() {
@@ -120,8 +120,8 @@ public class Courier {
             return this;
         }
 
-        public CourierBuilder cardNo(String cardNo) {
-            this.cardNo = cardNo;
+        public CourierBuilder cardNumber(String cardNumber) {
+            this.cardNumber = cardNumber;
             return this;
         }
 
@@ -140,13 +140,13 @@ public class Courier {
             return this;
         }
 
-        public CourierBuilder finger1Feature(String finger1Feature) {
-            this.finger1Feature = finger1Feature;
+        public CourierBuilder fingerFeature1(String fingerFeature1) {
+            this.fingerFeature1 = fingerFeature1;
             return this;
         }
 
-        public CourierBuilder finger2Feature(String finger2Feature) {
-            this.finger2Feature = finger2Feature;
+        public CourierBuilder fingerFeature2(String fingerFeature2) {
+            this.fingerFeature2 = fingerFeature2;
             return this;
         }
 
@@ -159,12 +159,12 @@ public class Courier {
             Courier courier = new Courier();
             courier.setId(id);
             courier.setName(name);
-            courier.setCardNo(cardNo);
+            courier.setCardNumber(cardNumber);
             courier.setPhone(phone);
             courier.setPhoto(photo);
             courier.setFaceFeature(faceFeature);
-            courier.setFinger1Feature(finger1Feature);
-            courier.setFinger2Feature(finger2Feature);
+            courier.setFingerFeature1(fingerFeature1);
+            courier.setFingerFeature2(fingerFeature2);
             courier.setCreateTime(createTime);
             return courier;
         }

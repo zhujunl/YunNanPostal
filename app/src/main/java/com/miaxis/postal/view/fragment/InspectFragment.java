@@ -1,33 +1,24 @@
 package com.miaxis.postal.view.fragment;
 
-import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
-import com.miaxis.postal.BR;
 import com.miaxis.postal.R;
-import com.miaxis.postal.data.entity.Order;
+import com.miaxis.postal.data.entity.Express;
 import com.miaxis.postal.databinding.FragmentInspectBinding;
 import com.miaxis.postal.view.adapter.InspectAdapter;
-import com.miaxis.postal.view.adapter.SpacesItemDecoration;
 import com.miaxis.postal.view.base.BaseViewModelFragment;
 import com.miaxis.postal.viewModel.InspectViewModel;
 
 public class InspectFragment extends BaseViewModelFragment<FragmentInspectBinding, InspectViewModel> {
 
-    private Order order;
+    private Express express;
     private InspectAdapter inspectAdapter;
 
-    public static InspectFragment newInstance(Order order) {
+    public static InspectFragment newInstance(Express express) {
         InspectFragment inspectFragment = new InspectFragment();
-        inspectFragment.setOrder(order);
+        inspectFragment.setExpress(express);
         return inspectFragment;
     }
 
@@ -70,7 +61,7 @@ public class InspectFragment extends BaseViewModelFragment<FragmentInspectBindin
         mListener.backToStack(null);
     }
 
-    public void setOrder(Order order) {
-        this.order = order;
+    public void setExpress(Express express) {
+        this.express = express;
     }
 }

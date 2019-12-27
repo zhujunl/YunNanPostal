@@ -1,11 +1,8 @@
 package com.miaxis.postal.data.net;
 
+import com.miaxis.postal.data.dto.CourierDto;
 import com.miaxis.postal.data.dto.TempIdDto;
-import com.miaxis.postal.data.entity.Courier;
-
 import java.util.List;
-
-import io.reactivex.Observable;
 import okhttp3.MultipartBody;
 import retrofit2.Call;
 import retrofit2.http.Field;
@@ -26,7 +23,7 @@ public interface PostalNet {
 
     @FormUrlEncoded
     @POST("api/v1/expressman/getExpressmanByPhone")
-    Call<ResponseEntity<Courier>> getExpressmanByPhoneSync(@Field("phone") String phone);
+    Call<ResponseEntity<CourierDto>> getExpressmanByPhoneSync(@Field("phone") String phone);
 
     @Multipart
     @POST("api/v1/expressman/registerExpressman")

@@ -11,14 +11,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.miaxis.postal.R;
 import com.miaxis.postal.bridge.GlideApp;
-import com.miaxis.postal.data.entity.Order;
-import com.miaxis.postal.databinding.ItemOrderBodyBinding;
-import com.miaxis.postal.databinding.ItemOrderHeaderBinding;
+import com.miaxis.postal.data.entity.Express;
+import com.miaxis.postal.databinding.ItemExpressBodyBinding;
+import com.miaxis.postal.databinding.ItemExpressHeaderBinding;
 import com.miaxis.postal.view.auxiliary.OnLimitClickHelper;
 import com.miaxis.postal.view.base.BaseViewHolder;
 import com.miaxis.postal.viewModel.ExpressViewModel;
 
-public class OrderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class ExpressAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private static final int TYPE_HEADER = 0;
     private static final int TYPE_BODY = 1;
@@ -30,7 +30,7 @@ public class OrderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     private OnHeaderClickListener headerListener;
     private OnBodyClickListener bodyListener;
 
-    public OrderAdapter(Context context, ExpressViewModel viewModel) {
+    public ExpressAdapter(Context context, ExpressViewModel viewModel) {
         this.context = context;
         this.viewModel = viewModel;
     }
@@ -39,13 +39,13 @@ public class OrderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         switch (viewType) {
             case TYPE_HEADER:
-                ItemOrderHeaderBinding headerBinding = DataBindingUtil.inflate(LayoutInflater.from(parent.getContext()), R.layout.item_order_header, parent, false);
+                ItemExpressHeaderBinding headerBinding = DataBindingUtil.inflate(LayoutInflater.from(parent.getContext()), R.layout.item_express_header, parent, false);
                 HeaderViewHolder headerViewHolder = new HeaderViewHolder(headerBinding.getRoot());
                 headerViewHolder.setBinding(headerBinding);
                 return headerViewHolder;
             case TYPE_BODY:
             default:
-                ItemOrderBodyBinding bodyBinding = DataBindingUtil.inflate(LayoutInflater.from(parent.getContext()), R.layout.item_order_body, parent, false);
+                ItemExpressBodyBinding bodyBinding = DataBindingUtil.inflate(LayoutInflater.from(parent.getContext()), R.layout.item_express_body, parent, false);
                 BodyViewHolder baseViewHolder = new BodyViewHolder(bodyBinding.getRoot());
                 baseViewHolder.setBinding(bodyBinding);
                 return baseViewHolder;
@@ -71,9 +71,9 @@ public class OrderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     private void setBodyItemValues(BodyViewHolder holder, int position) {
         int i = position - 1;
-        Order order = viewModel.getOrderList().get(i < 0 ? 0 : i);
-        holder.getBinding().setItem(order);
-        switch (order.getStatus()) {
+        Express express = viewModel.getExpressList().get(i < 0 ? 0 : i);
+        holder.getBinding().setItem(express);
+        switch (express.getStatus()) {
             case SUCCESS:
                 GlideApp.with(holder.itemView).load(R.drawable.icon_success).into(holder.getBinding().ivUpload);
                 break;
@@ -102,16 +102,16 @@ public class OrderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     @Override
     public int getItemCount() {
-        return viewModel.getOrderList().size() + 1;
+        return viewModel.getExpressList().size() + 1;
     }
 
-    class HeaderViewHolder extends BaseViewHolder<ItemOrderHeaderBinding> {
+    class HeaderViewHolder extends BaseViewHolder<ItemExpressHeaderBinding> {
         HeaderViewHolder(View itemView) {
             super(itemView);
         }
     }
 
-    class BodyViewHolder extends BaseViewHolder<ItemOrderBodyBinding> {
+    class BodyViewHolder extends BaseViewHolder<ItemExpressBodyBinding> {
         BodyViewHolder(View itemView) {
             super(itemView);
         }

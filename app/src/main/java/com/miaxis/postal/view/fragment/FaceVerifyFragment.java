@@ -18,6 +18,7 @@ import android.widget.FrameLayout;
 import com.miaxis.postal.BR;
 import com.miaxis.postal.R;
 import com.miaxis.postal.data.dto.TempIdDto;
+import com.miaxis.postal.data.entity.TempId;
 import com.miaxis.postal.databinding.FragmentFaceVerifyBinding;
 import com.miaxis.postal.manager.CameraManager;
 import com.miaxis.postal.view.base.BaseViewModelFragment;
@@ -86,9 +87,9 @@ public class FaceVerifyFragment extends BaseViewModelFragment<FragmentFaceVerify
 
     private Observer<IDInfor> idInforObserver = mIdInfor -> viewModel.startFaceVerify(idInfor);
 
-    private Observer<TempIdDto> tempIdObserver = tempIdDto ->
+    private Observer<TempId> tempIdObserver = tempId ->
             mListener.replaceFragment(ExpressFragment.newInstance(
-                    viewModel.idInforLiveData.getValue(), viewModel.headerCache, tempIdDto));
+                    viewModel.idInforLiveData.getValue(), viewModel.headerCache, tempId));
 
     private ViewTreeObserver.OnGlobalLayoutListener globalListener = new ViewTreeObserver.OnGlobalLayoutListener() {
         @Override

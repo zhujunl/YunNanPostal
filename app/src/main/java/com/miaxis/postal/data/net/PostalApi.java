@@ -1,5 +1,6 @@
 package com.miaxis.postal.data.net;
 
+import com.miaxis.postal.data.dto.CourierDto;
 import com.miaxis.postal.data.dto.TempIdDto;
 import com.miaxis.postal.data.entity.Courier;
 
@@ -22,7 +23,7 @@ public class PostalApi extends BaseAPI {
         return getPostalNetSync().getDeviceStatusSync(macAddress);
     }
 
-    public static Call<ResponseEntity<Courier>> getExpressmanByPhoneSync(String macAddress) {
+    public static Call<ResponseEntity<CourierDto>> getExpressmanByPhoneSync(String macAddress) {
         return getPostalNetSync().getExpressmanByPhoneSync(macAddress);
     }
 

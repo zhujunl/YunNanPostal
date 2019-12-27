@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "10e258b637f7ac851aad76f010d490b0",
+    "identityHash": "1de0baad5e35b6463fde16c49e985975",
     "entities": [
       {
         "tableName": "Config",
@@ -74,7 +74,7 @@
       },
       {
         "tableName": "Courier",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `name` TEXT, `cardNo` TEXT, `phone` TEXT, `photo` TEXT, `faceFeature` TEXT, `finger1Feature` TEXT, `finger2Feature` TEXT, `createTime` TEXT, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `name` TEXT, `cardNumber` TEXT, `phone` TEXT, `photo` TEXT, `faceFeature` TEXT, `fingerFeature1` TEXT, `fingerFeature2` TEXT, `createTime` TEXT, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -89,8 +89,8 @@
             "notNull": false
           },
           {
-            "fieldPath": "cardNo",
-            "columnName": "cardNo",
+            "fieldPath": "cardNumber",
+            "columnName": "cardNumber",
             "affinity": "TEXT",
             "notNull": false
           },
@@ -113,14 +113,14 @@
             "notNull": false
           },
           {
-            "fieldPath": "finger1Feature",
-            "columnName": "finger1Feature",
+            "fieldPath": "fingerFeature1",
+            "columnName": "fingerFeature1",
             "affinity": "TEXT",
             "notNull": false
           },
           {
-            "fieldPath": "finger2Feature",
-            "columnName": "finger2Feature",
+            "fieldPath": "fingerFeature2",
+            "columnName": "fingerFeature2",
             "affinity": "TEXT",
             "notNull": false
           },
@@ -144,7 +144,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '10e258b637f7ac851aad76f010d490b0')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '1de0baad5e35b6463fde16c49e985975')"
     ]
   }
 }
