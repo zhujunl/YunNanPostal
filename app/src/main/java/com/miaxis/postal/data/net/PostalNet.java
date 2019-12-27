@@ -39,6 +39,12 @@ public interface PostalNet {
     @POST("api/v1/order/getOrderById")
     Call<ResponseEntity<OrderDto>> getOrderByIdSync(@Field("id") long id);
 
+    @FormUrlEncoded
+    @POST("api/v1/device/deviceHeartBeat")
+    Call<ResponseEntity> deviceHeartBeatSync(@Field("macAddress") String macAddress,
+                                             @Field("lat") double lat,
+                                             @Field("lng") double lng);
+
     @Multipart
     @POST("api/v1/expressman/registerExpressman")
     Call<ResponseEntity> registerExpressmanSync(@Part("name") String name,

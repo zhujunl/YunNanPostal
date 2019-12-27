@@ -41,6 +41,10 @@ public class PostalApi extends BaseAPI {
         return getPostalNetSync().getOrderByIdSync(id);
     }
 
+    public static Call<ResponseEntity> deviceHeartBeatSync(String macAddress, double lat, double lng) {
+        return getPostalNetSync().deviceHeartBeatSync(macAddress, lat, lng);
+    }
+
     public static Call<ResponseEntity> registerExpressmanSync(String name,
                                                               String cardNo,
                                                               String phone,

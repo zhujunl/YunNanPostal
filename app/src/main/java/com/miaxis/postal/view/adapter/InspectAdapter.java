@@ -13,6 +13,7 @@ import com.miaxis.postal.R;
 import com.miaxis.postal.databinding.ItemInspectBodyBinding;
 import com.miaxis.postal.databinding.ItemInspectHeaderBinding;
 import com.miaxis.postal.view.auxiliary.OnLimitClickHelper;
+import com.miaxis.postal.view.auxiliary.OnLimitClickListener;
 import com.miaxis.postal.view.base.BaseViewHolder;
 import com.miaxis.postal.viewModel.InspectViewModel;
 
@@ -26,6 +27,7 @@ public class InspectAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     private InspectViewModel viewModel;
 
     private OnHeaderClickListener headerListener;
+    private OnBodyClickListener bodyListener;
 
     public InspectAdapter(Context context, InspectViewModel viewModel) {
         this.context = context;
@@ -67,7 +69,11 @@ public class InspectAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     private void setBodyItemValues(BodyViewHolder holder, int position) {
-
+        holder.itemView.setOnClickListener(new OnLimitClickHelper(view -> {
+            if (bodyListener != null) {
+                bodyListener.onBodyClick(holder.itemView, holder.getLayoutPosition());
+            }
+        }));
     }
 
     @Override
@@ -100,7 +106,15 @@ public class InspectAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         void onHeaderClick();
     }
 
+    public interface OnBodyClickListener {
+        void onBodyClick(View view, int position);
+    }
+
     public void setHeaderListener(OnHeaderClickListener headerListener) {
         this.headerListener = headerListener;
+    }
+
+    public void setBodyListener(OnBodyClickListener bodyListener) {
+        this.bodyListener = bodyListener;
     }
 }

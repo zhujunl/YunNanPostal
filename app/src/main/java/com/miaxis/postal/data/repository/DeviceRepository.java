@@ -67,4 +67,22 @@ public class DeviceRepository extends BaseRepository {
         throw new MyException("服务端返回数据解析失败，或为空");
     }
 
+    public void deviceHeartBeat(String macAddress, double lat, double lng) throws IOException, MyException {
+        Response<ResponseEntity> execute = PostalApi.deviceHeartBeatSync(macAddress, lat, lng).execute();
+        try {
+            ResponseEntity body = execute.body();
+            if (body != null) {
+                if (TextUtils.equals(body.getCode(), ValueUtil.SUCCESS)) {
+                    return;
+                } else {
+                    throw new MyException("服务端返回，" + body.getMessage());
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new MyException(e.getMessage());
+        }
+        throw new MyException("服务端返回数据解析失败，或为空");
+    }
+
 }

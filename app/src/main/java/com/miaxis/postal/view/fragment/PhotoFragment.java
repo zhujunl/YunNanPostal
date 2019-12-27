@@ -53,6 +53,7 @@ public class PhotoFragment extends BaseViewModelFragment<FragmentPhotoBinding, P
     protected void initView() {
         GlideApp.with(this).load(image).into(binding.pvPhoto);
         binding.pvPhoto.setOnClickListener(v -> onBackPressed());
+        binding.clPhoto.setOnClickListener(v -> onBackPressed());
     }
 
     @Override

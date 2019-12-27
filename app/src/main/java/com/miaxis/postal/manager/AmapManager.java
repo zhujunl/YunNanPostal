@@ -11,8 +11,12 @@ import com.amap.api.services.weather.LocalWeatherLive;
 import com.amap.api.services.weather.LocalWeatherLiveResult;
 import com.amap.api.services.weather.WeatherSearch;
 import com.amap.api.services.weather.WeatherSearchQuery;
+import com.miaxis.postal.data.exception.MyException;
+import com.miaxis.postal.data.repository.DeviceRepository;
 
 import org.greenrobot.eventbus.EventBus;
+
+import java.io.IOException;
 
 public class AmapManager implements AMapLocationListener, WeatherSearch.OnWeatherSearchListener {
 
@@ -66,7 +70,13 @@ public class AmapManager implements AMapLocationListener, WeatherSearch.OnWeathe
     public void onLocationChanged(AMapLocation aMapLocation) {
         if (aMapLocation != null && aMapLocation.getErrorCode() == 0) {
             this.aMapLocation = aMapLocation;
-            queryWeather(aMapLocation.getCity());
+            String mac = ConfigManager.getInstance().getConfig().getMac();
+            try {
+                DeviceRepository.getInstance().deviceHeartBeat(mac, aMapLocation.getLatitude(), aMapLocation.getLongitude());
+            } catch (IOException | MyException e) {
+                e.printStackTrace();
+            }
+//            queryWeather(aMapLocation.getCity());
         }
     }
 
