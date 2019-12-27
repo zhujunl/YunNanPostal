@@ -56,11 +56,11 @@ public class FaceLoginFragment extends BaseViewModelFragment<FragmentFaceLoginBi
         viewModel.courierLiveData.setValue(courier);
         viewModel.courierLiveData.observe(this, courierObserver);
         viewModel.verifyFlag.observe(this, verifyFlagObserver);
-        binding.rtvCamera.getViewTreeObserver().addOnGlobalLayoutListener(globalListener);
     }
 
     @Override
     protected void initView() {
+        binding.rtvCamera.getViewTreeObserver().addOnGlobalLayoutListener(globalListener);
         binding.ivBack.setOnClickListener(v -> onBackPressed());
     }
 
@@ -89,6 +89,7 @@ public class FaceLoginFragment extends BaseViewModelFragment<FragmentFaceLoginBi
             layoutParams.height = binding.flCamera.getHeight();
             binding.rtvCamera.setLayoutParams(layoutParams);
             binding.rtvCamera.turnRound();
+            CameraManager.getInstance().resetRetryTime();
             CameraManager.getInstance().openFrontCamera(binding.rtvCamera, cameraListener);
         }
     };

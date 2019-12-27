@@ -108,7 +108,6 @@ public class FaceRegisterViewModel extends BaseViewModel {
                         hint.set("出现错误，请重新拍摄");
                     }
                 });
-
     }
 
 }

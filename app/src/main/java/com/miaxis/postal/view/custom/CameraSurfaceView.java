@@ -12,22 +12,26 @@ import org.greenrobot.eventbus.EventBus;
 
 public class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Callback {
 
-    private Context mContext;
-    private SurfaceHolder mSurfaceHolder;
+    private Context context;
+    private SurfaceHolder surfaceHolder;
     private final Byte cameraLock = 3;
 
     public CameraSurfaceView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        mContext = context;
-        mSurfaceHolder = getHolder();
-        mSurfaceHolder.addCallback(this);
-        mSurfaceHolder.setFormat(SurfaceHolder.SURFACE_TYPE_NORMAL);
+        context = context;
+        surfaceHolder = getHolder();
+        surfaceHolder.addCallback(this);
+        surfaceHolder.setFormat(SurfaceHolder.SURFACE_TYPE_NORMAL);
+    }
+
+    public SurfaceHolder getSurfaceHolder() {
+        return surfaceHolder;
     }
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
 //        CameraManager.getInstance().openCamera(holder);
-        EventBus.getDefault().post(new SurfaceCreateEvent());
+//        EventBus.getDefault().post(new SurfaceCreateEvent());
     }
 
     @Override
@@ -36,7 +40,7 @@ public class CameraSurfaceView extends SurfaceView implements SurfaceHolder.Call
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-        CameraManager.getInstance().closeCamera();
+//        CameraManager.getInstance().closeCamera();
     }
 
 }

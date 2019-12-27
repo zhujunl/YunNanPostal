@@ -1,8 +1,6 @@
 package com.miaxis.postal.manager;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.SurfaceTexture;
@@ -10,22 +8,16 @@ import android.hardware.Camera;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
-import android.provider.MediaStore;
-import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.TextureView;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.FileProvider;
 
-import com.miaxis.postal.data.event.OpenCameraEvent;
-
-import org.greenrobot.eventbus.EventBus;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -255,28 +247,36 @@ public class CameraManager {
         this.retryTime = 0;
     }
 
-    public void openCamera(SurfaceHolder holder) {
+    public void openCamera(SurfaceHolder holder, OnCameraOpenListener listener) {
         try {
             mCamera = Camera.open(0);
             Camera.Parameters parameters = mCamera.getParameters();
-            EventBus.getDefault().post(new OpenCameraEvent(PRE_WIDTH, PRE_HEIGHT));
-//            List<Camera.Size> sizeList = parameters.getSupportedPreviewSizes();
-//            for (Camera.Size size : sizeList) {
-//                Log.e("asd", "" + size.width + "  " + size.height);
-//            }
-            parameters.setPreviewSize(PRE_WIDTH, PRE_HEIGHT);
-            parameters.setPictureSize(PIC_WIDTH, PIC_HEIGHT);
+            List<String> supportedFocusModes = parameters.getSupportedFocusModes();
+            if (supportedFocusModes != null && supportedFocusModes.size() > 0) {
+                if (supportedFocusModes.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
+                    parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+                } else if (supportedFocusModes.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO)) {
+                    parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
+                } else if (supportedFocusModes.contains(Camera.Parameters.FOCUS_MODE_AUTO)) {
+                    parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
+                }
+            }
+//            parameters.setPreviewSize(PRE_WIDTH, PRE_HEIGHT);
+//            parameters.setPictureSize(PIC_WIDTH, PIC_HEIGHT);
             mCamera.setParameters(parameters);
             mCamera.setDisplayOrientation(90);
             mCamera.setPreviewDisplay(holder);
             mCamera.setPreviewCallback(previewCallback);
             mCamera.startPreview();
+            if (listener != null) {
+                listener.onCameraOpen(parameters.getPreviewSize());
+            }
         } catch (Exception e) {
             e.printStackTrace();
             new Thread(() -> {
                 if (retryTime <= RETRY_TIMES) {
                     retryTime++;
-                    openCamera(holder);
+                    openCamera(holder, listener);
                 }
             }).start();
         }
@@ -295,20 +295,8 @@ public class CameraManager {
         }
     }
 
-    public void takePicture(Camera.PictureCallback jpeg) {
-        mCamera.takePicture(null, null, jpeg);
-    }
-
-    public void startPreview() {
-        if (mCamera != null) {
-            mCamera.startPreview();
-        }
-    }
-
-    public void stopPreview() {
-        if (mCamera != null) {
-            mCamera.stopPreview();
-        }
+    public Camera getmCamera() {
+        return mCamera;
     }
 
     private Camera.PreviewCallback previewCallback = (data, camera) -> FaceManager.getInstance().setLastPreviewData(data);

@@ -99,6 +99,7 @@ public class FaceVerifyFragment extends BaseViewModelFragment<FragmentFaceVerify
             layoutParams.height = binding.flCamera.getHeight();
             binding.rtvCamera.setLayoutParams(layoutParams);
             binding.rtvCamera.turnRound();
+            CameraManager.getInstance().resetRetryTime();
             CameraManager.getInstance().openBackCamera(binding.rtvCamera, cameraListener);
         }
     };

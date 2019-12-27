@@ -97,7 +97,7 @@ public class ExpressFragment extends BaseViewModelFragment<FragmentExpressBindin
         ((SimpleItemAnimator) binding.rvOrder.getItemAnimator()).setSupportsChangeAnimations(false);
         orderAdapter.setHeaderListener(() -> {
 //            if (viewModel.checkInput()) {
-//                if (binding.etPhone.isEnabled() && viewModel.getOrderList().size() == 0) {
+//                if (binding.etPhone.isEnabled() && viewModel.getPhotoList().size() == 0) {
 //                    new MaterialDialog.Builder(getContext())
 //                            .title("确认输入")
 //                            .content("确认寄件人手机号码以及寄件地址输入正确？\n(确认后不可修改)")

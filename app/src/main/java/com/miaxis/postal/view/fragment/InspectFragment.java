@@ -57,13 +57,12 @@ public class InspectFragment extends BaseViewModelFragment<FragmentInspectBindin
 
     @Override
     protected void initView() {
-//        inspectAdapter = new InspectAdapter(getContext(), viewModel);
-//        viewModel.photoList.observe(this, photoList -> inspectAdapter.notifyDataSetChanged());
-//        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 4);
-//        binding.rvInspect.setLayoutManager(gridLayoutManager);
-//        binding.rvInspect.setAdapter(inspectAdapter);
-//        binding.rvInspect.addItemDecoration(new SpacesItemDecoration(5));
-//        ((SimpleItemAnimator) binding.rvInspect.getItemAnimator()).setSupportsChangeAnimations(false);
+        inspectAdapter = new InspectAdapter(getContext(), viewModel);
+        viewModel.photoList.observe(this, photoList -> inspectAdapter.notifyDataSetChanged());
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 4);
+        binding.rvInspect.setLayoutManager(gridLayoutManager);
+        binding.rvInspect.setAdapter(inspectAdapter);
+        ((SimpleItemAnimator) binding.rvInspect.getItemAnimator()).setSupportsChangeAnimations(false);
     }
 
     @Override

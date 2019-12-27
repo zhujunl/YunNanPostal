@@ -86,6 +86,7 @@ public class FaceRegisterFragment extends BaseViewModelFragment<FragmentFaceRegi
             layoutParams.height = binding.flCamera.getHeight();
             binding.rtvCamera.setLayoutParams(layoutParams);
             binding.rtvCamera.turnRound();
+            CameraManager.getInstance().resetRetryTime();
             CameraManager.getInstance().openFrontCamera(binding.rtvCamera, cameraListener);
         }
     };

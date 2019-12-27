@@ -12,12 +12,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.miaxis.postal.R;
 import com.miaxis.postal.databinding.ItemInspectBodyBinding;
 import com.miaxis.postal.databinding.ItemInspectHeaderBinding;
-import com.miaxis.postal.databinding.ItemOrderBodyBinding;
-import com.miaxis.postal.databinding.ItemOrderHeaderBinding;
 import com.miaxis.postal.view.auxiliary.OnLimitClickHelper;
 import com.miaxis.postal.view.base.BaseViewHolder;
 import com.miaxis.postal.viewModel.InspectViewModel;
-import com.miaxis.postal.viewModel.OrderViewModel;
 
 public class InspectAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -84,7 +81,7 @@ public class InspectAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     @Override
     public int getItemCount() {
-        return viewModel.getOrderList().size() + 1;
+        return viewModel.getPhotoList().size() + 1;
     }
 
     class HeaderViewHolder extends BaseViewHolder<ItemInspectHeaderBinding> {

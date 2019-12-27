@@ -14,7 +14,7 @@ public class InspectViewModel extends BaseViewModel {
     public InspectViewModel() {
     }
 
-    public List<String> getOrderList() {
+    public List<String> getPhotoList() {
         List<String> value = photoList.getValue();
         if (value == null) {
             List<String> newArrayList = new ArrayList<>();

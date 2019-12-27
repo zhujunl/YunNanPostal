@@ -12,17 +12,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.miaxis.postal.R;
 import com.miaxis.postal.bridge.GlideApp;
 import com.miaxis.postal.data.entity.Order;
-import com.miaxis.postal.data.exception.MyException;
 import com.miaxis.postal.databinding.ItemOrderBodyBinding;
 import com.miaxis.postal.databinding.ItemOrderHeaderBinding;
 import com.miaxis.postal.view.auxiliary.OnLimitClickHelper;
-import com.miaxis.postal.view.auxiliary.OnLimitClickListener;
 import com.miaxis.postal.view.base.BaseViewHolder;
 import com.miaxis.postal.viewModel.ExpressViewModel;
-import com.miaxis.postal.viewModel.OrderViewModel;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class OrderAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
