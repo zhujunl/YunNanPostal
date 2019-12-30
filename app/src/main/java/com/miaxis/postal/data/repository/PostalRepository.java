@@ -70,9 +70,9 @@ public class PostalRepository extends BaseRepository {
 
     public void saveExpressFromAppSync(Express express, TempId tempId, String sendAddress, String sendPhone) throws IOException, MyException {
         List<File> fileList = new ArrayList<>();
-        for (String path : express.getPhotoList()) {
-            fileList.add(new File(path));
-        }
+//        for (String path : express.getPhotoList()) {
+//            fileList.add(new File(path));
+//        }
         Response<ResponseEntity> execute = PostalApi.saveOrderFromAppSync(
                 tempId.getPersonId(),
                 sendAddress,

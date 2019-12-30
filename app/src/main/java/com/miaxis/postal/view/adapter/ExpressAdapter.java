@@ -15,24 +15,20 @@ import com.miaxis.postal.data.entity.Express;
 import com.miaxis.postal.databinding.ItemExpressBodyBinding;
 import com.miaxis.postal.databinding.ItemExpressHeaderBinding;
 import com.miaxis.postal.view.auxiliary.OnLimitClickHelper;
+import com.miaxis.postal.view.base.BaseAdapter;
 import com.miaxis.postal.view.base.BaseViewHolder;
 import com.miaxis.postal.viewModel.ExpressViewModel;
 
-public class ExpressAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class ExpressAdapter extends BaseAdapter<Express, RecyclerView.ViewHolder> {
 
     private static final int TYPE_HEADER = 0;
     private static final int TYPE_BODY = 1;
 
-    protected Context context;
-
-    private ExpressViewModel viewModel;
-
     private OnHeaderClickListener headerListener;
     private OnBodyClickListener bodyListener;
 
-    public ExpressAdapter(Context context, ExpressViewModel viewModel) {
-        this.context = context;
-        this.viewModel = viewModel;
+    public ExpressAdapter(Context context) {
+        super(context);
     }
 
     @Override
@@ -70,20 +66,19 @@ public class ExpressAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     }
 
     private void setBodyItemValues(BodyViewHolder holder, int position) {
-        int i = position - 1;
-        Express express = viewModel.getExpressList().get(i < 0 ? 0 : i);
+        Express express = dataList.get(position - 1);
         holder.getBinding().setItem(express);
-        switch (express.getStatus()) {
-            case SUCCESS:
-                GlideApp.with(holder.itemView).load(R.drawable.icon_success).into(holder.getBinding().ivUpload);
-                break;
-            case LOADING:
-                GlideApp.with(holder.itemView).load(R.drawable.icon_loading).into(holder.getBinding().ivUpload);
-                break;
-            case FAILED:
-                GlideApp.with(holder.itemView).load(R.drawable.icon_failed).into(holder.getBinding().ivUpload);
-                break;
-        }
+//        switch (express.getStatus()) {
+//            case SUCCESS:
+//                GlideApp.with(holder.itemView).load(R.drawable.icon_success).into(holder.getBinding().ivUpload);
+//                break;
+//            case LOADING:
+//                GlideApp.with(holder.itemView).load(R.drawable.icon_loading).into(holder.getBinding().ivUpload);
+//                break;
+//            case FAILED:
+//                GlideApp.with(holder.itemView).load(R.drawable.icon_failed).into(holder.getBinding().ivUpload);
+//                break;
+//        }
         holder.itemView.setOnClickListener(new OnLimitClickHelper(view -> {
             if (bodyListener != null) {
                 bodyListener.onBodyClick(holder.itemView, holder.getLayoutPosition());
@@ -102,7 +97,7 @@ public class ExpressAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     @Override
     public int getItemCount() {
-        return viewModel.getExpressList().size() + 1;
+        return dataList.size() + 1;
     }
 
     class HeaderViewHolder extends BaseViewHolder<ItemExpressHeaderBinding> {

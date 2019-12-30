@@ -20,6 +20,7 @@ import com.speedata.libid2.IDInfor;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import io.reactivex.Observable;
@@ -56,17 +57,6 @@ public class ExpressViewModel extends BaseViewModel {
         }
     }
 
-    public List<Express> getExpressList() {
-        List<Express> value = expressList.getValue();
-        if (value == null) {
-            List<Express> newArrayList = new ArrayList<>();
-            expressList.setValue(newArrayList);
-            return newArrayList;
-        } else {
-            return value;
-        }
-    }
-
     private ScanManager.OnScanListener listener = code -> {
         stopScan();
         Express express = new Express();
@@ -79,65 +69,68 @@ public class ExpressViewModel extends BaseViewModel {
         }
     };
 
-    private boolean checkRepeat(Express repeat) {
-        List<Express> expressList = getExpressList();
-        for (Express express : expressList) {
-            if (TextUtils.equals(repeat.getBarCode(), express.getBarCode())) {
-                return true;
-            }
+    public List<Express> getExpressList() {
+        List<Express> value = expressList.getValue();
+        if (value == null) {
+            List<Express> newArrayList = new ArrayList<>();
+            expressList.setValue(newArrayList);
+            return newArrayList;
+        } else {
+            return value;
         }
-        return false;
     }
 
-    public void addExpress(Express express, Bitmap bitmap) {
-        Observable.just(bitmap)
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.io())
-                .map(mBitmap -> {
-                    String path = FileUtil.FACE_IMAGE_PATH + File.separator;
-                    String fileName = express.getBarCode() + System.currentTimeMillis() + ".jpg";
-                    FileUtil.saveBitmap(mBitmap, path, fileName);
-                    return path + fileName;
-                })
-                .map(s -> {
-                    List<String> imageList = new ArrayList<>();
-                    imageList.add(s);
-                    express.setPhotoList(imageList);
-                    uploadExpress(express);
-                    return express;
-                })
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(mExpress -> {
-                    List<Express> expressListCache = getExpressList();
-                    expressListCache.add(mExpress);
-                    expressList.setValue(expressListCache);
-                }, Throwable::printStackTrace);
+    public void modifyExpress(Express express) {
+        List<Express> localList = getExpressList();
+        for (int i = 0; i < localList.size(); i++) {
+            Express value = localList.get(i);
+            if (TextUtils.equals(value.getBarCode(), express.getBarCode())) {
+                localList.set(i, express);
+                expressList.setValue(localList);
+                return;
+            }
+        }
+        localList.add(express);
+        expressList.setValue(localList);
+    }
+
+    public void deleteExpress(Express express) {
+        List<Express> localList = getExpressList();
+        Iterator<Express> iterator = localList.iterator();
+        while (iterator.hasNext()) {
+            Express next = iterator.next();
+            if (TextUtils.equals(next.getBarCode(), express.getBarCode())) {
+                iterator.remove();
+                break;
+            }
+        }
+        expressList.setValue(localList);
     }
     
-    private void uploadExpress(Express express) {
-        Observable.create((ObservableOnSubscribe<Boolean>) emitter -> {
-            PostalRepository.getInstance().saveExpressFromAppSync(express, tempId.get(), address.get(), phone.get());
-            emitter.onNext(Boolean.TRUE);
-        })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(aBoolean -> {
-                    updateExpressStatus(express, Status.SUCCESS);
-                }, throwable -> {
-                    updateExpressStatus(express, Status.FAILED);
-                    toast.setValue(ToastManager.getToastBody(hanleError(throwable), ToastManager.INFO));
-                });
-    }
-
-    private void updateExpressStatus(Express update, Status status) {
-        List<Express> mExpressList = getExpressList();
-        for (Express express : mExpressList) {
-            if (TextUtils.equals(express.getBarCode(), update.getBarCode())) {
-                express.setStatus(status);
-            }
-        }
-        expressList.setValue(mExpressList);
-    }
+//    private void uploadExpress(Express express) {
+//        Observable.create((ObservableOnSubscribe<Boolean>) emitter -> {
+//            PostalRepository.getInstance().saveExpressFromAppSync(express, tempId.get(), address.get(), phone.get());
+//            emitter.onNext(Boolean.TRUE);
+//        })
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe(aBoolean -> {
+//                    updateExpressStatus(express, Status.SUCCESS);
+//                }, throwable -> {
+//                    updateExpressStatus(express, Status.FAILED);
+//                    toast.setValue(ToastManager.getToastBody(hanleError(throwable), ToastManager.INFO));
+//                });
+//    }
+//
+//    private void updateExpressStatus(Express update, Status status) {
+//        List<Express> mExpressList = getExpressList();
+//        for (Express express : mExpressList) {
+//            if (TextUtils.equals(express.getBarCode(), update.getBarCode())) {
+//                express.setStatus(status);
+//            }
+//        }
+//        expressList.setValue(mExpressList);
+//    }
 
     public void getLocation() {
         AmapManager.getInstance().getOneLocation(aMapLocation -> address.set(aMapLocation.getAddress()));
@@ -148,6 +141,16 @@ public class ExpressViewModel extends BaseViewModel {
             return false;
         }
         return true;
+    }
+
+    private boolean checkRepeat(Express repeat) {
+        List<Express> expressList = getExpressList();
+        for (Express express : expressList) {
+            if (TextUtils.equals(repeat.getBarCode(), express.getBarCode())) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

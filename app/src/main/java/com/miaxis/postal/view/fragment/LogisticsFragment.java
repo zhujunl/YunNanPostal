@@ -37,7 +37,6 @@ public class LogisticsFragment extends BaseViewModelFragment<FragmentLogisticsBi
     private LinearLayoutManager layoutManager;
 
     private String filter = "";
-    private boolean loadingMore = true;
     private int page = 1;
     private int localCount = 0;
 
@@ -139,7 +138,6 @@ public class LogisticsFragment extends BaseViewModelFragment<FragmentLogisticsBi
         if (binding.srlOrder.isRefreshing()) {
             binding.srlOrder.setRefreshing(false);
         }
-        int itemCount = orderAdapter.getItemCount();
         if (page == 1) {
             orderAdapter.setDataList(orderList);
             orderAdapter.notifyDataSetChanged();
@@ -150,7 +148,7 @@ public class LogisticsFragment extends BaseViewModelFragment<FragmentLogisticsBi
         } else {
             orderAdapter.setDataList(orderList);
             orderAdapter.notifyItemRangeChanged(localCount, orderList.size() - localCount);
-            if (itemCount != 0) {
+            if (localCount != 0) {
                 binding.rvOrder.scrollToPosition(localCount);
             }
             localCount = orderList.size();
@@ -162,6 +160,7 @@ public class LogisticsFragment extends BaseViewModelFragment<FragmentLogisticsBi
     };
 
     private RecyclerView.OnScrollListener onScrollListener = new RecyclerView.OnScrollListener() {
+        private boolean loadingMore = true;
         @Override
         public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
             super.onScrollStateChanged(recyclerView, newState);
@@ -184,15 +183,12 @@ public class LogisticsFragment extends BaseViewModelFragment<FragmentLogisticsBi
     };
 
     private void refresh() {
-        page = 1;
         localCount = 0;
-        viewModel.getOrderByCodeAndName(filter, 1);
+        viewModel.getOrderByCodeAndName(filter, page = 1);
     }
 
     private void loadMore() {
-        page++;
-        Log.e("asd", page+ "");
-        viewModel.getOrderByCodeAndName(filter, page);
+        viewModel.getOrderByCodeAndName(filter, ++page);
     }
 
 }

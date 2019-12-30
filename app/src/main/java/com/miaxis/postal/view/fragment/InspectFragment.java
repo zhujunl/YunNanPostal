@@ -2,18 +2,24 @@ package com.miaxis.postal.view.fragment;
 
 import android.view.View;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.miaxis.postal.R;
 import com.miaxis.postal.data.entity.Express;
 import com.miaxis.postal.data.entity.Photograph;
+import com.miaxis.postal.data.event.ExpressEditEvent;
 import com.miaxis.postal.data.event.TakePhotoEvent;
 import com.miaxis.postal.databinding.FragmentInspectBinding;
 import com.miaxis.postal.manager.ToastManager;
 import com.miaxis.postal.view.adapter.InspectAdapter;
+import com.miaxis.postal.view.auxiliary.OnLimitClickHelper;
+import com.miaxis.postal.view.auxiliary.OnLimitClickListener;
 import com.miaxis.postal.view.base.BaseViewModelFragment;
 import com.miaxis.postal.viewModel.InspectViewModel;
 
@@ -27,6 +33,8 @@ public class InspectFragment extends BaseViewModelFragment<FragmentInspectBindin
 
     private Express express;
     private InspectAdapter inspectAdapter;
+
+    private boolean firstIn = true;
 
     public static InspectFragment newInstance(Express express) {
         InspectFragment inspectFragment = new InspectFragment();
@@ -55,14 +63,54 @@ public class InspectFragment extends BaseViewModelFragment<FragmentInspectBindin
 
     @Override
     protected void initData() {
-
     }
 
     @Override
     protected void initView() {
         initRecycleView();
         viewModel.photographList.observe(this, photographObserver);
+        if (viewModel.express.get() == null) {
+            viewModel.express.set(express);
+            viewModel.initExpress(express);
+        }
+        binding.ivBack.setOnClickListener(v -> onBackPressed());
+        binding.ivDelete.setOnClickListener(new OnLimitClickHelper(view -> {
+            new MaterialDialog.Builder(getContext())
+                    .title("确认删除？")
+                    .positiveText("确认")
+                    .onPositive((dialog, which) -> {
+                        viewModel.makeDeleteResult();
+                        mListener.backToStack(null);
+                    })
+                    .negativeText("取消")
+                    .show();
+        }));
+        binding.fabConfirm.setOnClickListener(new OnLimitClickHelper(view -> {
+            if (viewModel.getSelectList().size() != 0) {
+                new MaterialDialog.Builder(getContext())
+                        .title("确认已选择的实物照片")
+                        .content("未选择的实物照片将会被删除")
+                        .positiveText("确认")
+                        .onPositive((dialog, which) -> {
+                            viewModel.makeModifyResult();
+                            mListener.backToStack(null);
+                        })
+                        .negativeText("取消")
+                        .show();
+            } else {
+                ToastManager.toast("请至少选择一张实物照片", ToastManager.INFO);
+            }
+        }));
         EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (firstIn && viewModel.checkEmptyExpress()) {
+            firstIn = false;
+            mListener.replaceFragment(CameraFragment.newInstance());
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
@@ -73,7 +121,17 @@ public class InspectFragment extends BaseViewModelFragment<FragmentInspectBindin
 
     @Override
     public void onBackPressed() {
-        mListener.backToStack(null);
+        if (viewModel.needBackCheck()) {
+            new MaterialDialog.Builder(getContext())
+                    .title("确认退出？")
+                    .content("未选择和未确认的实物照片将会被删除")
+                    .positiveText("确认")
+                    .onPositive((dialog, which) -> mListener.backToStack(null))
+                    .negativeText("取消")
+                    .show();
+        } else {
+            mListener.backToStack(null);
+        }
     }
 
     @Override
@@ -108,7 +166,7 @@ public class InspectFragment extends BaseViewModelFragment<FragmentInspectBindin
             if (viewModel.getSelectSize() < InspectViewModel.MAX_COUNT) {
                 updateSelectIcon(select, position);
             } else {
-                ToastManager.toast("最多上传" + InspectViewModel.MAX_COUNT + "张实物图片", ToastManager.INFO);
+                ToastManager.toast("最多选择" + InspectViewModel.MAX_COUNT + "张实物图片", ToastManager.INFO);
             }
         } else {
             updateSelectIcon(select, position);
@@ -116,27 +174,17 @@ public class InspectFragment extends BaseViewModelFragment<FragmentInspectBindin
     };
 
     private Observer<List<Photograph>> photographObserver = photographList -> {
-        if (viewModel.getSelectSize() == 0) {
-            int surplus = InspectViewModel.MAX_COUNT - viewModel.getSelectSize();
-            if (photographList.size() > 0 && surplus > 0) {
-                for (int i = 0; i < surplus; i++) {
-                    photographList.get(i).setSelect(true);
-                }
-            }
-        }
         inspectAdapter.setDataList(photographList);
         inspectAdapter.notifyDataSetChanged();
-        updateSelectText();
     };
 
-    private void updateSelectText() {
-        binding.tvSelect.setText(String.format("已选 %s / %s", viewModel.getSelectSize(), InspectViewModel.MAX_COUNT));
-    }
+//    private void updateSelectText() {
+//        binding.tvSelect.setText(String.format("已选 %s / %s", viewModel.getSelectSize(), InspectViewModel.MAX_COUNT));
+//    }
 
     private void updateSelectIcon(Photograph select, int position) {
         inspectAdapter.getDataList().get(position - 1).setSelect(!select.isSelect());
         inspectAdapter.notifyItemChanged(position);
-        updateSelectText();
     }
 
     public void setExpress(Express express) {

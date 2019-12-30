@@ -1,5 +1,7 @@
 package com.miaxis.postal.data.entity;
 
+import android.graphics.Bitmap;
+
 import com.miaxis.postal.bridge.Status;
 
 import java.util.List;
@@ -7,7 +9,7 @@ import java.util.List;
 public class Express {
 
     private String barCode;
-    private List<String> photoList;
+    private List<Bitmap> photoList;
     private Status status;
 
     public Express() {
@@ -21,11 +23,11 @@ public class Express {
         this.barCode = barCode;
     }
 
-    public List<String> getPhotoList() {
+    public List<Bitmap> getPhotoList() {
         return photoList;
     }
 
-    public void setPhotoList(List<String> photoList) {
+    public void setPhotoList(List<Bitmap> photoList) {
         this.photoList = photoList;
     }
 

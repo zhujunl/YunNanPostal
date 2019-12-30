@@ -11,11 +11,14 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 
 import android.provider.MediaStore;
+import android.view.View;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.miaxis.postal.R;
+import com.miaxis.postal.bridge.Status;
 import com.miaxis.postal.data.entity.Express;
 import com.miaxis.postal.data.entity.TempId;
+import com.miaxis.postal.data.event.ExpressEditEvent;
 import com.miaxis.postal.databinding.FragmentExpressBinding;
 import com.miaxis.postal.manager.CameraManager;
 import com.miaxis.postal.manager.ToastManager;
@@ -24,6 +27,10 @@ import com.miaxis.postal.view.adapter.SpacesItemDecoration;
 import com.miaxis.postal.view.base.BaseViewModelFragment;
 import com.miaxis.postal.viewModel.ExpressViewModel;
 import com.speedata.libid2.IDInfor;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.List;
 
@@ -37,9 +44,6 @@ public class ExpressFragment extends BaseViewModelFragment<FragmentExpressBindin
 
     private ExpressAdapter expressAdapter;
     private MaterialDialog scanDialog;
-
-    private Uri imageUriCache = null;
-    private Express expressCache = null;
 
     public static ExpressFragment newInstance(IDInfor idInfor, Bitmap header, TempId tempId) {
         ExpressFragment fragment = new ExpressFragment();
@@ -78,50 +82,31 @@ public class ExpressFragment extends BaseViewModelFragment<FragmentExpressBindin
     @Override
     protected void initView() {
         initDialog();
-        if (expressAdapter == null) {
-            expressAdapter = new ExpressAdapter(getContext(), viewModel);
-        }
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 3);
-        binding.rvExpress.setLayoutManager(gridLayoutManager);
-        binding.rvExpress.setAdapter(expressAdapter);
-        binding.rvExpress.addItemDecoration(new SpacesItemDecoration(1));
-        ((SimpleItemAnimator) binding.rvExpress.getItemAnimator()).setSupportsChangeAnimations(false);
-        expressAdapter.setHeaderListener(() -> {
-//            if (viewModel.checkInput()) {
-//                if (binding.etPhone.isEnabled() && viewModel.getPhotoList().size() == 0) {
-//                    new MaterialDialog.Builder(getContext())
-//                            .title("确认输入")
-//                            .content("确认寄件人手机号码以及寄件地址输入正确？\n(确认后不可修改)")
-//                            .positiveText("确认")
-//                            .onPositive((dialog, which) -> {
-//                                binding.etPhone.setEnabled(false);
-//                                binding.etAddress.setEnabled(false);
-//                                scanDialog.show();
-//                                viewModel.startScan();
-//                            })
-//                            .negativeText("取消")
-//                            .show();
-//                } else {
-                    scanDialog.show();
-                    viewModel.startScan();
-//                }
-//            } else {
-//                ToastManager.toast("请先输入寄件人手机号码以及寄件地址", ToastManager.INFO);
-//            }
-        });
+        initRecycleView();
         binding.ivAddress.setOnClickListener(v -> viewModel.getLocation());
         binding.fabConfirm.setOnClickListener(v -> {
-            new MaterialDialog.Builder(getContext())
-                    .title("确认离开")
-                    .content("确认已完成该寄件人名下的所有订单了吗？")
-                    .positiveText("确认")
-                    .onPositive((dialog, which) -> mListener.backToStack(HomeFragment.class))
-                    .negativeText("取消")
-                    .show();
+//            new MaterialDialog.Builder(getContext())
+//                    .title("确认离开")
+//                    .content("确认已完成该寄件人名下的所有订单了吗？")
+//                    .positiveText("确认")
+//                    .onPositive((dialog, which) -> mListener.backToStack(HomeFragment.class))
+//                    .negativeText("取消")
+//                    .show();
         });
         viewModel.expressList.observe(this, expressListObserver);
         viewModel.newExpress.observe(this, newExpressObserver);
         viewModel.repeatExpress.observe(this, repeatExpressObserver);
+        EventBus.getDefault().register(this);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    public void onExpressEditEvent(ExpressEditEvent event) {
+        if (event.getMode() == ExpressEditEvent.MODE_MODIFY) {
+            viewModel.modifyExpress(event.getExpress());
+        } else if (event.getMode() == ExpressEditEvent.MODE_DELETE) {
+            viewModel.deleteExpress(event.getExpress());
+        }
+        EventBus.getDefault().removeStickyEvent(event);
     }
 
     @Override
@@ -135,50 +120,11 @@ public class ExpressFragment extends BaseViewModelFragment<FragmentExpressBindin
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        try {
-            if (imageUriCache != null && expressCache != null) {
-                Bitmap bitmapFormUri = CameraManager.getBitmapFormUri(getContext(), imageUriCache);
-                if (bitmapFormUri != null) {
-                    viewModel.addExpress(expressCache, bitmapFormUri);
-                    imageUriCache = null;
-                    expressCache = null;
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
     public void onDestroyView() {
         super.onDestroyView();
         viewModel.expressList.removeObserver(expressListObserver);
+        EventBus.getDefault().unregister(this);
     }
-
-    private Observer<List<Express>> expressListObserver = expressList -> {
-        expressAdapter.notifyDataSetChanged();
-    };
-
-    private Observer<Express> newExpressObserver = express -> {
-        this.expressCache = express;
-        this.imageUriCache = null;
-        scanDialog.dismiss();
-        Intent openCameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        imageUriCache = CameraManager.getOutputMediaFileUri(getContext());
-        openCameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUriCache);
-        //Android7.0添加临时权限标记，此步千万别忘了
-        openCameraIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-        getActivity().startActivityForResult(openCameraIntent, REQUEST_CODE);
-    };
-
-    private Observer<Express> repeatExpressObserver = express -> {
-        this.expressCache = null;
-        this.imageUriCache = null;
-        scanDialog.dismiss();
-        ToastManager.toast("该条码编号已重复", ToastManager.INFO);
-    };
 
     private void initDialog() {
         scanDialog = new MaterialDialog.Builder(getContext())
@@ -189,6 +135,45 @@ public class ExpressFragment extends BaseViewModelFragment<FragmentExpressBindin
                 .onPositive((dialog, which) -> viewModel.stopScan())
                 .build();
     }
+
+    private void initRecycleView() {
+        expressAdapter = new ExpressAdapter(getContext());
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 3);
+        binding.rvExpress.setLayoutManager(gridLayoutManager);
+        binding.rvExpress.setAdapter(expressAdapter);
+        binding.rvExpress.addItemDecoration(new SpacesItemDecoration(1));
+        ((SimpleItemAnimator) binding.rvExpress.getItemAnimator()).setSupportsChangeAnimations(false);
+        expressAdapter.setHeaderListener(headerListener);
+        expressAdapter.setBodyListener(bodyListener);
+    }
+
+    private ExpressAdapter.OnHeaderClickListener headerListener = () -> {
+        //            scanDialog.show();
+//            viewModel.startScan();
+        Express express = new Express();
+        express.setBarCode("asd");
+        express.setStatus(Status.LOADING);
+        viewModel.newExpress.setValue(express);
+    };
+
+    private ExpressAdapter.OnBodyClickListener bodyListener = (view, position) -> {
+        mListener.replaceFragment(InspectFragment.newInstance(expressAdapter.getData(position - 1)));
+    };
+
+    private Observer<List<Express>> expressListObserver = expressList -> {
+        expressAdapter.setDataList(expressList);
+        expressAdapter.notifyDataSetChanged();
+    };
+
+    private Observer<Express> newExpressObserver = express -> {
+        scanDialog.dismiss();
+        mListener.replaceFragment(InspectFragment.newInstance(express));
+    };
+
+    private Observer<Express> repeatExpressObserver = express -> {
+        scanDialog.dismiss();
+        ToastManager.toast("该条码编号已重复", ToastManager.INFO);
+    };
 
     public void setIdInfor(IDInfor idInfor) {
         this.idInfor = idInfor;
