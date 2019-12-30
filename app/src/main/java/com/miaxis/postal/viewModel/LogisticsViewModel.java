@@ -29,6 +29,17 @@ public class LogisticsViewModel extends BaseViewModel {
         getOrderByCodeAndName("", 1);
     }
 
+    public List<SimpleOrder> getOrderList() {
+        List<SimpleOrder> value = orderList.getValue();
+        if (value == null) {
+            List<SimpleOrder> newArrayList = new ArrayList<>();
+            orderList.setValue(newArrayList);
+            return newArrayList;
+        } else {
+            return value;
+        }
+    }
+
     public void getOrderByCodeAndName(String filter, int pageNum) {
         Disposable disposable = Observable.create((ObservableOnSubscribe<List<SimpleOrder>>) emitter -> {
             List<SimpleOrder> simpleOrderList = OrderRepository.getInstance().getOrderByCodeAndNameSync(filter, pageNum, ValueUtil.PAGE_SIZE);
@@ -37,7 +48,13 @@ public class LogisticsViewModel extends BaseViewModel {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(simpleOrderList -> {
-                    orderList.setValue(simpleOrderList);
+                    if (pageNum == 1) {
+                        orderList.setValue(simpleOrderList);
+                    } else {
+                        List<SimpleOrder> LocalOrderList = getOrderList();
+                        LocalOrderList.addAll(simpleOrderList);
+                        orderList.setValue(LocalOrderList);
+                    }
                     if (simpleOrderList.isEmpty()) {
                         toast.setValue(ToastManager.getToastBody("没有更多了", ToastManager.SUCCESS));
                     }

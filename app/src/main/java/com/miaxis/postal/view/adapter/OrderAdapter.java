@@ -20,7 +20,7 @@ import com.miaxis.postal.view.base.BaseViewModelAdapter;
 import com.miaxis.postal.viewModel.LogisticsViewModel;
 import com.miaxis.postal.viewModel.OrderViewModel;
 
-public class OrderAdapter extends BaseAdapter<SimpleOrder, ItemOrderBinding, OrderAdapter.MyViewHolder> {
+public class OrderAdapter extends BaseViewModelAdapter<SimpleOrder, ItemOrderBinding, OrderAdapter.MyViewHolder> {
 
     private OnItemClickListener listener;
 

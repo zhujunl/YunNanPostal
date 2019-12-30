@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.serialport.DeviceControlSpd;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -60,7 +61,7 @@ public class CardManager {
                     } else {
                         startReadCard();
                     }
-                });
+                }, "dev/ttyMT1", 115200, DeviceControlSpd.PowerType.MAIN, 94);
                 startReadCard();
                 listener.onIDCardInitResult(result);
             } catch (IOException e) {

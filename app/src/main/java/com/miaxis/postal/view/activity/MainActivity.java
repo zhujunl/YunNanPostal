@@ -13,6 +13,7 @@ import com.miaxis.postal.view.base.BaseViewModelFragment;
 import com.miaxis.postal.view.base.OnFragmentInteractionListener;
 import com.miaxis.postal.view.fragment.CameraFragment;
 import com.miaxis.postal.view.fragment.ExpressFragment;
+import com.miaxis.postal.view.fragment.HomeFragment;
 import com.miaxis.postal.view.fragment.InspectFragment;
 import com.miaxis.postal.view.fragment.PreludeFragment;
 
@@ -37,7 +38,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
     @Override
     protected void initView() {
         initDialog();
-        replaceFragment(InspectFragment.newInstance(null));
+        replaceFragment(PreludeFragment.newInstance());
     }
 
     @Override

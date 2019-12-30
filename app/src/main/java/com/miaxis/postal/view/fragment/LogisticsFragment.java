@@ -2,11 +2,13 @@ package com.miaxis.postal.view.fragment;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.widget.SearchView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
@@ -32,10 +34,12 @@ import java.util.List;
 public class LogisticsFragment extends BaseViewModelFragment<FragmentLogisticsBinding, LogisticsViewModel> {
 
     private OrderAdapter orderAdapter;
-    private EndLessOnScrollListener scrollListener;
+    private LinearLayoutManager layoutManager;
 
     private String filter = "";
-    private boolean refreshFlag = true;
+    private boolean loadingMore = true;
+    private int page = 1;
+    private int localCount = 0;
 
     public static LogisticsFragment newInstance() {
         return new LogisticsFragment();
@@ -67,31 +71,10 @@ public class LogisticsFragment extends BaseViewModelFragment<FragmentLogisticsBi
 
     @Override
     protected void initView() {
-        if (orderAdapter == null) {
-            orderAdapter = new OrderAdapter(getContext());
-        }
-        if (scrollListener == null) {
-            //TODO:BUG HERE
-            scrollListener = new EndLessOnScrollListener() {
-                @Override
-                public void onLoadMore(int currentPage) {
-                    Log.e("asd", currentPage + "");
-                    viewModel.getOrderByCodeAndName(filter, currentPage);
-                }
-            };
-        }
-        orderAdapter.setListener(adapterListener);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
-        scrollListener.setLinearLayoutManager(layoutManager);
-        scrollListener.reset();
-        binding.rvOrder.clearOnScrollListeners();
-        binding.rvOrder.addOnScrollListener(scrollListener);
-        binding.rvOrder.setLayoutManager(layoutManager);
-        binding.rvOrder.setAdapter(orderAdapter);
-        ((SimpleItemAnimator) binding.rvOrder.getItemAnimator()).setSupportsChangeAnimations(false);
+        initRecycleView();
+        initSearchView();
         binding.ivBack.setOnClickListener(v -> onBackPressed());
         binding.srlOrder.setOnRefreshListener(this::refresh);
-        initSearchView();
         viewModel.orderList.observe(this, orderObserver);
         viewModel.orderDetail.observe(this, orderDetailObserver);
     }
@@ -105,6 +88,16 @@ public class LogisticsFragment extends BaseViewModelFragment<FragmentLogisticsBi
     public void onDestroyView() {
         super.onDestroyView();
         viewModel.orderList.removeObserver(orderObserver);
+    }
+
+    private void initRecycleView() {
+        orderAdapter = new OrderAdapter(getContext());
+        orderAdapter.setListener(adapterListener);
+        layoutManager = new LinearLayoutManager(getContext());
+        binding.rvOrder.addOnScrollListener(onScrollListener);
+        binding.rvOrder.setLayoutManager(layoutManager);
+        binding.rvOrder.setAdapter(orderAdapter);
+        ((SimpleItemAnimator) binding.rvOrder.getItemAnimator()).setSupportsChangeAnimations(false);
     }
 
     private void initSearchView() {
@@ -146,31 +139,60 @@ public class LogisticsFragment extends BaseViewModelFragment<FragmentLogisticsBi
         if (binding.srlOrder.isRefreshing()) {
             binding.srlOrder.setRefreshing(false);
         }
-        if (refreshFlag) {
-            refreshFlag = false;
-            updateScrollListener();
+        int itemCount = orderAdapter.getItemCount();
+        if (page == 1) {
             orderAdapter.setDataList(orderList);
-            binding.rvOrder.scrollToPosition(0);
+            orderAdapter.notifyDataSetChanged();
+            if (localCount == 0) {
+                binding.rvOrder.scrollToPosition(0);
+            }
+            localCount = orderList.size();
         } else {
-            int itemCount = orderAdapter.getItemCount();
-            orderAdapter.appendDataList(orderList);
-            binding.rvOrder.scrollToPosition(itemCount);
+            orderAdapter.setDataList(orderList);
+            orderAdapter.notifyItemRangeChanged(localCount, orderList.size() - localCount);
+            if (itemCount != 0) {
+                binding.rvOrder.scrollToPosition(localCount);
+            }
+            localCount = orderList.size();
         }
     };
 
     private Observer<Order> orderDetailObserver = order -> {
-        mListener.replaceFragment(OrderFragment.newInstance(order));
+//        mListener.replaceFragment(OrderFragment.newInstance(order));
     };
 
-    private void updateScrollListener() {
-        binding.rvOrder.clearOnScrollListeners();
-        scrollListener.reset();
-        binding.rvOrder.addOnScrollListener(scrollListener);
-    }
+    private RecyclerView.OnScrollListener onScrollListener = new RecyclerView.OnScrollListener() {
+        @Override
+        public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+            super.onScrollStateChanged(recyclerView, newState);
+            if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                if (!loadingMore && layoutManager.findLastVisibleItemPosition() + 1 == orderAdapter.getItemCount()) {
+                    loadMore();
+                }
+            }
+        }
+
+        @Override
+        public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+            super.onScrolled(recyclerView, dx, dy);
+            if (loadingMore && layoutManager.findLastVisibleItemPosition() + 1 == orderAdapter.getItemCount()) {
+                loadMore();
+            } else if (loadingMore) {
+                loadingMore = false;
+            }
+        }
+    };
 
     private void refresh() {
-        refreshFlag = true;
+        page = 1;
+        localCount = 0;
         viewModel.getOrderByCodeAndName(filter, 1);
+    }
+
+    private void loadMore() {
+        page++;
+        Log.e("asd", page+ "");
+        viewModel.getOrderByCodeAndName(filter, page);
     }
 
 }

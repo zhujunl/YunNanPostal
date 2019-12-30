@@ -13,12 +13,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class BaseViewModelAdapter<DB extends ViewDataBinding, VH extends BaseViewHolder> extends RecyclerView.Adapter<VH> {
-
-    protected Context context;
+public abstract class BaseViewModelAdapter<T, DB extends ViewDataBinding, VH extends RecyclerView.ViewHolder> extends BaseAdapter<T, VH> {
 
     public BaseViewModelAdapter(@NonNull Context context) {
-        this.context = context;
+        super(context);
     }
 
     @NonNull
@@ -26,6 +24,11 @@ public abstract class BaseViewModelAdapter<DB extends ViewDataBinding, VH extend
     public VH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         DB binding = DataBindingUtil.inflate(LayoutInflater.from(parent.getContext()), setContentView(), parent, false);
         return createViewHolder(binding.getRoot(), binding);
+    }
+
+    @Override
+    public int getItemCount() {
+        return dataList.size();
     }
 
     protected abstract int setContentView();

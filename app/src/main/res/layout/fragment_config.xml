@@ -16,6 +16,18 @@
         android:layout_height="match_parent"
         tools:context=".view.fragment.ConfigFragment">
 
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:text="设    置"
+            android:textSize="20sp"
+            android:gravity="center"
+            android:background="@color/white"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="@id/iv_back"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
         <ImageView
             android:id="@+id/iv_back"
             android:layout_width="0dp"
@@ -27,17 +39,6 @@
             app:layout_constraintWidth_percent="0.15"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:text="设    置"
-            android:textSize="20sp"
-            android:gravity="center"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="@id/iv_back"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
 
         <ImageView
             android:id="@+id/iv_save"
