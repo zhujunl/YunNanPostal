@@ -63,6 +63,10 @@ public class PostalApi extends BaseAPI {
                 fileBody);
     }
 
+    public static Call<ResponseEntity> checkOrderByCodeSync(String code) {
+        return getPostalNetSync().checkOrderByCodeSync(code);
+    }
+
     public static Call<ResponseEntity<TempIdDto>> savePersonFromApp(String name,
                                                                     String nation,
                                                                     String birthday,

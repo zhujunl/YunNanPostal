@@ -14,6 +14,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.miaxis.postal.BR;
 import com.miaxis.postal.R;
 import com.miaxis.postal.bridge.Status;
+import com.miaxis.postal.data.entity.IDCardRecord;
 import com.miaxis.postal.databinding.FragmentCardBinding;
 import com.miaxis.postal.view.base.BaseViewModelFragment;
 import com.miaxis.postal.viewModel.CardViewModel;
@@ -47,7 +48,7 @@ public class CardFragment extends BaseViewModelFragment<FragmentCardBinding, Car
     @Override
     protected void initData() {
         viewModel.initCardResult.observe(this, initCardResultObserver);
-        viewModel.idInfoLiveData.observe(this, idInfoObserver);
+        viewModel.idCardRecord.observe(this, idCardRecordObserver);
     }
 
     @Override
@@ -95,8 +96,8 @@ public class CardFragment extends BaseViewModelFragment<FragmentCardBinding, Car
         }
     };
 
-    private Observer<IDInfor> idInfoObserver = idInfo -> {
-        mListener.replaceFragment(FaceVerifyFragment.newInstance(viewModel.idInfoLiveData.getValue()));
+    private Observer<IDCardRecord> idCardRecordObserver = idInfo -> {
+        mListener.replaceFragment(FaceVerifyFragment.newInstance(viewModel.idCardRecord.getValue()));
     };
 
 }

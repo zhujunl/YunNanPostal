@@ -5,15 +5,19 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.serialport.DeviceControlSpd;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.miaxis.postal.data.entity.IDCardRecord;
 import com.speedata.libid2.IDInfor;
 import com.speedata.libid2.IDManager;
 import com.speedata.libid2.IID2Service;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 public class CardManager {
 
@@ -45,7 +49,7 @@ public class CardManager {
             @Override
             public void handleMessage(@NonNull Message msg) {
                 super.handleMessage(msg);
-                listener.onIDCardReceive((IDInfor) msg.obj);
+                listener.onIDCardReceive((IDCardRecord) msg.obj);
             }
         };
         initDevice();
@@ -56,7 +60,7 @@ public class CardManager {
             try {
                 boolean result = idManager.initDev(context, info -> {
                     if (info.isSuccess()) {
-                        handler.sendMessage(handler.obtainMessage(0, info));
+                        handler.sendMessage(handler.obtainMessage(0, transform(info)));
 //                        release();
                     } else {
                         startReadCard();
@@ -88,10 +92,38 @@ public class CardManager {
         }
     }
 
+    private IDCardRecord transform(IDInfor idInfor) {
+        return IDCardRecord.IDCardRecordBuilder.anIDCardRecord()
+                .name(idInfor.getName().trim())
+                .birthday(idInfor.getYear().trim() + "-" + idInfor.getMonth().trim() + "-" + idInfor.getDay().trim())
+                .address(idInfor.getAddress().trim())
+                .cardNumber(idInfor.getNum().trim())
+                .issuingAuthority(idInfor.getQianFa().trim())
+                .validateStart(idInfor.getStartYear().trim() + "-" + idInfor.getStartMonth().trim() + "-" + idInfor.getStartDay().trim())
+                .validateEnd(idInfor.getEndYear().trim() + "-" + idInfor.getEndMonth().trim() + "-" + idInfor.getEndDay().trim())
+                .sex(idInfor.getSex().trim())
+                .nation(idInfor.getNation().trim())
+                .cardBitmap(idInfor.getBmps())
+                .build();
+    }
+
+    /**
+     * 检查身份证是否已经过期
+     * @return true - 已过期 false - 未过期
+     */
+    public boolean checkIsOutValidate(IDCardRecord idCardRecord) {
+        try {
+            SimpleDateFormat myFmt = new SimpleDateFormat("yyyy-MM-dd", Locale.CHINA);
+            Date validEndDate = myFmt.parse(idCardRecord.getValidateEnd());
+            return validEndDate.getTime() < System.currentTimeMillis();
+        } catch (ParseException e) {
+            return false;
+        }
+    }
+
     public interface IDCardListener {
         void onIDCardInitResult(boolean result);
-
-        void onIDCardReceive(IDInfor idInfor);
+        void onIDCardReceive(IDCardRecord idCardRecord);
     }
 
 }

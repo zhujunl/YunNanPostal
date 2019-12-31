@@ -55,15 +55,6 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
         }
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        Fragment fragment = getVisibleFragment();
-        if (requestCode == ExpressFragment.REQUEST_CODE && fragment instanceof ExpressFragment) {
-            fragment.onActivityResult(requestCode, resultCode, data);
-        }
-    }
-
     /** OnFragmentInteractionListener方法区 **/
 
     @Override

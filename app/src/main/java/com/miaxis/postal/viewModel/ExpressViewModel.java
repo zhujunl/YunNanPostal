@@ -10,7 +10,9 @@ import com.miaxis.postal.app.PostalApp;
 import com.miaxis.postal.bridge.SingleLiveEvent;
 import com.miaxis.postal.bridge.Status;
 import com.miaxis.postal.data.entity.Express;
+import com.miaxis.postal.data.entity.IDCardRecord;
 import com.miaxis.postal.data.entity.TempId;
+import com.miaxis.postal.data.exception.MyException;
 import com.miaxis.postal.data.repository.PostalRepository;
 import com.miaxis.postal.manager.AmapManager;
 import com.miaxis.postal.manager.ScanManager;
@@ -19,26 +21,31 @@ import com.miaxis.postal.util.FileUtil;
 import com.speedata.libid2.IDInfor;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 public class ExpressViewModel extends BaseViewModel {
 
-    public ObservableField<IDInfor> idInfor = new ObservableField<>();
-    public ObservableField<Bitmap> header = new ObservableField<>();
-    public ObservableField<TempId> tempId = new ObservableField<>();
+    public ObservableField<IDCardRecord> idCardRecord = new ObservableField<>();
     public ObservableField<String> phone = new ObservableField<>();
     public ObservableField<String> address = new ObservableField<>();
 
     public MutableLiveData<List<Express>> expressList = new MutableLiveData<>(new ArrayList<>());
+    public MutableLiveData<Boolean> stopScanFlag = new SingleLiveEvent<>();
     public MutableLiveData<Express> newExpress = new SingleLiveEvent<>();
-    public MutableLiveData<Express> repeatExpress = new SingleLiveEvent<>();
+    public MutableLiveData<String> repeatExpress = new SingleLiveEvent<>();
+    public MutableLiveData<Boolean> uploadFlag = new SingleLiveEvent<>();
 
     public ExpressViewModel() {
     }
@@ -59,15 +66,54 @@ public class ExpressViewModel extends BaseViewModel {
 
     private ScanManager.OnScanListener listener = code -> {
         stopScan();
+        stopScanFlag.setValue(Boolean.TRUE);
+        waitMessage.setValue("扫描成功，开始校验");
+        Disposable disposable = Observable.just(code)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnNext(mCode -> {
+                    if (checkCodeLocalRepeat(mCode)) {
+                        waitMessage.setValue("");
+                        repeatExpress.setValue(mCode);
+                        throw new MyException("本地校验重复，导向已有单号");
+                    } else {
+                        waitMessage.setValue("本地校验通过，正在联网校验...");
+                    }
+                })
+                .observeOn(Schedulers.io())
+                .doOnNext(mCode -> {
+                    if (!checkCodeNetRepeat(mCode)) {
+                        waitMessage.postValue("");
+                        repeatExpress.postValue("");
+                        throw new MyException("联网校验重复");
+                    } else {
+                        waitMessage.postValue("联网校验通过，正在生成快递订单...");
+                    }
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(mCode -> {
+                    waitMessage.setValue("");
+                    makeNewExpress(mCode);
+                }, Throwable::printStackTrace);
+    };
+
+    private boolean checkCodeNetRepeat(String code) {
+        waitMessage.postValue("正在联网校验单号...");
+        try {
+            boolean result = PostalRepository.getInstance().checkOrderByCodeSync(code);
+            waitMessage.postValue("");
+            return result;
+        } catch (MyException | IOException e) {
+            e.printStackTrace();
+            return true;
+        }
+    }
+
+    private void makeNewExpress(String code) {
         Express express = new Express();
         express.setBarCode(code);
-        express.setStatus(Status.LOADING);
-        if (!checkRepeat(express)) {
-            newExpress.setValue(express);
-        } else {
-            repeatExpress.setValue(express);
-        }
-    };
+        newExpress.setValue(express);
+    }
 
     public List<Express> getExpressList() {
         List<Express> value = expressList.getValue();
@@ -78,6 +124,16 @@ public class ExpressViewModel extends BaseViewModel {
         } else {
             return value;
         }
+    }
+
+    public Express getExpressByCode(String code) {
+        List<Express> expressList = getExpressList();
+        for (Express express : expressList) {
+            if (TextUtils.equals(express.getBarCode(), code)) {
+                return express;
+            }
+        }
+        return null;
     }
 
     public void modifyExpress(Express express) {
@@ -106,31 +162,75 @@ public class ExpressViewModel extends BaseViewModel {
         }
         expressList.setValue(localList);
     }
-    
-//    private void uploadExpress(Express express) {
-//        Observable.create((ObservableOnSubscribe<Boolean>) emitter -> {
-//            PostalRepository.getInstance().saveExpressFromAppSync(express, tempId.get(), address.get(), phone.get());
-//            emitter.onNext(Boolean.TRUE);
-//        })
-//                .subscribeOn(Schedulers.io())
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe(aBoolean -> {
-//                    updateExpressStatus(express, Status.SUCCESS);
-//                }, throwable -> {
-//                    updateExpressStatus(express, Status.FAILED);
-//                    toast.setValue(ToastManager.getToastBody(hanleError(throwable), ToastManager.INFO));
-//                });
-//    }
-//
-//    private void updateExpressStatus(Express update, Status status) {
-//        List<Express> mExpressList = getExpressList();
-//        for (Express express : mExpressList) {
-//            if (TextUtils.equals(express.getBarCode(), update.getBarCode())) {
-//                express.setStatus(status);
-//            }
-//        }
-//        expressList.setValue(mExpressList);
-//    }
+
+    public void uploadExpress() {
+        IDCardRecord cardMessage = idCardRecord.get();
+        List<Express> expressList = getExpressList();
+        if (cardMessage == null || expressList.isEmpty()) {
+            return;
+        }
+        List<Express> cacheList = new ArrayList<>();
+        waitMessage.setValue("正在上传核验数据...");
+        Disposable disposable = Observable.create((ObservableOnSubscribe<TempId>) emitter -> {
+            TempId tempId = PostalRepository.getInstance().savePersonFromAppSync(cardMessage);
+            emitter.onNext(tempId);
+        })
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .map(tempId -> {
+                    String message = "";
+                    for (Express express : expressList) {
+                        try {
+                            message += "单号：" + express.getBarCode() + "\n\t状态：正在上传\n";
+                            waitMessage.postValue(message);
+                            boolean result = PostalRepository.getInstance().saveExpressFromAppSync(express, tempId, address.get(), phone.get());
+                            if (result) {
+                                message = message.replace("正在上传", "上传成功");
+                            } else {
+                                message = message.replace("正在上传", "重复单号");
+                            }
+                        } catch (IOException | MyException e) {
+                            e.printStackTrace();
+                            message = message.replace("正在上传", "上传失败");
+                            cacheList.add(express);
+                        }
+                        waitMessage.postValue(message);
+                    }
+                    return message;
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(message -> {
+                    waitMessage.setValue("");
+                    resultMessage.setValue(message);
+                    if (cacheList.isEmpty()) {
+                        uploadFlag.setValue(Boolean.TRUE);
+                    } else {
+                        waitMessage.setValue("部分数据上传失败，失败订单正在缓存...");
+                        saveExpressCache(message, cardMessage, cacheList, address.get(), phone.get());
+                    }
+                }, throwable -> {
+                    waitMessage.setValue("数据上传失败，失败原因：" + hanleError(throwable) + "\n数据正在缓存到本地，请勿退出");
+                    cacheList.addAll(expressList);
+                    saveExpressCache("", cardMessage, cacheList, address.get(), phone.get());
+                });
+    }
+
+    public void saveExpressCache(String message, IDCardRecord idCardRecord, List<Express> expressList, String address, String phone) {
+        Observable.create((ObservableOnSubscribe<Boolean>) emitter -> {
+            PostalRepository.getInstance().saveLocalExpress(idCardRecord, expressList, address, phone);
+            emitter.onNext(Boolean.TRUE);
+        })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(aBoolean -> {
+                    waitMessage.setValue("");
+                    resultMessage.setValue((TextUtils.isEmpty(message) ? "" : message + "\n\n") + "数据已缓存，将于后台自动尝试续传");
+                    uploadFlag.setValue(Boolean.TRUE);
+                }, throwable -> {
+                    waitMessage.setValue("");
+                    resultMessage.setValue((TextUtils.isEmpty(message) ? "" : message + "\n\n") + "数据缓存失败，失败原因：\n" + throwable.getMessage());
+                });
+    }
 
     public void getLocation() {
         AmapManager.getInstance().getOneLocation(aMapLocation -> address.set(aMapLocation.getAddress()));
@@ -143,10 +243,10 @@ public class ExpressViewModel extends BaseViewModel {
         return true;
     }
 
-    private boolean checkRepeat(Express repeat) {
+    private boolean checkCodeLocalRepeat(String code) {
         List<Express> expressList = getExpressList();
         for (Express express : expressList) {
-            if (TextUtils.equals(repeat.getBarCode(), express.getBarCode())) {
+            if (TextUtils.equals(code, express.getBarCode())) {
                 return true;
             }
         }

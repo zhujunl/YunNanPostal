@@ -45,6 +45,10 @@ public interface PostalNet {
                                              @Field("lat") double lat,
                                              @Field("lng") double lng);
 
+    @FormUrlEncoded
+    @POST("api/v1/order/checkOrderByCode")
+    Call<ResponseEntity> checkOrderByCodeSync(@Field("code") String code);
+
     @Multipart
     @POST("api/v1/expressman/registerExpressman")
     Call<ResponseEntity> registerExpressmanSync(@Part("name") String name,

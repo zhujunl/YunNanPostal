@@ -68,17 +68,6 @@ public class ExpressAdapter extends BaseAdapter<Express, RecyclerView.ViewHolder
     private void setBodyItemValues(BodyViewHolder holder, int position) {
         Express express = dataList.get(position - 1);
         holder.getBinding().setItem(express);
-//        switch (express.getStatus()) {
-//            case SUCCESS:
-//                GlideApp.with(holder.itemView).load(R.drawable.icon_success).into(holder.getBinding().ivUpload);
-//                break;
-//            case LOADING:
-//                GlideApp.with(holder.itemView).load(R.drawable.icon_loading).into(holder.getBinding().ivUpload);
-//                break;
-//            case FAILED:
-//                GlideApp.with(holder.itemView).load(R.drawable.icon_failed).into(holder.getBinding().ivUpload);
-//                break;
-//        }
         holder.itemView.setOnClickListener(new OnLimitClickHelper(view -> {
             if (bodyListener != null) {
                 bodyListener.onBodyClick(holder.itemView, holder.getLayoutPosition());

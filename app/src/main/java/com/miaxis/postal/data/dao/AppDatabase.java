@@ -13,11 +13,13 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 import com.miaxis.postal.data.converter.StringListConverter;
 import com.miaxis.postal.data.entity.Config;
 import com.miaxis.postal.data.entity.Courier;
+import com.miaxis.postal.data.entity.Express;
+import com.miaxis.postal.data.entity.IDCardRecord;
 import com.miaxis.postal.util.FileUtil;
 
 import java.io.File;
 
-@Database(entities = {Config.class, Courier.class}, version = 1)
+@Database(entities = {Config.class, Courier.class, IDCardRecord.class, Express.class}, version = 1)
 @TypeConverters({StringListConverter.class})
 public abstract class AppDatabase extends RoomDatabase {
 
@@ -64,5 +66,9 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract ConfigDao configDao();
 
     public abstract CourierDao courierDao();
+
+    public abstract IDCardRecordDao idCardRecordDao();
+
+    public abstract ExpressDao expressDao();
 
 }

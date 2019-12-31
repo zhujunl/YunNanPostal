@@ -12,6 +12,8 @@ import com.miaxis.postal.data.entity.Courier;
 import com.miaxis.postal.data.exception.MyException;
 import com.miaxis.postal.data.model.CourierModel;
 import com.miaxis.postal.data.repository.LoginRepository;
+import com.miaxis.postal.data.repository.PostalRepository;
+import com.miaxis.postal.manager.ToastManager;
 import com.miaxis.postal.util.ValueUtil;
 
 import io.reactivex.Observable;
@@ -64,9 +66,18 @@ public class LoginViewModel extends BaseViewModel {
                     waitMessage.setValue("");
                     courierLiveData.setValue(courier);
                     loginFaceFlag.setValue(Boolean.TRUE);
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            PostalRepository.getInstance().uploadLocalExpress();
+                        }
+                    }).start();
                 }, throwable -> {
                     waitMessage.setValue("");
-                    resultMessage.setValue(hanleError(throwable));
+                    if (courierLiveData.getValue() != null) {
+                        loginFaceFlag.setValue(Boolean.TRUE);
+                    }
+                    toast.setValue(ToastManager.getToastBody(hanleError(throwable), ToastManager.INFO));
                 });
     }
 

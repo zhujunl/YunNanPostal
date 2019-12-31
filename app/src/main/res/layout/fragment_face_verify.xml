@@ -80,13 +80,13 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintWidth_percent="0.3"
-                viewadapter:imageSource="@{viewModel.idInforLiveData.bmps}"/>
+                viewadapter:imageSource="@{viewModel.idCardRecordLiveData.cardBitmap}"/>
 
             <TextView
                 android:id="@+id/tv_name"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="@{viewModel.idInforLiveData.name}"
+                android:text="@{viewModel.idCardRecordLiveData.name}"
                 android:gravity="center"
                 app:layout_constraintStart_toEndOf="@id/iv_header"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -97,7 +97,7 @@
                 android:id="@+id/tv_card_number"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="@{viewModel.idInforLiveData.num}"
+                android:text="@{viewModel.idCardRecordLiveData.cardNumber}"
                 android:gravity="center"
                 app:layout_constraintStart_toEndOf="@id/iv_header"
                 app:layout_constraintEnd_toEndOf="parent"

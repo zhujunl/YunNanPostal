@@ -5,13 +5,15 @@ import androidx.lifecycle.MutableLiveData;
 import com.miaxis.postal.app.PostalApp;
 import com.miaxis.postal.bridge.SingleLiveEvent;
 import com.miaxis.postal.bridge.Status;
+import com.miaxis.postal.data.entity.IDCardRecord;
 import com.miaxis.postal.manager.CardManager;
+import com.miaxis.postal.manager.ToastManager;
 import com.speedata.libid2.IDInfor;
 
 public class CardViewModel extends BaseViewModel {
 
     public MutableLiveData<Status> initCardResult = new SingleLiveEvent<>();
-    public MutableLiveData<IDInfor> idInfoLiveData = new MutableLiveData<>();
+    public MutableLiveData<IDCardRecord> idCardRecord = new MutableLiveData<>();
 
     public CardViewModel() {
     }
@@ -32,8 +34,12 @@ public class CardViewModel extends BaseViewModel {
         }
 
         @Override
-        public void onIDCardReceive(IDInfor idInfor) {
-            idInfoLiveData.setValue(idInfor);
+        public void onIDCardReceive(IDCardRecord data) {
+            if (!CardManager.getInstance().checkIsOutValidate(data)) {
+                idCardRecord.setValue(data);
+            } else {
+                toast.setValue(ToastManager.getToastBody("身份证已过期", ToastManager.INFO));
+            }
         }
     };
 

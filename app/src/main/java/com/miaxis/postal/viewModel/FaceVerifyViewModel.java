@@ -9,6 +9,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.miaxis.postal.bridge.SingleLiveEvent;
 import com.miaxis.postal.data.dto.TempIdDto;
+import com.miaxis.postal.data.entity.IDCardRecord;
 import com.miaxis.postal.data.entity.MxRGBImage;
 import com.miaxis.postal.data.entity.TempId;
 import com.miaxis.postal.data.exception.MyException;
@@ -16,6 +17,7 @@ import com.miaxis.postal.data.repository.PostalRepository;
 import com.miaxis.postal.manager.CameraManager;
 import com.miaxis.postal.manager.ConfigManager;
 import com.miaxis.postal.manager.FaceManager;
+import com.miaxis.postal.manager.ToastManager;
 import com.speedata.libid2.IDInfor;
 
 import io.reactivex.Observable;
@@ -28,22 +30,20 @@ import io.reactivex.schedulers.Schedulers;
 
 public class FaceVerifyViewModel extends BaseViewModel {
 
-    public MutableLiveData<IDInfor> idInforLiveData = new MutableLiveData<>();
+    public MutableLiveData<IDCardRecord> idCardRecordLiveData = new MutableLiveData<>();
     public ObservableField<String> hint = new ObservableField<>("");
-    public MutableLiveData<TempId> tempIdLiveData = new SingleLiveEvent<>();
+    public MutableLiveData<IDCardRecord> verifyFlag = new SingleLiveEvent<>();
 
     private byte[] cardFeature;
-    public Bitmap headerCache;
 
     public FaceVerifyViewModel() {
     }
 
-    public void startFaceVerify(IDInfor idInfor) {
+    public void startFaceVerify(IDCardRecord idCardRecord) {
         cardFeature = null;
-        headerCache = null;
         hint.set("身份证证件照处理中");
         Disposable disposable = Observable.create((ObservableOnSubscribe<byte[]>) emitter -> {
-            byte[] feature = FaceManager.getInstance().getCardFeatureByBitmapPosting(idInfor.getBmps());
+            byte[] feature = FaceManager.getInstance().getCardFeatureByBitmapPosting(idCardRecord.getCardBitmap());
             if (feature != null) {
                 emitter.onNext(feature);
             } else {
@@ -79,13 +79,19 @@ public class FaceVerifyViewModel extends BaseViewModel {
                 float score = FaceManager.getInstance().matchFeature(feature, cardFeature);
                 if (score >= ConfigManager.getInstance().getConfig().getVerifyScore()) {
                     byte[] fileImage = FaceManager.getInstance().imageEncode(mxRGBImage.getRgbImage(), mxRGBImage.getWidth(), mxRGBImage.getHeight());
-                    headerCache = BitmapFactory.decodeByteArray(fileImage, 0, fileImage.length);
-                    hint.set("人证核验成功，正在上传");
+                    Bitmap header = BitmapFactory.decodeByteArray(fileImage, 0, fileImage.length);
+                    hint.set("人证核验成功");
                     stopFaceVerify();
-                    uploadVerify();
+                    IDCardRecord value = idCardRecordLiveData.getValue();
+                    if (value != null) {
+                        value.setFaceBitmap(header);
+                        verifyFlag.postValue(value);
+                    } else {
+                        toast.postValue(ToastManager.getToastBody("遇到错误，请退出后重试", ToastManager.ERROR));
+                    }
                     return;
                 } else {
-                    hint.set("比对失败");
+                    hint.set("请继续对准寄件人");
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -94,25 +100,25 @@ public class FaceVerifyViewModel extends BaseViewModel {
         }
     };
 
-    public void uploadVerify() {
-        IDInfor idInfor = idInforLiveData.getValue();
-        if (idInfor != null && headerCache != null) {
-            waitMessage.postValue("正在上传，请稍后...");
-            Observable.create((ObservableOnSubscribe<TempId>) emitter -> {
-                TempId tempId = PostalRepository.getInstance().savePersonFromAppSync(idInfor, headerCache);
-                emitter.onNext(tempId);
-            })
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(tempId -> {
-                        waitMessage.setValue("");
-                        tempIdLiveData.setValue(tempId);
-                    }, throwable -> {
-                        waitMessage.setValue("");
-                        resultMessage.setValue(hanleError(throwable));
-                        hint.set("核验结果上传失败");
-                    });
-        }
-    }
+//    public void uploadVerify() {
+//        IDInfor idInfor = idInforLiveData.getValue();
+//        if (idInfor != null && headerCache != null) {
+//            waitMessage.postValue("正在上传，请稍后...");
+//            Observable.create((ObservableOnSubscribe<TempId>) emitter -> {
+//                TempId tempId = PostalRepository.getInstance().savePersonFromAppSync(idInfor, headerCache);
+//                emitter.onNext(tempId);
+//            })
+//                    .subscribeOn(Schedulers.io())
+//                    .observeOn(AndroidSchedulers.mainThread())
+//                    .subscribe(tempId -> {
+//                        waitMessage.setValue("");
+//                        tempIdLiveData.setValue(tempId);
+//                    }, throwable -> {
+//                        waitMessage.setValue("");
+//                        resultMessage.setValue(hanleError(throwable));
+//                        hint.set("核验结果上传失败");
+//                    });
+//        }
+//    }
 
 }

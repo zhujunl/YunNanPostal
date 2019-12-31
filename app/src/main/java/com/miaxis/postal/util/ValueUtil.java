@@ -13,7 +13,7 @@ public class ValueUtil {
 
     public static final String DEFAULT_BASE_HOST = "http://183.129.171.153:9194/policebus/";
     public static final float DEFAULT_VERIFY_SCORE = 0.70f;
-    public static final int DEFAULT_QUALITY_SCORE = 50;
+    public static final int DEFAULT_QUALITY_SCORE = 60;
     public static final int DEFAULT_REGISTER_QUALITY_SCORE = 80;
     public static final int DEFAULT_DEVICE_ID = 0;
     public static final int DEFAULT_HEART_BEAT_INTERVAL = 10 * 60;

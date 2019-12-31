@@ -19,7 +19,7 @@ public class InspectViewModel extends BaseViewModel {
 
     public static final int MAX_COUNT = 5;
 
-    public ObservableField<Express> express = new ObservableField<>(null);
+    public ObservableField<Express> express = new ObservableField<>();
     public MutableLiveData<List<Photograph>> photographList = new MutableLiveData<>(new ArrayList<>());
 
     private boolean modified = false;

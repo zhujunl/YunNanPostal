@@ -60,15 +60,15 @@ public class LoginRepository extends BaseRepository {
                                        String finger1Feature,
                                        String finger2Feature,
                                        Bitmap bitmap) throws IOException, MyException {
-        String path = FileUtil.FACE_IMAGE_PATH + File.separator;
-        String cardFileName = "card_" + cardNo + System.currentTimeMillis() + ".jpg";
+        String faceFilePath = FileUtil.FACE_IMAGE_PATH + File.separator + "card_" + cardNo + System.currentTimeMillis() + ".jpg";
+        File file = FileUtil.saveBitmap(bitmap, faceFilePath);
         Response<ResponseEntity> execute = PostalApi.registerExpressmanSync(name,
                 cardNo,
                 phone,
                 faceFeature,
                 finger1Feature,
                 finger2Feature,
-                FileUtil.saveBitmap(bitmap, path, cardFileName)).execute();
+                file).execute();
         try {
             ResponseEntity body = execute.body();
             if (body != null) {
@@ -81,6 +81,8 @@ public class LoginRepository extends BaseRepository {
         } catch (Exception e) {
             e.printStackTrace();
             throw new MyException(e.getMessage());
+        } finally {
+            file.delete();
         }
         throw new MyException("服务端返回数据解析失败，或为空");
     }

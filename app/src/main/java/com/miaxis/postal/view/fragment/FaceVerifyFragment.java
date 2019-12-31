@@ -18,6 +18,7 @@ import android.widget.FrameLayout;
 import com.miaxis.postal.BR;
 import com.miaxis.postal.R;
 import com.miaxis.postal.data.dto.TempIdDto;
+import com.miaxis.postal.data.entity.IDCardRecord;
 import com.miaxis.postal.data.entity.TempId;
 import com.miaxis.postal.databinding.FragmentFaceVerifyBinding;
 import com.miaxis.postal.manager.CameraManager;
@@ -29,14 +30,14 @@ import com.speedata.libid2.IDInfor;
 
 public class FaceVerifyFragment extends BaseViewModelFragment<FragmentFaceVerifyBinding, FaceVerifyViewModel> {
 
-    private IDInfor idInfor;
+    private IDCardRecord idCardRecord;
 
     private RoundBorderView roundBorderView;
     private RoundFrameLayout roundFrameLayout;
 
-    public static FaceVerifyFragment newInstance(IDInfor idInfor) {
+    public static FaceVerifyFragment newInstance(IDCardRecord idCardRecord) {
         FaceVerifyFragment fragment = new FaceVerifyFragment();
-        fragment.setIdInfor(idInfor);
+        fragment.setIdCardRecord(idCardRecord);
         return fragment;
     }
 
@@ -61,16 +62,15 @@ public class FaceVerifyFragment extends BaseViewModelFragment<FragmentFaceVerify
 
     @Override
     protected void initData() {
-        viewModel.idInforLiveData.setValue(idInfor);
-        viewModel.idInforLiveData.observe(this, idInforObserver);
-        viewModel.tempIdLiveData.observe(this, tempIdObserver);
+        viewModel.idCardRecordLiveData.setValue(idCardRecord);
+        viewModel.idCardRecordLiveData.observe(this, idCardRecordObserver);
+        viewModel.verifyFlag.observe(this, verifyFlagObserver);
         binding.rtvCamera.getViewTreeObserver().addOnGlobalLayoutListener(globalListener);
     }
 
     @Override
     protected void initView() {
-        binding.ivBack.setOnClickListener(v ->
-                onBackPressed());
+        binding.ivBack.setOnClickListener(v -> onBackPressed());
     }
 
     @Override
@@ -85,11 +85,9 @@ public class FaceVerifyFragment extends BaseViewModelFragment<FragmentFaceVerify
         CameraManager.getInstance().closeBackCamera();
     }
 
-    private Observer<IDInfor> idInforObserver = mIdInfor -> viewModel.startFaceVerify(idInfor);
+    private Observer<IDCardRecord> idCardRecordObserver = mIdCardRecord -> viewModel.startFaceVerify(idCardRecord);
 
-    private Observer<TempId> tempIdObserver = tempId ->
-            mListener.replaceFragment(ExpressFragment.newInstance(
-                    viewModel.idInforLiveData.getValue(), viewModel.headerCache, tempId));
+    private Observer<IDCardRecord> verifyFlagObserver = mIdCardRecord -> mListener.replaceFragment(ExpressFragment.newInstance(mIdCardRecord));
 
     private ViewTreeObserver.OnGlobalLayoutListener globalListener = new ViewTreeObserver.OnGlobalLayoutListener() {
         @Override
@@ -135,7 +133,7 @@ public class FaceVerifyFragment extends BaseViewModelFragment<FragmentFaceVerify
         });
     };
 
-    public void setIdInfor(IDInfor idInfor) {
-        this.idInfor = idInfor;
+    public void setIdCardRecord(IDCardRecord idCardRecord) {
+        this.idCardRecord = idCardRecord;
     }
 }

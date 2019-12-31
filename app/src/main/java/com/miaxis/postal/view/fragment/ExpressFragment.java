@@ -11,12 +11,14 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 
 import android.provider.MediaStore;
+import android.text.TextUtils;
 import android.view.View;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.miaxis.postal.R;
 import com.miaxis.postal.bridge.Status;
 import com.miaxis.postal.data.entity.Express;
+import com.miaxis.postal.data.entity.IDCardRecord;
 import com.miaxis.postal.data.entity.TempId;
 import com.miaxis.postal.data.event.ExpressEditEvent;
 import com.miaxis.postal.databinding.FragmentExpressBinding;
@@ -24,6 +26,8 @@ import com.miaxis.postal.manager.CameraManager;
 import com.miaxis.postal.manager.ToastManager;
 import com.miaxis.postal.view.adapter.ExpressAdapter;
 import com.miaxis.postal.view.adapter.SpacesItemDecoration;
+import com.miaxis.postal.view.auxiliary.OnLimitClickHelper;
+import com.miaxis.postal.view.auxiliary.OnLimitClickListener;
 import com.miaxis.postal.view.base.BaseViewModelFragment;
 import com.miaxis.postal.viewModel.ExpressViewModel;
 import com.speedata.libid2.IDInfor;
@@ -36,20 +40,14 @@ import java.util.List;
 
 public class ExpressFragment extends BaseViewModelFragment<FragmentExpressBinding, ExpressViewModel> {
 
-    public static final int REQUEST_CODE = 11;
-
-    private IDInfor idInfor;
-    private Bitmap header;
-    private TempId tempId;
+    private IDCardRecord idCardRecord;
 
     private ExpressAdapter expressAdapter;
     private MaterialDialog scanDialog;
 
-    public static ExpressFragment newInstance(IDInfor idInfor, Bitmap header, TempId tempId) {
+    public static ExpressFragment newInstance(IDCardRecord idCardRecord) {
         ExpressFragment fragment = new ExpressFragment();
-        fragment.setIdInfor(idInfor);
-        fragment.setHeader(header);
-        fragment.setTempId(tempId);
+        fragment.setIdCardRecord(idCardRecord);
         return fragment;
     }
 
@@ -74,9 +72,7 @@ public class ExpressFragment extends BaseViewModelFragment<FragmentExpressBindin
 
     @Override
     protected void initData() {
-        viewModel.idInfor.set(idInfor);
-        viewModel.header.set(header);
-        viewModel.tempId.set(tempId);
+        viewModel.idCardRecord.set(idCardRecord);
     }
 
     @Override
@@ -84,18 +80,12 @@ public class ExpressFragment extends BaseViewModelFragment<FragmentExpressBindin
         initDialog();
         initRecycleView();
         binding.ivAddress.setOnClickListener(v -> viewModel.getLocation());
-        binding.fabConfirm.setOnClickListener(v -> {
-//            new MaterialDialog.Builder(getContext())
-//                    .title("确认离开")
-//                    .content("确认已完成该寄件人名下的所有订单了吗？")
-//                    .positiveText("确认")
-//                    .onPositive((dialog, which) -> mListener.backToStack(HomeFragment.class))
-//                    .negativeText("取消")
-//                    .show();
-        });
+        binding.fabConfirm.setOnClickListener(confirmClickListener);
         viewModel.expressList.observe(this, expressListObserver);
         viewModel.newExpress.observe(this, newExpressObserver);
         viewModel.repeatExpress.observe(this, repeatExpressObserver);
+        viewModel.stopScanFlag.observe(this, stopScanFlagObserver);
+        viewModel.uploadFlag.observe(this, uploadFlagObserver);
         EventBus.getDefault().register(this);
     }
 
@@ -148,12 +138,8 @@ public class ExpressFragment extends BaseViewModelFragment<FragmentExpressBindin
     }
 
     private ExpressAdapter.OnHeaderClickListener headerListener = () -> {
-        //            scanDialog.show();
-//            viewModel.startScan();
-        Express express = new Express();
-        express.setBarCode("asd");
-        express.setStatus(Status.LOADING);
-        viewModel.newExpress.setValue(express);
+        scanDialog.show();
+        viewModel.startScan();
     };
 
     private ExpressAdapter.OnBodyClickListener bodyListener = (view, position) -> {
@@ -165,25 +151,42 @@ public class ExpressFragment extends BaseViewModelFragment<FragmentExpressBindin
         expressAdapter.notifyDataSetChanged();
     };
 
+    private Observer<Boolean> stopScanFlagObserver = flag -> scanDialog.dismiss();
+
     private Observer<Express> newExpressObserver = express -> {
         scanDialog.dismiss();
         mListener.replaceFragment(InspectFragment.newInstance(express));
     };
 
-    private Observer<Express> repeatExpressObserver = express -> {
+    private Observer<String> repeatExpressObserver = code -> {
         scanDialog.dismiss();
-        ToastManager.toast("该条码编号已重复", ToastManager.INFO);
+        if (TextUtils.isEmpty(code)) {
+            ToastManager.toast("该条码编号已重复", ToastManager.INFO);
+        } else {
+            Express expressByCode = viewModel.getExpressByCode(code);
+            if (expressByCode != null) {
+                mListener.replaceFragment(InspectFragment.newInstance(expressByCode));
+            } else {
+                ToastManager.toast("该条码编号已重复", ToastManager.INFO);
+            }
+        }
     };
 
-    public void setIdInfor(IDInfor idInfor) {
-        this.idInfor = idInfor;
-    }
+    private Observer<Boolean> uploadFlagObserver = flag -> mListener.backToStack(HomeFragment.class);
 
-    public void setHeader(Bitmap header) {
-        this.header = header;
-    }
+    private View.OnClickListener confirmClickListener = new OnLimitClickHelper(view -> {
+        if (!viewModel.checkInput()) {
+            ToastManager.toast("请输入寄件人手机号码和寄件地址", ToastManager.INFO);
+            return;
+        }
+        if (viewModel.getExpressList().isEmpty()) {
+            ToastManager.toast("请至少完成一个订单", ToastManager.INFO);
+            return;
+        }
+        viewModel.uploadExpress();
+    });
 
-    public void setTempId(TempId tempId) {
-        this.tempId = tempId;
+    public void setIdCardRecord(IDCardRecord idCardRecord) {
+        this.idCardRecord = idCardRecord;
     }
 }

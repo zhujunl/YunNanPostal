@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Base64;
+import android.util.Log;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -32,7 +33,9 @@ public class FileUtil {
     public static final String LICENCE_PATH = PATH + File.separator + "FaceId_ST" + File.separator + "st_lic.txt";
     public static final String MODEL_PATH = MAIN_PATH + File.separator + "zzFaceModel";
     public static final String FACE_IMAGE_PATH = MAIN_PATH + File.separator + "recordImage";
+    public static final String ORDER_IMAGE_PATH = MAIN_PATH + File.separator + "orderImage";
     public static final String FACE_STOREHOUSE_PATH = MAIN_PATH + File.separator + "faceStorehouse";
+    public static final String ORDER_STOREHOUSE_PATH = MAIN_PATH + File.separator + "orderStorehouse";
 
     public static void initDirectory() {
         File path = new File(FileUtil.PATH);
@@ -51,7 +54,15 @@ public class FileUtil {
         if (!path.exists()) {
             path.mkdirs();
         }
+        path = new File(FileUtil.ORDER_IMAGE_PATH);
+        if (!path.exists()) {
+            path.mkdirs();
+        }
         path = new File(FileUtil.FACE_STOREHOUSE_PATH);
+        if (!path.exists()) {
+            path.mkdirs();
+        }
+        path = new File(FileUtil.ORDER_STOREHOUSE_PATH);
         if (!path.exists()) {
             path.mkdirs();
         }
@@ -208,13 +219,9 @@ public class FileUtil {
         }
     }
 
-    public static File saveBitmap(Bitmap bitmap, String path, String name) {
+    public static File saveBitmap(Bitmap bitmap, String path) {
         try {
-            File dir = new File(path);
-            if (!dir.exists() || !dir.isDirectory()) {
-                dir.mkdirs();
-            }
-            File file = new File(path, name);
+            File file = new File(path);
             if (file.exists()) {
                 file.delete();
             }
@@ -254,6 +261,17 @@ public class FileUtil {
         options.inSampleSize = inSampleSize; // 设置为刚才计算的压缩比例
         Bitmap bm = BitmapFactory.decodeFile(imagePath, options); // 解码文件
         return bm;
+    }
+
+    public static void deleteImg(String path) {
+        try {
+            File f = new File(path);
+            if (!f.delete()) {
+                Log.e("asd", "删除失败" + path);
+            }
+        } catch (Exception e) {
+            Log.e("asd", "删除失败 路径：" + path + "\r\n" + e.getMessage());
+        }
     }
 
 }
