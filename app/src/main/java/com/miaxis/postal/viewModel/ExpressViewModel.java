@@ -37,6 +37,8 @@ import io.reactivex.schedulers.Schedulers;
 
 public class ExpressViewModel extends BaseViewModel {
 
+    public static final String RECE_DATA_ACTION = "com.se4500.onDecodeComplete";
+
     public ObservableField<IDCardRecord> idCardRecord = new ObservableField<>();
     public ObservableField<String> phone = new ObservableField<>();
     public ObservableField<String> address = new ObservableField<>();
@@ -64,7 +66,9 @@ public class ExpressViewModel extends BaseViewModel {
         }
     }
 
-    private ScanManager.OnScanListener listener = code -> {
+    private ScanManager.OnScanListener listener = this::handlerScanCode;
+
+    public void handlerScanCode(String code) {
         stopScan();
         stopScanFlag.setValue(Boolean.TRUE);
         waitMessage.setValue("扫描成功，开始校验");
@@ -95,7 +99,7 @@ public class ExpressViewModel extends BaseViewModel {
                     waitMessage.setValue("");
                     makeNewExpress(mCode);
                 }, Throwable::printStackTrace);
-    };
+    }
 
     private boolean checkCodeNetRepeat(String code) {
         waitMessage.postValue("正在联网校验单号...");

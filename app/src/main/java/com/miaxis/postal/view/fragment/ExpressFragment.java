@@ -1,6 +1,9 @@
 package com.miaxis.postal.view.fragment;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.net.Uri;
 
@@ -10,8 +13,10 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 
+import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -29,6 +34,7 @@ import com.miaxis.postal.view.adapter.SpacesItemDecoration;
 import com.miaxis.postal.view.auxiliary.OnLimitClickHelper;
 import com.miaxis.postal.view.auxiliary.OnLimitClickListener;
 import com.miaxis.postal.view.base.BaseViewModelFragment;
+import com.miaxis.postal.view.component.ScanCodeReceiver;
 import com.miaxis.postal.viewModel.ExpressViewModel;
 import com.speedata.libid2.IDInfor;
 
@@ -79,6 +85,7 @@ public class ExpressFragment extends BaseViewModelFragment<FragmentExpressBindin
     protected void initView() {
         initDialog();
         initRecycleView();
+        initReceiver();
         binding.ivAddress.setOnClickListener(v -> viewModel.getLocation());
         binding.fabConfirm.setOnClickListener(confirmClickListener);
         viewModel.expressList.observe(this, expressListObserver);
@@ -112,6 +119,7 @@ public class ExpressFragment extends BaseViewModelFragment<FragmentExpressBindin
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        getActivity().unregisterReceiver(receiver);
         viewModel.expressList.removeObserver(expressListObserver);
         EventBus.getDefault().unregister(this);
     }
@@ -136,6 +144,22 @@ public class ExpressFragment extends BaseViewModelFragment<FragmentExpressBindin
         expressAdapter.setHeaderListener(headerListener);
         expressAdapter.setBodyListener(bodyListener);
     }
+
+    private void initReceiver() {
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(ScanCodeReceiver.RECE_DATA_ACTION);
+        getActivity().registerReceiver(receiver, intentFilter);
+    }
+
+    private BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (TextUtils.equals(intent.getAction(), ExpressViewModel.RECE_DATA_ACTION)) {
+                String data = intent.getStringExtra("se4500");
+                viewModel.handlerScanCode(data);
+            }
+        }
+    };
 
     private ExpressAdapter.OnHeaderClickListener headerListener = () -> {
         scanDialog.show();

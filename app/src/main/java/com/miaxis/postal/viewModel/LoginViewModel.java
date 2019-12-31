@@ -66,18 +66,13 @@ public class LoginViewModel extends BaseViewModel {
                     waitMessage.setValue("");
                     courierLiveData.setValue(courier);
                     loginFaceFlag.setValue(Boolean.TRUE);
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            PostalRepository.getInstance().uploadLocalExpress();
-                        }
-                    }).start();
+                    new Thread(() -> PostalRepository.getInstance().uploadLocalExpress()).start();
                 }, throwable -> {
                     waitMessage.setValue("");
                     if (courierLiveData.getValue() != null) {
                         loginFaceFlag.setValue(Boolean.TRUE);
                     }
-                    toast.setValue(ToastManager.getToastBody(hanleError(throwable), ToastManager.INFO));
+                    toast.setValue(ToastManager.getToastBody("离线登录：" + hanleError(throwable), ToastManager.INFO));
                 });
     }
 

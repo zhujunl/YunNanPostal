@@ -17,6 +17,7 @@ import com.miaxis.postal.data.repository.PostalRepository;
 import com.miaxis.postal.manager.CameraManager;
 import com.miaxis.postal.manager.ConfigManager;
 import com.miaxis.postal.manager.FaceManager;
+import com.miaxis.postal.manager.TTSManager;
 import com.miaxis.postal.manager.ToastManager;
 import com.speedata.libid2.IDInfor;
 
@@ -81,6 +82,7 @@ public class FaceVerifyViewModel extends BaseViewModel {
                     byte[] fileImage = FaceManager.getInstance().imageEncode(mxRGBImage.getRgbImage(), mxRGBImage.getWidth(), mxRGBImage.getHeight());
                     Bitmap header = BitmapFactory.decodeByteArray(fileImage, 0, fileImage.length);
                     hint.set("人证核验成功");
+                    TTSManager.getInstance().playVoiceMessageFlush("人证核验成功");
                     stopFaceVerify();
                     IDCardRecord value = idCardRecordLiveData.getValue();
                     if (value != null) {
