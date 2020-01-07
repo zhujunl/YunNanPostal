@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.net.Uri;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
@@ -19,6 +20,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.miaxis.postal.R;
 import com.miaxis.postal.bridge.Status;
@@ -86,6 +88,7 @@ public class ExpressFragment extends BaseViewModelFragment<FragmentExpressBindin
         initDialog();
         initRecycleView();
         initReceiver();
+        binding.ivBack.setOnClickListener(v -> onBackPressed());
         binding.ivAddress.setOnClickListener(v -> viewModel.getLocation());
         binding.fabConfirm.setOnClickListener(confirmClickListener);
         viewModel.expressList.observe(this, expressListObserver);
@@ -207,7 +210,12 @@ public class ExpressFragment extends BaseViewModelFragment<FragmentExpressBindin
             ToastManager.toast("请至少完成一个订单", ToastManager.INFO);
             return;
         }
-        viewModel.uploadExpress();
+        new MaterialDialog.Builder(getContext())
+                .title("确认上传？")
+                .positiveText("确认")
+                .onPositive((dialog, which) -> viewModel.uploadExpress())
+                .negativeText("取消")
+                .show();
     });
 
     public void setIdCardRecord(IDCardRecord idCardRecord) {

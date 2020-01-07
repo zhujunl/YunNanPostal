@@ -52,10 +52,10 @@
             android:id="@+id/tv_hint"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:textSize="24sp"
+            android:textSize="20sp"
             android:gravity="center"
             android:text="@{viewModel.hint}"
-            app:layout_constraintHeight_percent="0.15"
+            app:layout_constraintHeight_percent="0.12"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/fl_camera"/>
@@ -63,6 +63,9 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="0dp"
             android:layout_height="0dp"
+            android:layout_margin="10dp"
+            android:background="@drawable/stroke_shape"
+            app:layout_constraintWidth_percent="0.9"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_hint"
@@ -74,35 +77,172 @@
                 android:layout_height="0dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/default_header"
-                app:layout_constraintHorizontal_bias="0.2"
+                android:padding="5dp"
                 app:layout_constraintDimensionRatio="102:126"
+                app:layout_constraintHorizontal_bias="0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintWidth_percent="0.3"
+                app:layout_constraintBottom_toTopOf="@id/tv_card_number_hint"
                 viewadapter:imageSource="@{viewModel.idCardRecordLiveData.cardBitmap}"/>
+
+            <TextView
+                android:id="@+id/tv_name_hint"
+                android:text="姓名"
+                android:gravity="center"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintWidth_percent="0.2"
+                app:layout_constraintStart_toEndOf="@id/iv_header"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/tv_name"
+                app:layout_constraintBottom_toTopOf="@id/tv_sex_hint"/>
 
             <TextView
                 android:id="@+id/tv_name"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
                 android:text="@{viewModel.idCardRecordLiveData.name}"
-                android:gravity="center"
-                app:layout_constraintStart_toEndOf="@id/iv_header"
+                android:gravity="center|start"
+                app:layout_constraintStart_toEndOf="@id/tv_name_hint"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toTopOf="@id/tv_card_number"
-                app:layout_constraintTop_toTopOf="@id/iv_header" />
+                app:layout_constraintTop_toTopOf="@id/tv_name_hint"
+                app:layout_constraintBottom_toBottomOf="@id/tv_name_hint"/>
+
+            <TextView
+                android:id="@+id/tv_sex_hint"
+                android:text="性别"
+                android:gravity="center"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintWidth_percent="0.2"
+                app:layout_constraintStart_toEndOf="@id/iv_header"
+                app:layout_constraintTop_toBottomOf="@id/tv_name_hint"
+                app:layout_constraintBottom_toTopOf="@id/tv_birthday_hint"
+                app:layout_constraintEnd_toStartOf="@id/tv_sex"/>
+
+            <TextView
+                android:id="@+id/tv_sex"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:text="@{viewModel.idCardRecordLiveData.sex}"
+                android:gravity="center|start"
+                app:layout_constraintStart_toEndOf="@id/tv_sex_hint"
+                app:layout_constraintEnd_toStartOf="@id/tv_nation_hint"
+                app:layout_constraintTop_toTopOf="@id/tv_sex_hint"
+                app:layout_constraintBottom_toBottomOf="@id/tv_sex_hint"/>
+
+            <TextView
+                android:id="@+id/tv_nation_hint"
+                android:text="民族"
+                android:gravity="center"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintWidth_percent="0.2"
+                app:layout_constraintStart_toEndOf="@id/tv_sex"
+                app:layout_constraintTop_toTopOf="@id/tv_sex_hint"
+                app:layout_constraintEnd_toStartOf="@id/tv_nation"
+                app:layout_constraintBottom_toBottomOf="@id/tv_sex_hint"/>
+
+            <TextView
+                android:id="@+id/tv_nation"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:text="@{viewModel.idCardRecordLiveData.nation}"
+                android:gravity="center|start"
+                app:layout_constraintStart_toEndOf="@id/tv_nation_hint"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/tv_sex_hint"
+                app:layout_constraintBottom_toBottomOf="@id/tv_sex_hint"/>
+
+            <TextView
+                android:id="@+id/tv_birthday_hint"
+                android:text="出生"
+                android:gravity="center"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintWidth_percent="0.2"
+                app:layout_constraintStart_toEndOf="@id/iv_header"
+                app:layout_constraintTop_toBottomOf="@id/tv_sex_hint"
+                app:layout_constraintEnd_toStartOf="@id/tv_birthday"
+                app:layout_constraintBottom_toTopOf="@id/tv_card_number_hint"/>
+
+            <TextView
+                android:id="@+id/tv_birthday"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:text="@{viewModel.idCardRecordLiveData.birthday}"
+                android:gravity="center|start"
+                app:layout_constraintStart_toEndOf="@id/tv_birthday_hint"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/tv_birthday_hint"
+                app:layout_constraintBottom_toBottomOf="@id/tv_birthday_hint"/>
+
+            <TextView
+                android:id="@+id/tv_card_number_hint"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:text="身份号码"
+                android:gravity="center"
+                app:layout_constraintEnd_toEndOf="@id/iv_header"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_birthday_hint"
+                app:layout_constraintBottom_toTopOf="@id/tv_address_hint"/>
 
             <TextView
                 android:id="@+id/tv_card_number"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
                 android:text="@{viewModel.idCardRecordLiveData.cardNumber}"
-                android:gravity="center"
-                app:layout_constraintStart_toEndOf="@id/iv_header"
+                android:gravity="center|start"
+                app:layout_constraintStart_toEndOf="@id/tv_card_number_hint"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tv_name"
-                app:layout_constraintBottom_toBottomOf="@id/iv_header"/>
+                app:layout_constraintTop_toTopOf="@id/tv_card_number_hint"
+                app:layout_constraintBottom_toBottomOf="@id/tv_card_number_hint"/>
+
+            <TextView
+                android:id="@+id/tv_address_hint"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:text="住址"
+                android:gravity="center"
+                app:layout_constraintEnd_toEndOf="@id/iv_header"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_card_number_hint"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+            <TextView
+                android:id="@+id/tv_address"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:text="@{viewModel.idCardRecordLiveData.address}"
+                android:gravity="center|start"
+                app:layout_constraintStart_toEndOf="@id/tv_address_hint"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/tv_address_hint"
+                app:layout_constraintBottom_toBottomOf="@id/tv_address_hint"/>
+
+<!--            <TextView-->
+<!--                android:id="@+id/tv_name"-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="@{viewModel.idCardRecordLiveData.name}"-->
+<!--                android:gravity="center"-->
+<!--                app:layout_constraintStart_toEndOf="@id/iv_header"-->
+<!--                app:layout_constraintEnd_toEndOf="parent"-->
+<!--                app:layout_constraintBottom_toTopOf="@id/tv_card_number"-->
+<!--                app:layout_constraintTop_toTopOf="@id/iv_header" />-->
+
+<!--            <TextView-->
+<!--                android:id="@+id/tv_card_number"-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="@{viewModel.idCardRecordLiveData.cardNumber}"-->
+<!--                android:gravity="center"-->
+<!--                app:layout_constraintStart_toEndOf="@id/iv_header"-->
+<!--                app:layout_constraintEnd_toEndOf="parent"-->
+<!--                app:layout_constraintTop_toBottomOf="@id/tv_name"-->
+<!--                app:layout_constraintBottom_toBottomOf="@id/iv_header"/>-->
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

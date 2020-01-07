@@ -66,8 +66,7 @@ public class LoginFragment extends BaseViewModelFragment<FragmentLoginBinding, L
     }
 
     private Observer<Boolean> loginFaceFlagObserver = flag -> {
-//        mListener.replaceFragment(FaceLoginFragment.newInstance(viewModel.courierLiveData.getValue()));
-        mListener.replaceFragment(HomeFragment.newInstance());
+        mListener.replaceFragment(FaceLoginFragment.newInstance(viewModel.courierLiveData.getValue()));
     };
 
 }

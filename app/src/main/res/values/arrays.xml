@@ -1,0 +1,6 @@
+<resources>
+    <string-array name="banner">
+        <item>file:///android_asset/banner/banner_1.png</item>
+        <item>file:///android_asset/banner/banner_2.png</item>
+    </string-array>
+</resources>

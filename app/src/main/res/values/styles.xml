@@ -14,4 +14,38 @@
         <item name="android:indeterminateDrawable">@drawable/progress_small_holo</item>
     </style>
 
+    <style name="HorizontalLine">
+        <item name="android:background">@color/darkgrey</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">1px</item>
+    </style>
+
+    <style name="VerticalLine">
+        <item name="android:background">@color/darkgrey</item>
+        <item name="android:layout_width">1px</item>
+        <item name="android:layout_height">match_parent</item>
+    </style>
+
+    <style name="SettingItem">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">40dp</item>
+    </style>
+
+    <style name="SettingName">
+        <item name="android:textColor">@color/android_text_color</item>
+        <item name="android:background">@color/lightgrey</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">match_parent</item>
+    </style>
+
+    <style name="SettingBody">
+        <item name="android:gravity">center</item>
+        <item name="android:layout_weight">2.5</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
 </resources>

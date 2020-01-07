@@ -48,7 +48,7 @@ public class CardFragment extends BaseViewModelFragment<FragmentCardBinding, Car
     @Override
     protected void initData() {
         viewModel.initCardResult.observe(this, initCardResultObserver);
-        viewModel.idCardRecord.observe(this, idCardRecordObserver);
+        viewModel.readCardFlag.observe(this, readCardFlagObserver);
     }
 
     @Override
@@ -84,7 +84,7 @@ public class CardFragment extends BaseViewModelFragment<FragmentCardBinding, Car
                             dialog.dismiss();
                         })
                         .negativeText("退出")
-                        .onNegative((dialog, which) -> mListener.exitApp())
+                        .onNegative((dialog, which) -> onBackPressed())
                         .autoDismiss(false)
                         .show();
             case LOADING:
@@ -96,8 +96,8 @@ public class CardFragment extends BaseViewModelFragment<FragmentCardBinding, Car
         }
     };
 
-    private Observer<IDCardRecord> idCardRecordObserver = idInfo -> {
-        mListener.replaceFragment(FaceVerifyFragment.newInstance(viewModel.idCardRecord.getValue()));
+    private Observer<Boolean> readCardFlagObserver = flag -> {
+        mListener.replaceFragment(FaceVerifyFragment.newInstance(viewModel.getIdCardRecord()));
     };
 
 }

@@ -52,7 +52,7 @@
         <View
             android:layout_width="0dp"
             android:layout_height="1dp"
-            android:background="@color/lightgrey"
+            android:background="@color/main_color"
             app:layout_constraintTop_toBottomOf="@id/iv_back"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>

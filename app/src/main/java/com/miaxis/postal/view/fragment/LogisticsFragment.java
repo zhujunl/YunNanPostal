@@ -74,6 +74,7 @@ public class LogisticsFragment extends BaseViewModelFragment<FragmentLogisticsBi
         initSearchView();
         binding.ivBack.setOnClickListener(v -> onBackPressed());
         binding.srlOrder.setOnRefreshListener(this::refresh);
+        viewModel.refreshing.observe(this, refreshingObserver);
         viewModel.orderList.observe(this, orderObserver);
         viewModel.orderDetail.observe(this, orderDetailObserver);
     }
@@ -135,9 +136,6 @@ public class LogisticsFragment extends BaseViewModelFragment<FragmentLogisticsBi
     };
 
     private Observer<List<SimpleOrder>> orderObserver = orderList -> {
-        if (binding.srlOrder.isRefreshing()) {
-            binding.srlOrder.setRefreshing(false);
-        }
         if (page == 1) {
             orderAdapter.setDataList(orderList);
             orderAdapter.notifyDataSetChanged();
@@ -158,6 +156,8 @@ public class LogisticsFragment extends BaseViewModelFragment<FragmentLogisticsBi
     private Observer<Order> orderDetailObserver = order -> {
 //        mListener.replaceFragment(OrderFragment.newInstance(order));
     };
+
+    private Observer<Boolean> refreshingObserver = flag -> binding.srlOrder.setRefreshing(flag);
 
     private RecyclerView.OnScrollListener onScrollListener = new RecyclerView.OnScrollListener() {
         private boolean loadingMore = true;

@@ -89,6 +89,8 @@ dependencies {
     implementation 'com.alibaba:fastjson:1.1.71.android'
     //PhotoView
     implementation 'com.github.chrisbanes:PhotoView:2.3.0'
+    //Banner
+    implementation 'com.youth.banner:banner:1.4.10'
     //Libs
     implementation files('src/main/libs/scandecode.jar')
     implementation files('src/main/libs/AMap_Location_V4.5.0_20190121.jar')

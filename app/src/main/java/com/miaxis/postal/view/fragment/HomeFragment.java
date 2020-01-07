@@ -7,14 +7,22 @@ import androidx.lifecycle.ViewModelProviders;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.miaxis.postal.BR;
 import com.miaxis.postal.R;
+import com.miaxis.postal.data.entity.Courier;
 import com.miaxis.postal.databinding.FragmentHomeBinding;
+import com.miaxis.postal.view.auxiliary.GlideImageLoader;
 import com.miaxis.postal.view.base.BaseViewModelFragment;
 import com.miaxis.postal.viewModel.HomeViewModel;
 
+import java.util.Arrays;
+
 public class HomeFragment extends BaseViewModelFragment<FragmentHomeBinding, HomeViewModel> {
 
-    public static HomeFragment newInstance() {
-        return new HomeFragment();
+    private Courier courier;
+
+    public static HomeFragment newInstance(Courier courier) {
+        HomeFragment fragment = new HomeFragment();
+        fragment.setCourier(courier);
+        return fragment;
     }
 
     public HomeFragment() {
@@ -38,11 +46,12 @@ public class HomeFragment extends BaseViewModelFragment<FragmentHomeBinding, Hom
 
     @Override
     protected void initData() {
-
+        viewModel.courier.set(courier);
     }
 
     @Override
     protected void initView() {
+        binding.clConfig.setOnClickListener(v -> mListener.replaceFragment(ConfigFragment.newInstance()));
         binding.clLogistic.setOnClickListener(v -> mListener.replaceFragment(CardFragment.newInstance()));
         binding.clRecord.setOnClickListener(v -> mListener.replaceFragment(LogisticsFragment.newInstance()));
     }
@@ -55,5 +64,9 @@ public class HomeFragment extends BaseViewModelFragment<FragmentHomeBinding, Hom
                 .onPositive((dialog, which) -> mListener.backToStack(LoginFragment.class))
                 .negativeText("取消")
                 .show();
+    }
+
+    public void setCourier(Courier courier) {
+        this.courier = courier;
     }
 }

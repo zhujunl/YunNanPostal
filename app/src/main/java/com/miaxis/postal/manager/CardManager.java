@@ -49,7 +49,11 @@ public class CardManager {
             @Override
             public void handleMessage(@NonNull Message msg) {
                 super.handleMessage(msg);
-                listener.onIDCardReceive((IDCardRecord) msg.obj);
+                if (msg.what == 0) {
+                    listener.onIDCardReceive((IDCardRecord) msg.obj, "读卡成功");
+                } else if (msg.what == 1) {
+                    listener.onIDCardReceive(null, (String) msg.obj);
+                }
             }
         };
         initDevice();
@@ -62,7 +66,9 @@ public class CardManager {
                     if (info.isSuccess()) {
                         handler.sendMessage(handler.obtainMessage(0, transform(info)));
 //                        release();
+                        idManager.getIDInfor(false, false);
                     } else {
+                        handler.sendMessage(handler.obtainMessage(1, info.getErrorMsg()));
                         startReadCard();
                     }
                 }, "dev/ttyMT1", 115200, DeviceControlSpd.PowerType.MAIN, 94);
@@ -123,7 +129,7 @@ public class CardManager {
 
     public interface IDCardListener {
         void onIDCardInitResult(boolean result);
-        void onIDCardReceive(IDCardRecord idCardRecord);
+        void onIDCardReceive(IDCardRecord idCardRecord, String message);
     }
 
 }

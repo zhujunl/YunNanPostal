@@ -69,8 +69,8 @@ public class PostalRepository extends BaseRepository {
                 idCardRecord.getSex(),
                 idCardRecord.getIssuingAuthority(),
                 idCardRecord.getValidateStart(),
-                cardFile,
-                checkFile)
+                checkFile,
+                cardFile)
                 .execute();
         try {
             ResponseEntity<TempIdDto> body = execute.body();
@@ -171,8 +171,8 @@ public class PostalRepository extends BaseRepository {
                 idCardRecord.getSex(),
                 idCardRecord.getIssuingAuthority(),
                 idCardRecord.getValidateStart(),
-                cardFile,
-                faceFile)
+                faceFile,
+                cardFile)
                 .execute();
         try {
             ResponseEntity<TempIdDto> body = execute.body();

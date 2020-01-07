@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import com.miaxis.postal.BR;
 import com.miaxis.postal.R;
 import com.miaxis.postal.databinding.FragmentConfigBinding;
+import com.miaxis.postal.util.ValueUtil;
 import com.miaxis.postal.view.base.BaseViewModelFragment;
 import com.miaxis.postal.viewModel.ConfigViewModel;
 
@@ -47,6 +48,7 @@ public class ConfigFragment extends BaseViewModelFragment<FragmentConfigBinding,
 
     @Override
     protected void initView() {
+        binding.tvVersion.setText(ValueUtil.getCurVersion(getContext()));
         binding.ivBack.setOnClickListener(v -> onBackPressed());
         binding.ivSave.setOnClickListener(v -> viewModel.saveConfig());
     }

@@ -78,7 +78,7 @@ public class FaceLoginFragment extends BaseViewModelFragment<FragmentFaceLoginBi
 
     private Observer<Courier> courierObserver = courier -> viewModel.startFaceVerify();
 
-    private Observer<Boolean> verifyFlagObserver = flag -> mListener.replaceFragment(HomeFragment.newInstance());
+    private Observer<Boolean> verifyFlagObserver = flag -> mListener.replaceFragment(HomeFragment.newInstance(viewModel.courierLiveData.getValue()));
 
     private ViewTreeObserver.OnGlobalLayoutListener globalListener = new ViewTreeObserver.OnGlobalLayoutListener() {
         @Override

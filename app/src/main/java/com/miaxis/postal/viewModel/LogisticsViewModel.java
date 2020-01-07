@@ -24,6 +24,7 @@ public class LogisticsViewModel extends BaseViewModel {
 
     public MutableLiveData<List<SimpleOrder>> orderList = new MutableLiveData<>(new ArrayList<>());
     public MutableLiveData<Order> orderDetail = new SingleLiveEvent<>();
+    public MutableLiveData<Boolean> refreshing = new SingleLiveEvent<>();
 
     public LogisticsViewModel() {
         getOrderByCodeAndName("", 1);
@@ -48,6 +49,7 @@ public class LogisticsViewModel extends BaseViewModel {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(simpleOrderList -> {
+                    refreshing.setValue(Boolean.FALSE);
                     if (pageNum == 1) {
                         orderList.setValue(simpleOrderList);
                     } else {
@@ -59,6 +61,7 @@ public class LogisticsViewModel extends BaseViewModel {
                         toast.setValue(ToastManager.getToastBody("没有更多了", ToastManager.SUCCESS));
                     }
                 }, throwable -> {
+                    refreshing.setValue(Boolean.FALSE);
                     resultMessage.setValue(hanleError(throwable));
                 });
     }

@@ -8,6 +8,7 @@ import android.content.Intent;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.miaxis.postal.R;
 import com.miaxis.postal.databinding.ActivityMainBinding;
+import com.miaxis.postal.manager.CardManager;
 import com.miaxis.postal.view.base.BaseActivity;
 import com.miaxis.postal.view.base.BaseViewModelFragment;
 import com.miaxis.postal.view.base.OnFragmentInteractionListener;
@@ -44,6 +45,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        CardManager.getInstance().release();
     }
 
     @Override
