@@ -20,6 +20,8 @@ public class Express {
     private String senderPhone;
     private String senderAddress;
     private String verifyId;
+    private String latitude;
+    private String longitude;
 
     @Ignore
     private List<Bitmap> photoList;
@@ -81,5 +83,21 @@ public class Express {
 
     public void setPhotoList(List<Bitmap> photoList) {
         this.photoList = photoList;
+    }
+
+    public String getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(String latitude) {
+        this.latitude = latitude;
+    }
+
+    public String getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(String longitude) {
+        this.longitude = longitude;
     }
 }

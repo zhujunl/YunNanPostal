@@ -31,16 +31,27 @@ public class AmapManager implements AMapLocationListener {
     private AMapLocationClient aMapLocationClient;
     private AMapLocation aMapLocation;
 
-    public void getOneLocation(AMapLocationListener listener) {
+    public void getOneLocation(OnOneLocationListener listener) {
         AMapLocationClient aMapLocationClient = new AMapLocationClient(application);
-        aMapLocationClient.setLocationListener(listener);
+        aMapLocationClient.setLocationListener(aMapLocation -> {
+            if (aMapLocation.getErrorCode() == 0) {
+                String address = aMapLocation.getAddress();
+                aMapLocationClient.stopLocation();
+                listener.onOneLocation(address);
+                this.aMapLocation = aMapLocation;
+            }
+        });
         AMapLocationClientOption option = new AMapLocationClientOption();
         option.setOnceLocation(true);
+        option.setNeedAddress(true);
         option.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);
         option.setOnceLocationLatest(true);
-        option.setHttpTimeOut(8000);
         aMapLocationClient.setLocationOption(option);
         aMapLocationClient.startLocation();
+    }
+
+    public interface OnOneLocationListener {
+        void onOneLocation(String address);
     }
 
     /**
@@ -52,6 +63,7 @@ public class AmapManager implements AMapLocationListener {
         aMapLocationClient.setLocationListener(this);
         AMapLocationClientOption mLocationOption = new AMapLocationClientOption();
         mLocationOption.setInterval(1000 * 60 * 10);
+        mLocationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Battery_Saving);
         aMapLocationClient.setLocationOption(mLocationOption);
         aMapLocationClient.startLocation();
     }

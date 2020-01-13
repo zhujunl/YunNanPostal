@@ -80,6 +80,7 @@
                 android:hint="请输入手机号码"
                 android:text="@={viewModel.phone}"
                 android:enabled="@{viewModel.editMode}"
+                android:inputType="phone"
                 app:layout_constraintHorizontal_bias="0"
                 app:layout_constraintWidth_percent="0.75"
                 app:layout_constraintStart_toStartOf="parent"

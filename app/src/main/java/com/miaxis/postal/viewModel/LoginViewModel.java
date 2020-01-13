@@ -71,8 +71,10 @@ public class LoginViewModel extends BaseViewModel {
                     waitMessage.setValue("");
                     if (courierLiveData.getValue() != null) {
                         loginFaceFlag.setValue(Boolean.TRUE);
+                        toast.setValue(ToastManager.getToastBody("离线登录", ToastManager.INFO));
+                    } else {
+                        toast.setValue(ToastManager.getToastBody(hanleError(throwable), ToastManager.INFO));
                     }
-                    toast.setValue(ToastManager.getToastBody("离线登录：" + hanleError(throwable), ToastManager.INFO));
                 });
     }
 

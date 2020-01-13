@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "8b6e4b8e9ca6adb735550f89e2bc9bcb",
+    "identityHash": "a2ef6839ca3725e45e6d37a6740b6304",
     "entities": [
       {
         "tableName": "Config",
@@ -294,7 +294,7 @@
       },
       {
         "tableName": "Express",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `barCode` TEXT, `photoPathList` TEXT, `senderPhone` TEXT, `senderAddress` TEXT, `verifyId` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `barCode` TEXT, `photoPathList` TEXT, `senderPhone` TEXT, `senderAddress` TEXT, `verifyId` TEXT, `latitude` TEXT, `longitude` TEXT)",
         "fields": [
           {
             "fieldPath": "id",
@@ -331,6 +331,18 @@
             "columnName": "verifyId",
             "affinity": "TEXT",
             "notNull": false
+          },
+          {
+            "fieldPath": "latitude",
+            "columnName": "latitude",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "longitude",
+            "columnName": "longitude",
+            "affinity": "TEXT",
+            "notNull": false
           }
         ],
         "primaryKey": {
@@ -346,7 +358,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '8b6e4b8e9ca6adb735550f89e2bc9bcb')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'a2ef6839ca3725e45e6d37a6740b6304')"
     ]
   }
 }

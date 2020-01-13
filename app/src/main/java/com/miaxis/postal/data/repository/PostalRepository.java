@@ -3,6 +3,7 @@ package com.miaxis.postal.data.repository;
 import android.graphics.Bitmap;
 import android.text.TextUtils;
 
+import com.amap.api.location.AMapLocation;
 import com.miaxis.postal.data.dto.TempIdDto;
 import com.miaxis.postal.data.entity.Express;
 import com.miaxis.postal.data.entity.IDCardRecord;
@@ -12,6 +13,7 @@ import com.miaxis.postal.data.model.ExpressModel;
 import com.miaxis.postal.data.model.IDCardRecordModel;
 import com.miaxis.postal.data.net.PostalApi;
 import com.miaxis.postal.data.net.ResponseEntity;
+import com.miaxis.postal.manager.AmapManager;
 import com.miaxis.postal.util.FileUtil;
 import com.miaxis.postal.util.ValueUtil;
 import com.speedata.libid2.IDInfor;
@@ -99,6 +101,7 @@ public class PostalRepository extends BaseRepository {
             File file = FileUtil.saveBitmap(bitmap, path);
             fileList.add(file);
         }
+        AMapLocation aMapLocation = AmapManager.getInstance().getaMapLocation();
         Response<ResponseEntity> execute = PostalApi.saveOrderFromAppSync(
                 tempId.getPersonId(),
                 sendAddress,
@@ -110,8 +113,8 @@ public class PostalRepository extends BaseRepository {
                 "",
                 "",
                 "",
-                "",
-                "",
+                aMapLocation != null ? String.valueOf(aMapLocation.getLatitude()) : "",
+                aMapLocation != null ? String.valueOf(aMapLocation.getLongitude()) : "",
                 tempId.getCheckId(),
                 fileList)
                 .execute();
@@ -206,8 +209,8 @@ public class PostalRepository extends BaseRepository {
                 "",
                 "",
                 "",
-                "",
-                "",
+                express.getLatitude(),
+                express.getLongitude(),
                 tempId.getCheckId(),
                 fileList)
                 .execute();
@@ -252,6 +255,9 @@ public class PostalRepository extends BaseRepository {
             FileUtil.saveBitmap(bitmap, path);
             pathList.add(path);
         }
+        AMapLocation aMapLocation = AmapManager.getInstance().getaMapLocation();
+        express.setLatitude(aMapLocation != null ? String.valueOf(aMapLocation.getLatitude()) : "");
+        express.setLongitude(aMapLocation != null ? String.valueOf(aMapLocation.getLongitude()) : "");
         express.setPhotoPathList(pathList);
         express.setSenderAddress(address);
         express.setSenderPhone(phone);

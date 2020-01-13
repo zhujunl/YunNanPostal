@@ -237,7 +237,7 @@ public class ExpressViewModel extends BaseViewModel {
     }
 
     public void getLocation() {
-        AmapManager.getInstance().getOneLocation(aMapLocation -> address.set(aMapLocation.getAddress()));
+        AmapManager.getInstance().getOneLocation(addressStr -> address.set(addressStr));
     }
 
     public boolean checkInput() {

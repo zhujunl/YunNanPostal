@@ -154,7 +154,7 @@ public class LogisticsFragment extends BaseViewModelFragment<FragmentLogisticsBi
     };
 
     private Observer<Order> orderDetailObserver = order -> {
-//        mListener.replaceFragment(OrderFragment.newInstance(order));
+        mListener.replaceFragment(OrderFragment.newInstance(order));
     };
 
     private Observer<Boolean> refreshingObserver = flag -> binding.srlOrder.setRefreshing(flag);
