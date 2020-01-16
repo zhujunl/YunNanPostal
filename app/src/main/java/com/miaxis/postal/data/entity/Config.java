@@ -10,6 +10,7 @@ public class Config {
     private Long id;
     private String host;
     private String mac;
+    private int loginMode;
     private int qualityScore;
     private int registerQualityScore;
     private float verifyScore;
@@ -42,6 +43,14 @@ public class Config {
 
     public void setMac(String mac) {
         this.mac = mac;
+    }
+
+    public int getLoginMode() {
+        return loginMode;
+    }
+
+    public void setLoginMode(int loginMode) {
+        this.loginMode = loginMode;
     }
 
     public int getQualityScore() {
@@ -96,6 +105,7 @@ public class Config {
         private Long id;
         private String host;
         private String mac;
+        private int loginMode;
         private int qualityScore;
         private int registerQualityScore;
         private float verifyScore;
@@ -122,6 +132,11 @@ public class Config {
 
         public ConfigBuilder mac(String mac) {
             this.mac = mac;
+            return this;
+        }
+
+        public ConfigBuilder loginMode(int loginMode) {
+            this.loginMode = loginMode;
             return this;
         }
 
@@ -160,6 +175,7 @@ public class Config {
             config.setId(id);
             config.setHost(host);
             config.setMac(mac);
+            config.setLoginMode(loginMode);
             config.setQualityScore(qualityScore);
             config.setRegisterQualityScore(registerQualityScore);
             config.setVerifyScore(verifyScore);

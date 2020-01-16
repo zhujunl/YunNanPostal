@@ -94,4 +94,5 @@ dependencies {
     //Libs
     implementation files('src/main/libs/scandecode.jar')
     implementation files('src/main/libs/AMap_Location_V4.8.0_20191210.jar')
+    implementation files('src/main/libs/MxMscFingerApi.jar')
 }

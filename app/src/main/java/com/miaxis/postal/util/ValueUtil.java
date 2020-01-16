@@ -21,6 +21,9 @@ public class ValueUtil {
     public static final int DEFAULT_REGISTER_QUALITY_SCORE = 80;
     public static final int DEFAULT_DEVICE_ID = 0;
     public static final int DEFAULT_HEART_BEAT_INTERVAL = 10 * 60;
+    public static final int LOGIN_MODE_FINGER = 1;//1:仅指纹，2:仅人脸
+    public static final int LOGIN_MODE_FACE = 2;//1:仅指纹，2:仅人脸
+    public static final int DEFAULT_LOGIN_MODE = LOGIN_MODE_FINGER;
 
     public static final String SUCCESS = "200";
     public static final String DEVICE_ENABLE = "1";

@@ -1,5 +1,6 @@
 package com.miaxis.postal.viewModel;
 
+import android.text.TextUtils;
 import android.util.Log;
 
 import androidx.databinding.ObservableBoolean;
@@ -8,11 +9,13 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.miaxis.postal.bridge.SingleLiveEvent;
+import com.miaxis.postal.data.entity.Config;
 import com.miaxis.postal.data.entity.Courier;
 import com.miaxis.postal.data.exception.MyException;
 import com.miaxis.postal.data.model.CourierModel;
 import com.miaxis.postal.data.repository.LoginRepository;
 import com.miaxis.postal.data.repository.PostalRepository;
+import com.miaxis.postal.manager.ConfigManager;
 import com.miaxis.postal.manager.ToastManager;
 import com.miaxis.postal.util.ValueUtil;
 
@@ -30,6 +33,7 @@ public class LoginViewModel extends BaseViewModel {
     public ObservableBoolean editMode = new ObservableBoolean(false);
     public ObservableField<String> phone = new ObservableField<>();
     public MutableLiveData<Boolean> loginFaceFlag = new SingleLiveEvent<>();
+    public MutableLiveData<Boolean> loginFingerFlag = new SingleLiveEvent<>();
 
     public LoginViewModel() {
         loadCourier();
@@ -65,17 +69,35 @@ public class LoginViewModel extends BaseViewModel {
                 .subscribe(courier -> {
                     waitMessage.setValue("");
                     courierLiveData.setValue(courier);
-                    loginFaceFlag.setValue(Boolean.TRUE);
+                    startLogin(courier);
                     new Thread(() -> PostalRepository.getInstance().uploadLocalExpress()).start();
                 }, throwable -> {
                     waitMessage.setValue("");
                     if (courierLiveData.getValue() != null) {
-                        loginFaceFlag.setValue(Boolean.TRUE);
+                        startLogin(courierLiveData.getValue());
                         toast.setValue(ToastManager.getToastBody("离线登录", ToastManager.INFO));
                     } else {
                         toast.setValue(ToastManager.getToastBody(hanleError(throwable), ToastManager.INFO));
                     }
                 });
+    }
+
+    private void startLogin(Courier courier) {
+        Config config = ConfigManager.getInstance().getConfig();
+        if (config.getLoginMode() == ValueUtil.LOGIN_MODE_FINGER) {
+            if (!TextUtils.isEmpty(courier.getFingerFeature1())
+                    || !TextUtils.isEmpty(courier.getFingerFeature2())) {
+                loginFingerFlag.setValue(Boolean.TRUE);
+            } else {
+                resultMessage.setValue("该账号下无指纹信息");
+            }
+        } else if (config.getLoginMode() == ValueUtil.LOGIN_MODE_FACE) {
+            if (!TextUtils.isEmpty(courier.getFaceFeature())) {
+                loginFaceFlag.setValue(Boolean.TRUE);
+            } else {
+                resultMessage.setValue("该账号下无人脸信息");
+            }
+        }
     }
 
 }

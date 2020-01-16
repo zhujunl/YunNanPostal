@@ -1,11 +1,13 @@
 package com.miaxis.postal.view.fragment;
 
+import android.text.TextUtils;
 import android.view.View;
 
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import com.miaxis.postal.R;
 import com.miaxis.postal.data.event.FaceRegisterEvent;
+import com.miaxis.postal.data.event.FingerRegisterEvent;
 import com.miaxis.postal.databinding.FragmentRegisterBinding;
 import com.miaxis.postal.manager.ToastManager;
 import com.miaxis.postal.view.base.BaseViewModelFragment;
@@ -43,7 +45,7 @@ public class RegisterFragment extends BaseViewModelFragment<FragmentRegisterBind
     @Override
     protected void initData() {
         viewModel.registerFlag.observe(this, flag -> {
-
+            onBackPressed();
         });
     }
 
@@ -51,6 +53,8 @@ public class RegisterFragment extends BaseViewModelFragment<FragmentRegisterBind
     protected void initView() {
         binding.ivBack.setOnClickListener(v -> onBackPressed());
         binding.tvHeader.setOnClickListener(v -> mListener.replaceFragment(FaceRegisterFragment.newInstance()));
+        binding.tvFinger1.setOnClickListener(v -> mListener.replaceFragment(FingerRegisterFragment.newInstance(RegisterViewModel.FINGER1)));
+        binding.tvFinger2.setOnClickListener(v -> mListener.replaceFragment(FingerRegisterFragment.newInstance(RegisterViewModel.FINGER2)));
         binding.btnRegister.setOnClickListener(v -> {
             if (viewModel.checkInput()) {
                 viewModel.getCourierByPhone();
@@ -68,10 +72,26 @@ public class RegisterFragment extends BaseViewModelFragment<FragmentRegisterBind
 
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void onFaceRegisterEvent(FaceRegisterEvent event) {
-        binding.tvHeader.setText("已采集");
+        viewModel.faceFeatureHint.set("已采集");
         binding.tvHeader.setOnClickListener(null);
         viewModel.setFeatureCache(event.getFeature());
         viewModel.setHeaderCache(event.getBitmap());
+        EventBus.getDefault().removeStickyEvent(event);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    public void onFingerRegisterEvent(FingerRegisterEvent event) {
+        String feature = event.getFeature();
+        if (TextUtils.isEmpty(feature)) return;
+        if (TextUtils.equals(RegisterViewModel.FINGER1, event.getMark())) {
+            viewModel.finger1FeatureHint.set("已采集");
+            binding.tvFinger1.setOnClickListener(null);
+            viewModel.setFingerFeature1(feature);
+        } else {
+            viewModel.finger2FeatureHint.set("已采集");
+            binding.tvFinger2.setOnClickListener(null);
+            viewModel.setFingerFeature2(feature);
+        }
         EventBus.getDefault().removeStickyEvent(event);
     }
 

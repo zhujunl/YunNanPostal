@@ -47,6 +47,7 @@ public class ConfigManager {
                     .id(1L)
                     .host(ValueUtil.DEFAULT_BASE_HOST)
                     .mac(DeviceUtil.getMacFromHardware())
+                    .loginMode(ValueUtil.DEFAULT_LOGIN_MODE)
                     .verifyScore(ValueUtil.DEFAULT_VERIFY_SCORE)
                     .qualityScore(ValueUtil.DEFAULT_QUALITY_SCORE)
                     .registerQualityScore(ValueUtil.DEFAULT_REGISTER_QUALITY_SCORE)

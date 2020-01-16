@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 
 import com.miaxis.postal.BR;
 import com.miaxis.postal.R;
+import com.miaxis.postal.data.entity.Config;
 import com.miaxis.postal.databinding.FragmentConfigBinding;
 import com.miaxis.postal.util.ValueUtil;
 import com.miaxis.postal.view.base.BaseViewModelFragment;
@@ -50,7 +51,13 @@ public class ConfigFragment extends BaseViewModelFragment<FragmentConfigBinding,
     protected void initView() {
         binding.tvVersion.setText(ValueUtil.getCurVersion(getContext()));
         binding.ivBack.setOnClickListener(v -> onBackPressed());
-        binding.ivSave.setOnClickListener(v -> viewModel.saveConfig());
+        binding.ivSave.setOnClickListener(v -> {
+            Config config = viewModel.config.get();
+            if (config != null) {
+                config.setLoginMode(binding.rbFingerMode.isChecked() ? ValueUtil.LOGIN_MODE_FINGER : ValueUtil.LOGIN_MODE_FACE);
+                viewModel.saveConfig(config);
+            }
+        });
     }
 
     @Override

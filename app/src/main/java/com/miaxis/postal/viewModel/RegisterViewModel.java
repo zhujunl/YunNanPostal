@@ -17,14 +17,23 @@ import io.reactivex.schedulers.Schedulers;
 
 public class RegisterViewModel extends BaseViewModel {
 
+    public final static String FINGER1 = "1";
+    public final static String FINGER2 = "2";
+
     public ObservableField<String> name = new ObservableField<>();
     public ObservableField<String> number = new ObservableField<>();
     public ObservableField<String> phone = new ObservableField<>();
+
+    public ObservableField<String> faceFeatureHint = new ObservableField<>("点击采集");
+    public ObservableField<String> finger1FeatureHint = new ObservableField<>("点击采集");
+    public ObservableField<String> finger2FeatureHint = new ObservableField<>("点击采集");
 
     public MutableLiveData<Boolean> registerFlag = new SingleLiveEvent<>();
 
     private String featureCache;
     private Bitmap headerCache;
+    private String fingerFeature1;
+    private String fingerFeature2;
 
     public RegisterViewModel() {
     }
@@ -34,6 +43,8 @@ public class RegisterViewModel extends BaseViewModel {
                 || TextUtils.isEmpty(number.get())
                 || TextUtils.isEmpty(phone.get())
                 || TextUtils.isEmpty(featureCache)
+                || TextUtils.isEmpty(fingerFeature1)
+                || TextUtils.isEmpty(fingerFeature2)
                 || headerCache == null) {
             return false;
         }
@@ -47,8 +58,8 @@ public class RegisterViewModel extends BaseViewModel {
                     number.get(),
                     phone.get(),
                     featureCache,
-                    null,
-                    null,
+                    fingerFeature1,
+                    fingerFeature2,
                     headerCache);
             emitter.onNext(Boolean.TRUE);
         })
@@ -70,5 +81,13 @@ public class RegisterViewModel extends BaseViewModel {
 
     public void setHeaderCache(Bitmap headerCache) {
         this.headerCache = headerCache;
+    }
+
+    public void setFingerFeature1(String fingerFeature1) {
+        this.fingerFeature1 = fingerFeature1;
+    }
+
+    public void setFingerFeature2(String fingerFeature2) {
+        this.fingerFeature2 = fingerFeature2;
     }
 }

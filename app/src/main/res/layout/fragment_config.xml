@@ -5,6 +5,8 @@
 
     <data>
 
+        <import type="com.miaxis.postal.util.ValueUtil" />
+
         <variable
             name="viewModel"
             type="com.miaxis.postal.viewModel.ConfigViewModel" />
@@ -133,6 +135,58 @@
                         android:text="@={viewModel.config.host}"
                         android:background="@color/white"
                         android:singleLine="true" />
+
+                    <View style="@style/VerticalLine"/>
+
+                </LinearLayout>
+
+                <View style="@style/HorizontalLine"/>
+
+                <LinearLayout style="@style/SettingItem">
+
+                    <View style="@style/VerticalLine"/>
+
+                    <TextView style="@style/SettingName"
+                        android:text="登录方式" />
+
+                    <View style="@style/VerticalLine"/>
+
+                    <RadioGroup style="@style/SettingBody"
+                        android:background="@color/white"
+                        android:orientation="horizontal">
+
+                        <Space
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="0.5"/>
+
+                        <RadioButton
+                            android:id="@+id/rb_finger_mode"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:checked="@{viewModel.config.loginMode==ValueUtil.LOGIN_MODE_FINGER}"
+                            android:text="指纹"/>
+
+                        <Space
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="0.5"/>
+
+                        <RadioButton
+                            android:id="@+id/rb_face_mode"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:checked="@{viewModel.config.loginMode==ValueUtil.LOGIN_MODE_FACE}"
+                            android:text="人脸"/>
+
+                        <Space
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="0.5"/>
+
+                    </RadioGroup>
 
                     <View style="@style/VerticalLine"/>
 

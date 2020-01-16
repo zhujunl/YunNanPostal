@@ -2,6 +2,7 @@ package com.miaxis.postal.view.fragment;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
@@ -10,47 +11,51 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.miaxis.postal.BR;
 import com.miaxis.postal.R;
 import com.miaxis.postal.bridge.Status;
-import com.miaxis.postal.data.entity.IDCardRecord;
-import com.miaxis.postal.databinding.FragmentCardBinding;
+import com.miaxis.postal.databinding.FragmentFingerRegisterBinding;
 import com.miaxis.postal.view.base.BaseViewModelFragment;
-import com.miaxis.postal.viewModel.CardViewModel;
-import com.speedata.libid2.IDInfor;
+import com.miaxis.postal.viewModel.FingerRegisterViewModel;
 
-public class CardFragment extends BaseViewModelFragment<FragmentCardBinding, CardViewModel> {
+public class FingerRegisterFragment extends BaseViewModelFragment<FragmentFingerRegisterBinding, FingerRegisterViewModel> {
 
     private MaterialDialog retryDialog;
 
-    public static CardFragment newInstance() {
-        return new CardFragment();
+    private String mark;
+
+    public static FingerRegisterFragment newInstance(String mark) {
+        FingerRegisterFragment fragment = new FingerRegisterFragment();
+        fragment.setMark(mark);
+        return fragment;
     }
 
-    public CardFragment() {
+    public FingerRegisterFragment() {
         // Required empty public constructor
     }
 
     @Override
     protected int setContentView() {
-        return R.layout.fragment_card;
+        return R.layout.fragment_finger_register;
     }
 
     @Override
-    protected CardViewModel initViewModel() {
-        return ViewModelProviders.of(this).get(CardViewModel.class);
+    protected FingerRegisterViewModel initViewModel() {
+        return ViewModelProviders.of(this).get(FingerRegisterViewModel.class);
     }
 
     @Override
     public int initVariableId() {
-        return com.miaxis.postal.BR.viewModel;
+        return BR.viewModel;
     }
 
     @Override
     protected void initData() {
-        viewModel.initCardResult.observe(this, initCardResultObserver);
-        viewModel.readCardFlag.observe(this, readCardFlagObserver);
+        viewModel.mark = mark;
+        viewModel.initFingerResult.observe(this, fingerInitObserver);
+        viewModel.fingerResultFlag.observe(this, result -> mListener.backToStack(null));
     }
 
     @Override
@@ -59,34 +64,40 @@ public class CardFragment extends BaseViewModelFragment<FragmentCardBinding, Car
     }
 
     @Override
-    public void onBackPressed() {
-        mListener.backToStack(null);
-    }
-
-    @Override
     public void onStart() {
         super.onStart();
         if (retryDialog != null && retryDialog.isShowing()) {
             retryDialog.dismiss();
         }
-        viewModel.startReadCard();
+        viewModel.initFingerDevice();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        viewModel.stopReadCard();
+        viewModel.releaseFingerDevice();
     }
 
-    private Observer<Status> initCardResultObserver = status -> {
+    @Override
+    public void onBackPressed() {
+        new MaterialDialog.Builder(getContext())
+                .title("确认退出？")
+                .content("退出将放弃当前进度")
+                .positiveText("确认")
+                .onPositive((dialog, which) -> mListener.backToStack(null))
+                .negativeText("取消")
+                .show();
+    }
+
+    private Observer<Status> fingerInitObserver = status -> {
         switch (status) {
             case FAILED:
                 mListener.dismissWaitDialog();
                 retryDialog = new MaterialDialog.Builder(getContext())
-                        .title("初始化身份证阅读器失败，是否重试？")
+                        .title("初始化指纹模块失败，是否重试？")
                         .positiveText("重试")
                         .onPositive((dialog, which) -> {
-                            viewModel.startReadCard();
+                            viewModel.initFingerDevice();
                             dialog.dismiss();
                         })
                         .negativeText("退出")
@@ -98,16 +109,16 @@ public class CardFragment extends BaseViewModelFragment<FragmentCardBinding, Car
                         .show();
                 break;
             case LOADING:
-                mListener.showWaitDialog("正在初始化身份证阅读器");
+                mListener.showWaitDialog("正在初始化指纹模块");
                 break;
             case SUCCESS:
                 mListener.dismissWaitDialog();
+                viewModel.registerFeature();
                 break;
         }
     };
 
-    private Observer<Boolean> readCardFlagObserver = flag -> {
-        mListener.replaceFragment(FaceVerifyFragment.newInstance(viewModel.getIdCardRecord()));
-    };
-
+    public void setMark(String mark) {
+        this.mark = mark;
+    }
 }

@@ -29,7 +29,7 @@ public class CardViewModel extends BaseViewModel {
     }
 
     public void stopReadCard() {
-//        CardManager.getInstance().release();
+        CardManager.getInstance().release();
     }
 
     private CardManager.IDCardListener listener = new CardManager.IDCardListener() {

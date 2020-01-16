@@ -58,7 +58,7 @@ public class FaceRegisterFragment extends BaseViewModelFragment<FragmentFaceRegi
 
     @Override
     protected void initView() {
-        binding.ivBack.setOnClickListener(v -> mListener.backToStack(null));
+        binding.ivBack.setOnClickListener(v -> onBackPressed());
         binding.rtvCamera.getViewTreeObserver().addOnGlobalLayoutListener(globalListener);
         binding.ivTakePhoto.setOnClickListener(v -> viewModel.takePicture());
         binding.ivRetry.setOnClickListener(v -> viewModel.retry());

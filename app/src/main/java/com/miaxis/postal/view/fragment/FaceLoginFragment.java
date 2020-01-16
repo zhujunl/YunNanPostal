@@ -14,6 +14,7 @@ import com.miaxis.postal.R;
 import com.miaxis.postal.data.entity.Courier;
 import com.miaxis.postal.databinding.FragmentFaceLoginBinding;
 import com.miaxis.postal.manager.CameraManager;
+import com.miaxis.postal.manager.ToastManager;
 import com.miaxis.postal.view.base.BaseViewModelFragment;
 import com.miaxis.postal.view.custom.RoundBorderView;
 import com.miaxis.postal.view.custom.RoundFrameLayout;
@@ -78,7 +79,10 @@ public class FaceLoginFragment extends BaseViewModelFragment<FragmentFaceLoginBi
 
     private Observer<Courier> courierObserver = courier -> viewModel.startFaceVerify();
 
-    private Observer<Boolean> verifyFlagObserver = flag -> mListener.replaceFragment(HomeFragment.newInstance(viewModel.courierLiveData.getValue()));
+    private Observer<Boolean> verifyFlagObserver = flag -> {
+        ToastManager.toast("登录成功", ToastManager.SUCCESS);
+        mListener.replaceFragment(HomeFragment.newInstance(viewModel.courierLiveData.getValue()));
+    };
 
     private ViewTreeObserver.OnGlobalLayoutListener globalListener = new ViewTreeObserver.OnGlobalLayoutListener() {
         @Override

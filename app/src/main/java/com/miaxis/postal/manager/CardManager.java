@@ -36,11 +36,10 @@ public class CardManager {
      * ================================ 静态内部类单例 ================================
      **/
 
-    private IID2Service idManager = IDManager.getInstance();
+    private IID2Service idManager;
     private Context context;
     private Handler handler;
     private IDCardListener listener;
-    private volatile boolean release = false;
 
     public void init(@NonNull Context context, @NonNull IDCardListener listener) {
         this.context = context;
@@ -62,6 +61,7 @@ public class CardManager {
     private void initDevice() {
         new Thread(() -> {
             try {
+                idManager = IDManager.getInstance();
                 boolean result = idManager.initDev(context, info -> {
                     if (info.isSuccess()) {
                         handler.sendMessage(handler.obtainMessage(0, transform(info)));
@@ -82,16 +82,17 @@ public class CardManager {
     }
 
     public void startReadCard() {
-        idManager.getIDInfor(false, true);
+        if (idManager != null) {
+            idManager.getIDInfor(false, true);
+        }
     }
 
     public void release() {
         try {
-            release = false;
-//            idManager.getIDInfor(false, false);
             //退出 释放二代证模块
             if (idManager != null) {
                 idManager.releaseDev();
+                idManager = null;
             }
         } catch (IOException e) {
             e.printStackTrace();

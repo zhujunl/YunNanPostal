@@ -13,8 +13,8 @@ public class ConfigViewModel extends BaseViewModel {
     public ConfigViewModel() {
     }
 
-    public void saveConfig() {
-        ConfigManager.getInstance().saveConfig(config.get(), (result, message) -> {
+    public void saveConfig(Config config) {
+        ConfigManager.getInstance().saveConfig(config, (result, message) -> {
             if (result) {
                 toast.setValue(ToastManager.getToastBody(message, ToastManager.SUCCESS));
             } else {
