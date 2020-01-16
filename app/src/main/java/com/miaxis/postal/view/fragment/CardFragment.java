@@ -84,7 +84,10 @@ public class CardFragment extends BaseViewModelFragment<FragmentCardBinding, Car
                             dialog.dismiss();
                         })
                         .negativeText("退出")
-                        .onNegative((dialog, which) -> onBackPressed())
+                        .onNegative((dialog, which) -> {
+                            dialog.dismiss();
+                            onBackPressed();
+                        })
                         .autoDismiss(false)
                         .show();
             case LOADING:

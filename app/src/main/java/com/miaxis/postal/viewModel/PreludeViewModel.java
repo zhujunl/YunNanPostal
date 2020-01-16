@@ -128,14 +128,14 @@ public class PreludeViewModel extends BaseViewModel {
     }
 
     private void initResult(String status) {
-//        if (TextUtils.equals(status, ValueUtil.DEVICE_ENABLE)) {
+        if (TextUtils.equals(status, ValueUtil.DEVICE_ENABLE)) {
             hint.set("设备校验成功");
             initSuccess.setValue(Boolean.TRUE);
-//        } else {
-//            Config config = ConfigManager.getInstance().getConfig();
-//            errorMode.set(Boolean.TRUE);
-//            hint.set("该设备已禁用，请联系管理员\n" + "设备MAC：" + config.getMac());
-//        }
+        } else {
+            Config config = ConfigManager.getInstance().getConfig();
+            errorMode.set(Boolean.TRUE);
+            hint.set("该设备已禁用，请联系管理员\n" + "设备MAC：" + config.getMac());
+        }
     }
 
 }

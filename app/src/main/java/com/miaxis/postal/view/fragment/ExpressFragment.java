@@ -15,6 +15,8 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
@@ -30,6 +32,7 @@ import com.miaxis.postal.data.entity.TempId;
 import com.miaxis.postal.data.event.ExpressEditEvent;
 import com.miaxis.postal.databinding.FragmentExpressBinding;
 import com.miaxis.postal.manager.CameraManager;
+import com.miaxis.postal.manager.ScanManager;
 import com.miaxis.postal.manager.ToastManager;
 import com.miaxis.postal.view.adapter.ExpressAdapter;
 import com.miaxis.postal.view.adapter.SpacesItemDecoration;
@@ -52,6 +55,9 @@ public class ExpressFragment extends BaseViewModelFragment<FragmentExpressBindin
 
     private ExpressAdapter expressAdapter;
     private MaterialDialog scanDialog;
+
+    private Handler handler;
+    private int delay = 5;
 
     public static ExpressFragment newInstance(IDCardRecord idCardRecord) {
         ExpressFragment fragment = new ExpressFragment();
@@ -94,8 +100,9 @@ public class ExpressFragment extends BaseViewModelFragment<FragmentExpressBindin
         viewModel.expressList.observe(this, expressListObserver);
         viewModel.newExpress.observe(this, newExpressObserver);
         viewModel.repeatExpress.observe(this, repeatExpressObserver);
-        viewModel.stopScanFlag.observe(this, stopScanFlagObserver);
+        viewModel.scanFlag.observe(this, scanFlagObserver);
         viewModel.uploadFlag.observe(this, uploadFlagObserver);
+        handler = new Handler(Looper.getMainLooper());
         EventBus.getDefault().register(this);
     }
 
@@ -120,6 +127,18 @@ public class ExpressFragment extends BaseViewModelFragment<FragmentExpressBindin
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        ScanManager.getInstance().powerOn();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        ScanManager.getInstance().powerOff();
+    }
+
+    @Override
     public void onDestroyView() {
         super.onDestroyView();
         getActivity().unregisterReceiver(receiver);
@@ -132,8 +151,6 @@ public class ExpressFragment extends BaseViewModelFragment<FragmentExpressBindin
                 .title("新建订单")
                 .progress(true, 100)
                 .content("请将扫描口对准条码进行扫描")
-                .positiveText("取消扫描")
-                .onPositive((dialog, which) -> viewModel.stopScan())
                 .build();
     }
 
@@ -154,6 +171,26 @@ public class ExpressFragment extends BaseViewModelFragment<FragmentExpressBindin
         getActivity().registerReceiver(receiver, intentFilter);
     }
 
+    private Runnable scanDialogCountDownRunnable = new Runnable() {
+        @Override
+        public void run() {
+            try {
+                if (scanDialog.isShowing()) {
+                    String text = "请将扫描口对准条码进行扫描(" + delay + "S)";
+                    scanDialog.getContentView().setText(text);
+                    delay--;
+                    if (delay < 0) {
+                        viewModel.stopScan();
+                    } else {
+                        handler.postDelayed(scanDialogCountDownRunnable, 1000);
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    };
+
     private BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -165,7 +202,6 @@ public class ExpressFragment extends BaseViewModelFragment<FragmentExpressBindin
     };
 
     private ExpressAdapter.OnHeaderClickListener headerListener = () -> {
-        scanDialog.show();
         viewModel.startScan();
     };
 
@@ -178,15 +214,22 @@ public class ExpressFragment extends BaseViewModelFragment<FragmentExpressBindin
         expressAdapter.notifyDataSetChanged();
     };
 
-    private Observer<Boolean> stopScanFlagObserver = flag -> scanDialog.dismiss();
+    private Observer<Boolean> scanFlagObserver = flag -> {
+        handler.removeCallbacks(scanDialogCountDownRunnable);
+        if (flag) {
+            delay = 5;
+            handler.post(scanDialogCountDownRunnable);
+            scanDialog.show();
+        } else {
+            scanDialog.dismiss();
+        }
+    };
 
     private Observer<Express> newExpressObserver = express -> {
-        scanDialog.dismiss();
         mListener.replaceFragment(InspectFragment.newInstance(express));
     };
 
     private Observer<String> repeatExpressObserver = code -> {
-        scanDialog.dismiss();
         if (TextUtils.isEmpty(code)) {
             ToastManager.toast("该条码编号已重复", ToastManager.INFO);
         } else {

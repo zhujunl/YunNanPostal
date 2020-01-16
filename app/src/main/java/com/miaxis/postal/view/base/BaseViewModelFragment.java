@@ -81,11 +81,6 @@ public abstract class BaseViewModelFragment<V extends ViewDataBinding, VM extend
     public abstract void onBackPressed();
 
     @Override
-    public void onResume() {
-        super.onResume();
-    }
-
-    @Override
     public void onDestroyView() {
         super.onDestroyView();
         if (binding != null) {

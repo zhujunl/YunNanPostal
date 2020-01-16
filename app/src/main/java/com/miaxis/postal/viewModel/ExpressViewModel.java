@@ -44,15 +44,16 @@ public class ExpressViewModel extends BaseViewModel {
     public ObservableField<String> address = new ObservableField<>();
 
     public MutableLiveData<List<Express>> expressList = new MutableLiveData<>(new ArrayList<>());
-    public MutableLiveData<Boolean> stopScanFlag = new SingleLiveEvent<>();
     public MutableLiveData<Express> newExpress = new SingleLiveEvent<>();
     public MutableLiveData<String> repeatExpress = new SingleLiveEvent<>();
     public MutableLiveData<Boolean> uploadFlag = new SingleLiveEvent<>();
+    public MutableLiveData<Boolean> scanFlag = new SingleLiveEvent<>();
 
     public ExpressViewModel() {
     }
 
     public void startScan() {
+        scanFlag.setValue(Boolean.TRUE);
         ScanManager.getInstance().initDevice(PostalApp.getInstance(), listener);
         ScanManager.getInstance().startScan();
     }
@@ -61,6 +62,7 @@ public class ExpressViewModel extends BaseViewModel {
         try {
             ScanManager.getInstance().stopScan();
             ScanManager.getInstance().closeDevice();
+            scanFlag.setValue(Boolean.FALSE);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -70,7 +72,6 @@ public class ExpressViewModel extends BaseViewModel {
 
     public void handlerScanCode(String code) {
         stopScan();
-        stopScanFlag.setValue(Boolean.TRUE);
         waitMessage.setValue("扫描成功，开始校验");
         Disposable disposable = Observable.just(code)
                 .subscribeOn(Schedulers.io())

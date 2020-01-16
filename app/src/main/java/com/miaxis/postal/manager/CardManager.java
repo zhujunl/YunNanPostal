@@ -65,13 +65,13 @@ public class CardManager {
                 boolean result = idManager.initDev(context, info -> {
                     if (info.isSuccess()) {
                         handler.sendMessage(handler.obtainMessage(0, transform(info)));
-//                        release();
-                        idManager.getIDInfor(false, false);
+                        release();
+//                        idManager.getIDInfor(false, false);
                     } else {
                         handler.sendMessage(handler.obtainMessage(1, info.getErrorMsg()));
                         startReadCard();
                     }
-                }, "dev/ttyMT1", 115200, DeviceControlSpd.PowerType.MAIN, 94);
+                }, "dev/ttyMT1", 115200, DeviceControlSpd.PowerType.MAIN, 93, 94);
                 startReadCard();
                 listener.onIDCardInitResult(result);
             } catch (IOException e) {
