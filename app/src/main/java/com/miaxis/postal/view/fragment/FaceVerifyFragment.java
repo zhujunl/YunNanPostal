@@ -22,6 +22,9 @@ import com.miaxis.postal.data.entity.IDCardRecord;
 import com.miaxis.postal.data.entity.TempId;
 import com.miaxis.postal.databinding.FragmentFaceVerifyBinding;
 import com.miaxis.postal.manager.CameraManager;
+import com.miaxis.postal.manager.TTSManager;
+import com.miaxis.postal.view.auxiliary.OnLimitClickHelper;
+import com.miaxis.postal.view.auxiliary.OnLimitClickListener;
 import com.miaxis.postal.view.base.BaseViewModelFragment;
 import com.miaxis.postal.view.custom.RoundBorderView;
 import com.miaxis.postal.view.custom.RoundFrameLayout;
@@ -34,6 +37,8 @@ public class FaceVerifyFragment extends BaseViewModelFragment<FragmentFaceVerify
 
     private RoundBorderView roundBorderView;
     private RoundFrameLayout roundFrameLayout;
+
+    private boolean pass = false;
 
     public static FaceVerifyFragment newInstance(IDCardRecord idCardRecord) {
         FaceVerifyFragment fragment = new FaceVerifyFragment();
@@ -71,6 +76,9 @@ public class FaceVerifyFragment extends BaseViewModelFragment<FragmentFaceVerify
     @Override
     protected void initView() {
         binding.ivBack.setOnClickListener(v -> onBackPressed());
+        binding.tvSwitch.setOnClickListener(new OnLimitClickHelper(view -> {
+            mListener.replaceFragment(FingerVerifyFragment.newInstance(idCardRecord));
+        }));
     }
 
     @Override
@@ -81,13 +89,24 @@ public class FaceVerifyFragment extends BaseViewModelFragment<FragmentFaceVerify
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        mListener.dismissWaitDialog();
         viewModel.stopFaceVerify();
+        if (!pass) {
+            TTSManager.getInstance().stop();
+        }
         CameraManager.getInstance().closeBackCamera();
     }
 
-    private Observer<IDCardRecord> idCardRecordObserver = mIdCardRecord -> viewModel.startFaceVerify(idCardRecord);
+    private Observer<IDCardRecord> idCardRecordObserver = mIdCardRecord -> {
+        TTSManager.getInstance().playVoiceMessageAdd("请核验人脸");
+        viewModel.startFaceVerify(idCardRecord);
+    };
 
-    private Observer<IDCardRecord> verifyFlagObserver = mIdCardRecord -> mListener.replaceFragment(ExpressFragment.newInstance(mIdCardRecord));
+    private Observer<IDCardRecord> verifyFlagObserver = mIdCardRecord -> {
+        pass = true;
+        TTSManager.getInstance().playVoiceMessageFlush("核验通过");
+        mListener.replaceFragment(ExpressFragment.newInstance(mIdCardRecord));
+    };
 
     private ViewTreeObserver.OnGlobalLayoutListener globalListener = new ViewTreeObserver.OnGlobalLayoutListener() {
         @Override

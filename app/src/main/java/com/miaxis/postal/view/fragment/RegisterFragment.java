@@ -10,6 +10,7 @@ import com.miaxis.postal.data.event.FaceRegisterEvent;
 import com.miaxis.postal.data.event.FingerRegisterEvent;
 import com.miaxis.postal.databinding.FragmentRegisterBinding;
 import com.miaxis.postal.manager.ToastManager;
+import com.miaxis.postal.view.auxiliary.OnLimitClickHelper;
 import com.miaxis.postal.view.base.BaseViewModelFragment;
 import com.miaxis.postal.viewModel.RegisterViewModel;
 
@@ -52,9 +53,9 @@ public class RegisterFragment extends BaseViewModelFragment<FragmentRegisterBind
     @Override
     protected void initView() {
         binding.ivBack.setOnClickListener(v -> onBackPressed());
-        binding.tvHeader.setOnClickListener(v -> mListener.replaceFragment(FaceRegisterFragment.newInstance()));
-        binding.tvFinger1.setOnClickListener(v -> mListener.replaceFragment(FingerRegisterFragment.newInstance(RegisterViewModel.FINGER1)));
-        binding.tvFinger2.setOnClickListener(v -> mListener.replaceFragment(FingerRegisterFragment.newInstance(RegisterViewModel.FINGER2)));
+        binding.tvHeader.setOnClickListener(new OnLimitClickHelper(view -> mListener.replaceFragment(FaceRegisterFragment.newInstance())));
+        binding.tvFinger1.setOnClickListener(new OnLimitClickHelper(view -> mListener.replaceFragment(FingerRegisterFragment.newInstance(RegisterViewModel.FINGER1))));
+        binding.tvFinger2.setOnClickListener(new OnLimitClickHelper(view -> mListener.replaceFragment(FingerRegisterFragment.newInstance(RegisterViewModel.FINGER2))));
         binding.btnRegister.setOnClickListener(v -> {
             if (viewModel.checkInput()) {
                 viewModel.getCourierByPhone();

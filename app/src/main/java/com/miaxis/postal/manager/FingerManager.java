@@ -48,6 +48,8 @@ public class FingerManager {
     private DeviceControlSpd deviceControl;
     private FingerListener listener;
 
+    private volatile boolean init = false;
+
     public void init(@NonNull Context context, @NonNull FingerListener listener) {
         this.context = context;
         this.listener = listener;
@@ -62,11 +64,9 @@ public class FingerManager {
                 MxMscBigFingerApiFactory fingerFactory = new MxMscBigFingerApiFactory(PostalApp.getInstance());
                 mxMscBigFingerApi = fingerFactory.getApi();
                 mxFingerAlg = fingerFactory.getAlg();
-//                Result<String> deviceInfo = mxMscBigFingerApi.getDeviceInfo();
-//                if (deviceInfo.isSuccess()) {
-                    listener.onFingerInitResult(true);
-                    return;
-//                }
+                init = true;
+                listener.onFingerInitResult(true);
+                return;
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -75,6 +75,7 @@ public class FingerManager {
     }
 
     public void getFingerFeature() {
+        if (!init) return;
         executor.execute(() -> {
             try {
                 Result<MxImage> result = mxMscBigFingerApi.getFingerImageBig(5000);
@@ -96,6 +97,7 @@ public class FingerManager {
     }
 
     public void getFingerFeatureAndImage() {
+        if (!init) return;
         executor.execute(() -> {
             try {
                 Result<MxImage> result = mxMscBigFingerApi.getFingerImageBig(5000);
@@ -140,6 +142,7 @@ public class FingerManager {
 
     public void release() {
         try {
+            init = false;
             if (deviceControl != null) {
                 deviceControl.PowerOffDevice();
             }

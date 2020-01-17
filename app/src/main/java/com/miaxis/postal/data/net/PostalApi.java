@@ -77,10 +77,16 @@ public class PostalApi extends BaseAPI {
                                                                     String expireTime,
                                                                     File checkFile,
                                                                     File cardFile) {
-        RequestBody checkRequestFile = RequestBody.create(MediaType.parse("multipart/form-data"), checkFile);
-        MultipartBody.Part checkFileBody = MultipartBody.Part.createFormData("checkFile", checkFile.getName(), checkRequestFile);
-        RequestBody cardRequestFile = RequestBody.create(MediaType.parse("multipart/form-data"), cardFile);
-        MultipartBody.Part cardFileBody = MultipartBody.Part.createFormData("cardFile", cardFile.getName(), cardRequestFile);
+        MultipartBody.Part checkFileBody = null;
+        if (checkFile != null) {
+            RequestBody checkRequestFile = RequestBody.create(MediaType.parse("multipart/form-data"), checkFile);
+            checkFileBody = MultipartBody.Part.createFormData("checkFile", checkFile.getName(), checkRequestFile);
+        }
+        MultipartBody.Part cardFileBody = null;
+        if (cardFile != null) {
+            RequestBody cardRequestFile = RequestBody.create(MediaType.parse("multipart/form-data"), cardFile);
+            cardFileBody = MultipartBody.Part.createFormData("cardFile", cardFile.getName(), cardRequestFile);
+        }
         return getPostalNetSync().savePersonFromAppSync(name,
                 nation,
                 birthday,

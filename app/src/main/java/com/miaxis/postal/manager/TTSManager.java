@@ -55,6 +55,13 @@ public class TTSManager {
     }
 
     /**
+     * 停止播放
+     */
+    public void stop() {
+        ttsRef.get().stop();
+    }
+
+    /**
      * 关闭
      */
     public void close() {

@@ -10,6 +10,8 @@ import com.miaxis.postal.R;
 import com.miaxis.postal.data.entity.Courier;
 import com.miaxis.postal.databinding.FragmentHomeBinding;
 import com.miaxis.postal.view.auxiliary.GlideImageLoader;
+import com.miaxis.postal.view.auxiliary.OnLimitClickHelper;
+import com.miaxis.postal.view.auxiliary.OnLimitClickListener;
 import com.miaxis.postal.view.base.BaseViewModelFragment;
 import com.miaxis.postal.viewModel.HomeViewModel;
 
@@ -51,9 +53,9 @@ public class HomeFragment extends BaseViewModelFragment<FragmentHomeBinding, Hom
 
     @Override
     protected void initView() {
-        binding.clConfig.setOnClickListener(v -> mListener.replaceFragment(ConfigFragment.newInstance()));
-        binding.clLogistic.setOnClickListener(v -> mListener.replaceFragment(CardFragment.newInstance()));
-        binding.clRecord.setOnClickListener(v -> mListener.replaceFragment(LogisticsFragment.newInstance()));
+        binding.clConfig.setOnClickListener(new OnLimitClickHelper(view -> mListener.replaceFragment(ConfigFragment.newInstance())));
+        binding.clLogistic.setOnClickListener(new OnLimitClickHelper(view -> mListener.replaceFragment(CardFragment.newInstance())));
+        binding.clRecord.setOnClickListener(new OnLimitClickHelper(view -> mListener.replaceFragment(LogisticsFragment.newInstance())));
     }
 
     @Override

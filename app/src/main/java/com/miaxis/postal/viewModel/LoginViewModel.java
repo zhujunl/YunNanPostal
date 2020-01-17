@@ -73,8 +73,9 @@ public class LoginViewModel extends BaseViewModel {
                     new Thread(() -> PostalRepository.getInstance().uploadLocalExpress()).start();
                 }, throwable -> {
                     waitMessage.setValue("");
-                    if (courierLiveData.getValue() != null) {
-                        startLogin(courierLiveData.getValue());
+                    Courier courier = courierLiveData.getValue();
+                    if (courier != null && TextUtils.equals(courier.getPhone(), phone.get())) {
+                        startLogin(courier);
                         toast.setValue(ToastManager.getToastBody("离线登录", ToastManager.INFO));
                     } else {
                         toast.setValue(ToastManager.getToastBody(hanleError(throwable), ToastManager.INFO));

@@ -10,6 +10,7 @@ import com.miaxis.postal.R;
 import com.miaxis.postal.data.entity.Courier;
 import com.miaxis.postal.databinding.FragmentLoginBinding;
 import com.miaxis.postal.manager.ConfigManager;
+import com.miaxis.postal.manager.TTSManager;
 import com.miaxis.postal.manager.ToastManager;
 import com.miaxis.postal.util.ValueUtil;
 import com.miaxis.postal.view.base.BaseViewModelFragment;
@@ -87,6 +88,7 @@ public class LoginFragment extends BaseViewModelFragment<FragmentLoginBinding, L
             featureList.add(fingerFeature2);
             FingerVerifyDialogFragment.newInstance(featureList, result -> {
                 if (result) {
+                    TTSManager.getInstance().playVoiceMessageFlush("指纹登录成功");
                     ToastManager.toast("登录成功", ToastManager.SUCCESS);
                     mListener.replaceFragment(HomeFragment.newInstance(viewModel.courierLiveData.getValue()));
                 } else {

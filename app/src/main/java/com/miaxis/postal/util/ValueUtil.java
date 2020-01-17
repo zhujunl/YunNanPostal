@@ -51,4 +51,37 @@ public class ValueUtil {
         }
     }
 
+    public static String fingerPositionCovert(byte finger) {
+        switch ((int) finger) {
+            case 11:
+                return "右手拇指";
+            case 12:
+                return "右手食指";
+            case 13:
+                return "右手中指";
+            case 14:
+                return "右手环指";
+            case 15:
+                return "右手小指";
+            case 16:
+                return "左手拇指";
+            case 17:
+                return "左手食指";
+            case 18:
+                return "左手中指";
+            case 19:
+                return "左手环指";
+            case 20:
+                return "左手小指";
+            case 97:
+                return "右手不确定指位";
+            case 98:
+                return "左手不确定指位";
+            case 99:
+                return "其他不确定指位";
+            default:
+                return "其他不确定指位";
+        }
+    }
+
 }

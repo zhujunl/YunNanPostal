@@ -47,7 +47,7 @@ public class CardViewModel extends BaseViewModel {
                 if (!CardManager.getInstance().checkIsOutValidate(data)) {
                     idCardRecord = data;
                     cardMessage.set(message);
-                    TTSManager.getInstance().playVoiceMessageFlush("读卡成功，请核验人脸");
+                    TTSManager.getInstance().playVoiceMessageFlush("读卡成功");
                     if (idCardRecord != null) {
                         readCardFlag.setValue(Boolean.TRUE);
                     }

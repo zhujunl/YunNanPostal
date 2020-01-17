@@ -5,10 +5,12 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.serialport.DeviceControlSpd;
+import android.util.Base64;
 
 import androidx.annotation.NonNull;
 
 import com.miaxis.postal.data.entity.IDCardRecord;
+import com.miaxis.postal.util.ValueUtil;
 import com.speedata.libid2.IDInfor;
 import com.speedata.libid2.IDManager;
 import com.speedata.libid2.IID2Service;
@@ -83,7 +85,7 @@ public class CardManager {
 
     public void startReadCard() {
         if (idManager != null) {
-            idManager.getIDInfor(false, true);
+            idManager.getIDInfor(true, true);
         }
     }
 
@@ -100,18 +102,38 @@ public class CardManager {
     }
 
     private IDCardRecord transform(IDInfor idInfor) {
-        return IDCardRecord.IDCardRecordBuilder.anIDCardRecord()
+        String startDay = "";
+        String endDay = "";
+        try {
+            startDay = idInfor.getStartYear().trim() + "-" + idInfor.getStartMonth().trim() + "-" + idInfor.getStartDay().trim();
+            endDay = idInfor.getEndYear().trim() + "-" + idInfor.getEndMonth().trim() + "-" + idInfor.getEndDay().trim();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        IDCardRecord idCardRecord = IDCardRecord.IDCardRecordBuilder.anIDCardRecord()
                 .name(idInfor.getName().trim())
                 .birthday(idInfor.getYear().trim() + "-" + idInfor.getMonth().trim() + "-" + idInfor.getDay().trim())
                 .address(idInfor.getAddress().trim())
                 .cardNumber(idInfor.getNum().trim())
                 .issuingAuthority(idInfor.getQianFa().trim())
-                .validateStart(idInfor.getStartYear().trim() + "-" + idInfor.getStartMonth().trim() + "-" + idInfor.getStartDay().trim())
-                .validateEnd(idInfor.getEndYear().trim() + "-" + idInfor.getEndMonth().trim() + "-" + idInfor.getEndDay().trim())
+                .validateStart(startDay)
+                .validateEnd(endDay)
                 .sex(idInfor.getSex().trim())
                 .nation(idInfor.getNation().trim())
                 .cardBitmap(idInfor.getBmps())
                 .build();
+        if (idInfor.isWithFinger()) {
+            byte[] fingerprStringer = idInfor.getFingerprStringer();
+            byte[] bFingerData0 = new byte[512];
+            byte[] bFingerData1 = new byte[512];
+            System.arraycopy(fingerprStringer, 1, bFingerData0, 0, bFingerData0.length);
+            System.arraycopy(fingerprStringer, 513, bFingerData1, 0, bFingerData1.length - 1);
+            idCardRecord.setFingerprintPosition0(ValueUtil.fingerPositionCovert(bFingerData0[5]));
+            idCardRecord.setFingerprint0(Base64.encodeToString(bFingerData0, Base64.NO_WRAP));
+            idCardRecord.setFingerprintPosition1(ValueUtil.fingerPositionCovert(bFingerData1[5]));
+            idCardRecord.setFingerprint1(Base64.encodeToString(bFingerData1, Base64.NO_WRAP));
+        }
+        return idCardRecord;
     }
 
     /**

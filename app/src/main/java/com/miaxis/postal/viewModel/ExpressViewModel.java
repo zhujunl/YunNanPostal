@@ -99,7 +99,19 @@ public class ExpressViewModel extends BaseViewModel {
                 .subscribe(mCode -> {
                     waitMessage.setValue("");
                     makeNewExpress(mCode);
-                }, Throwable::printStackTrace);
+                    removeRepeatEdit(mCode);
+                }, throwable -> {
+                    throwable.printStackTrace();
+                    removeRepeatEdit(code);
+                });
+    }
+
+    private void removeRepeatEdit(String code) {
+        String phoneStr = phone.get();
+        if (phoneStr != null && phoneStr.contains(code)) {
+            phoneStr = phoneStr.replace(code, "");
+            phone.set(phoneStr);
+        }
     }
 
     private boolean checkCodeNetRepeat(String code) {

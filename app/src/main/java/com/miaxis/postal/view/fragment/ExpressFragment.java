@@ -95,7 +95,7 @@ public class ExpressFragment extends BaseViewModelFragment<FragmentExpressBindin
         initRecycleView();
         initReceiver();
         binding.ivBack.setOnClickListener(v -> onBackPressed());
-        binding.ivAddress.setOnClickListener(v -> viewModel.getLocation());
+        binding.ivAddress.setOnClickListener(new OnLimitClickHelper(view  -> viewModel.getLocation()));
         binding.fabConfirm.setOnClickListener(confirmClickListener);
         viewModel.expressList.observe(this, expressListObserver);
         viewModel.newExpress.observe(this, newExpressObserver);

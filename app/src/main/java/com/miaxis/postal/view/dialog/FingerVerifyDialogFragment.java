@@ -16,12 +16,13 @@ import com.miaxis.postal.BR;
 import com.miaxis.postal.R;
 import com.miaxis.postal.bridge.Status;
 import com.miaxis.postal.databinding.FragmentFingerVerifyDialogBinding;
+import com.miaxis.postal.manager.TTSManager;
 import com.miaxis.postal.view.base.BaseViewModelDialogFragment;
-import com.miaxis.postal.viewModel.FingerVerifyViewModel;
+import com.miaxis.postal.viewModel.FingerVerifyDialogViewModel;
 
 import java.util.List;
 
-public class FingerVerifyDialogFragment extends BaseViewModelDialogFragment<FragmentFingerVerifyDialogBinding, FingerVerifyViewModel> {
+public class FingerVerifyDialogFragment extends BaseViewModelDialogFragment<FragmentFingerVerifyDialogBinding, FingerVerifyDialogViewModel> {
 
     private MaterialDialog retryDialog;
 
@@ -45,8 +46,8 @@ public class FingerVerifyDialogFragment extends BaseViewModelDialogFragment<Frag
     }
 
     @Override
-    protected FingerVerifyViewModel initViewModel() {
-        return ViewModelProviders.of(this).get(FingerVerifyViewModel.class);
+    protected FingerVerifyDialogViewModel initViewModel() {
+        return ViewModelProviders.of(this).get(FingerVerifyDialogViewModel.class);
     }
 
     @Override
@@ -117,6 +118,7 @@ public class FingerVerifyDialogFragment extends BaseViewModelDialogFragment<Frag
                 break;
             case SUCCESS:
                 mListener.dismissWaitDialog();
+                TTSManager.getInstance().playVoiceMessageFlush("请按手指");
                 viewModel.verifyFinger(featureList);
                 break;
         }

@@ -5,6 +5,7 @@ import android.view.View;
 import androidx.lifecycle.ViewModelProviders;
 import com.miaxis.postal.R;
 import com.miaxis.postal.databinding.FragmentPreludeBinding;
+import com.miaxis.postal.view.auxiliary.OnLimitClickHelper;
 import com.miaxis.postal.view.base.BaseViewModelFragment;
 import com.miaxis.postal.viewModel.PreludeViewModel;
 
@@ -44,7 +45,7 @@ public class PreludeFragment extends BaseViewModelFragment<FragmentPreludeBindin
 
     @Override
     protected void initView() {
-        binding.ivConfig.setOnClickListener(v -> mListener.replaceFragment(ConfigFragment.newInstance()));
+        binding.ivConfig.setOnClickListener(new OnLimitClickHelper(view -> mListener.replaceFragment(ConfigFragment.newInstance())));
         binding.btnQuit.setOnClickListener(v -> mListener.exitApp());
         binding.btnRetry.setOnClickListener(v -> viewModel.requirePermission(PreludeFragment.this));
     }

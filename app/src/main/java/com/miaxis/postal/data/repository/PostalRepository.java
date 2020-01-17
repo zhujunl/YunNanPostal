@@ -60,8 +60,8 @@ public class PostalRepository extends BaseRepository {
     public TempId savePersonFromAppSync(IDCardRecord idCardRecord) throws IOException, MyException {
         String cardFilePath = FileUtil.FACE_IMAGE_PATH + File.separator + "card_" + idCardRecord.getCardNumber() + System.currentTimeMillis() + ".jpg";
         String checkFilePath = FileUtil.FACE_IMAGE_PATH + File.separator + "check" + idCardRecord.getCardNumber() + System.currentTimeMillis() + ".jpg";
-        File cardFile = FileUtil.saveBitmap(idCardRecord.getCardBitmap(), cardFilePath);
-        File checkFile = FileUtil.saveBitmap(idCardRecord.getFaceBitmap(), checkFilePath);
+        File cardFile = idCardRecord.getCardBitmap() != null ? FileUtil.saveBitmap(idCardRecord.getCardBitmap(), cardFilePath) : null;
+        File checkFile = idCardRecord.getFaceBitmap() != null ? FileUtil.saveBitmap(idCardRecord.getFaceBitmap(), checkFilePath) : null;
         Response<ResponseEntity<TempIdDto>> execute = PostalApi.savePersonFromApp(
                 idCardRecord.getName(),
                 idCardRecord.getNation(),
@@ -87,8 +87,12 @@ public class PostalRepository extends BaseRepository {
             e.printStackTrace();
             throw new MyException(e.getMessage());
         } finally {
-            cardFile.delete();
-            checkFile.delete();
+            if (cardFile != null) {
+                cardFile.delete();
+            }
+            if (checkFile != null) {
+                checkFile.delete();
+            }
         }
         throw new MyException("服务端返回，空数据");
     }
@@ -163,8 +167,8 @@ public class PostalRepository extends BaseRepository {
     }
 
     private TempId uploadLocalIDCardRecord(IDCardRecord idCardRecord) throws MyException, IOException {
-        File cardFile = new File(idCardRecord.getCardPicture());
-        File faceFile = new File(idCardRecord.getFacePicture());
+        File cardFile = !TextUtils.isEmpty(idCardRecord.getCardPicture()) ? new File(idCardRecord.getCardPicture()) : null;
+        File faceFile = !TextUtils.isEmpty(idCardRecord.getFacePicture()) ? new File(idCardRecord.getFacePicture()) : null;
         Response<ResponseEntity<TempIdDto>> execute = PostalApi.savePersonFromApp(
                 idCardRecord.getName(),
                 idCardRecord.getNation(),
@@ -175,8 +179,7 @@ public class PostalRepository extends BaseRepository {
                 idCardRecord.getIssuingAuthority(),
                 idCardRecord.getValidateStart(),
                 faceFile,
-                cardFile)
-                .execute();
+                cardFile).execute();
         try {
             ResponseEntity<TempIdDto> body = execute.body();
             if (body != null) {
@@ -234,12 +237,16 @@ public class PostalRepository extends BaseRepository {
     }
 
     private String saveLocalIDCardRecord(IDCardRecord idCardRecord) {
-        String cardPath = FileUtil.FACE_STOREHOUSE_PATH + File.separator + "card_" +idCardRecord.getCardNumber() + System.currentTimeMillis() + ".jpg";
-        String facePath = FileUtil.FACE_STOREHOUSE_PATH + File.separator + "face_" +idCardRecord.getCardNumber() + System.currentTimeMillis() + ".jpg";
-        FileUtil.saveBitmap(idCardRecord.getCardBitmap(), cardPath);
-        FileUtil.saveBitmap(idCardRecord.getFaceBitmap(), facePath);
-        idCardRecord.setCardPicture(cardPath);
-        idCardRecord.setFacePicture(facePath);
+        if (idCardRecord.getCardBitmap() != null) {
+            String cardPath = FileUtil.FACE_STOREHOUSE_PATH + File.separator + "card_" +idCardRecord.getCardNumber() + System.currentTimeMillis() + ".jpg";
+            FileUtil.saveBitmap(idCardRecord.getCardBitmap(), cardPath);
+            idCardRecord.setCardPicture(cardPath);
+        }
+        if (idCardRecord.getFaceBitmap() != null) {
+            String facePath = FileUtil.FACE_STOREHOUSE_PATH + File.separator + "face_" +idCardRecord.getCardNumber() + System.currentTimeMillis() + ".jpg";
+            FileUtil.saveBitmap(idCardRecord.getFaceBitmap(), facePath);
+            idCardRecord.setFacePicture(facePath);
+        }
         String verifyId = idCardRecord.getCardNumber() + "_" + System.currentTimeMillis();
         idCardRecord.setVerifyId(verifyId);
         IDCardRecordModel.saveIDCardRecord(idCardRecord);
