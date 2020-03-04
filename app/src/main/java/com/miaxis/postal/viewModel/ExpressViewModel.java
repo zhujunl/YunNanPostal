@@ -97,9 +97,9 @@ public class ExpressViewModel extends BaseViewModel {
                 })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(mCode -> {
+                    removeRepeatEdit(mCode);
                     waitMessage.setValue("");
                     makeNewExpress(mCode);
-                    removeRepeatEdit(mCode);
                 }, throwable -> {
                     throwable.printStackTrace();
                     removeRepeatEdit(code);

@@ -21,11 +21,12 @@ public class FingerRegisterViewModel extends BaseViewModel {
 
     public MutableLiveData<Status> initFingerResult = new SingleLiveEvent<>();
     public MutableLiveData<Boolean> fingerResultFlag = new SingleLiveEvent<>();
-
+    public MutableLiveData<Boolean> fingerImageUpdate = new SingleLiveEvent<>();
     public ObservableField<String> status = new ObservableField<>();
-    public ObservableField<Bitmap> fingerImage = new ObservableField<>();
 
     private int progress = 1;
+
+    public Bitmap fingerImageCache;
 
     private byte[] feature1;
     private byte[] feature2;
@@ -43,7 +44,7 @@ public class FingerRegisterViewModel extends BaseViewModel {
 
     public void registerFeature() {
         progress = 1;
-        status.set("请按手指（1/3）");
+        status.set("请按手指（0/3）");
         FingerManager.getInstance().getFingerFeatureAndImage();
     }
 
@@ -64,16 +65,17 @@ public class FingerRegisterViewModel extends BaseViewModel {
                 return;
             }
             if (hasImage) {
-                fingerImage.set(image);
+                fingerImageCache = image;
+                fingerImageUpdate.postValue(true);
             }
             if (progress == 1) {
                 feature1 = feature;
-                status.set("请按手指（2/3）");
+                status.set("请按手指（1/3）");
                 progress = 2;
                 FingerManager.getInstance().getFingerFeatureAndImage();
             } else if (progress == 2) {
                 feature2 = feature;
-                status.set("请按手指（3/3）");
+                status.set("请按手指（2/3）");
                 progress = 3;
                 FingerManager.getInstance().getFingerFeatureAndImage();
             } else if (progress == 3) {
@@ -88,7 +90,7 @@ public class FingerRegisterViewModel extends BaseViewModel {
                     }
                 }
                 progress = 1;
-                status.set("指纹模板合成失败，请重新采集\n请按手指（1/3）");
+                status.set("指纹模板合成失败，请重新采集\n请按手指（0/3）");
                 FingerManager.getInstance().getFingerFeatureAndImage();
             } else if (progress == 4) {
                 if (template != null) {
@@ -103,7 +105,7 @@ public class FingerRegisterViewModel extends BaseViewModel {
                     }
                 } else {
                     progress = 1;
-                    status.set("指纹模板合成失败，请重新采集\n请按手指（1/3）");
+                    status.set("指纹模板合成失败，请重新采集\n请按手指（0/3）");
                     FingerManager.getInstance().getFingerFeatureAndImage();
                 }
             }

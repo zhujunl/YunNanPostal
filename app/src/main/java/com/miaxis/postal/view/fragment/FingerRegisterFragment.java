@@ -15,6 +15,7 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.miaxis.postal.BR;
 import com.miaxis.postal.R;
+import com.miaxis.postal.bridge.GlideApp;
 import com.miaxis.postal.bridge.Status;
 import com.miaxis.postal.databinding.FragmentFingerRegisterBinding;
 import com.miaxis.postal.view.base.BaseViewModelFragment;
@@ -56,6 +57,7 @@ public class FingerRegisterFragment extends BaseViewModelFragment<FragmentFinger
         viewModel.mark = mark;
         viewModel.initFingerResult.observe(this, fingerInitObserver);
         viewModel.fingerResultFlag.observe(this, result -> mListener.backToStack(null));
+        viewModel.fingerImageUpdate.observe(this, fingerImageUpdateObserver);
     }
 
     @Override
@@ -116,6 +118,10 @@ public class FingerRegisterFragment extends BaseViewModelFragment<FragmentFinger
                 viewModel.registerFeature();
                 break;
         }
+    };
+
+    private Observer<Boolean> fingerImageUpdateObserver = update -> {
+        GlideApp.with(this).load(viewModel.fingerImageCache).into(binding.ivFinger);
     };
 
     public void setMark(String mark) {

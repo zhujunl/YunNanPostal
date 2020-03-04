@@ -35,7 +35,7 @@ public class ScanManager {
     }
 
     public void powerOff() {
-        scanControl(false);
+//        scanControl(false);
     }
 
     public void initDevice(@NonNull Context context, @NonNull OnScanListener listener) {
