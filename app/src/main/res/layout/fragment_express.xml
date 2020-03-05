@@ -140,7 +140,7 @@
                 <EditText
                     android:id="@+id/et_phone"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="0dp"
                     android:background="@null"
                     android:hint="请输入寄件人手机号码"
                     android:text="@={viewModel.phone}"
@@ -177,7 +177,7 @@
                 <EditText
                     android:id="@+id/et_address"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="0dp"
                     android:background="@null"
                     android:hint="请输入寄件地址"
                     android:text="@={viewModel.address}"

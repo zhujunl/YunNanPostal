@@ -6,6 +6,8 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +29,9 @@ public class FingerVerifyFragment extends BaseViewModelFragment<FragmentFingerVe
     private MaterialDialog retryDialog;
 
     private IDCardRecord idCardRecord;
+
+    private Handler handler;
+    private int delay = 21;
 
     private boolean pass = false;
 
@@ -60,6 +65,7 @@ public class FingerVerifyFragment extends BaseViewModelFragment<FragmentFingerVe
         viewModel.idCardRecordLiveData.setValue(idCardRecord);
         viewModel.initFingerResult.observe(this, fingerInitObserver);
         viewModel.fingerResultFlag.observe(this, fingerResultFlagObserver);
+        handler = new Handler(Looper.getMainLooper());
     }
 
     @Override
@@ -68,6 +74,7 @@ public class FingerVerifyFragment extends BaseViewModelFragment<FragmentFingerVe
         binding.tvSwitch.setOnClickListener(new OnLimitClickHelper(view -> {
             mListener.replaceFragment(FaceVerifyFragment.newInstance(idCardRecord));
         }));
+        handler.post(countDownRunnable);
     }
 
     @Override
@@ -93,12 +100,26 @@ public class FingerVerifyFragment extends BaseViewModelFragment<FragmentFingerVe
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        handler.removeCallbacks(countDownRunnable);
         mListener.dismissWaitDialog();
         if (!pass) {
             TTSManager.getInstance().stop();
         }
         viewModel.releaseFingerDevice();
     }
+
+    private Runnable countDownRunnable = new Runnable() {
+        @Override
+        public void run() {
+            delay--;
+            viewModel.countDown.set(delay + " S");
+            if (delay <= 0) {
+                onBackPressed();
+            } else {
+                handler.postDelayed(countDownRunnable, 1000);
+            }
+        }
+    };
 
     private Observer<Status> fingerInitObserver = status -> {
         switch (status) {
@@ -134,7 +155,15 @@ public class FingerVerifyFragment extends BaseViewModelFragment<FragmentFingerVe
         if (flag) {
             pass = true;
             TTSManager.getInstance().playVoiceMessageFlush("核验通过");
-            mListener.replaceFragment(ExpressFragment.newInstance(idCardRecord));
+            binding.ivBack.setEnabled(false);
+            binding.tvSwitch.setEnabled(false);
+            handler.postDelayed(() -> {
+                try {
+                    mListener.replaceFragment(ExpressFragment.newInstance(idCardRecord));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }, 1000);
         }
     };
 

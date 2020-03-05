@@ -38,6 +38,9 @@ public class FaceVerifyFragment extends BaseViewModelFragment<FragmentFaceVerify
     private RoundBorderView roundBorderView;
     private RoundFrameLayout roundFrameLayout;
 
+    private Handler handler;
+    private int delay = 21;
+
     private boolean pass = false;
 
     public static FaceVerifyFragment newInstance(IDCardRecord idCardRecord) {
@@ -71,6 +74,7 @@ public class FaceVerifyFragment extends BaseViewModelFragment<FragmentFaceVerify
         viewModel.idCardRecordLiveData.observe(this, idCardRecordObserver);
         viewModel.verifyFlag.observe(this, verifyFlagObserver);
         binding.rtvCamera.getViewTreeObserver().addOnGlobalLayoutListener(globalListener);
+        handler = new Handler(Looper.getMainLooper());
     }
 
     @Override
@@ -79,6 +83,7 @@ public class FaceVerifyFragment extends BaseViewModelFragment<FragmentFaceVerify
         binding.tvSwitch.setOnClickListener(new OnLimitClickHelper(view -> {
             mListener.replaceFragment(FingerVerifyFragment.newInstance(idCardRecord));
         }));
+        handler.post(countDownRunnable);
     }
 
     @Override
@@ -89,6 +94,7 @@ public class FaceVerifyFragment extends BaseViewModelFragment<FragmentFaceVerify
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        handler.removeCallbacks(countDownRunnable);
         mListener.dismissWaitDialog();
         viewModel.stopFaceVerify();
         if (!pass) {
@@ -97,6 +103,19 @@ public class FaceVerifyFragment extends BaseViewModelFragment<FragmentFaceVerify
         CameraManager.getInstance().closeBackCamera();
     }
 
+    private Runnable countDownRunnable = new Runnable() {
+        @Override
+        public void run() {
+            delay--;
+            viewModel.countDown.set(delay + " S");
+            if (delay <= 0) {
+                onBackPressed();
+            } else {
+                handler.postDelayed(countDownRunnable, 1000);
+            }
+        }
+    };
+
     private Observer<IDCardRecord> idCardRecordObserver = mIdCardRecord -> {
         TTSManager.getInstance().playVoiceMessageAdd("请核验人脸");
         viewModel.startFaceVerify(idCardRecord);
@@ -104,8 +123,15 @@ public class FaceVerifyFragment extends BaseViewModelFragment<FragmentFaceVerify
 
     private Observer<IDCardRecord> verifyFlagObserver = mIdCardRecord -> {
         pass = true;
-        TTSManager.getInstance().playVoiceMessageFlush("核验通过");
-        mListener.replaceFragment(ExpressFragment.newInstance(mIdCardRecord));
+        binding.ivBack.setEnabled(false);
+        binding.tvSwitch.setEnabled(false);
+        handler.postDelayed(() -> {
+            try {
+                mListener.replaceFragment(ExpressFragment.newInstance(mIdCardRecord));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }, 1000);
     };
 
     private ViewTreeObserver.OnGlobalLayoutListener globalListener = new ViewTreeObserver.OnGlobalLayoutListener() {

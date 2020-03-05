@@ -35,6 +35,8 @@ public class FaceVerifyViewModel extends BaseViewModel {
     public ObservableField<String> hint = new ObservableField<>("");
     public MutableLiveData<IDCardRecord> verifyFlag = new SingleLiveEvent<>();
 
+    public ObservableField<String> countDown = new ObservableField<>();
+
     private byte[] cardFeature;
 
     public FaceVerifyViewModel() {
@@ -82,7 +84,7 @@ public class FaceVerifyViewModel extends BaseViewModel {
                     byte[] fileImage = FaceManager.getInstance().imageEncode(mxRGBImage.getRgbImage(), mxRGBImage.getWidth(), mxRGBImage.getHeight());
                     Bitmap header = BitmapFactory.decodeByteArray(fileImage, 0, fileImage.length);
                     hint.set("人证核验成功");
-                    TTSManager.getInstance().playVoiceMessageFlush("人证核验成功");
+                    TTSManager.getInstance().playVoiceMessageFlush("核验通过");
                     stopFaceVerify();
                     IDCardRecord value = idCardRecordLiveData.getValue();
                     if (value != null) {
@@ -93,7 +95,7 @@ public class FaceVerifyViewModel extends BaseViewModel {
                     }
                     return;
                 } else {
-                    hint.set("请继续对准寄件人");
+                    hint.set("识别不通过");
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -101,26 +103,5 @@ public class FaceVerifyViewModel extends BaseViewModel {
             FaceManager.getInstance().setNeedNextFeature(true);
         }
     };
-
-//    public void uploadVerify() {
-//        IDInfor idInfor = idInforLiveData.getValue();
-//        if (idInfor != null && headerCache != null) {
-//            waitMessage.postValue("正在上传，请稍后...");
-//            Observable.create((ObservableOnSubscribe<TempId>) emitter -> {
-//                TempId tempId = PostalRepository.getInstance().savePersonFromAppSync(idInfor, headerCache);
-//                emitter.onNext(tempId);
-//            })
-//                    .subscribeOn(Schedulers.io())
-//                    .observeOn(AndroidSchedulers.mainThread())
-//                    .subscribe(tempId -> {
-//                        waitMessage.setValue("");
-//                        tempIdLiveData.setValue(tempId);
-//                    }, throwable -> {
-//                        waitMessage.setValue("");
-//                        resultMessage.setValue(hanleError(throwable));
-//                        hint.set("核验结果上传失败");
-//                    });
-//        }
-//    }
 
 }

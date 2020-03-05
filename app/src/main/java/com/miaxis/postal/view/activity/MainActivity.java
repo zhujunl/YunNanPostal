@@ -73,6 +73,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 
     @Override
     public void replaceFragment(Fragment fragment) {
+        hideInputMethod();
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.cl_container, fragment)
                 .addToBackStack(fragment.getClass().getName())

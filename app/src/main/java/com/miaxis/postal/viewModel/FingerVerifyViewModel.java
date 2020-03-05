@@ -20,7 +20,7 @@ import java.util.List;
 public class FingerVerifyViewModel extends BaseViewModel {
 
     public MutableLiveData<IDCardRecord> idCardRecordLiveData = new MutableLiveData<>();
-
+    public ObservableField<String> countDown = new ObservableField<>();
     public ObservableField<String> hint = new ObservableField<>("");
 
     public MutableLiveData<Status> initFingerResult = new SingleLiveEvent<>();

@@ -43,8 +43,8 @@ public class RegisterViewModel extends BaseViewModel {
                 || TextUtils.isEmpty(number.get())
                 || TextUtils.isEmpty(phone.get())
                 || TextUtils.isEmpty(featureCache)
-                || TextUtils.isEmpty(fingerFeature1)
-                || TextUtils.isEmpty(fingerFeature2)
+//                || TextUtils.isEmpty(fingerFeature1)
+//                || TextUtils.isEmpty(fingerFeature2)
                 || headerCache == null) {
             return false;
         }
