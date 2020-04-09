@@ -15,6 +15,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.miaxis.postal.bridge.SingleLiveEvent;
 import com.miaxis.postal.bridge.Status;
+import com.miaxis.postal.data.entity.PhotoFaceFeature;
 import com.miaxis.postal.data.event.FaceRegisterEvent;
 import com.miaxis.postal.data.exception.MyException;
 import com.miaxis.postal.manager.CameraManager;
@@ -38,6 +39,7 @@ public class FaceRegisterViewModel extends BaseViewModel {
     public MutableLiveData<Boolean> confirmFlag = new SingleLiveEvent<>();
 
     private String featureCache;
+    private String maskFeatureCache;
     private Bitmap headerCache;
 
     public FaceRegisterViewModel() {
@@ -68,8 +70,8 @@ public class FaceRegisterViewModel extends BaseViewModel {
     }
 
     public void confirm() {
-        if (!TextUtils.isEmpty(featureCache) && headerCache != null) {
-            EventBus.getDefault().postSticky(new FaceRegisterEvent(featureCache, headerCache));
+        if (!TextUtils.isEmpty(featureCache) && TextUtils.isEmpty(maskFeatureCache) && headerCache != null) {
+            EventBus.getDefault().postSticky(new FaceRegisterEvent(featureCache, maskFeatureCache, headerCache));
             confirmFlag.setValue(Boolean.TRUE);
         }
     }
@@ -85,16 +87,17 @@ public class FaceRegisterViewModel extends BaseViewModel {
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
                 .map(bitmap -> {
-                    byte[] feature = FaceManager.getInstance().getPhotoFeatureByBitmapPosting(bitmap);
-                    if (feature != null) {
+                    PhotoFaceFeature photoFaceFeature = FaceManager.getInstance().getPhotoFaceFeatureByBitmapForRegisterPosting(bitmap);
+                    if (photoFaceFeature.getFaceFeature() != null && photoFaceFeature.getMaskFaceFeature() != null) {
                         headerCache = bitmap;
-                        return Base64.encodeToString(feature, Base64.NO_WRAP);
+                        featureCache = Base64.encodeToString(photoFaceFeature.getFaceFeature(), Base64.NO_WRAP);
+                        maskFeatureCache = Base64.encodeToString(photoFaceFeature.getMaskFaceFeature(), Base64.NO_WRAP);
+                        return true;
                     }
-                    throw new MyException(FaceManager.getInstance().getErrorMessage());
+                    throw new MyException(photoFaceFeature.getMessage());
                 })
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(s -> {
-                    featureCache = s;
+                .subscribe(result -> {
                     shootFlag.setValue(Status.SUCCESS);
                     hint.set("人脸特征提取成功");
                 }, throwable -> {

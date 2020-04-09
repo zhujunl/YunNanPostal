@@ -42,14 +42,13 @@
         <ImageView
             android:id="@+id/iv_back"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/custom_toolbar_height"
             android:adjustViewBounds="true"
             android:padding="12dp"
             android:scaleType="fitCenter"
             android:src="@drawable/ic_navigate_before_white"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintWidth_percent="0.15" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="0dp"

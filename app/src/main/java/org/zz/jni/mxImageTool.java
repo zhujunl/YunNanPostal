@@ -77,40 +77,60 @@ public class mxImageTool {
 	/*******************************************************************************************
 	 功	能：	在输入的RGB图像上根据输入的Rect绘制矩形框
 	 参	数：	pRgbImgBuf  		- 输入	RGB图像缓冲区
+				 iImgWidth			- 输入	图像宽度
+				 iImgHeight			- 输入	图像高度
+				 iRect				- 输入	Rect[0]	=x;
+											 Rect[1]	=y;
+											 Rect[2]	=width;
+											 Rect[3]	=height;
+	 			iPointColor         - 输入  点颜色，0:R,1:G,2:B
+	 返	回：	1-成功，其他-失败
+	 *******************************************************************************************/
+	public native int DrawRect(byte[] pRgbImgBuf, int iImgWidth, int iImgHeight, int[] iRect,int iPointColor);
+
+	/*******************************************************************************************
+	 功	能：	在输入的RGB图像上根据输入的点坐标绘制点
+	 参	数：	pRgbImgBuf  		- 输入	RGB图像缓冲区
+				 iImgWidth			- 输入	图像宽度
+				 iImgHeight			- 输入	图像高度
+				 iPointPos			- 输入	点坐标序列（x1,y1,x2,y2,...）
+				 iPointNum			- 输入  点个数
+				 iPointColor         - 输入  点颜色，0:R,1:G,2:B
+	 返	回：	1-成功，其他-失败
+	 *******************************************************************************************/
+	public native int DrawPoint(byte[] pRgbImgBuf, int iImgWidth, int iImgHeight,
+								int[] iPointPos, int iPointNum,int iPointColor);
+
+	/*******************************************************************************************
+	 功	能：	在输入的RGB图像上根据输入的点坐标绘制点序号
+	 参	数：	pRgbImgBuf  			- 输入	RGB图像缓冲区
+				 iImgWidth			- 输入	图像宽度
+				 iImgHeight			- 输入	图像高度
+				 iPointX				- 输入	指定位置的X坐标
+				 iPointY				- 输入  	指定位置的Y坐标
+				 szText				- 输入  	显示文字
+				 iPointColor         - 输入  点颜色，0:R,1:G,2:B
+	 返	回：	1-成功，其他-失败
+	 *******************************************************************************************/
+	public native int DrawText(byte[] pRgbImgBuf, int iImgWidth, int iImgHeight,
+							   int iPointX, int iPointY, String szText,int iPointColor);
+
+	/*******************************************************************************************
+	 功	能：	在输入的RGB图像上根据输入的Rect,进行裁剪
+	 参	数：	pRgbImgBuf  		- 输入	RGB图像缓冲区
 	 iImgWidth			- 输入	图像宽度
 	 iImgHeight			- 输入	图像高度
 	 iRect				- 输入	Rect[0]	=x;
 	 Rect[1]	=y;
 	 Rect[2]	=width;
 	 Rect[3]	=height;
+	 pDstImgBuf  		- 输出	RGB图像缓冲区
+	 iDstWidth			- 输出	图像宽度
+	 iDstHeight			- 输出	图像高度
 	 返	回：	1-成功，其他-失败
 	 *******************************************************************************************/
-	public native int DrawRect(byte[] pRgbImgBuf, int iImgWidth, int iImgHeight, int[] iRect);
-
-	/*******************************************************************************************
-	 功	能：	在输入的RGB图像上根据输入的点坐标绘制点
-	 参	数：	pRgbImgBuf  		- 输入	RGB图像缓冲区
-	 iImgWidth			- 输入	图像宽度
-	 iImgHeight			- 输入	图像高度
-	 iPointPos			- 输入	点坐标序列（x1,y1,x2,y2,...）
-	 iPointNum			- 输入  点个数
-	 返	回：	1-成功，其他-失败
-	 *******************************************************************************************/
-	public native int DrawPoint(byte[] pRgbImgBuf, int iImgWidth, int iImgHeight,
-								int[] iPointPos, int iPointNum);
-
-	/*******************************************************************************************
-	 功	能：	在输入的RGB图像上根据输入的点坐标绘制点序号
-	 参	数：	pRgbImgBuf  			- 输入	RGB图像缓冲区
-	 iImgWidth			- 输入	图像宽度
-	 iImgHeight			- 输入	图像高度
-	 iPointX				- 输入	指定位置的X坐标
-	 iPointY				- 输入  	指定位置的Y坐标
-	 szText				- 输入  	显示文字
-	 返	回：	1-成功，其他-失败
-	 *******************************************************************************************/
-	public native int DrawText(byte[] pRgbImgBuf, int iImgWidth, int iImgHeight,
-							   int iPointX, int iPointY, String szText);
+	public native int ImageCutRect(byte[] pRgbImgBuf, int iImgWidth, int iImgHeight, int[] iRect,
+								   byte[] pDstImgBuf, int[] iDstWidth, int[] iDstHeight);
 
 	/*******************************************************************************************
 	 功	能：	图像文件数据转换为RGB24内存数据

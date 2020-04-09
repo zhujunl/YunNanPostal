@@ -1,8 +1,17 @@
 package com.miaxis.postal.util;
 
+import android.Manifest;
+import android.app.Service;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.os.Build;
+import android.provider.Settings;
+import android.telephony.TelephonyManager;
+
+import androidx.core.app.ActivityCompat;
+
+import com.miaxis.postal.app.PostalApp;
 
 import java.lang.reflect.Method;
 import java.net.NetworkInterface;
@@ -21,6 +30,17 @@ public class DeviceUtil {
             e.printStackTrace();
         }
         return "error";
+    }
+
+    public static String getIMEI() {
+        try {
+            TelephonyManager manager = (TelephonyManager) PostalApp.getInstance().getSystemService(Context.TELEPHONY_SERVICE);
+            Method method = manager.getClass().getMethod("getImei", int.class);
+            String imei = (String) method.invoke(manager, 0);
+            return imei;
+        } catch (Exception e) {
+            return "";
+        }
     }
 
     public static String getCurVersion(Context context) {

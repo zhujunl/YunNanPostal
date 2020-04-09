@@ -9,6 +9,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 
 import com.miaxis.postal.bridge.SingleLiveEvent;
+import com.miaxis.postal.data.entity.Config;
 import com.miaxis.postal.data.entity.Courier;
 import com.miaxis.postal.data.entity.MxRGBImage;
 import com.miaxis.postal.manager.CameraManager;
@@ -38,12 +39,18 @@ public class FaceLoginViewModel extends BaseViewModel {
         FaceManager.getInstance().setFeatureListener(null);
     }
 
-    private FaceManager.OnFeatureExtractListener faceListener = (mxRGBImage, mxFaceInfoEx, feature) -> {
+    private FaceManager.OnFeatureExtractListener faceListener = (mxRGBImage, mxFaceInfoEx, feature, mask) -> {
         Courier courier = courierLiveData.getValue();
         if (courier != null) {
             try {
-                float score = FaceManager.getInstance().matchFeature(feature, Base64.decode(courier.getFaceFeature(), Base64.NO_WRAP));
-                if (score >= ConfigManager.getInstance().getConfig().getVerifyScore()) {
+                float score;
+                if (mask) {
+                    score = FaceManager.getInstance().matchMaskFeature(feature, Base64.decode(courier.getMaskFaceFeature(), Base64.NO_WRAP));
+                } else {
+                    score = FaceManager.getInstance().matchFeature(feature, Base64.decode(courier.getFaceFeature(), Base64.NO_WRAP));
+                }
+                Config config = ConfigManager.getInstance().getConfig();
+                if (mask ? score >= config.getVerifyMaskScore() : score >= config.getVerifyScore()) {
                     verifyFlag.postValue(Boolean.TRUE);
                     stopFaceVerify();
                     return;

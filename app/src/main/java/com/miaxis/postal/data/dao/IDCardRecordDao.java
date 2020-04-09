@@ -22,6 +22,9 @@ public interface IDCardRecordDao {
     @Query("select * from IDCardRecord")
     List<IDCardRecord> loadAll();
 
+    @Query("select * from IDCardRecord where IDCardRecord.upload = 0 order by IDCardRecord.verifyTime asc limit 1")
+    IDCardRecord findOldestIDCardRecord();
+
     @Query("delete from IDCardRecord")
     void deleteAll();
 

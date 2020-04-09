@@ -16,10 +16,12 @@ public class ValueUtil {
     public final static Gson GSON = new Gson();
 
     public static final String DEFAULT_BASE_HOST = "http://183.129.171.153:9194/policebus/";
-    public static final float DEFAULT_VERIFY_SCORE = 0.70f;
-    public static final int DEFAULT_QUALITY_SCORE = 60;
-    public static final int DEFAULT_REGISTER_QUALITY_SCORE = 80;
+    public static final float DEFAULT_VERIFY_SCORE = 0.76f;
+    public static final float DEFAULT_MASK_VERIFY_SCORE = 0.72f;
+    public static final int DEFAULT_QUALITY_SCORE = 25;
+    public static final int DEFAULT_REGISTER_QUALITY_SCORE = 70;
     public static final int DEFAULT_DEVICE_ID = 0;
+    public static final int DEFAULT_MASK_SCORE = 40;
     public static final int DEFAULT_HEART_BEAT_INTERVAL = 10 * 60;
     public static final int LOGIN_MODE_FINGER = 1;//1:仅指纹，2:仅人脸
     public static final int LOGIN_MODE_FACE = 2;//1:仅指纹，2:仅人脸

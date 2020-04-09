@@ -110,7 +110,7 @@ public class CardManager {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        IDCardRecord idCardRecord = IDCardRecord.IDCardRecordBuilder.anIDCardRecord()
+        IDCardRecord idCardRecord = new IDCardRecord.Builder()
                 .name(idInfor.getName().trim())
                 .birthday(idInfor.getYear().trim() + "-" + idInfor.getMonth().trim() + "-" + idInfor.getDay().trim())
                 .address(idInfor.getAddress().trim())

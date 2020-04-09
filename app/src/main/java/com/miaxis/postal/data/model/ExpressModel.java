@@ -26,5 +26,13 @@ public class ExpressModel {
     public static List<Express> loadAll() {
         return AppDatabase.getInstance().expressDao().loadAll();
     }
-    
+
+    public static List<Express> loadExpressByPage(int pageNum, int pageSize) {
+        return AppDatabase.getInstance().expressDao().loadExpressByPage(pageNum, pageSize);
+    }
+
+    public static int loadExpressCount() {
+        return AppDatabase.getInstance().expressDao().loadExpressCount();
+    }
+
 }

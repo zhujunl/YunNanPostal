@@ -43,13 +43,15 @@ public class ConfigManager {
     public void checkConfig() {
         config = ConfigModel.loadConfig();
         if (config == null) {
-            config = Config.ConfigBuilder.aConfig()
+            config = new Config.Builder()
                     .id(1L)
                     .host(ValueUtil.DEFAULT_BASE_HOST)
-                    .mac(DeviceUtil.getMacFromHardware())
+                    .mac(DeviceUtil.getIMEI())
                     .loginMode(ValueUtil.DEFAULT_LOGIN_MODE)
                     .verifyScore(ValueUtil.DEFAULT_VERIFY_SCORE)
+                    .verifyMaskScore(ValueUtil.DEFAULT_MASK_VERIFY_SCORE)
                     .qualityScore(ValueUtil.DEFAULT_QUALITY_SCORE)
+                    .maskScore(ValueUtil.DEFAULT_MASK_SCORE)
                     .registerQualityScore(ValueUtil.DEFAULT_REGISTER_QUALITY_SCORE)
                     .deviceId(ValueUtil.DEFAULT_DEVICE_ID)
                     .deviceStatus(ValueUtil.DEVICE_UNABLE)

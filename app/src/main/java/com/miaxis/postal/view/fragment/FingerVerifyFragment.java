@@ -24,6 +24,8 @@ import com.miaxis.postal.view.base.BaseViewModelDialogFragment;
 import com.miaxis.postal.view.base.BaseViewModelFragment;
 import com.miaxis.postal.viewModel.FingerVerifyViewModel;
 
+import java.util.Date;
+
 public class FingerVerifyFragment extends BaseViewModelFragment<FragmentFingerVerifyBinding, FingerVerifyViewModel> {
 
     private MaterialDialog retryDialog;
@@ -159,6 +161,7 @@ public class FingerVerifyFragment extends BaseViewModelFragment<FragmentFingerVe
             binding.tvSwitch.setEnabled(false);
             handler.postDelayed(() -> {
                 try {
+                    idCardRecord.setVerifyTime(new Date());
                     mListener.replaceFragment(ExpressFragment.newInstance(idCardRecord));
                 } catch (Exception e) {
                     e.printStackTrace();

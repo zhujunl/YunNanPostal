@@ -16,7 +16,7 @@ public class BaseViewModel extends ViewModel {
     public MutableLiveData<String> resultMessage = new SingleLiveEvent<>();
     public MutableLiveData<ToastManager.ToastBody> toast = new SingleLiveEvent<>();
 
-    protected String hanleError(Throwable throwable) {
+    protected String handleError(Throwable throwable) {
         throwable.printStackTrace();
         Log.e("asd", "" + throwable.getMessage());
         if (ValueUtil.isNetException(throwable)) {

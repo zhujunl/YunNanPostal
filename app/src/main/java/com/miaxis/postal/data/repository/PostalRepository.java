@@ -57,219 +57,219 @@ public class PostalRepository extends BaseRepository {
         throw new MyException("服务端返回数据解析失败，或为空");
     }
 
-    public TempId savePersonFromAppSync(IDCardRecord idCardRecord) throws IOException, MyException {
-        String cardFilePath = FileUtil.FACE_IMAGE_PATH + File.separator + "card_" + idCardRecord.getCardNumber() + System.currentTimeMillis() + ".jpg";
-        String checkFilePath = FileUtil.FACE_IMAGE_PATH + File.separator + "check" + idCardRecord.getCardNumber() + System.currentTimeMillis() + ".jpg";
-        File cardFile = idCardRecord.getCardBitmap() != null ? FileUtil.saveBitmap(idCardRecord.getCardBitmap(), cardFilePath) : null;
-        File checkFile = idCardRecord.getFaceBitmap() != null ? FileUtil.saveBitmap(idCardRecord.getFaceBitmap(), checkFilePath) : null;
-        Response<ResponseEntity<TempIdDto>> execute = PostalApi.savePersonFromApp(
-                idCardRecord.getName(),
-                idCardRecord.getNation(),
-                idCardRecord.getBirthday(),
-                idCardRecord.getCardNumber(),
-                idCardRecord.getAddress(),
-                idCardRecord.getSex(),
-                idCardRecord.getIssuingAuthority(),
-                idCardRecord.getValidateStart(),
-                checkFile,
-                cardFile)
-                .execute();
-        try {
-            ResponseEntity<TempIdDto> body = execute.body();
-            if (body != null) {
-                if (TextUtils.equals(body.getCode(), ValueUtil.SUCCESS) && body.getData() != null) {
-                    return body.getData().transform();
-                } else {
-                    throw new MyException("服务端返回，" + body.getMessage());
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new MyException(e.getMessage());
-        } finally {
-            if (cardFile != null) {
-                cardFile.delete();
-            }
-            if (checkFile != null) {
-                checkFile.delete();
-            }
-        }
-        throw new MyException("服务端返回，空数据");
-    }
+//    public TempId savePersonFromAppSync(IDCardRecord idCardRecord) throws IOException, MyException {
+//        String cardFilePath = FileUtil.FACE_IMAGE_PATH + File.separator + "card_" + idCardRecord.getCardNumber() + System.currentTimeMillis() + ".jpg";
+//        String checkFilePath = FileUtil.FACE_IMAGE_PATH + File.separator + "check" + idCardRecord.getCardNumber() + System.currentTimeMillis() + ".jpg";
+//        File cardFile = idCardRecord.getCardBitmap() != null ? FileUtil.saveBitmap(idCardRecord.getCardBitmap(), cardFilePath) : null;
+//        File checkFile = idCardRecord.getFaceBitmap() != null ? FileUtil.saveBitmap(idCardRecord.getFaceBitmap(), checkFilePath) : null;
+//        Response<ResponseEntity<TempIdDto>> execute = PostalApi.savePersonFromApp(
+//                idCardRecord.getName(),
+//                idCardRecord.getNation(),
+//                idCardRecord.getBirthday(),
+//                idCardRecord.getCardNumber(),
+//                idCardRecord.getAddress(),
+//                idCardRecord.getSex(),
+//                idCardRecord.getIssuingAuthority(),
+//                idCardRecord.getValidateStart(),
+//                checkFile,
+//                cardFile)
+//                .execute();
+//        try {
+//            ResponseEntity<TempIdDto> body = execute.body();
+//            if (body != null) {
+//                if (TextUtils.equals(body.getCode(), ValueUtil.SUCCESS) && body.getData() != null) {
+//                    return body.getData().transform();
+//                } else {
+//                    throw new MyException("服务端返回，" + body.getMessage());
+//                }
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            throw new MyException(e.getMessage());
+//        } finally {
+//            if (cardFile != null) {
+//                cardFile.delete();
+//            }
+//            if (checkFile != null) {
+//                checkFile.delete();
+//            }
+//        }
+//        throw new MyException("服务端返回，空数据");
+//    }
 
-    public boolean saveExpressFromAppSync(Express express, TempId tempId, String sendAddress, String sendPhone) throws IOException, MyException {
-        List<File> fileList = new ArrayList<>();
-        for (int i = 0; i < express.getPhotoList().size(); i++) {
-            Bitmap bitmap = express.getPhotoList().get(i);
-            String path = FileUtil.ORDER_IMAGE_PATH + File.separator + i + System.currentTimeMillis() + ".jpg";
-            File file = FileUtil.saveBitmap(bitmap, path);
-            fileList.add(file);
-        }
-        AMapLocation aMapLocation = AmapManager.getInstance().getaMapLocation();
-        Response<ResponseEntity> execute = PostalApi.saveOrderFromAppSync(
-                tempId.getPersonId(),
-                sendAddress,
-                sendPhone,
-                express.getBarCode(),
-                "",
-                "",
-                "",
-                "",
-                "",
-                "",
-                aMapLocation != null ? String.valueOf(aMapLocation.getLatitude()) : "",
-                aMapLocation != null ? String.valueOf(aMapLocation.getLongitude()) : "",
-                tempId.getCheckId(),
-                fileList)
-                .execute();
-        try {
-            ResponseEntity body = execute.body();
-            if (body != null) {
-                return TextUtils.equals(body.getCode(), ValueUtil.SUCCESS);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new MyException(e.getMessage());
-        } finally {
-            for (File file : fileList) {
-                file.delete();
-            }
-        }
-        throw new MyException("服务端返回，空数据");
-    }
+//    public boolean saveExpressFromAppSync(Express express, TempId tempId, String sendAddress, String sendPhone) throws IOException, MyException {
+//        List<File> fileList = new ArrayList<>();
+//        for (int i = 0; i < express.getPhotoList().size(); i++) {
+//            Bitmap bitmap = express.getPhotoList().get(i);
+//            String path = FileUtil.ORDER_IMAGE_PATH + File.separator + i + System.currentTimeMillis() + ".jpg";
+//            File file = FileUtil.saveBitmap(bitmap, path);
+//            fileList.add(file);
+//        }
+//        AMapLocation aMapLocation = AmapManager.getInstance().getaMapLocation();
+//        Response<ResponseEntity> execute = PostalApi.saveOrderFromAppSync(
+//                tempId.getPersonId(),
+//                sendAddress,
+//                sendPhone,
+//                express.getBarCode(),
+//                "",
+//                "",
+//                "",
+//                "",
+//                "",
+//                "",
+//                aMapLocation != null ? String.valueOf(aMapLocation.getLatitude()) : "",
+//                aMapLocation != null ? String.valueOf(aMapLocation.getLongitude()) : "",
+//                tempId.getCheckId(),
+//                fileList)
+//                .execute();
+//        try {
+//            ResponseEntity body = execute.body();
+//            if (body != null) {
+//                return TextUtils.equals(body.getCode(), ValueUtil.SUCCESS);
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            throw new MyException(e.getMessage());
+//        } finally {
+//            for (File file : fileList) {
+//                file.delete();
+//            }
+//        }
+//        throw new MyException("服务端返回，空数据");
+//    }
 
-    public void uploadLocalExpress() {
-        List<IDCardRecord> idCardRecordList = IDCardRecordModel.loadAll();
-        for (IDCardRecord idCardRecord : idCardRecordList) {
-            List<Express> expressList = ExpressModel.loadExpress(idCardRecord.getVerifyId());
-            if (expressList != null && !expressList.isEmpty()) {
-                TempId tempId;
-                List<Express> failedExpressList = new ArrayList<>();
-                try {
-                    tempId = uploadLocalIDCardRecord(idCardRecord);
-                    for (Express express : expressList) {
-                        try {
-                            uploadLocalExpress(tempId, express);
-                            ExpressModel.deleteExpress(express);
-                        } catch (IOException | MyException e) {
-                            e.printStackTrace();
-                            failedExpressList.add(express);
-                        }
-                    }
-                    if (failedExpressList.isEmpty()) {
-                        IDCardRecordModel.deleteIDCardRecord(idCardRecord);
-                    }
-                } catch (MyException | IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
+//    public void uploadLocalExpress() {
+//        List<IDCardRecord> idCardRecordList = IDCardRecordModel.loadAll();
+//        for (IDCardRecord idCardRecord : idCardRecordList) {
+//            List<Express> expressList = ExpressModel.loadExpress(idCardRecord.getVerifyId());
+//            if (expressList != null && !expressList.isEmpty()) {
+//                TempId tempId;
+//                List<Express> failedExpressList = new ArrayList<>();
+//                try {
+//                    tempId = uploadLocalIDCardRecord(idCardRecord);
+//                    for (Express express : expressList) {
+//                        try {
+//                            uploadLocalExpress(tempId, express);
+//                            ExpressModel.deleteExpress(express);
+//                        } catch (IOException | MyException e) {
+//                            e.printStackTrace();
+//                            failedExpressList.add(express);
+//                        }
+//                    }
+//                    if (failedExpressList.isEmpty()) {
+//                        IDCardRecordModel.deleteIDCardRecord(idCardRecord);
+//                    }
+//                } catch (MyException | IOException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        }
+//    }
 
-    private TempId uploadLocalIDCardRecord(IDCardRecord idCardRecord) throws MyException, IOException {
-        File cardFile = !TextUtils.isEmpty(idCardRecord.getCardPicture()) ? new File(idCardRecord.getCardPicture()) : null;
-        File faceFile = !TextUtils.isEmpty(idCardRecord.getFacePicture()) ? new File(idCardRecord.getFacePicture()) : null;
-        Response<ResponseEntity<TempIdDto>> execute = PostalApi.savePersonFromApp(
-                idCardRecord.getName(),
-                idCardRecord.getNation(),
-                idCardRecord.getBirthday(),
-                idCardRecord.getCardNumber(),
-                idCardRecord.getAddress(),
-                idCardRecord.getSex(),
-                idCardRecord.getIssuingAuthority(),
-                idCardRecord.getValidateStart(),
-                faceFile,
-                cardFile).execute();
-        try {
-            ResponseEntity<TempIdDto> body = execute.body();
-            if (body != null) {
-                if (TextUtils.equals(body.getCode(), ValueUtil.SUCCESS) && body.getData() != null) {
-                    return body.getData().transform();
-                } else {
-                    throw new MyException("服务端返回，" + body.getMessage());
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new MyException(e.getMessage());
-        }
-        throw new MyException("服务端返回，空数据");
-    }
+//    private TempId uploadLocalIDCardRecord(IDCardRecord idCardRecord) throws MyException, IOException {
+//        File cardFile = !TextUtils.isEmpty(idCardRecord.getCardPicture()) ? new File(idCardRecord.getCardPicture()) : null;
+//        File faceFile = !TextUtils.isEmpty(idCardRecord.getFacePicture()) ? new File(idCardRecord.getFacePicture()) : null;
+//        Response<ResponseEntity<TempIdDto>> execute = PostalApi.savePersonFromApp(
+//                idCardRecord.getName(),
+//                idCardRecord.getNation(),
+//                idCardRecord.getBirthday(),
+//                idCardRecord.getCardNumber(),
+//                idCardRecord.getAddress(),
+//                idCardRecord.getSex(),
+//                idCardRecord.getIssuingAuthority(),
+//                idCardRecord.getValidateStart(),
+//                faceFile,
+//                cardFile).execute();
+//        try {
+//            ResponseEntity<TempIdDto> body = execute.body();
+//            if (body != null) {
+//                if (TextUtils.equals(body.getCode(), ValueUtil.SUCCESS) && body.getData() != null) {
+//                    return body.getData().transform();
+//                } else {
+//                    throw new MyException("服务端返回，" + body.getMessage());
+//                }
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            throw new MyException(e.getMessage());
+//        }
+//        throw new MyException("服务端返回，空数据");
+//    }
 
-    private boolean uploadLocalExpress(TempId tempId, Express express) throws IOException, MyException {
-        List<File> fileList = new ArrayList<>();
-        for (String path : express.getPhotoPathList()) {
-            fileList.add(new File(path));
-        }
-        Response<ResponseEntity> execute = PostalApi.saveOrderFromAppSync(
-                tempId.getPersonId(),
-                express.getSenderAddress(),
-                express.getSenderPhone(),
-                express.getBarCode(),
-                "",
-                "",
-                "",
-                "",
-                "",
-                "",
-                express.getLatitude(),
-                express.getLongitude(),
-                tempId.getCheckId(),
-                fileList)
-                .execute();
-        try {
-            ResponseEntity body = execute.body();
-            if (body != null) {
-                return TextUtils.equals(body.getCode(), ValueUtil.SUCCESS);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new MyException(e.getMessage());
-        }
-        throw new MyException("服务端返回，空数据");
-    }
+//    private boolean uploadLocalExpress(TempId tempId, Express express) throws IOException, MyException {
+//        List<File> fileList = new ArrayList<>();
+//        for (String path : express.getPhotoPathList()) {
+//            fileList.add(new File(path));
+//        }
+//        Response<ResponseEntity> execute = PostalApi.saveOrderFromAppSync(
+//                tempId.getPersonId(),
+//                express.getSenderAddress(),
+//                express.getSenderPhone(),
+//                express.getBarCode(),
+//                "",
+//                "",
+//                "",
+//                "",
+//                "",
+//                "",
+//                express.getLatitude(),
+//                express.getLongitude(),
+//                tempId.getCheckId(),
+//                fileList)
+//                .execute();
+//        try {
+//            ResponseEntity body = execute.body();
+//            if (body != null) {
+//                return TextUtils.equals(body.getCode(), ValueUtil.SUCCESS);
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            throw new MyException(e.getMessage());
+//        }
+//        throw new MyException("服务端返回，空数据");
+//    }
 
-    public void saveLocalExpress(IDCardRecord idCardRecord, List<Express> expressList, String address, String phone) {
-        String verifyId = saveLocalIDCardRecord(idCardRecord);
-        for (Express express : expressList) {
-            saveLocalExpress(verifyId, express, address, phone);
-        }
-    }
+//    public void saveLocalExpress(IDCardRecord idCardRecord, List<Express> expressList, String address, String phone) {
+//        String verifyId = saveLocalIDCardRecord(idCardRecord);
+//        for (Express express : expressList) {
+//            saveLocalExpress(verifyId, express, address, phone);
+//        }
+//    }
 
-    private String saveLocalIDCardRecord(IDCardRecord idCardRecord) {
-        if (idCardRecord.getCardBitmap() != null) {
-            String cardPath = FileUtil.FACE_STOREHOUSE_PATH + File.separator + "card_" +idCardRecord.getCardNumber() + System.currentTimeMillis() + ".jpg";
-            FileUtil.saveBitmap(idCardRecord.getCardBitmap(), cardPath);
-            idCardRecord.setCardPicture(cardPath);
-        }
-        if (idCardRecord.getFaceBitmap() != null) {
-            String facePath = FileUtil.FACE_STOREHOUSE_PATH + File.separator + "face_" +idCardRecord.getCardNumber() + System.currentTimeMillis() + ".jpg";
-            FileUtil.saveBitmap(idCardRecord.getFaceBitmap(), facePath);
-            idCardRecord.setFacePicture(facePath);
-        }
-        String verifyId = idCardRecord.getCardNumber() + "_" + System.currentTimeMillis();
-        idCardRecord.setVerifyId(verifyId);
-        IDCardRecordModel.saveIDCardRecord(idCardRecord);
-        return verifyId;
-    }
+//    private String saveLocalIDCardRecord(IDCardRecord idCardRecord) {
+//        if (idCardRecord.getCardBitmap() != null) {
+//            String cardPath = FileUtil.FACE_STOREHOUSE_PATH + File.separator + "card_" +idCardRecord.getCardNumber() + System.currentTimeMillis() + ".jpg";
+//            FileUtil.saveBitmap(idCardRecord.getCardBitmap(), cardPath);
+//            idCardRecord.setCardPicture(cardPath);
+//        }
+//        if (idCardRecord.getFaceBitmap() != null) {
+//            String facePath = FileUtil.FACE_STOREHOUSE_PATH + File.separator + "face_" +idCardRecord.getCardNumber() + System.currentTimeMillis() + ".jpg";
+//            FileUtil.saveBitmap(idCardRecord.getFaceBitmap(), facePath);
+//            idCardRecord.setFacePicture(facePath);
+//        }
+//        String verifyId = idCardRecord.getCardNumber() + "_" + System.currentTimeMillis();
+//        idCardRecord.setVerifyId(verifyId);
+//        IDCardRecordModel.saveIDCardRecord(idCardRecord);
+//        return verifyId;
+//    }
 
-    private void saveLocalExpress(String verifyId, Express express, String address, String phone) {
-        List<Bitmap> photoList = express.getPhotoList();
-        List<String> pathList = new ArrayList<>();
-        for (int i = 0; i < photoList.size(); i++) {
-            Bitmap bitmap = photoList.get(i);
-            String path = FileUtil.ORDER_STOREHOUSE_PATH +File.separator + express.getBarCode() + "_" + System.currentTimeMillis() + "_" + i + ".jpg";
-            FileUtil.saveBitmap(bitmap, path);
-            pathList.add(path);
-        }
-        AMapLocation aMapLocation = AmapManager.getInstance().getaMapLocation();
-        express.setLatitude(aMapLocation != null ? String.valueOf(aMapLocation.getLatitude()) : "");
-        express.setLongitude(aMapLocation != null ? String.valueOf(aMapLocation.getLongitude()) : "");
-        express.setPhotoPathList(pathList);
-        express.setSenderAddress(address);
-        express.setSenderPhone(phone);
-        express.setVerifyId(verifyId);
-        ExpressModel.saveExpress(express);
-    }
+//    private void saveLocalExpress(String verifyId, Express express, String address, String phone) {
+//        List<Bitmap> photoList = express.getPhotoList();
+//        List<String> pathList = new ArrayList<>();
+//        for (int i = 0; i < photoList.size(); i++) {
+//            Bitmap bitmap = photoList.get(i);
+//            String path = FileUtil.ORDER_STOREHOUSE_PATH +File.separator + express.getBarCode() + "_" + System.currentTimeMillis() + "_" + i + ".jpg";
+//            FileUtil.saveBitmap(bitmap, path);
+//            pathList.add(path);
+//        }
+//        AMapLocation aMapLocation = AmapManager.getInstance().getaMapLocation();
+//        express.setLatitude(aMapLocation != null ? String.valueOf(aMapLocation.getLatitude()) : "");
+//        express.setLongitude(aMapLocation != null ? String.valueOf(aMapLocation.getLongitude()) : "");
+//        express.setPhotoPathList(pathList);
+//        express.setSenderAddress(address);
+//        express.setSenderPhone(phone);
+//        express.setVerifyId(verifyId);
+//        ExpressModel.saveExpress(express);
+//    }
 
 }

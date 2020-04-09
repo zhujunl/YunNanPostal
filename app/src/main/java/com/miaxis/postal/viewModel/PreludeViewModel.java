@@ -2,7 +2,6 @@ package com.miaxis.postal.viewModel;
 
 import android.Manifest;
 import android.text.TextUtils;
-import android.util.Log;
 
 import androidx.databinding.ObservableBoolean;
 import androidx.databinding.ObservableField;
@@ -12,8 +11,6 @@ import androidx.lifecycle.LiveData;
 import com.miaxis.postal.app.PostalApp;
 import com.miaxis.postal.bridge.SingleLiveEvent;
 import com.miaxis.postal.data.entity.Config;
-import com.miaxis.postal.data.exception.MyException;
-import com.miaxis.postal.data.net.ResponseEntity;
 import com.miaxis.postal.data.repository.DeviceRepository;
 import com.miaxis.postal.manager.ConfigManager;
 import com.miaxis.postal.manager.ToastManager;
@@ -21,11 +18,9 @@ import com.miaxis.postal.util.ValueUtil;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 
 import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
 public class PreludeViewModel extends BaseViewModel {
@@ -102,7 +97,7 @@ public class PreludeViewModel extends BaseViewModel {
                     getDeviceStatus();
                 }, throwable -> {
                     errorMode.set(Boolean.TRUE);
-                    hint.set(hanleError(throwable));
+                    hint.set(handleError(throwable));
                 });
     }
 
@@ -122,7 +117,7 @@ public class PreludeViewModel extends BaseViewModel {
                 .subscribe(this::initResult, throwable -> {
                     Config config = ConfigManager.getInstance().getConfig();
                     initResult(config.getDeviceStatus());
-                    hint.set(hanleError(throwable));
+                    hint.set(handleError(throwable));
                     ToastManager.toast("脱机模式", ToastManager.INFO);
                 });
     }

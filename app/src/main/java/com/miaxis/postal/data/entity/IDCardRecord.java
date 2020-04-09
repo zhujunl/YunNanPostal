@@ -6,11 +6,13 @@ import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
+import java.util.Date;
+
 @Entity
 public class IDCardRecord {
 
     @PrimaryKey(autoGenerate = true)
-    private long id;
+    private Long id;
 
     /* 注释说明：二代证 / 港澳台 / 外国人永久居留证 */
     /** 卡片类型 空值=二代证，J=港澳台，I=外国人永久居留证 **/
@@ -58,8 +60,10 @@ public class IDCardRecord {
     /** 现场人员照片 **/
     private String facePicture;
 
-    /** 人证核验缓存编号 **/
+    /** 人证核验缓存 **/
     private String verifyId;
+    private Date verifyTime;
+    private boolean upload;
 
     /** 身份证照片Bitmap **/
     @Ignore
@@ -71,11 +75,41 @@ public class IDCardRecord {
     public IDCardRecord() {
     }
 
-    public long getId() {
+    private IDCardRecord(Builder builder) {
+        setId(builder.id);
+        setCardType(builder.cardType);
+        setCardId(builder.cardId);
+        setName(builder.name);
+        setBirthday(builder.birthday);
+        setAddress(builder.address);
+        setCardNumber(builder.cardNumber);
+        setIssuingAuthority(builder.issuingAuthority);
+        setValidateStart(builder.validateStart);
+        setValidateEnd(builder.validateEnd);
+        setSex(builder.sex);
+        setNation(builder.nation);
+        setFingerprint0(builder.fingerprint0);
+        setFingerprintPosition0(builder.fingerprintPosition0);
+        setFingerprint1(builder.fingerprint1);
+        setFingerprintPosition1(builder.fingerprintPosition1);
+        setPassNumber(builder.passNumber);
+        setIssueCount(builder.issueCount);
+        setChineseName(builder.chineseName);
+        setVersion(builder.version);
+        setCardPicture(builder.cardPicture);
+        setFacePicture(builder.facePicture);
+        setVerifyId(builder.verifyId);
+        setVerifyTime(builder.verifyTime);
+        setUpload(builder.upload);
+        setCardBitmap(builder.cardBitmap);
+        setFaceBitmap(builder.faceBitmap);
+    }
+
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -255,6 +289,22 @@ public class IDCardRecord {
         this.verifyId = verifyId;
     }
 
+    public Date getVerifyTime() {
+        return verifyTime;
+    }
+
+    public void setVerifyTime(Date verifyTime) {
+        this.verifyTime = verifyTime;
+    }
+
+    public boolean isUpload() {
+        return upload;
+    }
+
+    public void setUpload(boolean upload) {
+        this.upload = upload;
+    }
+
     public Bitmap getCardBitmap() {
         return cardBitmap;
     }
@@ -271,8 +321,8 @@ public class IDCardRecord {
         this.faceBitmap = faceBitmap;
     }
 
-    public static final class IDCardRecordBuilder {
-        private long id;
+    public static final class Builder {
+        private Long id;
         private String cardType;
         private String cardId;
         private String name;
@@ -295,169 +345,151 @@ public class IDCardRecord {
         private String cardPicture;
         private String facePicture;
         private String verifyId;
+        private Date verifyTime;
+        private boolean upload;
         private Bitmap cardBitmap;
         private Bitmap faceBitmap;
 
-        private IDCardRecordBuilder() {
+        public Builder() {
         }
 
-        public static IDCardRecordBuilder anIDCardRecord() {
-            return new IDCardRecordBuilder();
-        }
-
-        public IDCardRecordBuilder id(long id) {
-            this.id = id;
+        public Builder id(Long val) {
+            id = val;
             return this;
         }
 
-        public IDCardRecordBuilder cardType(String cardType) {
-            this.cardType = cardType;
+        public Builder cardType(String val) {
+            cardType = val;
             return this;
         }
 
-        public IDCardRecordBuilder cardId(String cardId) {
-            this.cardId = cardId;
+        public Builder cardId(String val) {
+            cardId = val;
             return this;
         }
 
-        public IDCardRecordBuilder name(String name) {
-            this.name = name;
+        public Builder name(String val) {
+            name = val;
             return this;
         }
 
-        public IDCardRecordBuilder birthday(String birthday) {
-            this.birthday = birthday;
+        public Builder birthday(String val) {
+            birthday = val;
             return this;
         }
 
-        public IDCardRecordBuilder address(String address) {
-            this.address = address;
+        public Builder address(String val) {
+            address = val;
             return this;
         }
 
-        public IDCardRecordBuilder cardNumber(String cardNumber) {
-            this.cardNumber = cardNumber;
+        public Builder cardNumber(String val) {
+            cardNumber = val;
             return this;
         }
 
-        public IDCardRecordBuilder issuingAuthority(String issuingAuthority) {
-            this.issuingAuthority = issuingAuthority;
+        public Builder issuingAuthority(String val) {
+            issuingAuthority = val;
             return this;
         }
 
-        public IDCardRecordBuilder validateStart(String validateStart) {
-            this.validateStart = validateStart;
+        public Builder validateStart(String val) {
+            validateStart = val;
             return this;
         }
 
-        public IDCardRecordBuilder validateEnd(String validateEnd) {
-            this.validateEnd = validateEnd;
+        public Builder validateEnd(String val) {
+            validateEnd = val;
             return this;
         }
 
-        public IDCardRecordBuilder sex(String sex) {
-            this.sex = sex;
+        public Builder sex(String val) {
+            sex = val;
             return this;
         }
 
-        public IDCardRecordBuilder nation(String nation) {
-            this.nation = nation;
+        public Builder nation(String val) {
+            nation = val;
             return this;
         }
 
-        public IDCardRecordBuilder fingerprint0(String fingerprint0) {
-            this.fingerprint0 = fingerprint0;
+        public Builder fingerprint0(String val) {
+            fingerprint0 = val;
             return this;
         }
 
-        public IDCardRecordBuilder fingerprintPosition0(String fingerprintPosition0) {
-            this.fingerprintPosition0 = fingerprintPosition0;
+        public Builder fingerprintPosition0(String val) {
+            fingerprintPosition0 = val;
             return this;
         }
 
-        public IDCardRecordBuilder fingerprint1(String fingerprint1) {
-            this.fingerprint1 = fingerprint1;
+        public Builder fingerprint1(String val) {
+            fingerprint1 = val;
             return this;
         }
 
-        public IDCardRecordBuilder fingerprintPosition1(String fingerprintPosition1) {
-            this.fingerprintPosition1 = fingerprintPosition1;
+        public Builder fingerprintPosition1(String val) {
+            fingerprintPosition1 = val;
             return this;
         }
 
-        public IDCardRecordBuilder passNumber(String passNumber) {
-            this.passNumber = passNumber;
+        public Builder passNumber(String val) {
+            passNumber = val;
             return this;
         }
 
-        public IDCardRecordBuilder issueCount(String issueCount) {
-            this.issueCount = issueCount;
+        public Builder issueCount(String val) {
+            issueCount = val;
             return this;
         }
 
-        public IDCardRecordBuilder chineseName(String chineseName) {
-            this.chineseName = chineseName;
+        public Builder chineseName(String val) {
+            chineseName = val;
             return this;
         }
 
-        public IDCardRecordBuilder version(String version) {
-            this.version = version;
+        public Builder version(String val) {
+            version = val;
             return this;
         }
 
-        public IDCardRecordBuilder cardPicture(String cardPicture) {
-            this.cardPicture = cardPicture;
+        public Builder cardPicture(String val) {
+            cardPicture = val;
             return this;
         }
 
-        public IDCardRecordBuilder facePicture(String facePicture) {
-            this.facePicture = facePicture;
+        public Builder facePicture(String val) {
+            facePicture = val;
             return this;
         }
 
-        public IDCardRecordBuilder verifyId(String verifyId) {
-            this.verifyId = verifyId;
+        public Builder verifyId(String val) {
+            verifyId = val;
             return this;
         }
 
-        public IDCardRecordBuilder cardBitmap(Bitmap cardBitmap) {
-            this.cardBitmap = cardBitmap;
+        public Builder verifyTime(Date val) {
+            verifyTime = val;
             return this;
         }
 
-        public IDCardRecordBuilder faceBitmap(Bitmap faceBitmap) {
-            this.faceBitmap = faceBitmap;
+        public Builder upload(boolean val) {
+            upload = val;
+            return this;
+        }
+
+        public Builder cardBitmap(Bitmap val) {
+            cardBitmap = val;
+            return this;
+        }
+
+        public Builder faceBitmap(Bitmap val) {
+            faceBitmap = val;
             return this;
         }
 
         public IDCardRecord build() {
-            IDCardRecord iDCardRecord = new IDCardRecord();
-            iDCardRecord.setId(id);
-            iDCardRecord.setCardType(cardType);
-            iDCardRecord.setCardId(cardId);
-            iDCardRecord.setName(name);
-            iDCardRecord.setBirthday(birthday);
-            iDCardRecord.setAddress(address);
-            iDCardRecord.setCardNumber(cardNumber);
-            iDCardRecord.setIssuingAuthority(issuingAuthority);
-            iDCardRecord.setValidateStart(validateStart);
-            iDCardRecord.setValidateEnd(validateEnd);
-            iDCardRecord.setSex(sex);
-            iDCardRecord.setNation(nation);
-            iDCardRecord.setFingerprint0(fingerprint0);
-            iDCardRecord.setFingerprintPosition0(fingerprintPosition0);
-            iDCardRecord.setFingerprint1(fingerprint1);
-            iDCardRecord.setFingerprintPosition1(fingerprintPosition1);
-            iDCardRecord.setPassNumber(passNumber);
-            iDCardRecord.setIssueCount(issueCount);
-            iDCardRecord.setChineseName(chineseName);
-            iDCardRecord.setVersion(version);
-            iDCardRecord.setCardPicture(cardPicture);
-            iDCardRecord.setFacePicture(facePicture);
-            iDCardRecord.setVerifyId(verifyId);
-            iDCardRecord.setCardBitmap(cardBitmap);
-            iDCardRecord.setFaceBitmap(faceBitmap);
-            return iDCardRecord;
+            return new IDCardRecord(this);
         }
     }
 }

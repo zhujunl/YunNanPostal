@@ -14,11 +14,28 @@ public class Config {
     private int qualityScore;
     private int registerQualityScore;
     private float verifyScore;
+    private float verifyMaskScore;
+    private int maskScore;
     private int deviceId;
     private String deviceStatus;
     private int heartBeatInterval;
 
     public Config() {
+    }
+
+    private Config(Builder builder) {
+        setId(builder.id);
+        setHost(builder.host);
+        setMac(builder.mac);
+        setLoginMode(builder.loginMode);
+        setQualityScore(builder.qualityScore);
+        setRegisterQualityScore(builder.registerQualityScore);
+        setVerifyScore(builder.verifyScore);
+        setVerifyMaskScore(builder.verifyMaskScore);
+        setMaskScore(builder.maskScore);
+        setDeviceId(builder.deviceId);
+        setDeviceStatus(builder.deviceStatus);
+        setHeartBeatInterval(builder.heartBeatInterval);
     }
 
     public Long getId() {
@@ -77,6 +94,22 @@ public class Config {
         this.verifyScore = verifyScore;
     }
 
+    public float getVerifyMaskScore() {
+        return verifyMaskScore;
+    }
+
+    public void setVerifyMaskScore(float verifyMaskScore) {
+        this.verifyMaskScore = verifyMaskScore;
+    }
+
+    public int getMaskScore() {
+        return maskScore;
+    }
+
+    public void setMaskScore(int maskScore) {
+        this.maskScore = maskScore;
+    }
+
     public int getDeviceId() {
         return deviceId;
     }
@@ -101,7 +134,7 @@ public class Config {
         this.heartBeatInterval = heartBeatInterval;
     }
 
-    public static final class ConfigBuilder {
+    public static final class Builder {
         private Long id;
         private String host;
         private String mac;
@@ -109,80 +142,77 @@ public class Config {
         private int qualityScore;
         private int registerQualityScore;
         private float verifyScore;
+        private float verifyMaskScore;
+        private int maskScore;
         private int deviceId;
         private String deviceStatus;
         private int heartBeatInterval;
 
-        private ConfigBuilder() {
+        public Builder() {
         }
 
-        public static ConfigBuilder aConfig() {
-            return new ConfigBuilder();
-        }
-
-        public ConfigBuilder id(Long id) {
-            this.id = id;
+        public Builder id(Long val) {
+            id = val;
             return this;
         }
 
-        public ConfigBuilder host(String host) {
-            this.host = host;
+        public Builder host(String val) {
+            host = val;
             return this;
         }
 
-        public ConfigBuilder mac(String mac) {
-            this.mac = mac;
+        public Builder mac(String val) {
+            mac = val;
             return this;
         }
 
-        public ConfigBuilder loginMode(int loginMode) {
-            this.loginMode = loginMode;
+        public Builder loginMode(int val) {
+            loginMode = val;
             return this;
         }
 
-        public ConfigBuilder qualityScore(int qualityScore) {
-            this.qualityScore = qualityScore;
+        public Builder qualityScore(int val) {
+            qualityScore = val;
             return this;
         }
 
-        public ConfigBuilder registerQualityScore(int registerQualityScore) {
-            this.registerQualityScore = registerQualityScore;
+        public Builder registerQualityScore(int val) {
+            registerQualityScore = val;
             return this;
         }
 
-        public ConfigBuilder verifyScore(float verifyScore) {
-            this.verifyScore = verifyScore;
+        public Builder verifyScore(float val) {
+            verifyScore = val;
             return this;
         }
 
-        public ConfigBuilder deviceId(int deviceId) {
-            this.deviceId = deviceId;
+        public Builder verifyMaskScore(float val) {
+            verifyMaskScore = val;
             return this;
         }
 
-        public ConfigBuilder deviceStatus(String deviceStatus) {
-            this.deviceStatus = deviceStatus;
+        public Builder maskScore(int val) {
+            maskScore = val;
             return this;
         }
 
-        public ConfigBuilder heartBeatInterval(int heartBeatInterval) {
-            this.heartBeatInterval = heartBeatInterval;
+        public Builder deviceId(int val) {
+            deviceId = val;
+            return this;
+        }
+
+        public Builder deviceStatus(String val) {
+            deviceStatus = val;
+            return this;
+        }
+
+        public Builder heartBeatInterval(int val) {
+            heartBeatInterval = val;
             return this;
         }
 
         public Config build() {
-            Config config = new Config();
-            config.setId(id);
-            config.setHost(host);
-            config.setMac(mac);
-            config.setLoginMode(loginMode);
-            config.setQualityScore(qualityScore);
-            config.setRegisterQualityScore(registerQualityScore);
-            config.setVerifyScore(verifyScore);
-            config.setDeviceId(deviceId);
-            config.setDeviceStatus(deviceStatus);
-            config.setHeartBeatInterval(heartBeatInterval);
-            return config;
+            return new Config(this);
         }
     }
 }

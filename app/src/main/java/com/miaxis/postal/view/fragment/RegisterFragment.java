@@ -76,6 +76,7 @@ public class RegisterFragment extends BaseViewModelFragment<FragmentRegisterBind
         viewModel.faceFeatureHint.set("已采集");
         binding.tvHeader.setOnClickListener(null);
         viewModel.setFeatureCache(event.getFeature());
+        viewModel.setMaskFeatureCache(event.getMaskFeature());
         viewModel.setHeaderCache(event.getBitmap());
         EventBus.getDefault().removeStickyEvent(event);
     }

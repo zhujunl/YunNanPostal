@@ -1,38 +1,33 @@
 package com.miaxis.postal.viewModel;
 
-import android.graphics.Bitmap;
 import android.text.TextUtils;
 
 import androidx.databinding.ObservableField;
 import androidx.lifecycle.MutableLiveData;
 
+import com.amap.api.location.AMapLocation;
 import com.miaxis.postal.app.PostalApp;
 import com.miaxis.postal.bridge.SingleLiveEvent;
-import com.miaxis.postal.bridge.Status;
 import com.miaxis.postal.data.entity.Express;
 import com.miaxis.postal.data.entity.IDCardRecord;
-import com.miaxis.postal.data.entity.TempId;
 import com.miaxis.postal.data.exception.MyException;
+import com.miaxis.postal.data.repository.ExpressRepository;
+import com.miaxis.postal.data.repository.IDCardRecordRepository;
 import com.miaxis.postal.data.repository.PostalRepository;
 import com.miaxis.postal.manager.AmapManager;
+import com.miaxis.postal.manager.PostalManager;
 import com.miaxis.postal.manager.ScanManager;
-import com.miaxis.postal.manager.ToastManager;
-import com.miaxis.postal.util.FileUtil;
-import com.speedata.libid2.IDInfor;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
 import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
-import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 public class ExpressViewModel extends BaseViewModel {
@@ -46,7 +41,7 @@ public class ExpressViewModel extends BaseViewModel {
     public MutableLiveData<List<Express>> expressList = new MutableLiveData<>(new ArrayList<>());
     public MutableLiveData<Express> newExpress = new SingleLiveEvent<>();
     public MutableLiveData<String> repeatExpress = new SingleLiveEvent<>();
-    public MutableLiveData<Boolean> uploadFlag = new SingleLiveEvent<>();
+    public MutableLiveData<Boolean> saveFlag = new SingleLiveEvent<>();
     public MutableLiveData<Boolean> scanFlag = new SingleLiveEvent<>();
 
     public ExpressViewModel() {
@@ -180,74 +175,117 @@ public class ExpressViewModel extends BaseViewModel {
         expressList.setValue(localList);
     }
 
-    public void uploadExpress() {
+    public void saveExpress() {
         IDCardRecord cardMessage = idCardRecord.get();
         List<Express> expressList = getExpressList();
-        if (cardMessage == null || expressList.isEmpty()) {
+        if (cardMessage == null || expressList == null || expressList.isEmpty()) {
+            resultMessage.setValue("未找到待上传数据");
             return;
         }
-        List<Express> cacheList = new ArrayList<>();
-        waitMessage.setValue("正在上传核验数据...");
-        Disposable disposable = Observable.create((ObservableOnSubscribe<TempId>) emitter -> {
-            TempId tempId = PostalRepository.getInstance().savePersonFromAppSync(cardMessage);
-            emitter.onNext(tempId);
+        waitMessage.setValue("正在保存...");
+        Observable.create((ObservableOnSubscribe<String>) emitter -> {
+            cardMessage.setUpload(false);
+            String verifyId = IDCardRecordRepository.getInstance().saveIdCardRecord(cardMessage);
+            emitter.onNext(verifyId);
         })
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
-                .map(tempId -> {
-                    String message = "";
+                .map(verifyId -> {
+                    String phoneStr = phone.get();
+                    String addressStr = address.get();
+                    AMapLocation aMapLocation = AmapManager.getInstance().getaMapLocation();
                     for (Express express : expressList) {
-                        try {
-                            message += "单号：" + express.getBarCode() + "\n\t状态：正在上传\n";
-                            waitMessage.postValue(message);
-                            boolean result = PostalRepository.getInstance().saveExpressFromAppSync(express, tempId, address.get(), phone.get());
-                            if (result) {
-                                message = message.replace("正在上传", "上传成功");
-                            } else {
-                                message = message.replace("正在上传", "重复单号");
-                            }
-                        } catch (IOException | MyException e) {
-                            e.printStackTrace();
-                            message = message.replace("正在上传", "上传失败");
-                            cacheList.add(express);
-                        }
-                        waitMessage.postValue(message);
+                        express.setSenderAddress(addressStr);
+                        express.setSenderPhone(phoneStr);
+                        express.setVerifyId(verifyId);
+                        express.setLatitude(aMapLocation != null ? String.valueOf(aMapLocation.getLatitude()) : "");
+                        express.setLongitude(aMapLocation != null ? String.valueOf(aMapLocation.getLongitude()) : "");
+                        express.setPieceTime(new Date());
+                        express.setUpload(false);
+                        ExpressRepository.getInstance().saveExpress(express);
                     }
-                    return message;
+                    return true;
                 })
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(message -> {
+                .subscribe(result -> {
                     waitMessage.setValue("");
-                    resultMessage.setValue(message);
-                    if (cacheList.isEmpty()) {
-                        uploadFlag.setValue(Boolean.TRUE);
-                    } else {
-                        waitMessage.setValue("部分数据上传失败，失败订单正在缓存...");
-                        saveExpressCache(message, cardMessage, cacheList, address.get(), phone.get());
-                    }
+                    resultMessage.setValue("数据已缓存，将于后台自动传输");
+                    saveFlag.setValue(Boolean.TRUE);
+                    PostalManager.getInstance().startPostal();
                 }, throwable -> {
-                    waitMessage.setValue("数据上传失败，失败原因：" + hanleError(throwable) + "\n数据正在缓存到本地，请勿退出");
-                    cacheList.addAll(expressList);
-                    saveExpressCache("", cardMessage, cacheList, address.get(), phone.get());
+                    waitMessage.setValue("");
+                    resultMessage.setValue("数据缓存失败，失败原因：\n" + throwable.getMessage());
                 });
     }
 
-    public void saveExpressCache(String message, IDCardRecord idCardRecord, List<Express> expressList, String address, String phone) {
-        Observable.create((ObservableOnSubscribe<Boolean>) emitter -> {
-            PostalRepository.getInstance().saveLocalExpress(idCardRecord, expressList, address, phone);
-            emitter.onNext(Boolean.TRUE);
-        })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(aBoolean -> {
-                    waitMessage.setValue("");
-                    resultMessage.setValue((TextUtils.isEmpty(message) ? "" : message + "\n\n") + "数据已缓存，将于后台自动尝试续传");
-                    uploadFlag.setValue(Boolean.TRUE);
-                }, throwable -> {
-                    waitMessage.setValue("");
-                    resultMessage.setValue((TextUtils.isEmpty(message) ? "" : message + "\n\n") + "数据缓存失败，失败原因：\n" + throwable.getMessage());
-                });
-    }
+//    public void uploadExpress() {
+//        IDCardRecord cardMessage = idCardRecord.get();
+//        List<Express> expressList = getExpressList();
+//        if (cardMessage == null || expressList.isEmpty()) {
+//            return;
+//        }
+//        List<Express> cacheList = new ArrayList<>();
+//        waitMessage.setValue("正在上传核验数据...");
+//        Disposable disposable = Observable.create((ObservableOnSubscribe<TempId>) emitter -> {
+//            TempId tempId = PostalRepository.getInstance().savePersonFromAppSync(cardMessage);
+//            emitter.onNext(tempId);
+//        })
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(Schedulers.io())
+//                .map(tempId -> {
+//                    String message = "";
+//                    for (Express express : expressList) {
+//                        try {
+//                            message += "单号：" + express.getBarCode() + "\n\t状态：正在上传\n";
+//                            waitMessage.postValue(message);
+//                            boolean result = PostalRepository.getInstance().saveExpressFromAppSync(express, tempId, address.get(), phone.get());
+//                            if (result) {
+//                                message = message.replace("正在上传", "上传成功");
+//                            } else {
+//                                message = message.replace("正在上传", "重复单号");
+//                            }
+//                        } catch (IOException | MyException e) {
+//                            e.printStackTrace();
+//                            message = message.replace("正在上传", "上传失败");
+//                            cacheList.add(express);
+//                        }
+//                        waitMessage.postValue(message);
+//                    }
+//                    return message;
+//                })
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe(message -> {
+//                    waitMessage.setValue("");
+//                    resultMessage.setValue(message);
+//                    if (cacheList.isEmpty()) {
+//                        uploadFlag.setValue(Boolean.TRUE);
+//                    } else {
+//                        waitMessage.setValue("部分数据上传失败，失败订单正在缓存...");
+//                        saveExpressCache(message, cardMessage, cacheList, address.get(), phone.get());
+//                    }
+//                }, throwable -> {
+//                    waitMessage.setValue("数据上传失败，失败原因：" + hanleError(throwable) + "\n数据正在缓存到本地，请勿退出");
+//                    cacheList.addAll(expressList);
+//                    saveExpressCache("", cardMessage, cacheList, address.get(), phone.get());
+//                });
+//    }
+
+//    public void saveExpressCache(String message, IDCardRecord idCardRecord, List<Express> expressList, String address, String phone) {
+//        Observable.create((ObservableOnSubscribe<Boolean>) emitter -> {
+//            PostalRepository.getInstance().saveLocalExpress(idCardRecord, expressList, address, phone);
+//            emitter.onNext(Boolean.TRUE);
+//        })
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe(aBoolean -> {
+//                    waitMessage.setValue("");
+//                    resultMessage.setValue((TextUtils.isEmpty(message) ? "" : message + "\n\n") + "数据已缓存，将于后台自动尝试续传");
+//                    uploadFlag.setValue(Boolean.TRUE);
+//                }, throwable -> {
+//                    waitMessage.setValue("");
+//                    resultMessage.setValue((TextUtils.isEmpty(message) ? "" : message + "\n\n") + "数据缓存失败，失败原因：\n" + throwable.getMessage());
+//                });
+//    }
 
     public void getLocation() {
         AmapManager.getInstance().getOneLocation(addressStr -> address.set(addressStr));

@@ -13,11 +13,25 @@ public class Courier {
     private String phone;
     private String photo;
     private String faceFeature;
+    private String maskFaceFeature;
     private String fingerFeature1;
     private String fingerFeature2;
     private String createTime;
 
     public Courier() {
+    }
+
+    private Courier(Builder builder) {
+        setId(builder.id);
+        setName(builder.name);
+        setCardNumber(builder.cardNumber);
+        setPhone(builder.phone);
+        setPhoto(builder.photo);
+        setFaceFeature(builder.faceFeature);
+        setMaskFaceFeature(builder.maskFaceFeature);
+        setFingerFeature1(builder.fingerFeature1);
+        setFingerFeature2(builder.fingerFeature2);
+        setCreateTime(builder.createTime);
     }
 
     public long getId() {
@@ -68,6 +82,14 @@ public class Courier {
         this.faceFeature = faceFeature;
     }
 
+    public String getMaskFaceFeature() {
+        return maskFaceFeature;
+    }
+
+    public void setMaskFaceFeature(String maskFaceFeature) {
+        this.maskFaceFeature = maskFaceFeature;
+    }
+
     public String getFingerFeature1() {
         return fingerFeature1;
     }
@@ -92,81 +114,73 @@ public class Courier {
         this.createTime = createTime;
     }
 
-    public static final class CourierBuilder {
+    public static final class Builder {
         private long id;
         private String name;
         private String cardNumber;
         private String phone;
         private String photo;
         private String faceFeature;
+        private String maskFaceFeature;
         private String fingerFeature1;
         private String fingerFeature2;
         private String createTime;
 
-        private CourierBuilder() {
+        public Builder() {
         }
 
-        public static CourierBuilder aCourier() {
-            return new CourierBuilder();
-        }
-
-        public CourierBuilder id(long id) {
-            this.id = id;
+        public Builder id(long val) {
+            id = val;
             return this;
         }
 
-        public CourierBuilder name(String name) {
-            this.name = name;
+        public Builder name(String val) {
+            name = val;
             return this;
         }
 
-        public CourierBuilder cardNumber(String cardNumber) {
-            this.cardNumber = cardNumber;
+        public Builder cardNumber(String val) {
+            cardNumber = val;
             return this;
         }
 
-        public CourierBuilder phone(String phone) {
-            this.phone = phone;
+        public Builder phone(String val) {
+            phone = val;
             return this;
         }
 
-        public CourierBuilder photo(String photo) {
-            this.photo = photo;
+        public Builder photo(String val) {
+            photo = val;
             return this;
         }
 
-        public CourierBuilder faceFeature(String faceFeature) {
-            this.faceFeature = faceFeature;
+        public Builder faceFeature(String val) {
+            faceFeature = val;
             return this;
         }
 
-        public CourierBuilder fingerFeature1(String fingerFeature1) {
-            this.fingerFeature1 = fingerFeature1;
+        public Builder maskFaceFeature(String val) {
+            maskFaceFeature = val;
             return this;
         }
 
-        public CourierBuilder fingerFeature2(String fingerFeature2) {
-            this.fingerFeature2 = fingerFeature2;
+        public Builder fingerFeature1(String val) {
+            fingerFeature1 = val;
             return this;
         }
 
-        public CourierBuilder createTime(String createTime) {
-            this.createTime = createTime;
+        public Builder fingerFeature2(String val) {
+            fingerFeature2 = val;
+            return this;
+        }
+
+        public Builder createTime(String val) {
+            createTime = val;
             return this;
         }
 
         public Courier build() {
-            Courier courier = new Courier();
-            courier.setId(id);
-            courier.setName(name);
-            courier.setCardNumber(cardNumber);
-            courier.setPhone(phone);
-            courier.setPhoto(photo);
-            courier.setFaceFeature(faceFeature);
-            courier.setFingerFeature1(fingerFeature1);
-            courier.setFingerFeature2(fingerFeature2);
-            courier.setCreateTime(createTime);
-            return courier;
+            return new Courier(this);
         }
     }
 }

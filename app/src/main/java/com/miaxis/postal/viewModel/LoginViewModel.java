@@ -5,26 +5,21 @@ import android.util.Log;
 
 import androidx.databinding.ObservableBoolean;
 import androidx.databinding.ObservableField;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.miaxis.postal.bridge.SingleLiveEvent;
 import com.miaxis.postal.data.entity.Config;
 import com.miaxis.postal.data.entity.Courier;
-import com.miaxis.postal.data.exception.MyException;
 import com.miaxis.postal.data.model.CourierModel;
 import com.miaxis.postal.data.repository.LoginRepository;
-import com.miaxis.postal.data.repository.PostalRepository;
 import com.miaxis.postal.manager.ConfigManager;
 import com.miaxis.postal.manager.ToastManager;
 import com.miaxis.postal.util.ValueUtil;
 
 import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
 public class LoginViewModel extends BaseViewModel {
@@ -70,7 +65,6 @@ public class LoginViewModel extends BaseViewModel {
                     waitMessage.setValue("");
                     courierLiveData.setValue(courier);
                     startLogin(courier);
-                    new Thread(() -> PostalRepository.getInstance().uploadLocalExpress()).start();
                 }, throwable -> {
                     waitMessage.setValue("");
                     Courier courier = courierLiveData.getValue();
@@ -78,7 +72,7 @@ public class LoginViewModel extends BaseViewModel {
                         startLogin(courier);
                         toast.setValue(ToastManager.getToastBody("离线登录", ToastManager.INFO));
                     } else {
-                        toast.setValue(ToastManager.getToastBody(hanleError(throwable), ToastManager.INFO));
+                        toast.setValue(ToastManager.getToastBody(handleError(throwable), ToastManager.INFO));
                     }
                 });
     }
@@ -93,7 +87,7 @@ public class LoginViewModel extends BaseViewModel {
                 resultMessage.setValue("该账号下无指纹信息");
             }
         } else if (config.getLoginMode() == ValueUtil.LOGIN_MODE_FACE) {
-            if (!TextUtils.isEmpty(courier.getFaceFeature())) {
+            if (!TextUtils.isEmpty(courier.getFaceFeature()) || !TextUtils.isEmpty(courier.getMaskFaceFeature())) {
                 loginFaceFlag.setValue(Boolean.TRUE);
             } else {
                 resultMessage.setValue("该账号下无人脸信息");

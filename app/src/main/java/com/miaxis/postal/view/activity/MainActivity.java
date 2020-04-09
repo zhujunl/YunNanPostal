@@ -4,11 +4,13 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.content.Intent;
+import android.text.TextUtils;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.miaxis.postal.R;
 import com.miaxis.postal.databinding.ActivityMainBinding;
 import com.miaxis.postal.manager.CardManager;
+import com.miaxis.postal.manager.PostalManager;
 import com.miaxis.postal.manager.ScanManager;
 import com.miaxis.postal.view.base.BaseActivity;
 import com.miaxis.postal.view.base.BaseViewModelFragment;
@@ -44,6 +46,14 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        if (!TextUtils.isEmpty(root)) {
+            PostalManager.getInstance().startPostal();
+        }
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         CardManager.getInstance().release();
@@ -64,6 +74,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
     public void setRoot(Fragment fragment) {
         root = fragment.getClass().getName();
         replaceFragment(fragment);
+        PostalManager.getInstance().init();
     }
 
     @Override
@@ -93,16 +104,6 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
             exitApp();
         }
     }
-
-//    @Override
-//    public void addFragment(Fragment lastFragment, Fragment fragment) {
-//        getSupportFragmentManager().beginTransaction()
-//                .hide(lastFragment)
-//                .add(R.id.cl_container, fragment)
-//                .show(fragment)
-//                .addToBackStack(fragment.getClass().getName())
-//                .commit();
-//    }
 
     @Override
     public void showWaitDialog(String message) {

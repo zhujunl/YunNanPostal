@@ -26,4 +26,8 @@ public class IDCardRecordModel {
         return AppDatabase.getInstance().idCardRecordDao().loadAll();
     }
 
+    public static IDCardRecord findOldestIDCardRecord() {
+        return AppDatabase.getInstance().idCardRecordDao().findOldestIDCardRecord();
+    }
+
 }

@@ -53,6 +53,18 @@
             app:layout_constraintStart_toStartOf="@id/tv_name"
             app:layout_constraintTop_toBottomOf="@id/tv_name"/>
 
+        <ImageView
+            android:id="@+id/iv_config"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_settings_white"
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"
+            android:padding="12dp"
+            app:layout_constraintWidth_percent="0.15"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline_middle"
             android:layout_width="0dp"
@@ -70,7 +82,7 @@
             app:layout_constraintBottom_toBottomOf="@id/guideline_middle">
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/cl_config"
+                android:id="@+id/cl_local"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:background="@drawable/corner_rect_white"
@@ -82,10 +94,10 @@
                 app:layout_constraintBottom_toBottomOf="parent">
 
                 <ImageView
-                    android:id="@+id/iv_config_image"
+                    android:id="@+id/iv_local_image"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
-                    android:src="@drawable/ic_settings_green"
+                    android:src="@drawable/ic_folder_open_green"
                     android:adjustViewBounds="true"
                     android:scaleType="fitCenter"
                     android:padding="10dp"
@@ -99,13 +111,13 @@
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="0dp"
-                    android:text="设置"
+                    android:text="本地"
                     android:gravity="center|top"
                     android:textSize="16sp"
                     android:textColor="@color/main_color_dark"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/iv_config_image"
+                    app:layout_constraintTop_toBottomOf="@id/iv_local_image"
                     app:layout_constraintBottom_toBottomOf="parent"/>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
@@ -117,7 +129,7 @@
                 android:background="@drawable/corner_rect_white"
                 app:layout_constraintWidth_percent="0.25"
                 app:layout_constraintDimensionRatio="1:1"
-                app:layout_constraintStart_toEndOf="@id/cl_config"
+                app:layout_constraintStart_toEndOf="@id/cl_local"
                 app:layout_constraintEnd_toStartOf="@id/cl_record"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent">

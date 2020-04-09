@@ -9,8 +9,10 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.miaxis.postal.bridge.SingleLiveEvent;
 import com.miaxis.postal.data.dto.TempIdDto;
+import com.miaxis.postal.data.entity.Config;
 import com.miaxis.postal.data.entity.IDCardRecord;
 import com.miaxis.postal.data.entity.MxRGBImage;
+import com.miaxis.postal.data.entity.PhotoFaceFeature;
 import com.miaxis.postal.data.entity.TempId;
 import com.miaxis.postal.data.exception.MyException;
 import com.miaxis.postal.data.repository.PostalRepository;
@@ -20,6 +22,8 @@ import com.miaxis.postal.manager.FaceManager;
 import com.miaxis.postal.manager.TTSManager;
 import com.miaxis.postal.manager.ToastManager;
 import com.speedata.libid2.IDInfor;
+
+import java.util.Date;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
@@ -37,7 +41,7 @@ public class FaceVerifyViewModel extends BaseViewModel {
 
     public ObservableField<String> countDown = new ObservableField<>();
 
-    private byte[] cardFeature;
+    private PhotoFaceFeature cardFeature;
 
     public FaceVerifyViewModel() {
     }
@@ -45,18 +49,18 @@ public class FaceVerifyViewModel extends BaseViewModel {
     public void startFaceVerify(IDCardRecord idCardRecord) {
         cardFeature = null;
         hint.set("身份证证件照处理中");
-        Disposable disposable = Observable.create((ObservableOnSubscribe<byte[]>) emitter -> {
-            byte[] feature = FaceManager.getInstance().getCardFeatureByBitmapPosting(idCardRecord.getCardBitmap());
-            if (feature != null) {
-                emitter.onNext(feature);
+        Disposable disposable = Observable.create((ObservableOnSubscribe<PhotoFaceFeature>) emitter -> {
+            PhotoFaceFeature photoFaceFeature = FaceManager.getInstance().getCardFaceFeatureByBitmapPosting(idCardRecord.getCardBitmap());
+            if (photoFaceFeature.getFaceFeature() != null && photoFaceFeature.getMaskFaceFeature() != null) {
+                emitter.onNext(photoFaceFeature);
             } else {
-                throw new MyException(FaceManager.getInstance().getErrorMessage());
+                throw new MyException(photoFaceFeature.getMessage());
             }
         })
                 .subscribeOn(Schedulers.io())
                 .observeOn(Schedulers.io())
-                .subscribe(bytes -> {
-                    cardFeature = bytes;
+                .subscribe(photoFaceFeature -> {
+                    cardFeature = photoFaceFeature;
                     FaceManager.getInstance().setFeatureListener(faceListener);
                     FaceManager.getInstance().setNeedNextFeature(true);
                     FaceManager.getInstance().setOrientation(CameraManager.getInstance().getPreviewOrientation());
@@ -76,11 +80,17 @@ public class FaceVerifyViewModel extends BaseViewModel {
         FaceManager.getInstance().setFeatureListener(null);
     }
 
-    private FaceManager.OnFeatureExtractListener faceListener = (mxRGBImage, mxFaceInfoEx, feature) -> {
+    private FaceManager.OnFeatureExtractListener faceListener = (mxRGBImage, mxFaceInfoEx, feature, mask) -> {
         if (cardFeature != null) {
             try {
-                float score = FaceManager.getInstance().matchFeature(feature, cardFeature);
-                if (score >= ConfigManager.getInstance().getConfig().getVerifyScore()) {
+                float score;
+                if (mask) {
+                    score = FaceManager.getInstance().matchMaskFeature(feature, cardFeature.getMaskFaceFeature());
+                } else {
+                    score = FaceManager.getInstance().matchFeature(feature, cardFeature.getFaceFeature());
+                }
+                Config config = ConfigManager.getInstance().getConfig();
+                if (mask ? score >= config.getVerifyMaskScore() : score >= config.getVerifyScore()) {
                     byte[] fileImage = FaceManager.getInstance().imageEncode(mxRGBImage.getRgbImage(), mxRGBImage.getWidth(), mxRGBImage.getHeight());
                     Bitmap header = BitmapFactory.decodeByteArray(fileImage, 0, fileImage.length);
                     hint.set("人证核验成功");
@@ -89,6 +99,7 @@ public class FaceVerifyViewModel extends BaseViewModel {
                     IDCardRecord value = idCardRecordLiveData.getValue();
                     if (value != null) {
                         value.setFaceBitmap(header);
+                        value.setVerifyTime(new Date());
                         verifyFlag.postValue(value);
                     } else {
                         toast.postValue(ToastManager.getToastBody("遇到错误，请退出后重试", ToastManager.ERROR));

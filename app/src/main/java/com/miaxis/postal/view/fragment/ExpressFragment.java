@@ -4,44 +4,31 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Bitmap;
-import android.net.Uri;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.provider.MediaStore;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 
-import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.miaxis.postal.R;
-import com.miaxis.postal.bridge.Status;
 import com.miaxis.postal.data.entity.Express;
 import com.miaxis.postal.data.entity.IDCardRecord;
-import com.miaxis.postal.data.entity.TempId;
 import com.miaxis.postal.data.event.ExpressEditEvent;
 import com.miaxis.postal.databinding.FragmentExpressBinding;
-import com.miaxis.postal.manager.CameraManager;
 import com.miaxis.postal.manager.ScanManager;
 import com.miaxis.postal.manager.ToastManager;
 import com.miaxis.postal.view.adapter.ExpressAdapter;
 import com.miaxis.postal.view.adapter.SpacesItemDecoration;
 import com.miaxis.postal.view.auxiliary.OnLimitClickHelper;
-import com.miaxis.postal.view.auxiliary.OnLimitClickListener;
 import com.miaxis.postal.view.base.BaseViewModelFragment;
 import com.miaxis.postal.view.component.ScanCodeReceiver;
 import com.miaxis.postal.viewModel.ExpressViewModel;
-import com.speedata.libid2.IDInfor;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -101,7 +88,7 @@ public class ExpressFragment extends BaseViewModelFragment<FragmentExpressBindin
         viewModel.newExpress.observe(this, newExpressObserver);
         viewModel.repeatExpress.observe(this, repeatExpressObserver);
         viewModel.scanFlag.observe(this, scanFlagObserver);
-        viewModel.uploadFlag.observe(this, uploadFlagObserver);
+        viewModel.saveFlag.observe(this, saveFlagObserver);
         handler = new Handler(Looper.getMainLooper());
         EventBus.getDefault().register(this);
     }
@@ -242,7 +229,7 @@ public class ExpressFragment extends BaseViewModelFragment<FragmentExpressBindin
         }
     };
 
-    private Observer<Boolean> uploadFlagObserver = flag -> mListener.backToStack(HomeFragment.class);
+    private Observer<Boolean> saveFlagObserver = flag -> mListener.backToStack(HomeFragment.class);
 
     private View.OnClickListener confirmClickListener = new OnLimitClickHelper(view -> {
         if (!viewModel.checkInput()) {
@@ -256,7 +243,7 @@ public class ExpressFragment extends BaseViewModelFragment<FragmentExpressBindin
         new MaterialDialog.Builder(getContext())
                 .title("确认上传？")
                 .positiveText("确认")
-                .onPositive((dialog, which) -> viewModel.uploadExpress())
+                .onPositive((dialog, which) -> viewModel.saveExpress())
                 .negativeText("取消")
                 .show();
     });

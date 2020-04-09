@@ -31,6 +31,7 @@ public class RegisterViewModel extends BaseViewModel {
     public MutableLiveData<Boolean> registerFlag = new SingleLiveEvent<>();
 
     private String featureCache;
+    private String maskFeatureCache;
     private Bitmap headerCache;
     private String fingerFeature1;
     private String fingerFeature2;
@@ -43,8 +44,9 @@ public class RegisterViewModel extends BaseViewModel {
                 || TextUtils.isEmpty(number.get())
                 || TextUtils.isEmpty(phone.get())
                 || TextUtils.isEmpty(featureCache)
-//                || TextUtils.isEmpty(fingerFeature1)
-//                || TextUtils.isEmpty(fingerFeature2)
+                || TextUtils.isEmpty(maskFeatureCache)
+                || TextUtils.isEmpty(fingerFeature1)
+                || TextUtils.isEmpty(fingerFeature2)
                 || headerCache == null) {
             return false;
         }
@@ -71,12 +73,16 @@ public class RegisterViewModel extends BaseViewModel {
                     registerFlag.setValue(Boolean.TRUE);
                 }, throwable -> {
                     waitMessage.setValue("");
-                    resultMessage.setValue(hanleError(throwable));
+                    resultMessage.setValue(handleError(throwable));
                 });
     }
 
     public void setFeatureCache(String featureCache) {
         this.featureCache = featureCache;
+    }
+
+    public void setMaskFeatureCache(String maskFeatureCache) {
+        this.maskFeatureCache = maskFeatureCache;
     }
 
     public void setHeaderCache(Bitmap headerCache) {

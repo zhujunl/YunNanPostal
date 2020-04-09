@@ -13,11 +13,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
 public class LogisticsViewModel extends BaseViewModel {
@@ -62,7 +60,7 @@ public class LogisticsViewModel extends BaseViewModel {
                     }
                 }, throwable -> {
                     refreshing.setValue(Boolean.FALSE);
-                    resultMessage.setValue(hanleError(throwable));
+                    resultMessage.setValue(handleError(throwable));
                 });
     }
 
@@ -79,7 +77,7 @@ public class LogisticsViewModel extends BaseViewModel {
                     orderDetail.setValue(order);
                 }, throwable -> {
                     waitMessage.setValue("");
-                    resultMessage.setValue(hanleError(throwable));
+                    resultMessage.setValue(handleError(throwable));
                 });
     }
 

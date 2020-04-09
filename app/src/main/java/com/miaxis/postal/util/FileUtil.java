@@ -13,6 +13,7 @@ import android.util.Log;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -225,8 +226,10 @@ public class FileUtil {
             if (file.exists()) {
                 file.delete();
             }
+            ByteArrayOutputStream baos = compressImage(bitmap);
             FileOutputStream out = new FileOutputStream(file);
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+//            compressImage.compress(Bitmap.CompressFormat.JPEG, 100, out);
+            out.write(baos.toByteArray());
             out.flush();
             out.getFD().sync();
             out.close();
@@ -235,6 +238,28 @@ public class FileUtil {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public static ByteArrayOutputStream compressImage(Bitmap image) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        image.compress(Bitmap.CompressFormat.JPEG, 100, baos);// 质量压缩方法，这里100表示不压缩，把压缩后的数据存放到baos中
+        int options = 90;
+        while (baos.toByteArray().length / 1024 > 80) { // 循环判断如果压缩后图片是否大于80kb,大于继续压缩
+            baos.reset(); // 重置baos即清空baos
+            image.compress(Bitmap.CompressFormat.JPEG, options, baos);//
+            // 这里压缩options%，把压缩后的数据存放到baos中
+            if (options > 10) {//设置最小值，防止低于0时出异常
+                options -= 10;// 每次都减少10
+            } else {
+                break;
+            }
+        }
+        return baos;
+//        ByteArrayInputStream isBm = new ByteArrayInputStream(baos.toByteArray());//
+//        // 把压缩后的数据baos存放到ByteArrayInputStream中
+//        Bitmap bitmap = BitmapFactory.decodeStream(isBm, null, null);//
+//        // 把ByteArrayInputStream数据生成图片
+//        return bitmap;
     }
 
     public static Bitmap compressUri(Context context, Uri imageUri) {

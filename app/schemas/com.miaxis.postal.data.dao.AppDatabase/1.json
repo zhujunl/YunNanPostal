@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "ccbb6e4f36637e04fc7fee3ef1f3814f",
+    "identityHash": "f6099197c2ca1bdee7f72d37d2b68d13",
     "entities": [
       {
         "tableName": "Config",
@@ -148,13 +148,13 @@
       },
       {
         "tableName": "IDCardRecord",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `cardType` TEXT, `cardId` TEXT, `name` TEXT, `birthday` TEXT, `address` TEXT, `cardNumber` TEXT, `issuingAuthority` TEXT, `validateStart` TEXT, `validateEnd` TEXT, `sex` TEXT, `nation` TEXT, `fingerprint0` TEXT, `fingerprintPosition0` TEXT, `fingerprint1` TEXT, `fingerprintPosition1` TEXT, `passNumber` TEXT, `issueCount` TEXT, `chineseName` TEXT, `version` TEXT, `cardPicture` TEXT, `facePicture` TEXT, `verifyId` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `cardType` TEXT, `cardId` TEXT, `name` TEXT, `birthday` TEXT, `address` TEXT, `cardNumber` TEXT, `issuingAuthority` TEXT, `validateStart` TEXT, `validateEnd` TEXT, `sex` TEXT, `nation` TEXT, `fingerprint0` TEXT, `fingerprintPosition0` TEXT, `fingerprint1` TEXT, `fingerprintPosition1` TEXT, `passNumber` TEXT, `issueCount` TEXT, `chineseName` TEXT, `version` TEXT, `cardPicture` TEXT, `facePicture` TEXT, `verifyId` TEXT, `verifyTime` INTEGER, `upload` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
             "columnName": "id",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": false
           },
           {
             "fieldPath": "cardType",
@@ -287,6 +287,18 @@
             "columnName": "verifyId",
             "affinity": "TEXT",
             "notNull": false
+          },
+          {
+            "fieldPath": "verifyTime",
+            "columnName": "verifyTime",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "upload",
+            "columnName": "upload",
+            "affinity": "INTEGER",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -300,13 +312,13 @@
       },
       {
         "tableName": "Express",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `barCode` TEXT, `photoPathList` TEXT, `senderPhone` TEXT, `senderAddress` TEXT, `verifyId` TEXT, `latitude` TEXT, `longitude` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `barCode` TEXT, `photoPathList` TEXT, `senderPhone` TEXT, `senderAddress` TEXT, `verifyId` TEXT, `latitude` TEXT, `longitude` TEXT, `pieceTime` INTEGER, `upload` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
             "columnName": "id",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": false
           },
           {
             "fieldPath": "barCode",
@@ -349,6 +361,18 @@
             "columnName": "longitude",
             "affinity": "TEXT",
             "notNull": false
+          },
+          {
+            "fieldPath": "pieceTime",
+            "columnName": "pieceTime",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "upload",
+            "columnName": "upload",
+            "affinity": "INTEGER",
+            "notNull": true
           }
         ],
         "primaryKey": {
@@ -364,7 +388,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'ccbb6e4f36637e04fc7fee3ef1f3814f')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'f6099197c2ca1bdee7f72d37d2b68d13')"
     ]
   }
 }

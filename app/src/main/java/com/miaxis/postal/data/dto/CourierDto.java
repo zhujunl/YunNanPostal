@@ -11,6 +11,7 @@ public class CourierDto implements Mapper<Courier> {
     private String phone;
     private String photo;
     private String faceFeature;
+    private String maskFaceFeature;
     private String finger1Feature;
     private String finger2Feature;
     private String createTime;
@@ -66,6 +67,14 @@ public class CourierDto implements Mapper<Courier> {
         this.faceFeature = faceFeature;
     }
 
+    public String getMaskFaceFeature() {
+        return maskFaceFeature;
+    }
+
+    public void setMaskFaceFeature(String maskFaceFeature) {
+        this.maskFaceFeature = maskFaceFeature;
+    }
+
     public String getFinger1Feature() {
         return finger1Feature;
     }
@@ -93,13 +102,14 @@ public class CourierDto implements Mapper<Courier> {
     @Override
     public Courier transform() throws MyException {
         try {
-            return Courier.CourierBuilder.aCourier()
+            return new Courier.Builder()
                     .id(id)
                     .name(name)
                     .cardNumber(cardNo)
                     .phone(phone)
                     .photo(photo)
                     .faceFeature(faceFeature)
+                    .maskFaceFeature(maskFaceFeature)
                     .fingerFeature1(finger1Feature)
                     .fingerFeature2(finger2Feature)
                     .createTime(createTime)
