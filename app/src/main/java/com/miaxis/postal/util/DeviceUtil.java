@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
+import android.text.TextUtils;
 
 import androidx.core.app.ActivityCompat;
 
@@ -33,10 +34,30 @@ public class DeviceUtil {
     }
 
     public static String getIMEI() {
+//        try {
+//            TelephonyManager manager = (TelephonyManager) PostalApp.getInstance().getSystemService(Context.TELEPHONY_SERVICE);
+//            Method method = manager.getClass().getMethod("getImei", int.class);
+//            String imei = (String) method.invoke(manager, 0);
+//            return imei;
+//        } catch (Exception e) {
+//            return "";
+//        }
+        String imei0 = getIMEI(PostalApp.getInstance(), 0);
+        String imei1 = getIMEI(PostalApp.getInstance(), 1);
+        if (!TextUtils.isEmpty(imei1) && !imei1.contains("000")) {
+            return imei1;
+        }
+        if (!TextUtils.isEmpty(imei0) && !imei0.contains("000")) {
+            return imei0;
+        }
+        return "";
+    }
+
+    public static String getIMEI(Context context, int slotId) {
         try {
-            TelephonyManager manager = (TelephonyManager) PostalApp.getInstance().getSystemService(Context.TELEPHONY_SERVICE);
+            TelephonyManager manager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
             Method method = manager.getClass().getMethod("getImei", int.class);
-            String imei = (String) method.invoke(manager, 0);
+            String imei = (String) method.invoke(manager, slotId);
             return imei;
         } catch (Exception e) {
             return "";

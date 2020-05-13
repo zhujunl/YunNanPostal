@@ -1,6 +1,7 @@
 package com.miaxis.postal.manager;
 
 import android.app.Application;
+import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 
@@ -58,6 +59,11 @@ public class ConfigManager {
                     .heartBeatInterval(ValueUtil.DEFAULT_HEART_BEAT_INTERVAL)
                     .build();
             ConfigModel.saveConfig(config);
+        } else {
+            if (TextUtils.isEmpty(config.getMac())) {
+                config.setMac(DeviceUtil.getIMEI());
+                ConfigModel.saveConfig(config);
+            }
         }
     }
 
