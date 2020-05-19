@@ -15,6 +15,8 @@ import androidx.annotation.NonNull;
 import androidx.core.content.FileProvider;
 
 
+import com.miaxis.postal.app.App;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -102,12 +104,12 @@ public class CameraManager {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            new Thread(() -> {
+            App.getInstance().getThreadExecutor().execute(() -> {
                 if (retryTime <= RETRY_TIMES) {
                     retryTime++;
                     openFrontCamera(textureView, listener);
                 }
-            }).start();
+            });
         }
     }
 
@@ -190,12 +192,12 @@ public class CameraManager {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            new Thread(() -> {
+            App.getInstance().getThreadExecutor().execute(() -> {
                 if (retryTime <= RETRY_TIMES) {
                     retryTime++;
                     openBackCamera(textureView, listener);
                 }
-            }).start();
+            });
         }
     }
 
@@ -273,12 +275,12 @@ public class CameraManager {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            new Thread(() -> {
+            App.getInstance().getThreadExecutor().execute(() -> {
                 if (retryTime <= RETRY_TIMES) {
                     retryTime++;
                     openCamera(holder, listener);
                 }
-            }).start();
+            });
         }
     }
 

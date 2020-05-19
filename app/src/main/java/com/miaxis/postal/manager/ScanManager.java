@@ -6,7 +6,7 @@ import android.os.SystemProperties;
 
 import androidx.annotation.NonNull;
 
-import com.miaxis.postal.app.PostalApp;
+import com.miaxis.postal.app.App;
 import com.scandecode.ScanDecode;
 import com.scandecode.inf.ScanInterface;
 
@@ -88,7 +88,7 @@ public class ScanManager {
             SystemProperties.set("persist.sys.scanstopimme","false");
             Intent Barcodeintent = new Intent();
             Barcodeintent.setPackage("com.geomobile.oemscanservice");
-            PostalApp.getInstance().startService(Barcodeintent);
+            App.getInstance().startService(Barcodeintent);
         } else {
             SystemProperties.set("persist.sys.keyreport", "false");
 //            SystemProperties.set("persist.sys.keyreportshow", "false");
@@ -96,10 +96,10 @@ public class ScanManager {
             SystemProperties.set("persist.sys.scanstopimme","true");
             Intent intentstop = new Intent();
             intentstop.setAction("com.geomobile.se4500barcodestop");
-            PostalApp.getInstance().sendBroadcast(intentstop,null);
+            App.getInstance().sendBroadcast(intentstop,null);
             Intent Barcodeintent = new Intent();
             Barcodeintent.setPackage("com.geomobile.oemscanservice");
-            PostalApp.getInstance().stopService(Barcodeintent);
+            App.getInstance().stopService(Barcodeintent);
         }
     }
 

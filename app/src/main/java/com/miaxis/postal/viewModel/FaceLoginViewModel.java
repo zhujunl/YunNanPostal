@@ -2,6 +2,7 @@ package com.miaxis.postal.viewModel;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.text.TextUtils;
 import android.util.Base64;
 
 import androidx.databinding.ObservableField;
@@ -43,10 +44,10 @@ public class FaceLoginViewModel extends BaseViewModel {
         Courier courier = courierLiveData.getValue();
         if (courier != null) {
             try {
-                float score;
-                if (mask) {
+                float score = 0f;
+                if (mask && !TextUtils.isEmpty(courier.getMaskFaceFeature())) {
                     score = FaceManager.getInstance().matchMaskFeature(feature, Base64.decode(courier.getMaskFaceFeature(), Base64.NO_WRAP));
-                } else {
+                } else if (!mask && !TextUtils.isEmpty(courier.getFaceFeature())) {
                     score = FaceManager.getInstance().matchFeature(feature, Base64.decode(courier.getFaceFeature(), Base64.NO_WRAP));
                 }
                 Config config = ConfigManager.getInstance().getConfig();

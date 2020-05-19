@@ -3,14 +3,13 @@ package com.miaxis.postal.viewModel;
 import androidx.databinding.ObservableField;
 import androidx.lifecycle.MutableLiveData;
 
-import com.miaxis.postal.app.PostalApp;
+import com.miaxis.postal.app.App;
 import com.miaxis.postal.bridge.SingleLiveEvent;
 import com.miaxis.postal.bridge.Status;
 import com.miaxis.postal.data.entity.IDCardRecord;
 import com.miaxis.postal.manager.CardManager;
 import com.miaxis.postal.manager.TTSManager;
 import com.miaxis.postal.manager.ToastManager;
-import com.speedata.libid2.IDInfor;
 
 public class CardViewModel extends BaseViewModel {
 
@@ -25,11 +24,11 @@ public class CardViewModel extends BaseViewModel {
 
     public void startReadCard() {
         initCardResult.setValue(Status.LOADING);
-        CardManager.getInstance().init(PostalApp.getInstance(), listener);
+        CardManager.getInstance().init(App.getInstance(), listener);
     }
 
     public void stopReadCard() {
-        CardManager.getInstance().release();
+        CardManager.getInstance().stopReadCard();
     }
 
     private CardManager.IDCardListener listener = new CardManager.IDCardListener() {

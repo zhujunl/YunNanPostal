@@ -18,7 +18,6 @@ import com.miaxis.postal.data.entity.IDCardRecord;
 import com.miaxis.postal.databinding.FragmentCardBinding;
 import com.miaxis.postal.view.base.BaseViewModelFragment;
 import com.miaxis.postal.viewModel.CardViewModel;
-import com.speedata.libid2.IDInfor;
 
 public class CardFragment extends BaseViewModelFragment<FragmentCardBinding, CardViewModel> {
 
@@ -60,6 +59,9 @@ public class CardFragment extends BaseViewModelFragment<FragmentCardBinding, Car
 
     @Override
     public void onBackPressed() {
+        if (retryDialog != null) {
+            retryDialog.dismiss();
+        }
         mListener.backToStack(null);
     }
 

@@ -5,7 +5,7 @@ import android.util.Base64;
 
 import androidx.lifecycle.MutableLiveData;
 
-import com.miaxis.postal.app.PostalApp;
+import com.miaxis.postal.app.App;
 import com.miaxis.postal.bridge.SingleLiveEvent;
 import com.miaxis.postal.bridge.Status;
 import com.miaxis.postal.manager.FingerManager;
@@ -25,7 +25,7 @@ public class FingerVerifyDialogViewModel extends BaseViewModel {
 
     public void initFingerDevice() {
         initFingerResult.setValue(Status.LOADING);
-        FingerManager.getInstance().init(PostalApp.getInstance(), listener);
+        FingerManager.getInstance().init(App.getInstance(), listener);
     }
 
     public void verifyFinger(List<String> featureList) {

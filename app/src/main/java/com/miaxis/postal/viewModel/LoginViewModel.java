@@ -87,7 +87,8 @@ public class LoginViewModel extends BaseViewModel {
                 resultMessage.setValue("该账号下无指纹信息");
             }
         } else if (config.getLoginMode() == ValueUtil.LOGIN_MODE_FACE) {
-            if (!TextUtils.isEmpty(courier.getFaceFeature()) || !TextUtils.isEmpty(courier.getMaskFaceFeature())) {
+            if (!TextUtils.isEmpty(courier.getFaceFeature())
+                    || !TextUtils.isEmpty(courier.getMaskFaceFeature())) {
                 loginFaceFlag.setValue(Boolean.TRUE);
             } else {
                 resultMessage.setValue("该账号下无人脸信息");

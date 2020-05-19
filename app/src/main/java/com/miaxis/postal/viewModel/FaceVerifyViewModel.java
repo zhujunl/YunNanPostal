@@ -8,29 +8,21 @@ import androidx.databinding.ObservableField;
 import androidx.lifecycle.MutableLiveData;
 
 import com.miaxis.postal.bridge.SingleLiveEvent;
-import com.miaxis.postal.data.dto.TempIdDto;
 import com.miaxis.postal.data.entity.Config;
 import com.miaxis.postal.data.entity.IDCardRecord;
-import com.miaxis.postal.data.entity.MxRGBImage;
 import com.miaxis.postal.data.entity.PhotoFaceFeature;
-import com.miaxis.postal.data.entity.TempId;
 import com.miaxis.postal.data.exception.MyException;
-import com.miaxis.postal.data.repository.PostalRepository;
 import com.miaxis.postal.manager.CameraManager;
 import com.miaxis.postal.manager.ConfigManager;
 import com.miaxis.postal.manager.FaceManager;
 import com.miaxis.postal.manager.TTSManager;
 import com.miaxis.postal.manager.ToastManager;
-import com.speedata.libid2.IDInfor;
 
 import java.util.Date;
 
 import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
 public class FaceVerifyViewModel extends BaseViewModel {

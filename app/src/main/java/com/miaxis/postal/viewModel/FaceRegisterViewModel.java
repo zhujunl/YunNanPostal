@@ -70,7 +70,7 @@ public class FaceRegisterViewModel extends BaseViewModel {
     }
 
     public void confirm() {
-        if (!TextUtils.isEmpty(featureCache) && TextUtils.isEmpty(maskFeatureCache) && headerCache != null) {
+        if (!TextUtils.isEmpty(featureCache) && !TextUtils.isEmpty(maskFeatureCache) && headerCache != null) {
             EventBus.getDefault().postSticky(new FaceRegisterEvent(featureCache, maskFeatureCache, headerCache));
             confirmFlag.setValue(Boolean.TRUE);
         }

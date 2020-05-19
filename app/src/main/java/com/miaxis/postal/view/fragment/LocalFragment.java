@@ -14,6 +14,7 @@ import com.miaxis.postal.R;
 import com.miaxis.postal.data.entity.Express;
 import com.miaxis.postal.data.entity.Local;
 import com.miaxis.postal.databinding.FragmentLocalBinding;
+import com.miaxis.postal.manager.PostalManager;
 import com.miaxis.postal.view.adapter.LocalAdapter;
 import com.miaxis.postal.view.base.BaseViewModelFragment;
 import com.miaxis.postal.viewModel.LocalViewModel;
@@ -170,6 +171,7 @@ public class LocalFragment extends BaseViewModelFragment<FragmentLocalBinding, L
     };
 
     private void refresh() {
+        PostalManager.getInstance().startPostal();
         localCount = 0;
         viewModel.loadExpressByPage(page = 1);
     }

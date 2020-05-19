@@ -15,9 +15,14 @@ import com.miaxis.postal.util.FileUtil;
 
 import org.greenrobot.eventbus.EventBus;
 
-public class PostalApp extends Application {
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-    private static PostalApp instance;
+public class App extends Application {
+
+    private ExecutorService threadExecutor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 2);
+
+    private static App instance;
 
     @Override
     public void onCreate() {
@@ -26,7 +31,7 @@ public class PostalApp extends Application {
         EventBus.builder().addIndex(new MyEventBusIndex()).installDefaultEventBus();
     }
 
-    public static PostalApp getInstance() {
+    public static App getInstance() {
         return instance;
     }
 
@@ -45,6 +50,10 @@ public class PostalApp extends Application {
             e.printStackTrace();
             listener.onInit(false, e.getMessage());
         }
+    }
+
+    public ExecutorService getThreadExecutor() {
+        return threadExecutor;
     }
 
     public interface OnAppInitListener {

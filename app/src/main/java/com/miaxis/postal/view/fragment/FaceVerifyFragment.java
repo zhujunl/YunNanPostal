@@ -15,21 +15,16 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 
-import com.miaxis.postal.BR;
 import com.miaxis.postal.R;
-import com.miaxis.postal.data.dto.TempIdDto;
 import com.miaxis.postal.data.entity.IDCardRecord;
-import com.miaxis.postal.data.entity.TempId;
 import com.miaxis.postal.databinding.FragmentFaceVerifyBinding;
 import com.miaxis.postal.manager.CameraManager;
 import com.miaxis.postal.manager.TTSManager;
 import com.miaxis.postal.view.auxiliary.OnLimitClickHelper;
-import com.miaxis.postal.view.auxiliary.OnLimitClickListener;
 import com.miaxis.postal.view.base.BaseViewModelFragment;
 import com.miaxis.postal.view.custom.RoundBorderView;
 import com.miaxis.postal.view.custom.RoundFrameLayout;
 import com.miaxis.postal.viewModel.FaceVerifyViewModel;
-import com.speedata.libid2.IDInfor;
 
 public class FaceVerifyFragment extends BaseViewModelFragment<FragmentFaceVerifyBinding, FaceVerifyViewModel> {
 

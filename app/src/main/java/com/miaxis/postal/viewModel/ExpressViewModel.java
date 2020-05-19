@@ -6,7 +6,7 @@ import androidx.databinding.ObservableField;
 import androidx.lifecycle.MutableLiveData;
 
 import com.amap.api.location.AMapLocation;
-import com.miaxis.postal.app.PostalApp;
+import com.miaxis.postal.app.App;
 import com.miaxis.postal.bridge.SingleLiveEvent;
 import com.miaxis.postal.data.entity.Express;
 import com.miaxis.postal.data.entity.IDCardRecord;
@@ -49,7 +49,7 @@ public class ExpressViewModel extends BaseViewModel {
 
     public void startScan() {
         scanFlag.setValue(Boolean.TRUE);
-        ScanManager.getInstance().initDevice(PostalApp.getInstance(), listener);
+        ScanManager.getInstance().initDevice(App.getInstance(), listener);
         ScanManager.getInstance().startScan();
     }
 

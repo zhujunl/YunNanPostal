@@ -1,18 +1,12 @@
 package com.miaxis.postal.util;
 
-import android.Manifest;
-import android.app.Service;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.os.Build;
-import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 
-import androidx.core.app.ActivityCompat;
-
-import com.miaxis.postal.app.PostalApp;
+import com.miaxis.postal.app.App;
 
 import java.lang.reflect.Method;
 import java.net.NetworkInterface;
@@ -42,8 +36,8 @@ public class DeviceUtil {
 //        } catch (Exception e) {
 //            return "";
 //        }
-        String imei0 = getIMEI(PostalApp.getInstance(), 0);
-        String imei1 = getIMEI(PostalApp.getInstance(), 1);
+        String imei0 = getIMEI(App.getInstance(), 0);
+        String imei1 = getIMEI(App.getInstance(), 1);
         if (!TextUtils.isEmpty(imei1) && !imei1.contains("000")) {
             return imei1;
         }

@@ -2,14 +2,11 @@ package com.miaxis.postal.manager;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
 import android.serialport.DeviceControlSpd;
 
 import androidx.annotation.NonNull;
 
-import com.miaxis.postal.app.PostalApp;
+import com.miaxis.postal.app.App;
 import com.mx.finger.alg.MxFingerAlg;
 import com.mx.finger.api.msc.MxMscBigFingerApi;
 import com.mx.finger.api.msc.MxMscBigFingerApiFactory;
@@ -61,13 +58,14 @@ public class FingerManager {
             try {
                 deviceControl = new DeviceControlSpd(DeviceControlSpd.PowerType.MAIN, 93, 63);
                 deviceControl.PowerOnDevice();
-                MxMscBigFingerApiFactory fingerFactory = new MxMscBigFingerApiFactory(PostalApp.getInstance());
+                Thread.sleep(500);
+                MxMscBigFingerApiFactory fingerFactory = new MxMscBigFingerApiFactory(App.getInstance());
                 mxMscBigFingerApi = fingerFactory.getApi();
                 mxFingerAlg = fingerFactory.getAlg();
                 init = true;
                 listener.onFingerInitResult(true);
                 return;
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             listener.onFingerInitResult(false);

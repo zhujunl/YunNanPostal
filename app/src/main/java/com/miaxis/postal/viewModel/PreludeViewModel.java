@@ -8,7 +8,7 @@ import androidx.databinding.ObservableField;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
 
-import com.miaxis.postal.app.PostalApp;
+import com.miaxis.postal.app.App;
 import com.miaxis.postal.bridge.SingleLiveEvent;
 import com.miaxis.postal.data.entity.Config;
 import com.miaxis.postal.data.repository.DeviceRepository;
@@ -52,7 +52,7 @@ public class PreludeViewModel extends BaseViewModel {
                 .observeOn(Schedulers.io())
                 .subscribe(success -> {
                     if (success) {
-                        PostalApp.getInstance().initApplication(onAppInitListener);
+                        App.getInstance().initApplication(onAppInitListener);
                     } else {
                         throw new Exception("拒绝权限");
                     }
@@ -63,7 +63,7 @@ public class PreludeViewModel extends BaseViewModel {
                 });
     }
 
-    private PostalApp.OnAppInitListener onAppInitListener = (result, message) -> {
+    private App.OnAppInitListener onAppInitListener = (result, message) -> {
         if (result) {
             Config config = ConfigManager.getInstance().getConfig();
             if (config.getDeviceId() == ValueUtil.DEFAULT_DEVICE_ID) {

@@ -7,8 +7,7 @@ import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.miaxis.postal.app.PostalApp;
-import com.miaxis.postal.view.activity.MainActivity;
+import com.miaxis.postal.app.App;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -71,7 +70,7 @@ public class CrashExceptionManager implements Thread.UncaughtExceptionHandler {
 //        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 //        mContext.startActivity(intent);
 //        android.os.Process.killProcess(android.os.Process.myPid());//再此之前可以做些退出等操作
-        Context context = PostalApp.getInstance().getApplicationContext();
+        Context context = App.getInstance().getApplicationContext();
         final Intent intent = context.getPackageManager().getLaunchIntentForPackage(context.getPackageName());
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         context.startActivity(intent);

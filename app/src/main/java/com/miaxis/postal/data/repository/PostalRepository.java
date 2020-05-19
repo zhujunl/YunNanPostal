@@ -1,28 +1,13 @@
 package com.miaxis.postal.data.repository;
 
-import android.graphics.Bitmap;
 import android.text.TextUtils;
 
-import com.amap.api.location.AMapLocation;
-import com.miaxis.postal.data.dto.TempIdDto;
-import com.miaxis.postal.data.entity.Express;
-import com.miaxis.postal.data.entity.IDCardRecord;
-import com.miaxis.postal.data.entity.TempId;
 import com.miaxis.postal.data.exception.MyException;
-import com.miaxis.postal.data.model.ExpressModel;
-import com.miaxis.postal.data.model.IDCardRecordModel;
 import com.miaxis.postal.data.net.PostalApi;
 import com.miaxis.postal.data.net.ResponseEntity;
-import com.miaxis.postal.manager.AmapManager;
-import com.miaxis.postal.util.FileUtil;
 import com.miaxis.postal.util.ValueUtil;
-import com.speedata.libid2.IDInfor;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Observer;
 
 import retrofit2.Response;
 

@@ -6,12 +6,11 @@ import android.util.Base64;
 import androidx.databinding.ObservableField;
 import androidx.lifecycle.MutableLiveData;
 
-import com.miaxis.postal.app.PostalApp;
+import com.miaxis.postal.app.App;
 import com.miaxis.postal.bridge.SingleLiveEvent;
 import com.miaxis.postal.bridge.Status;
 import com.miaxis.postal.data.event.FingerRegisterEvent;
 import com.miaxis.postal.manager.FingerManager;
-import com.miaxis.postal.manager.TTSManager;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -39,7 +38,7 @@ public class FingerRegisterViewModel extends BaseViewModel {
 
     public void initFingerDevice() {
         initFingerResult.setValue(Status.LOADING);
-        FingerManager.getInstance().init(PostalApp.getInstance(), listener);
+        FingerManager.getInstance().init(App.getInstance(), listener);
     }
 
     public void registerFeature() {
