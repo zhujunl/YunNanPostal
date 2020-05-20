@@ -6,6 +6,7 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.miaxis.postal.R;
@@ -46,8 +47,15 @@ public class LocalAdapter extends BaseViewModelAdapter<Local, ItemLocalBinding, 
             holder.getBinding().tvUpload.setTextColor(item.getExpress().isUpload()
                     ? context.getResources().getColor(R.color.darkgreen)
                     : context.getResources().getColor(R.color.darkred));
-            RequestOptions options = RequestOptions.bitmapTransform(new RoundedCorners(30));
-            GlideApp.with(context).load(item.getExpress().getPhotoPathList().get(0)).apply(options).into(holder.getBinding().ivImage);
+            if (item.getExpress() != null && item.getExpress().getPhotoList() != null && !item.getExpress().getPhotoList().isEmpty()) {
+                RequestOptions options = RequestOptions.bitmapTransform(new RoundedCorners(30));
+                GlideApp.with(context)
+                        .load(item.getExpress().getPhotoPathList().get(0))
+                        .apply(options)
+                        .skipMemoryCache(true)
+                        .diskCacheStrategy(DiskCacheStrategy.NONE)
+                        .into(holder.getBinding().ivImage);
+            }
             holder.getBinding().cvOrder.setOnClickListener(v -> {
                 if (listener != null) {
                     listener.onItemClick(holder.getBinding().cvOrder, holder.getLayoutPosition());

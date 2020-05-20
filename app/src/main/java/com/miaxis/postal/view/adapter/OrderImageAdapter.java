@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.miaxis.postal.R;
@@ -47,7 +48,12 @@ public class OrderImageAdapter extends BaseViewModelAdapter<String, ItemOrderIma
         String item = dataList.get(position);
         holder.getBinding().setItem(item);
         RequestOptions options = RequestOptions.bitmapTransform(new RoundedCorners(30));
-        GlideApp.with(context).load(item).apply(options).into(holder.getBinding().ivImage);
+        GlideApp.with(context)
+                .load(item)
+                .apply(options)
+                .skipMemoryCache(true)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .into(holder.getBinding().ivImage);
         holder.getBinding().ivImage.setOnClickListener(new OnLimitClickHelper(view -> {
             if (listener != null) {
                 listener.onItemClick(holder.getBinding().ivImage, holder.getLayoutPosition());

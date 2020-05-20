@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.miaxis.postal.BR;
 import com.miaxis.postal.R;
 import com.miaxis.postal.bridge.GlideApp;
@@ -51,7 +52,11 @@ public class PhotoFragment extends BaseViewModelFragment<FragmentPhotoBinding, P
 
     @Override
     protected void initView() {
-        GlideApp.with(this).load(image).into(binding.pvPhoto);
+        GlideApp.with(this)
+                .load(image)
+                .skipMemoryCache(true)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .into(binding.pvPhoto);
         binding.pvPhoto.setOnClickListener(v -> onBackPressed());
         binding.clPhoto.setOnClickListener(v -> onBackPressed());
     }

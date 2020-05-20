@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.miaxis.postal.BR;
 import com.miaxis.postal.R;
 import com.miaxis.postal.bridge.GlideApp;
@@ -121,7 +122,11 @@ public class FingerRegisterFragment extends BaseViewModelFragment<FragmentFinger
     };
 
     private Observer<Boolean> fingerImageUpdateObserver = update -> {
-        GlideApp.with(this).load(viewModel.fingerImageCache).into(binding.ivFinger);
+        GlideApp.with(this)
+                .load(viewModel.fingerImageCache)
+                .skipMemoryCache(true)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .into(binding.ivFinger);
     };
 
     public void setMark(String mark) {
