@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#008577</color>
-    <color name="colorPrimaryDark">#00574B</color>
+    <color name="colorPrimary">#66CCFF</color>
+    <color name="colorPrimaryDark">#0080FF</color>
     <color name="colorAccent">#D81B60</color>
     <color name="white">#ffffff</color> <!-- 白色 -->
     <color name="ivory">#fffff0</color> <!-- 象牙色 -->
@@ -153,8 +153,8 @@
     <color name="dark">#333</color><!-- 用于深色文字 -->
     <color name="android_text_color">#8a000000</color>
     <color name="android_window_background">#fffafafa</color>
-    <color name="main_color">#009966</color>
-    <color name="main_color_dark">#00734A</color>
+    <color name="main_color">#66CCFF</color>
+    <color name="main_color_dark">#0080FF</color>
     <color name="aero_light">#60ffffff</color>
     <color name="high_blue">#45aaf2</color>
     <color name="fusion_red">#fc5c65</color>

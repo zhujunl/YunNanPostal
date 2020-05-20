@@ -395,7 +395,7 @@
             android:id="@+id/btn_register"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:background="@drawable/rounded_button_green"
+            android:background="@drawable/rounded_button_main_color"
             android:gravity="center"
             android:text="注册"
             android:textSize="16sp"

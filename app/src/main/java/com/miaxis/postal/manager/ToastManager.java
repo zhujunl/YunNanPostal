@@ -4,6 +4,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.widget.Toast;
 
+import com.miaxis.postal.R;
 import com.miaxis.postal.app.App;
 
 import es.dmoral.toasty.Toasty;
@@ -25,7 +26,8 @@ public class ToastManager {
             }
             switch (toastMode) {
                 case SUCCESS:
-                    toast = Toasty.success(App.getInstance().getApplicationContext(), message, Toast.LENGTH_SHORT, true);
+//                    toast = Toasty.success(App.getInstance().getApplicationContext(), message, Toast.LENGTH_SHORT, true);
+                    toast = Toasty.custom(App.getInstance().getApplicationContext(), message, R.drawable.ic_check_white_24dp, R.color.main_color, Toast.LENGTH_SHORT, true, true);
                     break;
                 case ERROR:
                     toast = Toasty.error(App.getInstance().getApplicationContext(), message, Toast.LENGTH_SHORT, true);

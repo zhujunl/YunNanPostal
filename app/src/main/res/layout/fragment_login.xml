@@ -38,7 +38,7 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="中国邮政"
+            android:text="云南邮政业"
             android:textSize="30sp"
             android:gravity="center"
             app:layout_constraintVertical_bias="0.2"

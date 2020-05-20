@@ -14,13 +14,8 @@ import com.miaxis.postal.data.entity.Photograph;
 import com.miaxis.postal.databinding.ItemInspectBodyBinding;
 import com.miaxis.postal.databinding.ItemInspectHeaderBinding;
 import com.miaxis.postal.view.auxiliary.OnLimitClickHelper;
-import com.miaxis.postal.view.auxiliary.OnLimitClickListener;
 import com.miaxis.postal.view.base.BaseAdapter;
 import com.miaxis.postal.view.base.BaseViewHolder;
-import com.miaxis.postal.viewModel.InspectViewModel;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class InspectAdapter extends BaseAdapter<Photograph, RecyclerView.ViewHolder> {
 
@@ -75,7 +70,7 @@ public class InspectAdapter extends BaseAdapter<Photograph, RecyclerView.ViewHol
     private void setBodyItemValues(BodyViewHolder holder, int position) {
         Photograph photograph = dataList.get(position - 1);
         holder.getBinding().setItem(photograph);
-        holder.getBinding().ivSelect.setImageResource(photograph.isSelect() ? R.drawable.ic_check_box_green : R.drawable.ic_check_box_outline_blank_white);
+        holder.getBinding().ivSelect.setImageResource(photograph.isSelect() ? R.drawable.ic_check_box_blue : R.drawable.ic_check_box_outline_blank_white);
         holder.getBinding().clSelect.setOnClickListener(new OnLimitClickHelper(view -> {
             if (checkBoxListener != null) {
                 checkBoxListener.onBodyCheckBoxClick(holder.getBinding().clSelect, holder.getLayoutPosition());

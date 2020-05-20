@@ -45,7 +45,7 @@
             android:id="@+id/iv_save"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_check_green"
+            android:src="@drawable/ic_check_blue"
             android:scaleType="fitCenter"
             android:adjustViewBounds="true"
             android:padding="12dp"
