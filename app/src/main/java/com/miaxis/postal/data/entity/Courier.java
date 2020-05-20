@@ -17,6 +17,7 @@ public class Courier {
     private String fingerFeature1;
     private String fingerFeature2;
     private String createTime;
+    private String password;
 
     public Courier() {
     }
@@ -32,6 +33,7 @@ public class Courier {
         setFingerFeature1(builder.fingerFeature1);
         setFingerFeature2(builder.fingerFeature2);
         setCreateTime(builder.createTime);
+        setPassword(builder.password);
     }
 
     public long getId() {
@@ -114,6 +116,14 @@ public class Courier {
         this.createTime = createTime;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     public static final class Builder {
         private long id;
         private String name;
@@ -125,6 +135,7 @@ public class Courier {
         private String fingerFeature1;
         private String fingerFeature2;
         private String createTime;
+        private String password;
 
         public Builder() {
         }
@@ -176,6 +187,11 @@ public class Courier {
 
         public Builder createTime(String val) {
             createTime = val;
+            return this;
+        }
+
+        public Builder password(String val) {
+            password = val;
             return this;
         }
 

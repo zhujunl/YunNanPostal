@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 2,
-    "identityHash": "7d82cbf1f9e5619ee813ded6def33916",
+    "identityHash": "7feb47f3b2673704ce8d416c215950bf",
     "entities": [
       {
         "tableName": "Config",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER, `host` TEXT, `mac` TEXT, `loginMode` INTEGER NOT NULL, `qualityScore` INTEGER NOT NULL, `registerQualityScore` INTEGER NOT NULL, `verifyScore` REAL NOT NULL, `verifyMaskScore` REAL NOT NULL, `maskScore` INTEGER NOT NULL, `deviceId` INTEGER NOT NULL, `deviceStatus` TEXT, `heartBeatInterval` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER, `host` TEXT, `deviceIMEI` TEXT, `qualityScore` INTEGER NOT NULL, `registerQualityScore` INTEGER NOT NULL, `verifyScore` REAL NOT NULL, `verifyMaskScore` REAL NOT NULL, `maskScore` INTEGER NOT NULL, `deviceId` INTEGER NOT NULL, `deviceStatus` TEXT, `heartBeatInterval` INTEGER NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -21,16 +21,10 @@
             "notNull": false
           },
           {
-            "fieldPath": "mac",
-            "columnName": "mac",
+            "fieldPath": "deviceIMEI",
+            "columnName": "deviceIMEI",
             "affinity": "TEXT",
             "notNull": false
-          },
-          {
-            "fieldPath": "loginMode",
-            "columnName": "loginMode",
-            "affinity": "INTEGER",
-            "notNull": true
           },
           {
             "fieldPath": "qualityScore",
@@ -92,7 +86,7 @@
       },
       {
         "tableName": "Courier",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `name` TEXT, `cardNumber` TEXT, `phone` TEXT, `photo` TEXT, `faceFeature` TEXT, `maskFaceFeature` TEXT, `fingerFeature1` TEXT, `fingerFeature2` TEXT, `createTime` TEXT, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `name` TEXT, `cardNumber` TEXT, `phone` TEXT, `photo` TEXT, `faceFeature` TEXT, `maskFaceFeature` TEXT, `fingerFeature1` TEXT, `fingerFeature2` TEXT, `createTime` TEXT, `password` TEXT, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -151,6 +145,12 @@
           {
             "fieldPath": "createTime",
             "columnName": "createTime",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "password",
+            "columnName": "password",
             "affinity": "TEXT",
             "notNull": false
           }
@@ -406,7 +406,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '7d82cbf1f9e5619ee813ded6def33916')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '7feb47f3b2673704ce8d416c215950bf')"
     ]
   }
 }

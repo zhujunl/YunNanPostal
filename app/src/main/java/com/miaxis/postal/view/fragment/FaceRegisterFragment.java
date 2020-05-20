@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.os.Handler;
@@ -43,7 +44,7 @@ public class FaceRegisterFragment extends BaseViewModelFragment<FragmentFaceRegi
 
     @Override
     protected FaceRegisterViewModel initViewModel() {
-        return ViewModelProviders.of(this).get(FaceRegisterViewModel.class);
+        return new ViewModelProvider(this, getViewModelProviderFactory()).get(FaceRegisterViewModel.class);
     }
 
     @Override

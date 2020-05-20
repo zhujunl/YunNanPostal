@@ -7,61 +7,44 @@ import com.miaxis.postal.data.exception.MyException;
 import com.miaxis.postal.manager.ConfigManager;
 import com.miaxis.postal.util.ValueUtil;
 
+import java.util.concurrent.TimeUnit;
+
 import io.reactivex.Observable;
 import io.reactivex.schedulers.Schedulers;
+import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 public class BaseAPI {
 
-    protected final static Retrofit.Builder RETROFIT = new Retrofit.Builder()
+    private final static Retrofit.Builder RETROFIT_BUILDER = new Retrofit.Builder()
             .addConverterFactory(ScalarsConverterFactory.create())
             .addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create());
 
-    protected static Retrofit getRetrofit() {
-        return RETROFIT.baseUrl(ConfigManager.getInstance().getConfig().getHost()).build();
+    private static Retrofit retrofit;
+
+    private static Retrofit getRetrofit() {
+        return retrofit;
     }
 
-    protected static Observable<PostalNet> getPostalNet() {
-        return Observable.create(emitter -> {
-            Retrofit retrofit = getRetrofit();
-            PostalNet postalNet = retrofit.create(PostalNet.class);
-            emitter.onNext(postalNet);
-        });
+    public static void rebuildRetrofit() {
+        OkHttpClient.Builder builder = new OkHttpClient.Builder()
+                .connectTimeout(10, TimeUnit.SECONDS)
+                .readTimeout(10, TimeUnit.SECONDS)
+                .writeTimeout(10, TimeUnit.SECONDS);
+//        builder.sslSocketFactory(SSLSocketClient.getSSLSocketFactory());
+//        builder.hostnameVerifier(SSLSocketClient.getHostnameVerifier());
+        OkHttpClient okHttpClient = builder.build();
+        retrofit = RETROFIT_BUILDER
+                .client(okHttpClient)
+                .baseUrl(ConfigManager.getInstance().getConfig().getHost())
+                .build();
     }
 
     protected static PostalNet getPostalNetSync() {
         return getRetrofit().create(PostalNet.class);
-    }
-
-    protected static Observable<ResponseEntity> handleResponse(Observable<ResponseEntity> observable) {
-        return observable.subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.io())
-                .doOnNext(responseEntity -> {
-                    if (!TextUtils.equals(responseEntity.getCode(), ValueUtil.SUCCESS)) {
-                        throw new MyException(responseEntity.getMessage());
-                    }
-                });
-    }
-
-    protected static <T> Observable<ResponseEntity<T>> handleGenericityResponse(Observable<ResponseEntity<T>> observable) {
-        return observable.subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.io())
-                .doOnNext(responseEntity -> {
-                    if (!TextUtils.equals(responseEntity.getCode(), ValueUtil.SUCCESS)) {
-                        throw new MyException(responseEntity.getMessage());
-                    }
-                });
-    }
-
-    protected static <T> Observable<ResponseEntity<T>> handleLocalResponse(Observable<ResponseEntity<T>> observable) {
-        return observable.doOnNext(responseEntity -> {
-            if (!TextUtils.equals(responseEntity.getCode(), ValueUtil.SUCCESS)) {
-                throw new MyException(responseEntity.getMessage());
-            }
-        });
     }
 
 }

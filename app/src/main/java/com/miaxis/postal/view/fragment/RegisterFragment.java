@@ -4,6 +4,7 @@ import android.text.TextUtils;
 import android.view.View;
 
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import com.miaxis.postal.R;
 import com.miaxis.postal.data.event.FaceRegisterEvent;
@@ -35,7 +36,7 @@ public class RegisterFragment extends BaseViewModelFragment<FragmentRegisterBind
 
     @Override
     protected RegisterViewModel initViewModel() {
-        return ViewModelProviders.of(this).get(RegisterViewModel.class);
+        return new ViewModelProvider(this, getViewModelProviderFactory()).get(RegisterViewModel.class);
     }
 
     @Override

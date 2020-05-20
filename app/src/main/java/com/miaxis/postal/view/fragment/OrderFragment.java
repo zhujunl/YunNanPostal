@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.SimpleItemAnimator;
@@ -43,7 +44,7 @@ public class OrderFragment extends BaseViewModelFragment<FragmentOrderBinding, O
 
     @Override
     protected OrderViewModel initViewModel() {
-        return ViewModelProviders.of(this).get(OrderViewModel.class);
+        return new ViewModelProvider(this, getViewModelProviderFactory()).get(OrderViewModel.class);
     }
 
     @Override

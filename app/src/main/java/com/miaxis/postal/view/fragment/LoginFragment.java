@@ -4,6 +4,7 @@ import android.text.TextUtils;
 import android.view.View;
 
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.miaxis.postal.R;
@@ -37,7 +38,7 @@ public class LoginFragment extends BaseViewModelFragment<FragmentLoginBinding, L
 
     @Override
     protected LoginViewModel initViewModel() {
-        return ViewModelProviders.of(this).get(LoginViewModel.class);
+        return new ViewModelProvider(this, getViewModelProviderFactory()).get(LoginViewModel.class);
     }
 
     @Override
@@ -47,26 +48,17 @@ public class LoginFragment extends BaseViewModelFragment<FragmentLoginBinding, L
 
     @Override
     protected void initData() {
-        viewModel.loginFaceFlag.observe(this, loginFaceFlagObserver);
-        viewModel.loginFingerFlag.observe(this, loginFingerFlagObserver);
+        viewModel.loginResult.observe(this, loginResultObserver);
     }
 
     @Override
     protected void initView() {
         binding.ivConfig.setOnClickListener(v -> mListener.replaceFragment(ConfigFragment.newInstance()));
         binding.btnLogin.setOnClickListener(v -> {
-            if (TextUtils.isEmpty(viewModel.phone.get())) {
-                ToastManager.toast("请输入手机号码", ToastManager.INFO);
-            } else {
-                viewModel.getCourierByPhone();
+            if (checkInput()) {
+                viewModel.getCourier();
             }
         });
-        binding.tvSwitch.setOnClickListener(v -> {
-            viewModel.editMode.set(true);
-            viewModel.phone.set("");
-            binding.etAccount.requestFocus();
-        });
-        binding.tvRegister.setOnClickListener(v -> mListener.replaceFragment(RegisterFragment.newInstance()));
     }
 
     @Override
@@ -74,28 +66,43 @@ public class LoginFragment extends BaseViewModelFragment<FragmentLoginBinding, L
         mListener.exitApp();
     }
 
-    private Observer<Boolean> loginFaceFlagObserver = flag -> {
-        mListener.replaceFragment(FaceLoginFragment.newInstance(viewModel.courierLiveData.getValue()));
+    private Observer<Boolean> loginResultObserver = result -> {
+
     };
 
-    private Observer<Boolean> loginFingerFlagObserver = flag -> {
-        Courier courier = viewModel.courierLiveData.getValue();
-        if (courier != null) {
-            String fingerFeature1 = courier.getFingerFeature1();
-            String fingerFeature2 = courier.getFingerFeature2();
-            List<String> featureList = new ArrayList<>();
-            featureList.add(fingerFeature1);
-            featureList.add(fingerFeature2);
-            FingerVerifyDialogFragment.newInstance(featureList, result -> {
-                if (result) {
-                    TTSManager.getInstance().playVoiceMessageFlush("指纹登录成功");
-                    ToastManager.toast("登录成功", ToastManager.SUCCESS);
-                    mListener.replaceFragment(HomeFragment.newInstance(viewModel.courierLiveData.getValue()));
-                } else {
-                    ToastManager.toast("登录失败", ToastManager.INFO);
-                }
-            }).show(getChildFragmentManager(), "FingerVerifyDialogFragment");
+//    private Observer<Boolean> loginFaceFlagObserver = flag -> {
+//        mListener.replaceFragment(FaceLoginFragment.newInstance(viewModel.courierLiveData.getValue()));
+//    };
+//
+//    private Observer<Boolean> loginFingerFlagObserver = flag -> {
+//        Courier courier = viewModel.courierLiveData.getValue();
+//        if (courier != null) {
+//            String fingerFeature1 = courier.getFingerFeature1();
+//            String fingerFeature2 = courier.getFingerFeature2();
+//            List<String> featureList = new ArrayList<>();
+//            featureList.add(fingerFeature1);
+//            featureList.add(fingerFeature2);
+//            FingerVerifyDialogFragment.newInstance(featureList, result -> {
+//                if (result) {
+//                    TTSManager.getInstance().playVoiceMessageFlush("指纹登录成功");
+//                    ToastManager.toast("登录成功", ToastManager.SUCCESS);
+//                    mListener.replaceFragment(HomeFragment.newInstance(viewModel.courierLiveData.getValue()));
+//                } else {
+//                    ToastManager.toast("登录失败", ToastManager.INFO);
+//                }
+//            }).show(getChildFragmentManager(), "FingerVerifyDialogFragment");
+//        }
+//    };
+
+    private boolean checkInput() {
+        if (TextUtils.isEmpty(viewModel.username.get())) {
+            ToastManager.toast("请输入用户名", ToastManager.INFO);
+            return false;
+        } else if (TextUtils.isEmpty(viewModel.password.get())) {
+            ToastManager.toast("请输入密码", ToastManager.INFO);
+            return false;
         }
-    };
+        return true;
+    }
 
 }

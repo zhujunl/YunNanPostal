@@ -8,6 +8,7 @@ import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 
+import com.miaxis.postal.app.App;
 import com.miaxis.postal.bridge.Status;
 import com.miaxis.postal.data.event.TakePhotoEvent;
 import com.miaxis.postal.manager.CameraManager;
@@ -82,7 +83,7 @@ public class CameraViewModel extends BaseViewModel {
             bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
             emitter.onNext(bitmap);
         })
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(Schedulers.from(App.getInstance().getThreadExecutor()))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(bitmap -> {
                     bitmapCache = bitmap;

@@ -3,6 +3,7 @@ package com.miaxis.postal.view.fragment;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.view.LayoutInflater;
@@ -34,7 +35,7 @@ public class ConfigFragment extends BaseViewModelFragment<FragmentConfigBinding,
 
     @Override
     protected ConfigViewModel initViewModel() {
-        return ViewModelProviders.of(this).get(ConfigViewModel.class);
+        return new ViewModelProvider(this, getViewModelProviderFactory()).get(ConfigViewModel.class);
     }
 
     @Override
@@ -54,7 +55,6 @@ public class ConfigFragment extends BaseViewModelFragment<FragmentConfigBinding,
         binding.ivSave.setOnClickListener(v -> {
             Config config = viewModel.config.get();
             if (config != null) {
-                config.setLoginMode(binding.rbFingerMode.isChecked() ? ValueUtil.LOGIN_MODE_FINGER : ValueUtil.LOGIN_MODE_FACE);
                 viewModel.saveConfig(config);
             }
         });

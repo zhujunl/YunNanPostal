@@ -2,6 +2,7 @@ package com.miaxis.postal.viewModel;
 
 import androidx.lifecycle.MutableLiveData;
 
+import com.miaxis.postal.app.App;
 import com.miaxis.postal.bridge.SingleLiveEvent;
 import com.miaxis.postal.data.entity.Order;
 import com.miaxis.postal.data.entity.SimpleOrder;
@@ -44,7 +45,7 @@ public class LogisticsViewModel extends BaseViewModel {
             List<SimpleOrder> simpleOrderList = OrderRepository.getInstance().getOrderByCodeAndNameSync(filter, pageNum, ValueUtil.PAGE_SIZE);
             emitter.onNext(simpleOrderList);
         })
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(Schedulers.from(App.getInstance().getThreadExecutor()))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(simpleOrderList -> {
                     refreshing.setValue(Boolean.FALSE);
@@ -70,7 +71,7 @@ public class LogisticsViewModel extends BaseViewModel {
             Order order = OrderRepository.getInstance().getOrderByIdSync(simpleOrder.getId());
             emitter.onNext(order);
         })
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(Schedulers.from(App.getInstance().getThreadExecutor()))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(order -> {
                     waitMessage.setValue("");

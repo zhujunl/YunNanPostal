@@ -69,7 +69,7 @@ public class ExpressViewModel extends BaseViewModel {
         stopScan();
         waitMessage.setValue("扫描成功，开始校验");
         Disposable disposable = Observable.just(code)
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(Schedulers.from(App.getInstance().getThreadExecutor()))
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext(mCode -> {
                     if (checkCodeLocalRepeat(mCode)) {
@@ -80,7 +80,7 @@ public class ExpressViewModel extends BaseViewModel {
                         waitMessage.setValue("本地校验通过，正在联网校验...");
                     }
                 })
-                .observeOn(Schedulers.io())
+                .observeOn(Schedulers.from(App.getInstance().getThreadExecutor()))
                 .doOnNext(mCode -> {
                     if (!checkCodeNetRepeat(mCode)) {
                         waitMessage.postValue("");
@@ -188,8 +188,8 @@ public class ExpressViewModel extends BaseViewModel {
             String verifyId = IDCardRecordRepository.getInstance().saveIdCardRecord(cardMessage);
             emitter.onNext(verifyId);
         })
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.io())
+                .subscribeOn(Schedulers.from(App.getInstance().getThreadExecutor()))
+                .observeOn(Schedulers.from(App.getInstance().getThreadExecutor()))
                 .map(verifyId -> {
                     String phoneStr = phone.get();
                     String addressStr = address.get();
@@ -230,8 +230,8 @@ public class ExpressViewModel extends BaseViewModel {
 //            TempId tempId = PostalRepository.getInstance().savePersonFromAppSync(cardMessage);
 //            emitter.onNext(tempId);
 //        })
-//                .subscribeOn(Schedulers.io())
-//                .observeOn(Schedulers.io())
+//                .subscribeOn(Schedulers.from(App.getInstance().getThreadExecutor()))
+//                .observeOn(Schedulers.from(App.getInstance().getThreadExecutor()))
 //                .map(tempId -> {
 //                    String message = "";
 //                    for (Express express : expressList) {
@@ -275,7 +275,7 @@ public class ExpressViewModel extends BaseViewModel {
 //            PostalRepository.getInstance().saveLocalExpress(idCardRecord, expressList, address, phone);
 //            emitter.onNext(Boolean.TRUE);
 //        })
-//                .subscribeOn(Schedulers.io())
+//                .subscribeOn(Schedulers.from(App.getInstance().getThreadExecutor()))
 //                .observeOn(AndroidSchedulers.mainThread())
 //                .subscribe(aBoolean -> {
 //                    waitMessage.setValue("");

@@ -5,6 +5,7 @@ import android.text.TextUtils;
 
 import androidx.annotation.NonNull;
 
+import com.miaxis.postal.app.App;
 import com.miaxis.postal.data.entity.Config;
 import com.miaxis.postal.data.model.ConfigModel;
 import com.miaxis.postal.util.DeviceUtil;
@@ -47,8 +48,7 @@ public class ConfigManager {
             config = new Config.Builder()
                     .id(1L)
                     .host(ValueUtil.DEFAULT_BASE_HOST)
-                    .mac(DeviceUtil.getIMEI())
-                    .loginMode(ValueUtil.DEFAULT_LOGIN_MODE)
+                    .deviceIMEI(DeviceUtil.getIMEI())
                     .verifyScore(ValueUtil.DEFAULT_VERIFY_SCORE)
                     .verifyMaskScore(ValueUtil.DEFAULT_MASK_VERIFY_SCORE)
                     .qualityScore(ValueUtil.DEFAULT_QUALITY_SCORE)
@@ -60,8 +60,8 @@ public class ConfigManager {
                     .build();
             ConfigModel.saveConfig(config);
         } else {
-            if (TextUtils.isEmpty(config.getMac())) {
-                config.setMac(DeviceUtil.getIMEI());
+            if (TextUtils.isEmpty(config.getDeviceIMEI())) {
+                config.setDeviceIMEI(DeviceUtil.getIMEI());
                 ConfigModel.saveConfig(config);
             }
         }
@@ -78,7 +78,7 @@ public class ConfigManager {
             this.config = config;
             emitter.onNext(Boolean.TRUE);
         })
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(Schedulers.from(App.getInstance().getThreadExecutor()))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(aBoolean -> listener.onConfigSave(true, "保存成功")
                         , throwable -> listener.onConfigSave(false, "保存失败，" + throwable.getMessage()));

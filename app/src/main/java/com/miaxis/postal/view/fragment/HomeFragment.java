@@ -2,6 +2,7 @@ package com.miaxis.postal.view.fragment;
 
 import android.view.View;
 
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -38,7 +39,7 @@ public class HomeFragment extends BaseViewModelFragment<FragmentHomeBinding, Hom
 
     @Override
     protected HomeViewModel initViewModel() {
-        return ViewModelProviders.of(this).get(HomeViewModel.class);
+        return new ViewModelProvider(this, getViewModelProviderFactory()).get(HomeViewModel.class);
     }
 
     @Override

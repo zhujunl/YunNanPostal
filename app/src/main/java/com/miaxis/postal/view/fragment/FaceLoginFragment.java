@@ -1,6 +1,7 @@
 package com.miaxis.postal.view.fragment;
 
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.os.Handler;
@@ -45,7 +46,7 @@ public class FaceLoginFragment extends BaseViewModelFragment<FragmentFaceLoginBi
 
     @Override
     protected FaceLoginViewModel initViewModel() {
-        return ViewModelProviders.of(this).get(FaceLoginViewModel.class);
+        return new ViewModelProvider(this, getViewModelProviderFactory()).get(FaceLoginViewModel.class);
     }
 
     @Override

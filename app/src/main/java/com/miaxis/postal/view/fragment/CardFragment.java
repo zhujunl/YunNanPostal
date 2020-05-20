@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.view.LayoutInflater;
@@ -38,7 +39,7 @@ public class CardFragment extends BaseViewModelFragment<FragmentCardBinding, Car
 
     @Override
     protected CardViewModel initViewModel() {
-        return ViewModelProviders.of(this).get(CardViewModel.class);
+        return new ViewModelProvider(this, getViewModelProviderFactory()).get(CardViewModel.class);
     }
 
     @Override

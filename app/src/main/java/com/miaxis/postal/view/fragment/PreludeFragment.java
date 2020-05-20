@@ -2,6 +2,7 @@ package com.miaxis.postal.view.fragment;
 
 import android.view.View;
 
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import com.miaxis.postal.R;
 import com.miaxis.postal.databinding.FragmentPreludeBinding;
@@ -26,7 +27,7 @@ public class PreludeFragment extends BaseViewModelFragment<FragmentPreludeBindin
 
     @Override
     protected PreludeViewModel initViewModel() {
-        return ViewModelProviders.of(this).get(PreludeViewModel.class);
+        return new ViewModelProvider(this, getViewModelProviderFactory()).get(PreludeViewModel.class);
     }
 
     @Override

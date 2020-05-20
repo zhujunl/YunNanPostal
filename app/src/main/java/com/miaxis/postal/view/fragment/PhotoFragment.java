@@ -3,6 +3,7 @@ package com.miaxis.postal.view.fragment;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.view.LayoutInflater;
@@ -38,7 +39,7 @@ public class PhotoFragment extends BaseViewModelFragment<FragmentPhotoBinding, P
 
     @Override
     protected PhotoViewModel initViewModel() {
-        return ViewModelProviders.of(this).get(PhotoViewModel.class);
+        return new ViewModelProvider(this, getViewModelProviderFactory()).get(PhotoViewModel.class);
     }
 
     @Override

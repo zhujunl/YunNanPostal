@@ -9,8 +9,7 @@ public class Config {
     @PrimaryKey
     private Long id;
     private String host;
-    private String mac;
-    private int loginMode;
+    private String deviceIMEI;
     private int qualityScore;
     private int registerQualityScore;
     private float verifyScore;
@@ -26,8 +25,7 @@ public class Config {
     private Config(Builder builder) {
         setId(builder.id);
         setHost(builder.host);
-        setMac(builder.mac);
-        setLoginMode(builder.loginMode);
+        setDeviceIMEI(builder.deviceIMEI);
         setQualityScore(builder.qualityScore);
         setRegisterQualityScore(builder.registerQualityScore);
         setVerifyScore(builder.verifyScore);
@@ -54,20 +52,12 @@ public class Config {
         this.host = host;
     }
 
-    public String getMac() {
-        return mac;
+    public String getDeviceIMEI() {
+        return deviceIMEI;
     }
 
-    public void setMac(String mac) {
-        this.mac = mac;
-    }
-
-    public int getLoginMode() {
-        return loginMode;
-    }
-
-    public void setLoginMode(int loginMode) {
-        this.loginMode = loginMode;
+    public void setDeviceIMEI(String deviceIMEI) {
+        this.deviceIMEI = deviceIMEI;
     }
 
     public int getQualityScore() {
@@ -137,8 +127,7 @@ public class Config {
     public static final class Builder {
         private Long id;
         private String host;
-        private String mac;
-        private int loginMode;
+        private String deviceIMEI;
         private int qualityScore;
         private int registerQualityScore;
         private float verifyScore;
@@ -161,13 +150,8 @@ public class Config {
             return this;
         }
 
-        public Builder mac(String val) {
-            mac = val;
-            return this;
-        }
-
-        public Builder loginMode(int val) {
-            loginMode = val;
+        public Builder deviceIMEI(String val) {
+            deviceIMEI = val;
             return this;
         }
 

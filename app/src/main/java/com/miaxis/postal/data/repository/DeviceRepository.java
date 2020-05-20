@@ -30,8 +30,8 @@ public class DeviceRepository extends BaseRepository {
      **/
 
     public Integer registerDevice() throws IOException, MyException {
-        String mac = ConfigManager.getInstance().getConfig().getMac();
-        Response<ResponseEntity<Integer>> execute = PostalApi.registerDeviceSync(mac).execute();
+        String deviceIMEI = ConfigManager.getInstance().getConfig().getDeviceIMEI();
+        Response<ResponseEntity<Integer>> execute = PostalApi.registerDeviceSync(deviceIMEI).execute();
         try {
             ResponseEntity<Integer> body = execute.body();
             if (body != null) {
@@ -49,8 +49,8 @@ public class DeviceRepository extends BaseRepository {
     }
 
     public String getDeviceStatus() throws IOException, MyException {
-        String mac = ConfigManager.getInstance().getConfig().getMac();
-        Response<ResponseEntity<String>> execute = PostalApi.getDeviceStatusSync(mac).execute();
+        String deviceIMEI = ConfigManager.getInstance().getConfig().getDeviceIMEI();
+        Response<ResponseEntity<String>> execute = PostalApi.getDeviceStatusSync(deviceIMEI).execute();
         try {
             ResponseEntity<String> body = execute.body();
             if (body != null) {

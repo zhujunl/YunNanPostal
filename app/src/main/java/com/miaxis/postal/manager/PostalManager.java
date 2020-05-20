@@ -96,8 +96,8 @@ public class PostalManager {
 //                emitter.onError(new MyException("未找到待上传日志"));
 //            }
 //        })
-//                .subscribeOn(Schedulers.io())
-//                .observeOn(Schedulers.io())
+//                .subscribeOn(Schedulers.from(App.getInstance().getThreadExecutor()))
+//                .observeOn(Schedulers.from(App.getInstance().getThreadExecutor()))
 //                .doOnNext(idCardRecord -> {
 //                    TempId tempId = IDCardRecordRepository.getInstance().uploadIDCardRecord(idCardRecord);
 //                    List<Express> expressList = ExpressRepository.getInstance().loadExpressByVerifyId(idCardRecord.getVerifyId());

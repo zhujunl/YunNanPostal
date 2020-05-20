@@ -49,7 +49,7 @@ public class PreludeViewModel extends BaseViewModel {
                         Manifest.permission.ACCESS_COARSE_LOCATION)
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .doOnNext(aBoolean -> hint.set("正在初始化"))
-                .observeOn(Schedulers.io())
+                .observeOn(Schedulers.from(App.getInstance().getThreadExecutor()))
                 .subscribe(success -> {
                     if (success) {
                         App.getInstance().initApplication(onAppInitListener);
@@ -84,8 +84,8 @@ public class PreludeViewModel extends BaseViewModel {
             int deviceId = DeviceRepository.getInstance().registerDevice();
             emitter.onNext(deviceId);
         })
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.io())
+                .subscribeOn(Schedulers.from(App.getInstance().getThreadExecutor()))
+                .observeOn(Schedulers.from(App.getInstance().getThreadExecutor()))
                 .doOnNext(i -> {
                     Config config = ConfigManager.getInstance().getConfig();
                     config.setDeviceId(i);
@@ -106,8 +106,8 @@ public class PreludeViewModel extends BaseViewModel {
             String deviceStatus = DeviceRepository.getInstance().getDeviceStatus();
             emitter.onNext(deviceStatus);
         })
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.io())
+                .subscribeOn(Schedulers.from(App.getInstance().getThreadExecutor()))
+                .observeOn(Schedulers.from(App.getInstance().getThreadExecutor()))
                 .doOnNext(s -> {
                     Config config = ConfigManager.getInstance().getConfig();
                     config.setDeviceStatus(s);
@@ -129,7 +129,7 @@ public class PreludeViewModel extends BaseViewModel {
         } else {
             Config config = ConfigManager.getInstance().getConfig();
             errorMode.set(Boolean.TRUE);
-            hint.set("该设备已禁用，请联系管理员\n" + "设备MAC：" + config.getMac());
+            hint.set("该设备已禁用，请联系管理员\n" + "设备IMEI：" + config.getDeviceIMEI());
         }
     }
 

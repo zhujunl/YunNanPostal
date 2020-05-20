@@ -7,6 +7,7 @@ import android.util.Base64;
 import androidx.databinding.ObservableField;
 import androidx.lifecycle.MutableLiveData;
 
+import com.miaxis.postal.app.App;
 import com.miaxis.postal.bridge.SingleLiveEvent;
 import com.miaxis.postal.data.entity.Config;
 import com.miaxis.postal.data.entity.IDCardRecord;
@@ -49,8 +50,8 @@ public class FaceVerifyViewModel extends BaseViewModel {
                 throw new MyException(photoFaceFeature.getMessage());
             }
         })
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.io())
+                .subscribeOn(Schedulers.from(App.getInstance().getThreadExecutor()))
+                .observeOn(Schedulers.from(App.getInstance().getThreadExecutor()))
                 .subscribe(photoFaceFeature -> {
                     cardFeature = photoFaceFeature;
                     FaceManager.getInstance().setFeatureListener(faceListener);

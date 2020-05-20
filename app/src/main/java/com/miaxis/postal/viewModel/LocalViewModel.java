@@ -4,6 +4,7 @@ import android.text.TextUtils;
 
 import androidx.lifecycle.MutableLiveData;
 
+import com.miaxis.postal.app.App;
 import com.miaxis.postal.bridge.SingleLiveEvent;
 import com.miaxis.postal.data.entity.Express;
 import com.miaxis.postal.data.entity.IDCardRecord;
@@ -40,7 +41,7 @@ public class LocalViewModel extends BaseViewModel {
             List<IDCardRecord> idCardRecordList = IDCardRecordRepository.getInstance().loadAll();
             emitter.onNext(idCardRecordList);
         })
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(Schedulers.from(App.getInstance().getThreadExecutor()))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(mIdCardRecordList -> {
                     idCardRecordList = mIdCardRecordList;
@@ -83,7 +84,7 @@ public class LocalViewModel extends BaseViewModel {
             }
             emitter.onNext(mLocalList);
         })
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(Schedulers.from(App.getInstance().getThreadExecutor()))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(mLocalList -> {
                     refreshing.setValue(Boolean.FALSE);

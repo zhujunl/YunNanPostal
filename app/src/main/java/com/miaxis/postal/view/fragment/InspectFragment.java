@@ -4,6 +4,7 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.SimpleItemAnimator;
@@ -53,7 +54,7 @@ public class InspectFragment extends BaseViewModelFragment<FragmentInspectBindin
 
     @Override
     protected InspectViewModel initViewModel() {
-        return ViewModelProviders.of(this).get(InspectViewModel.class);
+        return new ViewModelProvider(this, getViewModelProviderFactory()).get(InspectViewModel.class);
     }
 
     @Override

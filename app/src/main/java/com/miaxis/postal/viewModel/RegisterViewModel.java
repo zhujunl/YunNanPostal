@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import androidx.databinding.ObservableField;
 import androidx.lifecycle.MutableLiveData;
 
+import com.miaxis.postal.app.App;
 import com.miaxis.postal.bridge.SingleLiveEvent;
 import com.miaxis.postal.data.repository.LoginRepository;
 
@@ -65,7 +66,7 @@ public class RegisterViewModel extends BaseViewModel {
                     headerCache);
             emitter.onNext(Boolean.TRUE);
         })
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(Schedulers.from(App.getInstance().getThreadExecutor()))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(courier -> {
                     waitMessage.setValue("");

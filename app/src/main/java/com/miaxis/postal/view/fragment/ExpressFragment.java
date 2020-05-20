@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.SimpleItemAnimator;
@@ -63,7 +64,7 @@ public class ExpressFragment extends BaseViewModelFragment<FragmentExpressBindin
 
     @Override
     protected ExpressViewModel initViewModel() {
-        return ViewModelProviders.of(this).get(ExpressViewModel.class);
+        return new ViewModelProvider(this, getViewModelProviderFactory()).get(ExpressViewModel.class);
     }
 
     @Override

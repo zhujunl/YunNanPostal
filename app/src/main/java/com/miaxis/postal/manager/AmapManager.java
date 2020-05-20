@@ -76,9 +76,9 @@ public class AmapManager implements AMapLocationListener {
     public void onLocationChanged(AMapLocation aMapLocation) {
         if (aMapLocation != null && aMapLocation.getErrorCode() == 0) {
             this.aMapLocation = aMapLocation;
-            String mac = ConfigManager.getInstance().getConfig().getMac();
+            String deviceIMEI = ConfigManager.getInstance().getConfig().getDeviceIMEI();
             try {
-                DeviceRepository.getInstance().deviceHeartBeat(mac, aMapLocation.getLatitude(), aMapLocation.getLongitude());
+                DeviceRepository.getInstance().deviceHeartBeat(deviceIMEI, aMapLocation.getLatitude(), aMapLocation.getLongitude());
             } catch (IOException | MyException e) {
                 e.printStackTrace();
             }

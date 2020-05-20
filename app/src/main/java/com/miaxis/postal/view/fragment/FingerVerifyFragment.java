@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.os.Handler;
@@ -54,7 +55,7 @@ public class FingerVerifyFragment extends BaseViewModelFragment<FragmentFingerVe
 
     @Override
     protected FingerVerifyViewModel initViewModel() {
-        return ViewModelProviders.of(this).get(FingerVerifyViewModel.class);
+        return new ViewModelProvider(this, getViewModelProviderFactory()).get(FingerVerifyViewModel.class);
     }
 
     @Override

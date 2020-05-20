@@ -2,6 +2,7 @@ package com.miaxis.postal.view.fragment;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -45,7 +46,7 @@ public class LocalFragment extends BaseViewModelFragment<FragmentLocalBinding, L
 
     @Override
     protected LocalViewModel initViewModel() {
-        return ViewModelProviders.of(this).get(LocalViewModel.class);
+        return new ViewModelProvider(this, getViewModelProviderFactory()).get(LocalViewModel.class);
     }
 
     @Override

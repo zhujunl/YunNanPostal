@@ -5,6 +5,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.view.LayoutInflater;
@@ -45,7 +46,7 @@ public class FingerRegisterFragment extends BaseViewModelFragment<FragmentFinger
 
     @Override
     protected FingerRegisterViewModel initViewModel() {
-        return ViewModelProviders.of(this).get(FingerRegisterViewModel.class);
+        return new ViewModelProvider(this, getViewModelProviderFactory()).get(FingerRegisterViewModel.class);
     }
 
     @Override
