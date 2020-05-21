@@ -5,10 +5,16 @@ import android.graphics.Bitmap;
 import androidx.databinding.ObservableField;
 import androidx.lifecycle.MutableLiveData;
 
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.MultiFormatWriter;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
+import com.miaxis.postal.app.App;
 import com.miaxis.postal.bridge.SingleLiveEvent;
 import com.miaxis.postal.data.entity.Express;
 import com.miaxis.postal.data.entity.Photograph;
 import com.miaxis.postal.data.event.ExpressEditEvent;
+import com.miaxis.postal.util.BarcodeUtil;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -22,7 +28,11 @@ public class InspectViewModel extends BaseViewModel {
     public ObservableField<Express> express = new ObservableField<>();
     public MutableLiveData<List<Photograph>> photographList = new MutableLiveData<>(new ArrayList<>());
 
+    public MutableLiveData<Boolean> barcodeImageUpdate = new SingleLiveEvent<>();
+
     private boolean modified = false;
+
+    public Bitmap barcodeBitmapCache = null;
 
     public InspectViewModel() {
     }
@@ -40,6 +50,7 @@ public class InspectViewModel extends BaseViewModel {
             }
             photographList.setValue(expressPhotoList);
         }
+        showBarcodeImage(express.getBarCode());
     }
 
     public void addPhotograph(List<Bitmap> bitmapList) {
@@ -65,10 +76,11 @@ public class InspectViewModel extends BaseViewModel {
         this.photographList.setValue(photoList);
     }
 
-    public void makeModifyResult() {
+    public void makeModifyResult(String info) {
         Express local = express.get();
         if (local != null) {
             local.setPhotoList(getSelectList());
+            local.setInfo(info);
             EventBus.getDefault().postSticky(new ExpressEditEvent(ExpressEditEvent.MODE_MODIFY, local));
         }
     }
@@ -120,6 +132,15 @@ public class InspectViewModel extends BaseViewModel {
 
     public boolean needBackCheck() {
         return modified;
+    }
+
+    public void showBarcodeImage(String barcode) {
+        App.getInstance().getThreadExecutor().execute(() -> {
+            barcodeBitmapCache = BarcodeUtil.createBarcodeBitmap(barcode);
+            if (barcodeBitmapCache != null) {
+                barcodeImageUpdate.postValue(Boolean.TRUE);
+            }
+        });
     }
 
 }

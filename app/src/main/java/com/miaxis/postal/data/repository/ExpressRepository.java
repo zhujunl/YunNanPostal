@@ -48,7 +48,7 @@ public class ExpressRepository {
                 express.getSenderAddress(),
                 express.getSenderPhone(),
                 express.getBarCode(),
-                "",
+                express.getInfo(),
                 "",
                 "",
                 "",

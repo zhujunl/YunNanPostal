@@ -8,7 +8,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 29
         versionCode 2
-        versionName "1.0.1"
+        versionName "1.0.1_ST"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         javaCompileOptions {
             annotationProcessorOptions {
@@ -94,4 +94,5 @@ dependencies {
     implementation files('src/main/libs/AMap_Location_V4.8.0_20191210.jar')
     implementation files('src/main/libs/MxMscFingerApi.jar')
     implementation files('src/main/libs/IDCardComDriver.jar')
+    implementation files('src/main/libs/zxing.jar')
 }

@@ -19,7 +19,7 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:text="@{viewModel.express.barCode}"
+            android:text="开箱验视"
             android:textSize="20sp"
             android:textColor="@color/white"
             android:gravity="center"
@@ -60,26 +60,142 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
 
+        <ImageView
+            android:id="@+id/iv_barcode"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"
+            android:layout_marginTop="10dp"
+            app:layout_constraintDimensionRatio="5:2"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/iv_back"
+            app:layout_constraintHeight_percent="0.13"/>
+
+        <TextView
+            android:id="@+id/tv_barcode"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center|top"
+            android:textSize="14sp"
+            android:text="@{viewModel.express.barCode}"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/iv_barcode" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_info"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintWidth_percent="0.9"
+            app:layout_constraintHeight_percent="0.075"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_barcode">
+
+            <TextView
+                android:id="@+id/tv_info"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:text="描述信息"
+                android:textSize="14sp"
+                android:gravity="center"
+                app:layout_constraintWidth_percent="0.2"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="0dp"
+                android:background="@color/lightgrey"
+                app:layout_constraintHeight_percent="0.5"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/et_info"
+                app:layout_constraintStart_toEndOf="@id/tv_info"/>
+
+            <EditText
+                android:id="@+id/et_info"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:textColor="@color/darkgray"
+                android:textSize="14sp"
+                android:background="@null"
+                android:hint="请输入物品名称及描述"
+                android:text="@={viewModel.express.info}"
+                app:layout_constraintHorizontal_bias="0"
+                app:layout_constraintWidth_percent="0.75"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:background="@color/lightgrey"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <View
+            android:id="@+id/v_line"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:background="@color/main_color"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/cl_info"
+            app:layout_constraintBottom_toTopOf="@id/rv_inspect"/>
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_inspect"
             android:layout_width="0dp"
             android:layout_height="0dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/iv_back"
+            app:layout_constraintTop_toBottomOf="@id/v_line"
+            app:layout_constraintBottom_toTopOf="@id/tv_select"/>
+
+        <TextView
+            android:id="@+id/tv_select"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:gravity="center"
+            app:layout_constraintTop_toBottomOf="@id/rv_inspect"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/btn_confirm"/>
+
+        <Button
+            android:id="@+id/btn_confirm"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="完成"
+            android:textSize="18sp"
+            android:textColor="@color/white"
+            android:background="@drawable/button_blue_background_right_angle"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"/>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fab_confirm"
+            android:id="@+id/fab_alarm"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_check_white"
-            app:layout_constraintVertical_bias="0.9"
+            android:src="@drawable/ic_notifications_active_white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.9"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            app:layout_constraintVertical_bias="0.9" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

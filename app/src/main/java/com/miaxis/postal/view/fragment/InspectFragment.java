@@ -1,5 +1,6 @@
 package com.miaxis.postal.view.fragment;
 
+import android.text.TextUtils;
 import android.view.View;
 
 import androidx.annotation.NonNull;
@@ -11,7 +12,9 @@ import androidx.recyclerview.widget.SimpleItemAnimator;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.miaxis.postal.R;
+import com.miaxis.postal.bridge.GlideApp;
 import com.miaxis.postal.data.entity.Express;
 import com.miaxis.postal.data.entity.Photograph;
 import com.miaxis.postal.data.event.ExpressEditEvent;
@@ -34,8 +37,6 @@ public class InspectFragment extends BaseViewModelFragment<FragmentInspectBindin
 
     private Express express;
     private InspectAdapter inspectAdapter;
-
-    private boolean firstIn = true;
 
     public static InspectFragment newInstance(Express express) {
         InspectFragment inspectFragment = new InspectFragment();
@@ -64,6 +65,7 @@ public class InspectFragment extends BaseViewModelFragment<FragmentInspectBindin
 
     @Override
     protected void initData() {
+        viewModel.barcodeImageUpdate.observe(this, barcodeImageUpdateObserver);
     }
 
     @Override
@@ -86,14 +88,16 @@ public class InspectFragment extends BaseViewModelFragment<FragmentInspectBindin
                     .negativeText("取消")
                     .show();
         }));
-        binding.fabConfirm.setOnClickListener(new OnLimitClickHelper(view -> {
-            if (viewModel.getSelectList().size() != 0) {
+        binding.btnConfirm.setOnClickListener(new OnLimitClickHelper(view -> {
+            if (TextUtils.isEmpty(binding.etInfo.getText().toString())) {
+                ToastManager.toast("请输入物品名称及描述", ToastManager.INFO);
+            } else if (viewModel.getSelectList().size() != 0) {
                 new MaterialDialog.Builder(getContext())
                         .title("确认已选择的实物照片")
                         .content("未选择的实物照片将会被删除")
                         .positiveText("确认")
                         .onPositive((dialog, which) -> {
-                            viewModel.makeModifyResult();
+                            viewModel.makeModifyResult(binding.etInfo.getText().toString());
                             mListener.backToStack(null);
                         })
                         .negativeText("取消")
@@ -103,15 +107,6 @@ public class InspectFragment extends BaseViewModelFragment<FragmentInspectBindin
             }
         }));
         EventBus.getDefault().register(this);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (firstIn && viewModel.checkEmptyExpress()) {
-            firstIn = false;
-            mListener.replaceFragment(CameraFragment.newInstance());
-        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
@@ -177,15 +172,27 @@ public class InspectFragment extends BaseViewModelFragment<FragmentInspectBindin
     private Observer<List<Photograph>> photographObserver = photographList -> {
         inspectAdapter.setDataList(photographList);
         inspectAdapter.notifyDataSetChanged();
+        updateSelectText();
     };
 
-//    private void updateSelectText() {
-//        binding.tvSelect.setText(String.format("已选 %s / %s", viewModel.getSelectSize(), InspectViewModel.MAX_COUNT));
-//    }
+    private Observer<Boolean> barcodeImageUpdateObserver = flag -> {
+        if (flag) {
+            GlideApp.with(this)
+                    .load(viewModel.barcodeBitmapCache)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .skipMemoryCache(true)
+                    .into(binding.ivBarcode);
+        }
+    };
+
+    private void updateSelectText() {
+        binding.tvSelect.setText(String.format("已选 %s / %s", viewModel.getSelectSize(), InspectViewModel.MAX_COUNT));
+    }
 
     private void updateSelectIcon(Photograph select, int position) {
         inspectAdapter.getDataList().get(position - 1).setSelect(!select.isSelect());
         inspectAdapter.notifyItemChanged(position);
+        updateSelectText();
     }
 
     public void setExpress(Express express) {

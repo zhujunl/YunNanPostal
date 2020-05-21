@@ -76,9 +76,12 @@ public class LogisticsFragment extends BaseViewModelFragment<FragmentLogisticsBi
         initSearchView();
         binding.ivBack.setOnClickListener(v -> onBackPressed());
         binding.srlOrder.setOnRefreshListener(this::refresh);
+        binding.srlOrder.setColorSchemeResources(R.color.main_color,R.color.main_color_dark);
         viewModel.refreshing.observe(this, refreshingObserver);
         viewModel.orderList.observe(this, orderObserver);
         viewModel.orderDetail.observe(this, orderDetailObserver);
+        refresh();
+        binding.srlOrder.setRefreshing(true);
     }
 
     @Override

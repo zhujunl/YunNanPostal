@@ -26,7 +26,6 @@ public class LogisticsViewModel extends BaseViewModel {
     public MutableLiveData<Boolean> refreshing = new SingleLiveEvent<>();
 
     public LogisticsViewModel() {
-        getOrderByCodeAndName("", 1);
     }
 
     public List<SimpleOrder> getOrderList() {
