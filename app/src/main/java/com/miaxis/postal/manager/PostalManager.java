@@ -84,40 +84,6 @@ public class PostalManager {
         } finally {
             uploading = false;
         }
-
-
-//        handler.removeMessages(0);
-//        Observable.create((ObservableOnSubscribe<IDCardRecord>) emitter -> {
-//            uploading = true;
-//            IDCardRecord idCardRecord = IDCardRecordRepository.getInstance().findOldestIDCardRecord();
-//            if (idCardRecord != null) {
-//                emitter.onNext(idCardRecord);
-//            } else {
-//                emitter.onError(new MyException("未找到待上传日志"));
-//            }
-//        })
-//                .subscribeOn(Schedulers.from(App.getInstance().getThreadExecutor()))
-//                .observeOn(Schedulers.from(App.getInstance().getThreadExecutor()))
-//                .doOnNext(idCardRecord -> {
-//                    TempId tempId = IDCardRecordRepository.getInstance().uploadIDCardRecord(idCardRecord);
-//                    List<Express> expressList = ExpressRepository.getInstance().loadExpressByVerifyId(idCardRecord.getVerifyId());
-//                    for (Express express : expressList) {
-//                        ExpressRepository.getInstance().uploadLocalExpress(express, tempId);
-//                        express.setUpload(true);
-//                        ExpressRepository.getInstance().updateExpress(express);
-//                    }
-//                    idCardRecord.setUpload(true);
-//                    IDCardRecordRepository.getInstance().updateIdCardRecord(idCardRecord);
-//                })
-//                .subscribe(idCardRecord -> {
-//                    Log.e("asd", "Postal成功");
-//                    handler.sendMessage(handler.obtainMessage(0));
-//                }, throwable -> {
-//                    throwable.printStackTrace();
-//                    Log.e("asd", "" + throwable.getMessage());
-//                    uploading = false;
-//                    handler.sendMessageDelayed(handler.obtainMessage(0), 60 * 60 * 1000);
-//                });
     }
 
 }

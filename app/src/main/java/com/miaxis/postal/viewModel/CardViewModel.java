@@ -42,6 +42,7 @@ public class CardViewModel extends BaseViewModel {
 
         @Override
         public void onIDCardReceive(IDCardRecord data, String message) {
+            initCardResult.postValue(Status.SUCCESS);
             if (data != null) {
                 if (!CardManager.getInstance().checkIsOutValidate(data)) {
                     idCardRecord = data;

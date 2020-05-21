@@ -6,6 +6,7 @@
 
     <data>
 
+        <import type="com.miaxis.postal.util.ValueUtil" />
         <variable
             name="viewModel"
             type="com.miaxis.postal.viewModel.ExpressViewModel" />
@@ -104,7 +105,7 @@
                 android:layout_height="0dp"
                 android:gravity="center|start"
                 android:paddingStart="10dp"
-                android:text="@{viewModel.idCardRecord.cardNumber}"
+                android:text="@{ValueUtil.cardNumberDesensitization(viewModel.idCardRecord.cardNumber)}"
                 android:textColor="@color/white"
                 android:textSize="16sp"
                 app:layout_constraintBottom_toBottomOf="@id/iv_number_icon"
@@ -235,20 +236,33 @@
             android:id="@+id/rv_express"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
             android:background="@drawable/corner_rect_white"
             android:padding="10dp"
             app:layout_constraintWidth_percent="0.9"
-            app:layout_constraintDimensionRatio="1:1"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/btn_submit"
             app:layout_constraintTop_toBottomOf="@id/cl_input" />
 
+        <Button
+            android:id="@+id/btn_submit"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="提交"
+            android:textSize="18sp"
+            android:textColor="@color/white"
+            android:background="@drawable/button_blue_background_right_angle"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fab_confirm"
+            android:id="@+id/fab_alarm"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_check_white"
+            android:src="@drawable/ic_notifications_active_white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.9"

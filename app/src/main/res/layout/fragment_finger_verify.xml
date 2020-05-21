@@ -140,10 +140,8 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_margin="10dp"
             android:background="@drawable/stroke_shape"
-            app:layout_constraintHeight_percent="0.35"
-            app:layout_constraintWidth_percent="0.9"
+            android:layout_margin="10dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_hint"
@@ -158,10 +156,12 @@
                 android:padding="5dp"
                 app:layout_constraintDimensionRatio="102:126"
                 app:layout_constraintHorizontal_bias="0"
+                app:layout_constraintVertical_bias="0"
+                app:layout_constraintWidth_percent="0.3"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toTopOf="@id/tv_card_number_hint"
+                app:layout_constraintBottom_toBottomOf="parent"
                 viewadapter:imageSource="@{viewModel.idCardRecordLiveData.cardBitmap}"/>
 
             <TextView
@@ -243,7 +243,7 @@
                 app:layout_constraintStart_toEndOf="@id/iv_header"
                 app:layout_constraintTop_toBottomOf="@id/tv_sex_hint"
                 app:layout_constraintEnd_toStartOf="@id/tv_birthday"
-                app:layout_constraintBottom_toTopOf="@id/tv_card_number_hint"/>
+                app:layout_constraintBottom_toBottomOf="@id/iv_header"/>
 
             <TextView
                 android:id="@+id/tv_birthday"
@@ -256,51 +256,19 @@
                 app:layout_constraintTop_toTopOf="@id/tv_birthday_hint"
                 app:layout_constraintBottom_toBottomOf="@id/tv_birthday_hint"/>
 
-            <TextView
-                android:id="@+id/tv_card_number_hint"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:text="身份号码"
-                android:gravity="center"
-                app:layout_constraintEnd_toEndOf="@id/iv_header"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tv_birthday_hint"
-                app:layout_constraintBottom_toTopOf="@id/tv_address_hint"/>
-
-            <TextView
-                android:id="@+id/tv_card_number"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:text="@{viewModel.idCardRecordLiveData.cardNumber}"
-                android:gravity="center|start"
-                app:layout_constraintStart_toEndOf="@id/tv_card_number_hint"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@id/tv_card_number_hint"
-                app:layout_constraintBottom_toBottomOf="@id/tv_card_number_hint"/>
-
-            <TextView
-                android:id="@+id/tv_address_hint"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:text="住址"
-                android:gravity="center"
-                app:layout_constraintEnd_toEndOf="@id/iv_header"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tv_card_number_hint"
-                app:layout_constraintBottom_toBottomOf="parent"/>
-
-            <TextView
-                android:id="@+id/tv_address"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:text="@{viewModel.idCardRecordLiveData.address}"
-                android:gravity="center|start"
-                app:layout_constraintStart_toEndOf="@id/tv_address_hint"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@id/tv_address_hint"
-                app:layout_constraintBottom_toBottomOf="@id/tv_address_hint"/>
-
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_alarm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_notifications_active_white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.9"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.9" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

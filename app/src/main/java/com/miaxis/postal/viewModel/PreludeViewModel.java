@@ -94,8 +94,7 @@ public class PreludeViewModel extends BaseViewModel {
                     } else {
                         Config config = ConfigManager.getInstance().getConfig();
                         initResult(config.getDeviceStatus());
-                        hint.set(handleError(throwable));
-                        ToastManager.toast("脱机模式", ToastManager.INFO);
+                        ToastManager.toast("脱机模式：" + handleError(throwable), ToastManager.INFO);
                     }
                 });
     }
@@ -105,7 +104,7 @@ public class PreludeViewModel extends BaseViewModel {
             hint.set("设备校验成功");
             initSuccess.setValue(Boolean.TRUE);
         } else {
-            showErrorMessage("该设备已禁用，请联系管理员");
+            showErrorMessage("该设备已禁用，请确保设备已联网。\n若仍出现此信息，请联系管理员。");
         }
     }
 

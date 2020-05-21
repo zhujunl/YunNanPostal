@@ -25,6 +25,7 @@ public class Express {
     private String longitude;
     private Date pieceTime;
     private boolean upload;
+    private String info;
 
     @Ignore
     private List<Bitmap> photoList;
@@ -43,6 +44,7 @@ public class Express {
         setLongitude(builder.longitude);
         setPieceTime(builder.pieceTime);
         setUpload(builder.upload);
+        setInfo(builder.info);
         setPhotoList(builder.photoList);
     }
 
@@ -126,6 +128,14 @@ public class Express {
         this.upload = upload;
     }
 
+    public String getInfo() {
+        return info;
+    }
+
+    public void setInfo(String info) {
+        this.info = info;
+    }
+
     public List<Bitmap> getPhotoList() {
         return photoList;
     }
@@ -145,6 +155,7 @@ public class Express {
         private String longitude;
         private Date pieceTime;
         private boolean upload;
+        private String info;
         private List<Bitmap> photoList;
 
         public Builder() {
@@ -197,6 +208,11 @@ public class Express {
 
         public Builder upload(boolean val) {
             upload = val;
+            return this;
+        }
+
+        public Builder info(String val) {
+            info = val;
             return this;
         }
 

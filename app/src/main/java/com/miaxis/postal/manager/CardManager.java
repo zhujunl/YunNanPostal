@@ -93,10 +93,12 @@ public class CardManager {
     private boolean isDeviceOpen() throws InterruptedException {
         int count = 4;
         String samId = readSamId();
+        Log.e("asd", "ssssssssss" + samId);
         while (TextUtils.isEmpty(samId)) {
             Thread.sleep(100);
             samId = readSamId();
             count--;
+            Log.e("asd", "sadadsadsadsa" + count);
             if (!TextUtils.isEmpty(samId)) {
                 return true;
             }

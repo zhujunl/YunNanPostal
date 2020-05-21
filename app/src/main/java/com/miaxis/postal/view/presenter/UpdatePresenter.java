@@ -58,6 +58,9 @@ public class UpdatePresenter {
     }
 
     private void showUpdateDialog(Update update) {
+        if (updateDialog != null && updateDialog.isShowing()) {
+            updateDialog.dismiss();
+        }
         updateDialog = new MaterialDialog.Builder(context)
                 .title("检查更新")
                 .content("")

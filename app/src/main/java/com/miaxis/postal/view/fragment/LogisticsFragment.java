@@ -23,6 +23,7 @@ import com.miaxis.postal.R;
 import com.miaxis.postal.data.entity.Order;
 import com.miaxis.postal.data.entity.SimpleOrder;
 import com.miaxis.postal.databinding.FragmentLogisticsBinding;
+import com.miaxis.postal.manager.PostalManager;
 import com.miaxis.postal.view.adapter.EndLessOnScrollListener;
 import com.miaxis.postal.view.adapter.ExpressAdapter;
 import com.miaxis.postal.view.adapter.OrderAdapter;
@@ -179,6 +180,7 @@ public class LogisticsFragment extends BaseViewModelFragment<FragmentLogisticsBi
     };
 
     private void refresh() {
+        PostalManager.getInstance().startPostal();
         localCount = 0;
         viewModel.getOrderByCodeAndName(filter, page = 1);
     }

@@ -101,7 +101,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
         int backStackEntryCount = getSupportFragmentManager().getBackStackEntryCount();
         if (backStackEntryCount > 1) {
             if (fragment != null) {
-                getSupportFragmentManager().popBackStackImmediate(fragment.getName(), 1);
+                getSupportFragmentManager().popBackStackImmediate(fragment.getName(), 0);
             } else {
                 getSupportFragmentManager().popBackStackImmediate(null, 0);
             }

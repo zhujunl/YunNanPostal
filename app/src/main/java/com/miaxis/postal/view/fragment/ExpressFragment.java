@@ -7,7 +7,6 @@ import android.content.IntentFilter;
 
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 
@@ -85,7 +84,7 @@ public class ExpressFragment extends BaseViewModelFragment<FragmentExpressBindin
         binding.ivBack.setOnClickListener(v -> onBackPressed());
         binding.ivAddress.setOnClickListener(new OnLimitClickHelper(view  -> viewModel.getLocation()));
         binding.ivAddress.performClick();
-        binding.fabConfirm.setOnClickListener(confirmClickListener);
+        binding.btnSubmit.setOnClickListener(submitClickListener);
         viewModel.expressList.observe(this, expressListObserver);
         viewModel.newExpress.observe(this, newExpressObserver);
         viewModel.repeatExpress.observe(this, repeatExpressObserver);
@@ -233,11 +232,11 @@ public class ExpressFragment extends BaseViewModelFragment<FragmentExpressBindin
 
     private Observer<Boolean> saveFlagObserver = flag -> mListener.backToStack(HomeFragment.class);
 
-    private View.OnClickListener confirmClickListener = new OnLimitClickHelper(view -> {
-        if (!viewModel.checkInput()) {
-            ToastManager.toast("请输入寄件人手机号码和寄件地址", ToastManager.INFO);
-            return;
-        }
+    private View.OnClickListener submitClickListener = new OnLimitClickHelper(view -> {
+//        if (!viewModel.checkInput()) {
+//            ToastManager.toast("请输入寄件人手机号码和寄件地址", ToastManager.INFO);
+//            return;
+//        }
         if (viewModel.getExpressList().isEmpty()) {
             ToastManager.toast("请至少完成一个订单", ToastManager.INFO);
             return;

@@ -59,6 +59,8 @@ public class LoginFragment extends BaseViewModelFragment<FragmentLoginBinding, L
                 viewModel.getCourier();
             }
         });
+        //TODO:
+        viewModel.password.set("123456");
     }
 
     @Override

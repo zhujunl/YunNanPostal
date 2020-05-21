@@ -20,7 +20,7 @@ import com.miaxis.postal.util.FileUtil;
 
 import java.io.File;
 
-@Database(entities = {Config.class, Courier.class, IDCardRecord.class, Express.class}, version = 3)
+@Database(entities = {Config.class, Courier.class, IDCardRecord.class, Express.class}, version = 4)
 @TypeConverters({StringListConverter.class, DateConverter.class})
 public abstract class AppDatabase extends RoomDatabase {
 

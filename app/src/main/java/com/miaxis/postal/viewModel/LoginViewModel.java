@@ -83,12 +83,13 @@ public class LoginViewModel extends BaseViewModel {
         try {
             if (TextUtils.equals(courier.getPassword(), getInputPasswordMD5())) {
                 loginResult.postValue(Boolean.TRUE);
+                return;
             }
+
         } catch (MyException e) {
             e.printStackTrace();
         }
-        //TODO:
-        loginResult.postValue(Boolean.TRUE);
+        loginResult.postValue(Boolean.FALSE);
     }
 
     private String getInputPasswordMD5() throws MyException {

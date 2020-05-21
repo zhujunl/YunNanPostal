@@ -3,6 +3,7 @@ package com.miaxis.postal.util;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.text.TextUtils;
 
 import com.google.gson.Gson;
 
@@ -15,7 +16,7 @@ public class ValueUtil {
 
     public final static Gson GSON = new Gson();
 
-    public static final String DEFAULT_BASE_HOST = "http://183.129.171.153:9194/policebus/";
+    public static final String DEFAULT_BASE_HOST = "http://192.168.5.125:8088/policebus/";
     public static final float DEFAULT_VERIFY_SCORE = 0.76f;
     public static final float DEFAULT_MASK_VERIFY_SCORE = 0.72f;
     public static final int DEFAULT_QUALITY_SCORE = 25;
@@ -27,8 +28,8 @@ public class ValueUtil {
     public static final int DEFAULT_LOGIN_MODE = LOGIN_MODE_FINGER;
 
     public static final String SUCCESS = "200";
-    public static final String DEVICE_ENABLE = "1";
-    public static final String DEVICE_UNABLE = "0";
+    public static final String DEVICE_ENABLE = "00601";
+    public static final String DEVICE_UNABLE = "00602";
     public static final int PAGE_SIZE = 8;
 
     public static boolean isNetException(Throwable throwable) {
@@ -83,6 +84,14 @@ public class ValueUtil {
             default:
                 return "其他不确定指位";
         }
+    }
+
+    //身份证前三后四脱敏
+    public static String cardNumberDesensitization(String id) {
+        if (TextUtils.isEmpty(id) || (id.length() < 8)) {
+            return id;
+        }
+        return id.replaceAll("(?<=\\w{3})\\w(?=\\w{4})", "*");
     }
 
 }

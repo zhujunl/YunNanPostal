@@ -14,7 +14,7 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_margin="1dp"
-            android:background="@color/lightgrey"
+            android:background="@drawable/button_blue_background"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -22,17 +22,31 @@
             app:layout_constraintDimensionRatio="1:1">
 
             <ImageView
+                android:id="@+id/iv_image"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:src="@drawable/ic_crop_free_grey"
+                android:src="@drawable/ic_add_big_white"
                 android:scaleType="fitCenter"
                 android:adjustViewBounds="true"
                 app:layout_constraintHeight_percent="0.5"
                 app:layout_constraintWidth_percent="0.5"
+                app:layout_constraintVertical_bias="0.2"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:gravity="center"
+                android:text="新建订单"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/iv_image"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

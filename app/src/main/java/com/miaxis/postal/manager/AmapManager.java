@@ -7,6 +7,7 @@ import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
 import com.miaxis.postal.data.exception.MyException;
+import com.miaxis.postal.data.exception.NetResultFailedException;
 import com.miaxis.postal.data.repository.DeviceRepository;
 
 import org.greenrobot.eventbus.EventBus;
@@ -79,7 +80,7 @@ public class AmapManager implements AMapLocationListener {
             String deviceIMEI = ConfigManager.getInstance().getConfig().getDeviceIMEI();
             try {
                 DeviceRepository.getInstance().deviceHeartBeat(deviceIMEI, aMapLocation.getLatitude(), aMapLocation.getLongitude());
-            } catch (IOException | MyException e) {
+            } catch (IOException | MyException | NetResultFailedException e) {
                 e.printStackTrace();
             }
         }
