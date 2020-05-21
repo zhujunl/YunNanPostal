@@ -7,6 +7,7 @@ import com.miaxis.postal.data.dto.SimpleOrderDto;
 import com.miaxis.postal.data.entity.Order;
 import com.miaxis.postal.data.entity.SimpleOrder;
 import com.miaxis.postal.data.exception.MyException;
+import com.miaxis.postal.data.exception.NetResultFailedException;
 import com.miaxis.postal.data.net.PostalApi;
 import com.miaxis.postal.data.net.ResponseEntity;
 import com.miaxis.postal.util.ValueUtil;
@@ -34,7 +35,7 @@ public class OrderRepository extends BaseRepository {
      * ================================ 静态内部类单例写法 ================================
      **/
 
-    public List<SimpleOrder> getOrderByCodeAndNameSync(String param, int pageNum, int pageSize) throws IOException, MyException {
+    public List<SimpleOrder> getOrderByCodeAndNameSync(String param, int pageNum, int pageSize) throws IOException, MyException, NetResultFailedException {
         Response<ResponseEntity<List<SimpleOrderDto>>> execute = PostalApi.getOrderByCodeAndNameSync(param, pageNum, pageSize).execute();
         try {
             ResponseEntity<List<SimpleOrderDto>> body = execute.body();
@@ -42,9 +43,11 @@ public class OrderRepository extends BaseRepository {
                 if (TextUtils.equals(body.getCode(), ValueUtil.SUCCESS) && body.getData() != null) {
                     return transformSimpleOrderDtoList(body.getData());
                 } else {
-                    throw new MyException("服务端返回，" + body.getMessage());
+                    throw new NetResultFailedException("服务端返回，" + body.getMessage());
                 }
             }
+        } catch (NetResultFailedException e) {
+            throw e;
         } catch (Exception e) {
             e.printStackTrace();
             throw new MyException(e.getMessage());
@@ -52,7 +55,7 @@ public class OrderRepository extends BaseRepository {
         throw new MyException("服务端返回数据解析失败，或为空");
     }
 
-    public Order getOrderByIdSync(long id) throws IOException, MyException {
+    public Order getOrderByIdSync(long id) throws IOException, MyException, NetResultFailedException {
         Response<ResponseEntity<OrderDto>> execute = PostalApi.getOrderByIdSync(id).execute();
         try {
             ResponseEntity<OrderDto> body = execute.body();
@@ -60,9 +63,11 @@ public class OrderRepository extends BaseRepository {
                 if (TextUtils.equals(body.getCode(), ValueUtil.SUCCESS) && body.getData() != null) {
                     return body.getData().transform();
                 } else {
-                    throw new MyException("服务端返回，" + body.getMessage());
+                    throw new NetResultFailedException("服务端返回，" + body.getMessage());
                 }
             }
+        } catch (NetResultFailedException e) {
+            throw e;
         } catch (Exception e) {
             e.printStackTrace();
             throw new MyException(e.getMessage());

@@ -4,6 +4,7 @@ import com.miaxis.postal.data.dto.CourierDto;
 import com.miaxis.postal.data.dto.OrderDto;
 import com.miaxis.postal.data.dto.SimpleOrderDto;
 import com.miaxis.postal.data.dto.TempIdDto;
+import com.miaxis.postal.data.dto.UpdateDto;
 import com.miaxis.postal.data.entity.Courier;
 
 import java.io.File;
@@ -16,10 +17,6 @@ import okhttp3.RequestBody;
 import retrofit2.Call;
 
 public class PostalApi extends BaseAPI {
-
-    public static Call<ResponseEntity<Integer>> registerDeviceSync(String macAddress) {
-        return getPostalNetSync().registerDeviceSync(macAddress);
-    }
 
     public static Call<ResponseEntity<String>> getDeviceStatusSync(String macAddress) {
         return getPostalNetSync().getDeviceStatusSync(macAddress);
@@ -133,6 +130,10 @@ public class PostalApi extends BaseAPI {
                 lng,
                 checkId,
                 parts);
+    }
+
+    public static Call<ResponseEntity<UpdateDto>> updateApp(String version) {
+        return getPostalNetSync().updateApp(version);
     }
 
 }

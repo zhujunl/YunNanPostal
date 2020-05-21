@@ -15,7 +15,6 @@ public class Config {
     private float verifyScore;
     private float verifyMaskScore;
     private int maskScore;
-    private int deviceId;
     private String deviceStatus;
     private int heartBeatInterval;
 
@@ -31,7 +30,6 @@ public class Config {
         setVerifyScore(builder.verifyScore);
         setVerifyMaskScore(builder.verifyMaskScore);
         setMaskScore(builder.maskScore);
-        setDeviceId(builder.deviceId);
         setDeviceStatus(builder.deviceStatus);
         setHeartBeatInterval(builder.heartBeatInterval);
     }
@@ -100,14 +98,6 @@ public class Config {
         this.maskScore = maskScore;
     }
 
-    public int getDeviceId() {
-        return deviceId;
-    }
-
-    public void setDeviceId(int deviceId) {
-        this.deviceId = deviceId;
-    }
-
     public String getDeviceStatus() {
         return deviceStatus;
     }
@@ -133,7 +123,6 @@ public class Config {
         private float verifyScore;
         private float verifyMaskScore;
         private int maskScore;
-        private int deviceId;
         private String deviceStatus;
         private int heartBeatInterval;
 
@@ -177,11 +166,6 @@ public class Config {
 
         public Builder maskScore(int val) {
             maskScore = val;
-            return this;
-        }
-
-        public Builder deviceId(int val) {
-            deviceId = val;
             return this;
         }
 

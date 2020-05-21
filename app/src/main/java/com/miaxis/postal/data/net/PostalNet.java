@@ -4,6 +4,7 @@ import com.miaxis.postal.data.dto.CourierDto;
 import com.miaxis.postal.data.dto.OrderDto;
 import com.miaxis.postal.data.dto.SimpleOrderDto;
 import com.miaxis.postal.data.dto.TempIdDto;
+import com.miaxis.postal.data.dto.UpdateDto;
 
 import java.util.List;
 
@@ -16,11 +17,6 @@ import retrofit2.http.POST;
 import retrofit2.http.Part;
 
 public interface PostalNet {
-
-    //注册设备
-    @FormUrlEncoded
-    @POST("api/v1/device/registerDevice")
-    Call<ResponseEntity<Integer>> registerDeviceSync(@Field("macAddress") String macAddress);
 
     //获取设备状态
     @FormUrlEncoded
@@ -98,5 +94,9 @@ public interface PostalNet {
                                               @Part("lng") String lng,
                                               @Part("checkId") String checkId,
                                               @Part List<MultipartBody.Part> file);
+
+    @FormUrlEncoded
+    @POST("api/v1/update/updateApp")
+    Call<ResponseEntity<UpdateDto>> updateApp(@Field("version") String version);
 
 }

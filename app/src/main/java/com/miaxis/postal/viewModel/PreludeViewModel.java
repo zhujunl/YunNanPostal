@@ -11,6 +11,7 @@ import androidx.lifecycle.LiveData;
 import com.miaxis.postal.app.App;
 import com.miaxis.postal.bridge.SingleLiveEvent;
 import com.miaxis.postal.data.entity.Config;
+import com.miaxis.postal.data.exception.NetResultFailedException;
 import com.miaxis.postal.data.repository.DeviceRepository;
 import com.miaxis.postal.manager.ConfigManager;
 import com.miaxis.postal.manager.ToastManager;
@@ -66,40 +67,13 @@ public class PreludeViewModel extends BaseViewModel {
     private App.OnAppInitListener onAppInitListener = (result, message) -> {
         if (result) {
             Config config = ConfigManager.getInstance().getConfig();
-            if (config.getDeviceId() == ValueUtil.DEFAULT_DEVICE_ID) {
-                hint.set("初始化成功，首次使用，正在联网注册设备");
-                registerDevice();
-            } else {
-                hint.set("初始化成功，正在查询设备状态");
-                getDeviceStatus();
-            }
+            hint.set("初始化成功，正在查询设备状态");
+            getDeviceStatus();
         } else {
             errorMode.set(Boolean.TRUE);
             hint.set(message);
         }
     };
-
-    private void registerDevice() {
-        Disposable subscribe = Observable.create((ObservableOnSubscribe<Integer>) emitter -> {
-            int deviceId = DeviceRepository.getInstance().registerDevice();
-            emitter.onNext(deviceId);
-        })
-                .subscribeOn(Schedulers.from(App.getInstance().getThreadExecutor()))
-                .observeOn(Schedulers.from(App.getInstance().getThreadExecutor()))
-                .doOnNext(i -> {
-                    Config config = ConfigManager.getInstance().getConfig();
-                    config.setDeviceId(i);
-                    ConfigManager.getInstance().saveConfigSync(config);
-                })
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(integer -> {
-                    hint.set("注册设备成功，正在查询设备状态");
-                    getDeviceStatus();
-                }, throwable -> {
-                    errorMode.set(Boolean.TRUE);
-                    hint.set(handleError(throwable));
-                });
-    }
 
     private void getDeviceStatus() {
         Disposable subscribe = Observable.create((ObservableOnSubscribe<String>) emitter -> {
@@ -115,10 +89,14 @@ public class PreludeViewModel extends BaseViewModel {
                 })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(this::initResult, throwable -> {
-                    Config config = ConfigManager.getInstance().getConfig();
-                    initResult(config.getDeviceStatus());
-                    hint.set(handleError(throwable));
-                    ToastManager.toast("脱机模式", ToastManager.INFO);
+                    if (throwable instanceof NetResultFailedException) {
+                        showErrorMessage(throwable.getMessage());
+                    } else {
+                        Config config = ConfigManager.getInstance().getConfig();
+                        initResult(config.getDeviceStatus());
+                        hint.set(handleError(throwable));
+                        ToastManager.toast("脱机模式", ToastManager.INFO);
+                    }
                 });
     }
 
@@ -127,10 +105,14 @@ public class PreludeViewModel extends BaseViewModel {
             hint.set("设备校验成功");
             initSuccess.setValue(Boolean.TRUE);
         } else {
-            Config config = ConfigManager.getInstance().getConfig();
-            errorMode.set(Boolean.TRUE);
-            hint.set("该设备已禁用，请联系管理员\n" + "设备IMEI：" + config.getDeviceIMEI());
+            showErrorMessage("该设备已禁用，请联系管理员");
         }
+    }
+
+    private void showErrorMessage(String message) {
+        Config config = ConfigManager.getInstance().getConfig();
+        errorMode.set(Boolean.TRUE);
+        hint.set(message + "\n" + "设备IMEI：" + config.getDeviceIMEI());
     }
 
 }

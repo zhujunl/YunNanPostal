@@ -1,6 +1,8 @@
 package com.miaxis.postal.manager;
 
+import android.app.AlarmManager;
 import android.app.Application;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Looper;
@@ -8,15 +10,17 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.miaxis.postal.app.App;
+import com.miaxis.postal.view.activity.MainActivity;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class CrashExceptionManager implements Thread.UncaughtExceptionHandler {
 
-    private CrashExceptionManager() {}
+    private CrashExceptionManager() {
+    }
 
-    public static CrashExceptionManager getInstance () {
+    public static CrashExceptionManager getInstance() {
         return SingletonHolder.instance;
     }
 
@@ -24,7 +28,9 @@ public class CrashExceptionManager implements Thread.UncaughtExceptionHandler {
         private static final CrashExceptionManager instance = new CrashExceptionManager();
     }
 
-    /** ================================ 静态内部类单例写法 ================================ **/
+    /**
+     * ================================ 静态内部类单例写法 ================================
+     **/
 
     public static String TAG = "MyCrash";
     // 系统默认的UncaughtException处理类
@@ -51,30 +57,24 @@ public class CrashExceptionManager implements Thread.UncaughtExceptionHandler {
     @Override
     public void uncaughtException(Thread thread, Throwable ex) {
         ex.printStackTrace();
+        CameraManager.getInstance().closeCamera();
         Log.e("asd", "" + ex.getMessage());
         new Thread(() -> {
             Looper.prepare();
             Toast.makeText(mContext, "很抱歉，程序出现异常，即将重新启动", Toast.LENGTH_LONG).show();
             Looper.loop();
         }).start();
-        try {
-            thread.sleep(3000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
         restartApp();
     }
 
-    private void restartApp(){
-//        Intent intent = new Intent(mContext, MainActivity.class);
-//        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//        mContext.startActivity(intent);
-//        android.os.Process.killProcess(android.os.Process.myPid());//再此之前可以做些退出等操作
+    private void restartApp() {
         Context context = App.getInstance().getApplicationContext();
-        final Intent intent = context.getPackageManager().getLaunchIntentForPackage(context.getPackageName());
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        context.startActivity(intent);
-        android.os.Process.killProcess(android.os.Process.myPid());
+        Intent mStartActivity = new Intent(context, MainActivity.class);
+        int mPendingIntentId = 123456;
+        PendingIntent mPendingIntent = PendingIntent.getActivity(context, mPendingIntentId, mStartActivity, PendingIntent.FLAG_CANCEL_CURRENT);
+        AlarmManager mgr = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, mPendingIntent);
+        System.exit(0);
     }
 
 }

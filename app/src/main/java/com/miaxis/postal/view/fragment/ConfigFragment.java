@@ -15,6 +15,8 @@ import com.miaxis.postal.R;
 import com.miaxis.postal.data.entity.Config;
 import com.miaxis.postal.databinding.FragmentConfigBinding;
 import com.miaxis.postal.util.ValueUtil;
+import com.miaxis.postal.view.auxiliary.OnLimitClickHelper;
+import com.miaxis.postal.view.auxiliary.OnLimitClickListener;
 import com.miaxis.postal.view.base.BaseViewModelFragment;
 import com.miaxis.postal.viewModel.ConfigViewModel;
 
@@ -51,6 +53,9 @@ public class ConfigFragment extends BaseViewModelFragment<FragmentConfigBinding,
     @Override
     protected void initView() {
         binding.tvVersion.setText(ValueUtil.getCurVersion(getContext()));
+        binding.tvCheckUpdate.setOnClickListener(new OnLimitClickHelper(view -> {
+            mListener.updateApp();
+        }));
         binding.ivBack.setOnClickListener(v -> onBackPressed());
         binding.ivSave.setOnClickListener(v -> {
             Config config = viewModel.config.get();

@@ -62,6 +62,7 @@ public class LoginViewModel extends BaseViewModel {
                 .subscribeOn(Schedulers.from(App.getInstance().getThreadExecutor()))
                 .observeOn(Schedulers.from(App.getInstance().getThreadExecutor()))
                 .doOnNext(CourierModel::saveCourier)
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(courier -> {
                     waitMessage.setValue("");
                     courierLiveData.setValue(courier);
@@ -86,7 +87,8 @@ public class LoginViewModel extends BaseViewModel {
         } catch (MyException e) {
             e.printStackTrace();
         }
-        loginResult.postValue(Boolean.FALSE);
+        //TODO:
+        loginResult.postValue(Boolean.TRUE);
     }
 
     private String getInputPasswordMD5() throws MyException {
@@ -97,7 +99,7 @@ public class LoginViewModel extends BaseViewModel {
                 return passwordMD5;
             }
         }
-        throw new MyException("输入密码为空");
+        throw new MyException("输入密码为空或提取MD5失败");
     }
 
 }

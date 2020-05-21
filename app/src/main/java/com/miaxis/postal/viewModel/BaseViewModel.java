@@ -5,8 +5,10 @@ import android.util.Log;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.miaxis.postal.app.App;
 import com.miaxis.postal.bridge.SingleLiveEvent;
 import com.miaxis.postal.data.exception.MyException;
+import com.miaxis.postal.data.exception.NetResultFailedException;
 import com.miaxis.postal.manager.ToastManager;
 import com.miaxis.postal.util.ValueUtil;
 
@@ -21,11 +23,17 @@ public class BaseViewModel extends ViewModel {
         Log.e("asd", "" + throwable.getMessage());
         if (ValueUtil.isNetException(throwable)) {
             return "联网错误";
+        } else if (throwable instanceof NetResultFailedException) {
+            return throwable.getMessage();
         } else if (throwable instanceof MyException) {
             return throwable.getMessage();
         } else {
             return "出现错误";
         }
+    }
+
+    protected String getString(int resourceId) {
+        return App.getInstance().getResources().getString(resourceId);
     }
 
 }

@@ -54,7 +54,6 @@ public class ConfigManager {
                     .qualityScore(ValueUtil.DEFAULT_QUALITY_SCORE)
                     .maskScore(ValueUtil.DEFAULT_MASK_SCORE)
                     .registerQualityScore(ValueUtil.DEFAULT_REGISTER_QUALITY_SCORE)
-                    .deviceId(ValueUtil.DEFAULT_DEVICE_ID)
                     .deviceStatus(ValueUtil.DEVICE_UNABLE)
                     .heartBeatInterval(ValueUtil.DEFAULT_HEART_BEAT_INTERVAL)
                     .build();

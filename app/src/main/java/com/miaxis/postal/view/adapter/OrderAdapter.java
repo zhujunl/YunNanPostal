@@ -45,30 +45,18 @@ public class OrderAdapter extends BaseViewModelAdapter<SimpleOrder, ItemOrderBin
     public void onBindViewHolder(@NonNull OrderAdapter.MyViewHolder holder, int position) {
         SimpleOrder item = dataList.get(position);
         holder.getBinding().setItem(item);
-        RequestOptions options = RequestOptions.bitmapTransform(new RoundedCorners(30));
-        GlideApp.with(context)
-                .load(item.getImage())
-                .apply(options)
-                .skipMemoryCache(true)
-                .diskCacheStrategy(DiskCacheStrategy.NONE)
-                .into(holder.getBinding().ivImage);
         holder.getBinding().cvOrder.setOnClickListener(v -> {
             if (listener != null) {
                 listener.onItemClick(holder.getBinding().cvOrder, holder.getLayoutPosition());
             }
         });
-        holder.getBinding().ivImage.setOnClickListener(new OnLimitClickHelper(view -> {
-            if (listener != null && !TextUtils.isEmpty(item.getImage())) {
-                listener.onThumbnail(item.getImage());
-            }
-        }));
     }
 
     public void setListener(OnItemClickListener listener) {
         this.listener = listener;
     }
 
-    class MyViewHolder extends BaseViewHolder<ItemOrderBinding> {
+    static class MyViewHolder extends BaseViewHolder<ItemOrderBinding> {
         MyViewHolder(View itemView) {
             super(itemView);
         }
@@ -76,7 +64,6 @@ public class OrderAdapter extends BaseViewModelAdapter<SimpleOrder, ItemOrderBin
 
     public interface OnItemClickListener {
         void onItemClick(View view, int position);
-        void onThumbnail(String url);
     }
 
 }

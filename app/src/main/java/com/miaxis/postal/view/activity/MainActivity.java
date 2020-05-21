@@ -20,6 +20,7 @@ import com.miaxis.postal.view.fragment.ExpressFragment;
 import com.miaxis.postal.view.fragment.HomeFragment;
 import com.miaxis.postal.view.fragment.InspectFragment;
 import com.miaxis.postal.view.fragment.PreludeFragment;
+import com.miaxis.postal.view.presenter.UpdatePresenter;
 
 public class MainActivity extends BaseActivity<ActivityMainBinding> implements OnFragmentInteractionListener {
 
@@ -28,6 +29,8 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
     private MaterialDialog quitDialog;
 
     private String root;
+
+    private UpdatePresenter updatePresenter;
 
     @Override
     protected int setContentView() {
@@ -42,6 +45,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
     @Override
     protected void initView() {
         initDialog();
+        updatePresenter = new UpdatePresenter(this);
         replaceFragment(PreludeFragment.newInstance());
     }
 
@@ -75,11 +79,12 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
         root = fragment.getClass().getName();
         replaceFragment(fragment);
         PostalManager.getInstance().init();
+        updatePresenter.checkUpdate();
     }
 
     @Override
     public void backToRoot() {
-        getSupportFragmentManager().popBackStack(root, 0);
+        getSupportFragmentManager().popBackStack(root, 1);
     }
 
     @Override
@@ -96,9 +101,9 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
         int backStackEntryCount = getSupportFragmentManager().getBackStackEntryCount();
         if (backStackEntryCount > 1) {
             if (fragment != null) {
-                getSupportFragmentManager().popBackStack(fragment.getName(), 0);
+                getSupportFragmentManager().popBackStackImmediate(fragment.getName(), 1);
             } else {
-                getSupportFragmentManager().popBackStack();
+                getSupportFragmentManager().popBackStackImmediate(null, 0);
             }
         } else {
             exitApp();
@@ -128,6 +133,13 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
     public void dismissResultDialog() {
         if (resultDialog.isShowing()) {
             resultDialog.dismiss();
+        }
+    }
+
+    @Override
+    public void updateApp() {
+        if (updatePresenter != null) {
+            updatePresenter.checkUpdate();
         }
     }
 

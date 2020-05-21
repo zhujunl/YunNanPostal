@@ -18,8 +18,8 @@
             android:id="@+id/cv_order"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginTop="3dp"
             android:layout_marginStart="6dp"
+            android:layout_marginTop="3dp"
             android:layout_marginEnd="6dp"
             android:layout_marginBottom="3dp"
             android:clickable="true"
@@ -27,7 +27,7 @@
             app:cardElevation="2dp"
             app:contentPadding="6dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintDimensionRatio="3:1"
+            app:layout_constraintDimensionRatio="5:1"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -36,83 +36,44 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-            <TextView
-                android:id="@+id/tv_order_code"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:text="@{item.orderCode}"
-                android:textSize="16sp"
-                android:textColor="@color/dark"
-                android:gravity="center|start"
-                app:layout_constraintVertical_bias="0"
-                app:layout_constraintHeight_percent="0.25"
-                app:layout_constraintWidth_percent="0.95"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"/>
+                <TextView
+                    android:id="@+id/tv_order_code"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center|start"
+                    android:text="@{item.orderCode}"
+                    android:textColor="@color/dark"
+                    android:textSize="16sp"
+                    app:layout_constraintWidth_percent="0.7"
+                    app:layout_constraintVertical_bias="0"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/tv_name"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/cl_image"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                app:layout_constraintDimensionRatio="1:1"
-                app:layout_constraintStart_toStartOf="@id/tv_order_code"
-                app:layout_constraintTop_toBottomOf="@id/tv_order_code"
-                app:layout_constraintBottom_toBottomOf="parent">
-
-                <ImageView
-                    android:id="@+id/iv_image"
+                <TextView
+                    android:id="@+id/tv_name"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
-                    android:scaleType="centerCrop"
-                    android:background="@color/black"
-                    app:layout_constraintDimensionRatio="1:1"
-                    app:layout_constraintHeight_percent="0.8"
-                    app:layout_constraintHorizontal_bias="0"
-                    app:layout_constraintStart_toStartOf="parent"
+                    android:gravity="center|start"
+                    android:text="@{item.senderName}"
+                    android:textSize="14sp"
+                    app:layout_constraintStart_toEndOf="@id/tv_order_code"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"/>
+                    app:layout_constraintBottom_toBottomOf="@id/tv_order_code"
+                    app:layout_constraintTop_toTopOf="@id/tv_order_code"/>
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <TextView
-                android:id="@+id/tv_name"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:text="@{item.senderName}"
-                android:textSize="14sp"
-                android:gravity="center|start"
-                app:layout_constraintWidth_percent="0.3"
-                app:layout_constraintHeight_percent="0.3"
-                app:layout_constraintTop_toBottomOf="@id/tv_order_code"
-                app:layout_constraintStart_toEndOf="@id/cl_image"
-                app:layout_constraintEnd_toStartOf="@id/tv_phone"
-                app:layout_constraintBottom_toTopOf="@id/tv_address"/>
-
-            <TextView
-                android:id="@+id/tv_phone"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:text="@{item.senderPhone}"
-                android:textSize="14sp"
-                android:gravity="center|start"
-                app:layout_constraintTop_toBottomOf="@id/tv_order_code"
-                app:layout_constraintStart_toEndOf="@id/tv_name"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toBottomOf="@id/tv_name"/>
-
-            <TextView
-                android:id="@+id/tv_address"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:text="@{item.senderAddress}"
-                android:textSize="12sp"
-                app:layout_constraintStart_toEndOf="@id/cl_image"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tv_name"/>
+                <TextView
+                    android:id="@+id/tv_address"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:text="@{item.senderAddress}"
+                    android:textSize="12sp"
+                    android:gravity="center|start"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_order_code" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

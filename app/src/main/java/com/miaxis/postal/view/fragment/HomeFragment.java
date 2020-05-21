@@ -55,8 +55,7 @@ public class HomeFragment extends BaseViewModelFragment<FragmentHomeBinding, Hom
     @Override
     protected void initView() {
         binding.ivConfig.setOnClickListener(new OnLimitClickHelper(view -> mListener.replaceFragment(ConfigFragment.newInstance())));
-        binding.clLocal.setOnClickListener(new OnLimitClickHelper(view -> mListener.replaceFragment(LocalFragment.newInstance())));
-        binding.clLogistic.setOnClickListener(new OnLimitClickHelper(view -> mListener.replaceFragment(CardFragment.newInstance())));
+        binding.clExpress.setOnClickListener(new OnLimitClickHelper(view -> mListener.replaceFragment(CardFragment.newInstance())));
         binding.clRecord.setOnClickListener(new OnLimitClickHelper(view -> mListener.replaceFragment(LogisticsFragment.newInstance())));
     }
 

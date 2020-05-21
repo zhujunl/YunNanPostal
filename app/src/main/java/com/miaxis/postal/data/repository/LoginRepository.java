@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import com.miaxis.postal.data.dto.CourierDto;
 import com.miaxis.postal.data.entity.Courier;
 import com.miaxis.postal.data.exception.MyException;
+import com.miaxis.postal.data.exception.NetResultFailedException;
 import com.miaxis.postal.data.model.CourierModel;
 import com.miaxis.postal.data.net.PostalApi;
 import com.miaxis.postal.data.net.ResponseEntity;
@@ -35,7 +36,7 @@ public class LoginRepository extends BaseRepository {
      * ================================ 静态内部类单例写法 ================================
      **/
 
-    public Courier getCourierByPhoneSync(String phone) throws IOException, MyException {
+    public Courier getCourierByPhoneSync(String phone) throws IOException, MyException, NetResultFailedException {
         Response<ResponseEntity<CourierDto>> execute = PostalApi.getExpressmanByPhoneSync(phone).execute();
         try {
             ResponseEntity<CourierDto> body = execute.body();
@@ -43,9 +44,11 @@ public class LoginRepository extends BaseRepository {
                 if (TextUtils.equals(body.getCode(), ValueUtil.SUCCESS) && body.getData() != null) {
                     return body.getData().transform();
                 } else {
-                    throw new MyException("服务端返回，" + body.getMessage());
+                    throw new NetResultFailedException("服务端返回，" + body.getMessage());
                 }
             }
+        } catch (NetResultFailedException e) {
+            throw e;
         } catch (Exception e) {
             e.printStackTrace();
             throw new MyException(e.getMessage());
@@ -59,7 +62,7 @@ public class LoginRepository extends BaseRepository {
                                        String faceFeature,
                                        String finger1Feature,
                                        String finger2Feature,
-                                       Bitmap bitmap) throws IOException, MyException {
+                                       Bitmap bitmap) throws IOException, MyException, NetResultFailedException {
         String faceFilePath = FileUtil.FACE_IMAGE_PATH + File.separator + "card_" + cardNo + System.currentTimeMillis() + ".jpg";
         File file = FileUtil.saveBitmap(bitmap, faceFilePath);
         Response<ResponseEntity> execute = PostalApi.registerExpressmanSync(name,
@@ -75,9 +78,11 @@ public class LoginRepository extends BaseRepository {
                 if (TextUtils.equals(body.getCode(), ValueUtil.SUCCESS)) {
                     return;
                 } else {
-                    throw new MyException("服务端返回，" + body.getMessage());
+                    throw new NetResultFailedException("服务端返回，" + body.getMessage());
                 }
             }
+        } catch (NetResultFailedException e) {
+            throw e;
         } catch (Exception e) {
             e.printStackTrace();
             throw new MyException(e.getMessage());

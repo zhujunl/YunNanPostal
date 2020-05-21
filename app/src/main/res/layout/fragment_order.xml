@@ -73,6 +73,7 @@
                 android:layout_height="0dp"
                 android:adjustViewBounds="true"
                 android:scaleType="fitCenter"
+                android:src="@drawable/ic_fingerprint_white"
                 app:layout_constraintWidth_percent="0.3"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/iv_face_picture"

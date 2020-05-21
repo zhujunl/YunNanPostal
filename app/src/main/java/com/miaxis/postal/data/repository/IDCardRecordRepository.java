@@ -6,6 +6,7 @@ import com.miaxis.postal.data.dto.TempIdDto;
 import com.miaxis.postal.data.entity.IDCardRecord;
 import com.miaxis.postal.data.entity.TempId;
 import com.miaxis.postal.data.exception.MyException;
+import com.miaxis.postal.data.exception.NetResultFailedException;
 import com.miaxis.postal.data.model.IDCardRecordModel;
 import com.miaxis.postal.data.net.PostalApi;
 import com.miaxis.postal.data.net.ResponseEntity;
@@ -35,7 +36,7 @@ public class IDCardRecordRepository {
      * ================================ 静态内部类单例 ================================
      **/
 
-    public TempId uploadIDCardRecord(IDCardRecord idCardRecord) throws MyException, IOException {
+    public TempId uploadIDCardRecord(IDCardRecord idCardRecord) throws MyException, IOException, NetResultFailedException {
         File cardFile = !TextUtils.isEmpty(idCardRecord.getCardPicture()) ? new File(idCardRecord.getCardPicture()) : null;
         File faceFile = !TextUtils.isEmpty(idCardRecord.getFacePicture()) ? new File(idCardRecord.getFacePicture()) : null;
         Response<ResponseEntity<TempIdDto>> execute = PostalApi.savePersonFromApp(
@@ -55,9 +56,11 @@ public class IDCardRecordRepository {
                 if (TextUtils.equals(body.getCode(), ValueUtil.SUCCESS) && body.getData() != null) {
                     return body.getData().transform();
                 } else {
-                    throw new MyException("服务端返回，" + body.getMessage());
+                    throw new NetResultFailedException("服务端返回，" + body.getMessage());
                 }
             }
+        } catch (NetResultFailedException e) {
+            throw e;
         } catch (Exception e) {
             e.printStackTrace();
             throw new MyException(e.getMessage());

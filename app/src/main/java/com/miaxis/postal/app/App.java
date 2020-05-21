@@ -4,6 +4,7 @@ import android.app.Application;
 
 import androidx.annotation.NonNull;
 
+import com.liulishuo.filedownloader.FileDownloader;
 import com.miaxis.postal.MyEventBusIndex;
 import com.miaxis.postal.data.dao.AppDatabase;
 import com.miaxis.postal.data.net.PostalApi;
@@ -43,6 +44,7 @@ public class App extends Application {
             ConfigManager.getInstance().checkConfig();
             CrashExceptionManager.getInstance().init(this);
             PostalApi.rebuildRetrofit();
+            FileDownloader.setup(this);
             AmapManager.getInstance().startLocation(this);
             TTSManager.getInstance().init(getApplicationContext());
             int result = FaceManager.getInstance().initFaceST(getApplicationContext(), FileUtil.MODEL_PATH, FileUtil.LICENCE_PATH);

@@ -12,5 +12,6 @@ public interface OnFragmentInteractionListener {
     void dismissWaitDialog();
     void showResultDialog(String message);
     void dismissResultDialog();
+    void updateApp();
     void exitApp();
 }

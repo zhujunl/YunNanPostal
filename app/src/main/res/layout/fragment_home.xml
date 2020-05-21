@@ -82,60 +82,19 @@
             app:layout_constraintBottom_toBottomOf="@id/guideline_middle">
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/cl_local"
+                android:id="@+id/cl_express"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:background="@drawable/corner_rect_white"
-                app:layout_constraintWidth_percent="0.25"
+                app:layout_constraintWidth_percent="0.3"
                 app:layout_constraintDimensionRatio="1:1"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/cl_logistic"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent">
-
-                <ImageView
-                    android:id="@+id/iv_local_image"
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:src="@drawable/ic_folder_open_blue"
-                    android:adjustViewBounds="true"
-                    android:scaleType="fitCenter"
-                    android:padding="10dp"
-                    app:layout_constraintVertical_bias="0"
-                    app:layout_constraintHeight_percent="0.7"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"/>
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:text="本地"
-                    android:gravity="center|top"
-                    android:textSize="16sp"
-                    android:textColor="@color/main_color"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/iv_local_image"
-                    app:layout_constraintBottom_toBottomOf="parent"/>
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/cl_logistic"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:background="@drawable/corner_rect_white"
-                app:layout_constraintWidth_percent="0.25"
-                app:layout_constraintDimensionRatio="1:1"
-                app:layout_constraintStart_toEndOf="@id/cl_local"
                 app:layout_constraintEnd_toStartOf="@id/cl_record"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent">
 
                 <ImageView
-                    android:id="@+id/iv_logistic_image"
+                    android:id="@+id/iv_express_image"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     android:src="@drawable/ic_fullscreen_blue"
@@ -158,7 +117,7 @@
                     android:textColor="@color/main_color"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/iv_logistic_image"
+                    app:layout_constraintTop_toBottomOf="@id/iv_express_image"
                     app:layout_constraintBottom_toBottomOf="parent"/>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
@@ -168,9 +127,9 @@
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:background="@drawable/corner_rect_white"
-                app:layout_constraintWidth_percent="0.25"
+                app:layout_constraintWidth_percent="0.3"
                 app:layout_constraintDimensionRatio="1:1"
-                app:layout_constraintStart_toEndOf="@id/cl_logistic"
+                app:layout_constraintStart_toEndOf="@id/cl_express"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent">

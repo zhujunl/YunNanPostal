@@ -129,11 +129,6 @@ public class LogisticsFragment extends BaseViewModelFragment<FragmentLogisticsBi
         public void onItemClick(View view, int position) {
             viewModel.getOrderById(orderAdapter.getData(position));
         }
-
-        @Override
-        public void onThumbnail(String url) {
-            mListener.replaceFragment(PhotoFragment.newInstance(url));
-        }
     };
 
     private Observer<List<SimpleOrder>> orderObserver = orderList -> {

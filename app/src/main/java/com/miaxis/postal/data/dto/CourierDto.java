@@ -15,6 +15,7 @@ public class CourierDto implements Mapper<Courier> {
     private String finger1Feature;
     private String finger2Feature;
     private String createTime;
+    private String password;
 
     public CourierDto() {
     }
@@ -99,6 +100,14 @@ public class CourierDto implements Mapper<Courier> {
         this.createTime = createTime;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     @Override
     public Courier transform() throws MyException {
         try {
@@ -113,6 +122,7 @@ public class CourierDto implements Mapper<Courier> {
                     .fingerFeature1(finger1Feature)
                     .fingerFeature2(finger2Feature)
                     .createTime(createTime)
+                    .password(password)
                     .build();
         } catch (Exception e) {
             e.printStackTrace();
