@@ -18,6 +18,7 @@ import com.miaxis.postal.util.ValueUtil;
 import com.miaxis.postal.view.auxiliary.OnLimitClickHelper;
 import com.miaxis.postal.view.auxiliary.OnLimitClickListener;
 import com.miaxis.postal.view.base.BaseViewModelFragment;
+import com.miaxis.postal.view.presenter.UpdatePresenter;
 import com.miaxis.postal.viewModel.ConfigViewModel;
 
 public class ConfigFragment extends BaseViewModelFragment<FragmentConfigBinding, ConfigViewModel> {
@@ -54,7 +55,13 @@ public class ConfigFragment extends BaseViewModelFragment<FragmentConfigBinding,
     protected void initView() {
         binding.tvVersion.setText(ValueUtil.getCurVersion(getContext()));
         binding.tvCheckUpdate.setOnClickListener(new OnLimitClickHelper(view -> {
-            mListener.updateApp();
+            mListener.showWaitDialog("正在检查更新，请稍后...");
+            mListener.updateApp((result, message) -> {
+                mListener.dismissWaitDialog();
+                if (!result) {
+                    mListener.showResultDialog(message);
+                }
+            });
         }));
         binding.ivBack.setOnClickListener(v -> onBackPressed());
         binding.ivSave.setOnClickListener(v -> {

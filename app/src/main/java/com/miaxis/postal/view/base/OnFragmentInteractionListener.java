@@ -2,6 +2,8 @@ package com.miaxis.postal.view.base;
 
 import androidx.fragment.app.Fragment;
 
+import com.miaxis.postal.view.presenter.UpdatePresenter;
+
 public interface OnFragmentInteractionListener {
     void setRoot(Fragment fragment);
     void backToRoot();
@@ -12,6 +14,6 @@ public interface OnFragmentInteractionListener {
     void dismissWaitDialog();
     void showResultDialog(String message);
     void dismissResultDialog();
-    void updateApp();
+    void updateApp(UpdatePresenter.OnCheckUpdateResultListener listener);
     void exitApp();
 }

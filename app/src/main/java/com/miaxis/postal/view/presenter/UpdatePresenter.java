@@ -15,6 +15,8 @@ import com.liulishuo.filedownloader.FileDownloadListener;
 import com.liulishuo.filedownloader.FileDownloader;
 import com.miaxis.postal.app.App;
 import com.miaxis.postal.data.entity.Update;
+import com.miaxis.postal.data.exception.MyException;
+import com.miaxis.postal.data.exception.NetResultFailedException;
 import com.miaxis.postal.data.repository.DeviceRepository;
 import com.miaxis.postal.manager.ToastManager;
 import com.miaxis.postal.util.DateUtil;
@@ -52,9 +54,33 @@ public class UpdatePresenter {
                     showUpdateDialog(update);
                 }, throwable -> {
                     throwable.printStackTrace();
-                    ToastManager.toast("查询更新信息失败", ToastManager.INFO);
                     Log.e("asd", "更新App错误：" + throwable.getMessage());
                 });
+    }
+
+    public void checkUpdate(OnCheckUpdateResultListener listener) {
+        Observable.create((ObservableOnSubscribe<Update>) emitter -> {
+            Update update = DeviceRepository.getInstance().updateApp();
+            emitter.onNext(update);
+        })
+                .subscribeOn(Schedulers.from(App.getInstance().getThreadExecutor()))
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(update -> {
+                    listener.onUpdateResult(true, "检测到新版本");
+                    showUpdateDialog(update);
+                }, throwable -> {
+                    if (throwable instanceof NetResultFailedException || throwable instanceof MyException) {
+                        listener.onUpdateResult(false, "" + throwable.getMessage());
+                    } else {
+                        listener.onUpdateResult(false, "查询更新信息失败");
+                    }
+                    throwable.printStackTrace();
+                    Log.e("asd", "更新App错误：" + throwable.getMessage());
+                });
+    }
+
+    public interface OnCheckUpdateResultListener {
+        void onUpdateResult(boolean result, String message);
     }
 
     private void showUpdateDialog(Update update) {

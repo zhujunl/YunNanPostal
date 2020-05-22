@@ -137,9 +137,9 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
     }
 
     @Override
-    public void updateApp() {
+    public void updateApp(UpdatePresenter.OnCheckUpdateResultListener listener) {
         if (updatePresenter != null) {
-            updatePresenter.checkUpdate();
+            updatePresenter.checkUpdate(listener);
         }
     }
 
