@@ -161,8 +161,8 @@ public class PostalApi extends BaseAPI {
                 expressmanName);
     }
 
-    public static Call<ResponseEntity<UpdateDto>> updateApp(String version) {
-        return getPostalNetSync().updateApp(version);
+    public static Call<ResponseEntity<UpdateDto>> updateApp(String versionName) {
+        return getPostalNetSync().getAppByVersionName(versionName);
     }
 
 }

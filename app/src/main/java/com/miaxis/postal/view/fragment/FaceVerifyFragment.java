@@ -125,6 +125,7 @@ public class FaceVerifyFragment extends BaseViewModelFragment<FragmentFaceVerify
         pass = true;
         binding.ivBack.setEnabled(false);
         binding.tvSwitch.setEnabled(false);
+        binding.fabAlarm.setEnabled(false);
         IDCardRecord value = viewModel.idCardRecordLiveData.getValue();
         if (value != null) {
             value.setVerifyType("1");

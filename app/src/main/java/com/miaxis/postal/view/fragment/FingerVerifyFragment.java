@@ -162,6 +162,7 @@ public class FingerVerifyFragment extends BaseViewModelFragment<FragmentFingerVe
             TTSManager.getInstance().playVoiceMessageFlush("核验通过");
             binding.ivBack.setEnabled(false);
             binding.tvSwitch.setEnabled(false);
+            binding.fabAlarm.setEnabled(false);
             idCardRecord.setVerifyType("2");
             handler.postDelayed(() -> {
                 try {

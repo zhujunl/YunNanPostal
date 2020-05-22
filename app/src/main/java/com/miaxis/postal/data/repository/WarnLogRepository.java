@@ -38,8 +38,8 @@ public class WarnLogRepository extends BaseRepository {
     public Integer uploadWarnLog(WarnLog warnLog, TempId tempId) throws MyException, IOException, NetResultFailedException {
         Config config = ConfigManager.getInstance().getConfig();
         Response<ResponseEntity<Integer>> execute = PostalApi.uploadWarnLog(
-                tempId.getPersonId(),
-                tempId.getCheckId(),
+                tempId != null ? tempId.getPersonId() : "",
+                tempId != null ? tempId.getCheckId() : "",
                 warnLog.getSendAddress(),
                 warnLog.getSendName(),
                 warnLog.getSendCardNo(),
@@ -75,6 +75,14 @@ public class WarnLogRepository extends BaseRepository {
 
     public List<WarnLog> loadAll() {
         return WarnLogModel.loadAll();
+    }
+
+    public int loadWarnLogCount() {
+        return WarnLogModel.loadWarnLogCount();
+    }
+
+    public WarnLog findOldestWarnLog() {
+        return WarnLogModel.findOldestWarnLog();
     }
 
 }

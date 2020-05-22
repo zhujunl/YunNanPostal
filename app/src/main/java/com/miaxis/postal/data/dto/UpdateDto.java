@@ -5,20 +5,22 @@ import com.miaxis.postal.data.exception.MyException;
 
 public class UpdateDto implements Mapper<Update> {
 
-    private String version;
+    private int id;
     private String url;
-    private String releaseTime;
-    private boolean forced;
+    private String version;
+    private String name;
+    private String content;
+    private String uploadTime;
 
     public UpdateDto() {
     }
 
-    public String getVersion() {
-        return version;
+    public int getId() {
+        return id;
     }
 
-    public void setVersion(String version) {
-        this.version = version;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getUrl() {
@@ -29,26 +31,47 @@ public class UpdateDto implements Mapper<Update> {
         this.url = url;
     }
 
-    public String getReleaseTime() {
-        return releaseTime;
+    public String getVersion() {
+        return version;
     }
 
-    public void setReleaseTime(String releaseTime) {
-        this.releaseTime = releaseTime;
+    public void setVersion(String version) {
+        this.version = version;
     }
 
-    public boolean isForced() {
-        return forced;
+    public String getName() {
+        return name;
     }
 
-    public void setForced(boolean forced) {
-        this.forced = forced;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public String getUploadTime() {
+        return uploadTime;
+    }
+
+    public void setUploadTime(String uploadTime) {
+        this.uploadTime = uploadTime;
     }
 
     @Override
     public Update transform() throws MyException {
         try {
             return new Update.Builder()
+                    .versionCode(version)
+                    .versionName(name)
+                    .content(content)
+                    .url(url)
+                    .updateTime(uploadTime)
                     .build();
         } catch (Exception e) {
             e.printStackTrace();

@@ -19,4 +19,12 @@ public class WarnLogModel {
         return AppDatabase.getInstance().warnLogDao().loadAll();
     }
 
+    public static int loadWarnLogCount() {
+        return AppDatabase.getInstance().warnLogDao().loadWarnLogCount();
+    }
+
+    public static WarnLog findOldestWarnLog() {
+        return AppDatabase.getInstance().warnLogDao().findOldestWarnLog();
+    }
+
 }

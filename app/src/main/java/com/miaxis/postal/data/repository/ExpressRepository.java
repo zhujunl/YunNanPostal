@@ -38,7 +38,7 @@ public class ExpressRepository {
      * ================================ 静态内部类单例 ================================
      **/
 
-    public boolean uploadLocalExpress(Express express, TempId tempId) throws IOException, MyException {
+    public boolean uploadLocalExpress(Express express, TempId tempId, Integer warnLogId) throws IOException, MyException {
         List<File> fileList = new ArrayList<>();
         for (String path : express.getPhotoPathList()) {
             fileList.add(new File(path));
@@ -57,7 +57,7 @@ public class ExpressRepository {
                 express.getLatitude(),
                 express.getLongitude(),
                 tempId.getCheckId(),
-                "",
+                warnLogId != null ? String.valueOf(warnLogId) : "",
                 fileList)
                 .execute();
         try {

@@ -84,7 +84,7 @@ public class FaceLoginFragment extends BaseViewModelFragment<FragmentFaceLoginBi
     private Observer<Boolean> verifyFlagObserver = flag -> {
         TTSManager.getInstance().playVoiceMessageFlush("人脸登录成功");
         ToastManager.toast("登录成功", ToastManager.SUCCESS);
-        mListener.replaceFragment(HomeFragment.newInstance(viewModel.courierLiveData.getValue()));
+        mListener.replaceFragment(HomeFragment.newInstance());
     };
 
     private ViewTreeObserver.OnGlobalLayoutListener globalListener = new ViewTreeObserver.OnGlobalLayoutListener() {

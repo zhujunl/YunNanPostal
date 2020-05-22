@@ -8,6 +8,7 @@ public class Courier {
 
     @PrimaryKey
     private long id;
+    private long courierId;
     private String name;
     private String cardNumber;
     private String phone;
@@ -24,6 +25,7 @@ public class Courier {
 
     private Courier(Builder builder) {
         setId(builder.id);
+        setCourierId(builder.courierId);
         setName(builder.name);
         setCardNumber(builder.cardNumber);
         setPhone(builder.phone);
@@ -42,6 +44,14 @@ public class Courier {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public long getCourierId() {
+        return courierId;
+    }
+
+    public void setCourierId(long courierId) {
+        this.courierId = courierId;
     }
 
     public String getName() {
@@ -126,6 +136,7 @@ public class Courier {
 
     public static final class Builder {
         private long id;
+        private long courierId;
         private String name;
         private String cardNumber;
         private String phone;
@@ -142,6 +153,11 @@ public class Courier {
 
         public Builder id(long val) {
             id = val;
+            return this;
+        }
+
+        public Builder courierId(long val) {
+            courierId = val;
             return this;
         }
 

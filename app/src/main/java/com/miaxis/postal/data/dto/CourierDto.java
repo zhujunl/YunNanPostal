@@ -112,7 +112,8 @@ public class CourierDto implements Mapper<Courier> {
     public Courier transform() throws MyException {
         try {
             return new Courier.Builder()
-                    .id(id)
+                    .id(1L)
+                    .courierId(id)
                     .name(name)
                     .cardNumber(cardNo)
                     .phone(phone)

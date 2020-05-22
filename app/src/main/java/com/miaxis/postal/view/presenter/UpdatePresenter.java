@@ -21,6 +21,7 @@ import com.miaxis.postal.data.repository.DeviceRepository;
 import com.miaxis.postal.manager.ToastManager;
 import com.miaxis.postal.util.DateUtil;
 import com.miaxis.postal.util.FileUtil;
+import com.miaxis.postal.util.ValueUtil;
 
 import java.io.File;
 import java.util.Date;
@@ -44,14 +45,17 @@ public class UpdatePresenter {
     }
 
     public void checkUpdate() {
+        String versionName = ValueUtil.getCurVersion(context);
         Observable.create((ObservableOnSubscribe<Update>) emitter -> {
-            Update update = DeviceRepository.getInstance().updateApp();
+            Update update = DeviceRepository.getInstance().updateApp(versionName);
             emitter.onNext(update);
         })
                 .subscribeOn(Schedulers.from(App.getInstance().getThreadExecutor()))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(update -> {
-                    showUpdateDialog(update);
+                    if (!TextUtils.equals(versionName, update.getVersionCode() + "_" + update.getVersionName())) {
+                        showUpdateDialog(update);
+                    }
                 }, throwable -> {
                     throwable.printStackTrace();
                     Log.e("asd", "更新App错误：" + throwable.getMessage());
@@ -59,15 +63,20 @@ public class UpdatePresenter {
     }
 
     public void checkUpdate(OnCheckUpdateResultListener listener) {
+        String versionName = ValueUtil.getCurVersion(context);
         Observable.create((ObservableOnSubscribe<Update>) emitter -> {
-            Update update = DeviceRepository.getInstance().updateApp();
+            Update update = DeviceRepository.getInstance().updateApp(versionName);
             emitter.onNext(update);
         })
                 .subscribeOn(Schedulers.from(App.getInstance().getThreadExecutor()))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(update -> {
-                    listener.onUpdateResult(true, "检测到新版本");
-                    showUpdateDialog(update);
+                    if (!TextUtils.equals(versionName, update.getVersionCode() + "_" + update.getVersionName())) {
+                        listener.onUpdateResult(true, "检测到新版本");
+                        showUpdateDialog(update);
+                    } else {
+                        listener.onUpdateResult(false, "已是最新版本");
+                    }
                 }, throwable -> {
                     if (throwable instanceof NetResultFailedException || throwable instanceof MyException) {
                         listener.onUpdateResult(false, "" + throwable.getMessage());
@@ -87,9 +96,14 @@ public class UpdatePresenter {
         if (updateDialog != null && updateDialog.isShowing()) {
             updateDialog.dismiss();
         }
+        String content = update.getContent().replace("\\n", "\n");;
         updateDialog = new MaterialDialog.Builder(context)
-                .title("检查更新")
-                .content("")
+                .title("检测到新版本")
+                .content(
+                        "版本名称：" + update.getVersionCode() + "_" + update.getVersionName() + "\n"
+                        + "更新时间：" + update.getUpdateTime() + "\n"
+                        + "更新内容：\n" + content
+                )
                 .positiveText("更新")
                 .onPositive((dialog, which) -> {
                     dialog.dismiss();
@@ -120,7 +134,7 @@ public class UpdatePresenter {
     }
 
     private void downloadUrl(String url) {
-        String path = FileUtil.MAIN_PATH + File.separator + "实名核验_" + DateUtil.YEAR_MONTH_DAY_FORMAT.format(new Date()) + ".apk";
+        String path = FileUtil.MAIN_PATH + File.separator + "实名核验_" + System.currentTimeMillis() + ".apk";
         FileDownloader.getImpl().create(url)
                 .setPath(path)
                 .setListener(new FileDownloadListener() {

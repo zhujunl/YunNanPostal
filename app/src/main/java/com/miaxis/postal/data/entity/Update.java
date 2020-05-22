@@ -2,27 +2,45 @@ package com.miaxis.postal.data.entity;
 
 public class Update {
 
-    private String version;
+    private String versionCode;
+    private String versionName;
+    private String content;
     private String url;
-    private String releaseTime;
-    private boolean forced;
+    private String updateTime;
 
     public Update() {
     }
 
     private Update(Builder builder) {
-        setVersion(builder.version);
+        setVersionCode(builder.versionCode);
+        setVersionName(builder.versionName);
+        setContent(builder.content);
         setUrl(builder.url);
-        setReleaseTime(builder.releaseTime);
-        setForced(builder.forced);
+        setUpdateTime(builder.updateTime);
     }
 
-    public String getVersion() {
-        return version;
+    public String getVersionCode() {
+        return versionCode;
     }
 
-    public void setVersion(String version) {
-        this.version = version;
+    public void setVersionCode(String versionCode) {
+        this.versionCode = versionCode;
+    }
+
+    public String getVersionName() {
+        return versionName;
+    }
+
+    public void setVersionName(String versionName) {
+        this.versionName = versionName;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
     }
 
     public String getUrl() {
@@ -33,33 +51,36 @@ public class Update {
         this.url = url;
     }
 
-    public String getReleaseTime() {
-        return releaseTime;
+    public String getUpdateTime() {
+        return updateTime;
     }
 
-    public void setReleaseTime(String releaseTime) {
-        this.releaseTime = releaseTime;
-    }
-
-    public boolean isForced() {
-        return forced;
-    }
-
-    public void setForced(boolean forced) {
-        this.forced = forced;
+    public void setUpdateTime(String updateTime) {
+        this.updateTime = updateTime;
     }
 
     public static final class Builder {
-        private String version;
+        private String versionCode;
+        private String versionName;
+        private String content;
         private String url;
-        private String releaseTime;
-        private boolean forced;
+        private String updateTime;
 
         public Builder() {
         }
 
-        public Builder version(String val) {
-            version = val;
+        public Builder versionCode(String val) {
+            versionCode = val;
+            return this;
+        }
+
+        public Builder versionName(String val) {
+            versionName = val;
+            return this;
+        }
+
+        public Builder content(String val) {
+            content = val;
             return this;
         }
 
@@ -68,13 +89,8 @@ public class Update {
             return this;
         }
 
-        public Builder releaseTime(String val) {
-            releaseTime = val;
-            return this;
-        }
-
-        public Builder forced(boolean val) {
-            forced = val;
+        public Builder updateTime(String val) {
+            updateTime = val;
             return this;
         }
 

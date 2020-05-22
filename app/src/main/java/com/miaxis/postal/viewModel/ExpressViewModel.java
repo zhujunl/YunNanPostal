@@ -348,7 +348,7 @@ public class ExpressViewModel extends BaseViewModel {
                             .sendCardNo(cardMessage.getCardNumber())
                             .sendPhone(phoneStr)
                             .sendName(cardMessage.getName())
-                            .expressmanId(courier.getId())
+                            .expressmanId(courier.getCourierId())
                             .expressmanName(courier.getName())
                             .expressmanPhone(courier.getPhone())
                             .createTime(DateUtil.DATE_FORMAT.format(new Date()))

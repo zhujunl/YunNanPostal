@@ -98,4 +98,8 @@ public class IDCardRecordRepository {
         return IDCardRecordModel.loadAll();
     }
 
+    public IDCardRecord loadIDCardRecord(String verifyId) {
+        return IDCardRecordModel.loadIDCardRecord(verifyId);
+    }
+
 }

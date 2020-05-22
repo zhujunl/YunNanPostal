@@ -122,7 +122,7 @@ public interface PostalNet {
     );
 
     @FormUrlEncoded
-    @POST("api/v1/update/updateApp")
-    Call<ResponseEntity<UpdateDto>> updateApp(@Field("version") String version);
+    @POST("api/v1/app/getAppByVersionName")
+    Call<ResponseEntity<UpdateDto>> getAppByVersionName(@Field("versionName") String versionName);
 
 }

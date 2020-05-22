@@ -73,8 +73,8 @@ public class DeviceRepository extends BaseRepository {
         throw new MyException("服务端返回数据解析失败，或为空");
     }
 
-    public Update updateApp() throws IOException, MyException, NetResultFailedException {
-        Response<ResponseEntity<UpdateDto>> execute = PostalApi.updateApp("").execute();
+    public Update updateApp(String versionName) throws IOException, MyException, NetResultFailedException {
+        Response<ResponseEntity<UpdateDto>> execute = PostalApi.updateApp(versionName).execute();
         try {
             ResponseEntity<UpdateDto> body = execute.body();
             if (body != null) {

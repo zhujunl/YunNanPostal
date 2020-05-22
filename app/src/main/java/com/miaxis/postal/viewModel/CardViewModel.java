@@ -105,7 +105,7 @@ public class CardViewModel extends BaseViewModel {
         AMapLocation aMapLocation = AmapManager.getInstance().getaMapLocation();
         return new WarnLog.Builder()
                 .sendAddress(aMapLocation != null ? aMapLocation.getAddress() : "")
-                .expressmanId(courier.getId())
+                .expressmanId(courier.getCourierId())
                 .expressmanName(courier.getName())
                 .expressmanPhone(courier.getPhone())
                 .createTime(DateUtil.DATE_FORMAT.format(new Date()))

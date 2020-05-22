@@ -114,7 +114,7 @@ public class FingerVerifyViewModel extends BaseViewModel {
                                 .sendCardNo(cardMessage.getCardNumber())
                                 .sendName(cardMessage.getName())
                                 .sendAddress(aMapLocation != null ? aMapLocation.getAddress() : "")
-                                .expressmanId(courier.getId())
+                                .expressmanId(courier.getCourierId())
                                 .expressmanName(courier.getName())
                                 .expressmanPhone(courier.getPhone())
                                 .createTime(DateUtil.DATE_FORMAT.format(new Date()))

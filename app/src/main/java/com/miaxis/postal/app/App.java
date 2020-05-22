@@ -47,7 +47,7 @@ public class App extends Application {
             FileDownloader.setup(this);
             AmapManager.getInstance().startLocation(this);
             TTSManager.getInstance().init(getApplicationContext());
-            int result = FaceManager.getInstance().initFaceST(getApplicationContext(), FileUtil.MODEL_PATH, FileUtil.LICENCE_PATH);
+            int result = FaceManager.getInstance().initFaceST(getApplicationContext(), FileUtil.LICENCE_PATH);
             listener.onInit(result == FaceManager.INIT_SUCCESS, FaceManager.getFaceInitResultDetail(result));
 //            listener.onInit(true, "");
         } catch (Exception e) {

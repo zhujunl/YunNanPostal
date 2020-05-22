@@ -75,11 +75,10 @@ public class FaceManager {
      * 初始化人脸算法
      *
      * @param context     设备上下文
-     * @param szModelPath 人脸模型文件目录
      * @param licencePath 授权文件路径
      * @return 状态码
      */
-    public int initFaceST(Context context, String szModelPath, String licencePath) {
+    public int initFaceST(Context context, String licencePath) {
         final String sLicence = FileUtil.readLicence(licencePath);
         if (TextUtils.isEmpty(sLicence)) {
             return ERR_LICENCE;
