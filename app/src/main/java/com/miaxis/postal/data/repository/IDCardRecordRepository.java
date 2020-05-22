@@ -48,6 +48,7 @@ public class IDCardRecordRepository {
                 idCardRecord.getSex(),
                 idCardRecord.getIssuingAuthority(),
                 idCardRecord.getValidateStart(),
+                idCardRecord.getVerifyType(),
                 faceFile,
                 cardFile).execute();
         try {

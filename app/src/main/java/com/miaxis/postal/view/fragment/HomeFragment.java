@@ -10,6 +10,7 @@ import com.miaxis.postal.BR;
 import com.miaxis.postal.R;
 import com.miaxis.postal.data.entity.Courier;
 import com.miaxis.postal.databinding.FragmentHomeBinding;
+import com.miaxis.postal.manager.PostalManager;
 import com.miaxis.postal.view.auxiliary.GlideImageLoader;
 import com.miaxis.postal.view.auxiliary.OnLimitClickHelper;
 import com.miaxis.postal.view.auxiliary.OnLimitClickListener;
@@ -20,12 +21,8 @@ import java.util.Arrays;
 
 public class HomeFragment extends BaseViewModelFragment<FragmentHomeBinding, HomeViewModel> {
 
-    private Courier courier;
-
-    public static HomeFragment newInstance(Courier courier) {
-        HomeFragment fragment = new HomeFragment();
-        fragment.setCourier(courier);
-        return fragment;
+    public static HomeFragment newInstance() {
+        return new HomeFragment();
     }
 
     public HomeFragment() {
@@ -49,7 +46,6 @@ public class HomeFragment extends BaseViewModelFragment<FragmentHomeBinding, Hom
 
     @Override
     protected void initData() {
-        viewModel.courier.set(courier);
     }
 
     @Override
@@ -60,6 +56,12 @@ public class HomeFragment extends BaseViewModelFragment<FragmentHomeBinding, Hom
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        PostalManager.getInstance().startPostal();
+    }
+
+    @Override
     public void onBackPressed() {
         new MaterialDialog.Builder(getContext())
                 .title("确认退出登录？")
@@ -67,9 +69,5 @@ public class HomeFragment extends BaseViewModelFragment<FragmentHomeBinding, Hom
                 .onPositive((dialog, which) -> mListener.backToStack(LoginFragment.class))
                 .negativeText("取消")
                 .show();
-    }
-
-    public void setCourier(Courier courier) {
-        this.courier = courier;
     }
 }

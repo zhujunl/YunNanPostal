@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.SimpleItemAnimator;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -85,6 +86,7 @@ public class ExpressFragment extends BaseViewModelFragment<FragmentExpressBindin
         binding.ivAddress.setOnClickListener(new OnLimitClickHelper(view  -> viewModel.getLocation()));
         binding.ivAddress.performClick();
         binding.btnSubmit.setOnClickListener(submitClickListener);
+        binding.fabAlarm.setOnLongClickListener(alarmListener);
         viewModel.expressList.observe(this, expressListObserver);
         viewModel.newExpress.observe(this, newExpressObserver);
         viewModel.repeatExpress.observe(this, repeatExpressObserver);
@@ -100,6 +102,9 @@ public class ExpressFragment extends BaseViewModelFragment<FragmentExpressBindin
             viewModel.modifyExpress(event.getExpress());
         } else if (event.getMode() == ExpressEditEvent.MODE_DELETE) {
             viewModel.deleteExpress(event.getExpress());
+        } else if (event.getMode() == ExpressEditEvent.MODE_ALARM) {
+            viewModel.modifyExpress(event.getExpress());
+            binding.fabAlarm.performLongClick();
         }
         EventBus.getDefault().removeStickyEvent(event);
     }
@@ -248,6 +253,11 @@ public class ExpressFragment extends BaseViewModelFragment<FragmentExpressBindin
                 .negativeText("取消")
                 .show();
     });
+
+    private View.OnLongClickListener alarmListener = v -> {
+        viewModel.alarm();
+        return false;
+    };
 
     public void setIdCardRecord(IDCardRecord idCardRecord) {
         this.idCardRecord = idCardRecord;

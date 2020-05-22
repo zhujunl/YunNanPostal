@@ -6,6 +6,7 @@ public class ExpressEditEvent {
 
     public static final int MODE_MODIFY = 1;
     public static final int MODE_DELETE = 2;
+    public static final int MODE_ALARM = 3;
 
     private int mode;
     private Express express;

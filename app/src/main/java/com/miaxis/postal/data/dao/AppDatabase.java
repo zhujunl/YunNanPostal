@@ -16,11 +16,12 @@ import com.miaxis.postal.data.entity.Config;
 import com.miaxis.postal.data.entity.Courier;
 import com.miaxis.postal.data.entity.Express;
 import com.miaxis.postal.data.entity.IDCardRecord;
+import com.miaxis.postal.data.entity.WarnLog;
 import com.miaxis.postal.util.FileUtil;
 
 import java.io.File;
 
-@Database(entities = {Config.class, Courier.class, IDCardRecord.class, Express.class}, version = 4)
+@Database(entities = {Config.class, Courier.class, IDCardRecord.class, Express.class, WarnLog.class}, version = 4)
 @TypeConverters({StringListConverter.class, DateConverter.class})
 public abstract class AppDatabase extends RoomDatabase {
 
@@ -71,5 +72,7 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract IDCardRecordDao idCardRecordDao();
 
     public abstract ExpressDao expressDao();
+
+    public abstract WarnLogDao warnLogDao();
 
 }

@@ -68,6 +68,7 @@ public class FingerVerifyFragment extends BaseViewModelFragment<FragmentFingerVe
         viewModel.idCardRecordLiveData.setValue(idCardRecord);
         viewModel.initFingerResult.observe(this, fingerInitObserver);
         viewModel.fingerResultFlag.observe(this, fingerResultFlagObserver);
+        viewModel.saveFlag.observe(this, saveFlagObserver);
         handler = new Handler(Looper.getMainLooper());
     }
 
@@ -77,6 +78,7 @@ public class FingerVerifyFragment extends BaseViewModelFragment<FragmentFingerVe
         binding.tvSwitch.setOnClickListener(new OnLimitClickHelper(view -> {
             mListener.replaceFragment(FaceVerifyFragment.newInstance(idCardRecord));
         }));
+        binding.fabAlarm.setOnLongClickListener(alarmListener);
         handler.post(countDownRunnable);
     }
 
@@ -160,6 +162,7 @@ public class FingerVerifyFragment extends BaseViewModelFragment<FragmentFingerVe
             TTSManager.getInstance().playVoiceMessageFlush("核验通过");
             binding.ivBack.setEnabled(false);
             binding.tvSwitch.setEnabled(false);
+            idCardRecord.setVerifyType("2");
             handler.postDelayed(() -> {
                 try {
                     idCardRecord.setVerifyTime(new Date());
@@ -169,6 +172,13 @@ public class FingerVerifyFragment extends BaseViewModelFragment<FragmentFingerVe
                 }
             }, 1000);
         }
+    };
+
+    private Observer<Boolean> saveFlagObserver = flag -> mListener.backToStack(HomeFragment.class);
+
+    private View.OnLongClickListener alarmListener = v -> {
+        viewModel.alarm();
+        return false;
     };
 
     public void setIdCardRecord(IDCardRecord idCardRecord) {

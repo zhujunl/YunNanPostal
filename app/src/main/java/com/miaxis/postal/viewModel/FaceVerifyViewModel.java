@@ -7,22 +7,32 @@ import android.util.Base64;
 import androidx.databinding.ObservableField;
 import androidx.lifecycle.MutableLiveData;
 
+import com.amap.api.location.AMapLocation;
 import com.miaxis.postal.app.App;
 import com.miaxis.postal.bridge.SingleLiveEvent;
 import com.miaxis.postal.data.entity.Config;
+import com.miaxis.postal.data.entity.Courier;
 import com.miaxis.postal.data.entity.IDCardRecord;
 import com.miaxis.postal.data.entity.PhotoFaceFeature;
+import com.miaxis.postal.data.entity.WarnLog;
 import com.miaxis.postal.data.exception.MyException;
+import com.miaxis.postal.data.repository.IDCardRecordRepository;
+import com.miaxis.postal.data.repository.WarnLogRepository;
+import com.miaxis.postal.manager.AmapManager;
 import com.miaxis.postal.manager.CameraManager;
 import com.miaxis.postal.manager.ConfigManager;
+import com.miaxis.postal.manager.DataCacheManager;
 import com.miaxis.postal.manager.FaceManager;
+import com.miaxis.postal.manager.PostalManager;
 import com.miaxis.postal.manager.TTSManager;
 import com.miaxis.postal.manager.ToastManager;
+import com.miaxis.postal.util.DateUtil;
 
 import java.util.Date;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
@@ -30,7 +40,9 @@ public class FaceVerifyViewModel extends BaseViewModel {
 
     public MutableLiveData<IDCardRecord> idCardRecordLiveData = new MutableLiveData<>();
     public ObservableField<String> hint = new ObservableField<>("");
-    public MutableLiveData<IDCardRecord> verifyFlag = new SingleLiveEvent<>();
+
+    public MutableLiveData<Boolean> verifyFlag = new SingleLiveEvent<>();
+    public MutableLiveData<Boolean> saveFlag = new SingleLiveEvent<>();
 
     public ObservableField<String> countDown = new ObservableField<>();
 
@@ -93,7 +105,8 @@ public class FaceVerifyViewModel extends BaseViewModel {
                     if (value != null) {
                         value.setFaceBitmap(header);
                         value.setVerifyTime(new Date());
-                        verifyFlag.postValue(value);
+                        idCardRecordLiveData.setValue(value);
+                        verifyFlag.postValue(Boolean.TRUE);
                     } else {
                         toast.postValue(ToastManager.getToastBody("遇到错误，请退出后重试", ToastManager.ERROR));
                     }
@@ -107,5 +120,45 @@ public class FaceVerifyViewModel extends BaseViewModel {
             FaceManager.getInstance().setNeedNextFeature(true);
         }
     };
+
+    public void alarm() {
+        IDCardRecord cardMessage = idCardRecordLiveData.getValue();
+        if (cardMessage != null) {
+            waitMessage.setValue("操作执行中");
+            Observable.create((ObservableOnSubscribe<String>) emitter -> {
+                cardMessage.setUpload(false);
+                String verifyId = IDCardRecordRepository.getInstance().saveIdCardRecord(cardMessage);
+                emitter.onNext(verifyId);
+            })
+                    .subscribeOn(Schedulers.from(App.getInstance().getThreadExecutor()))
+                    .observeOn(Schedulers.from(App.getInstance().getThreadExecutor()))
+                    .doOnNext(verifyId -> {
+                        Courier courier = DataCacheManager.getInstance().getCourier();
+                        AMapLocation aMapLocation = AmapManager.getInstance().getaMapLocation();
+                        WarnLog warnLog = new WarnLog.Builder()
+                                .verifyId(verifyId)
+                                .sendCardNo(cardMessage.getCardNumber())
+                                .sendName(cardMessage.getName())
+                                .sendAddress(aMapLocation != null ? aMapLocation.getAddress() : "")
+                                .expressmanId(courier.getId())
+                                .expressmanName(courier.getName())
+                                .expressmanPhone(courier.getPhone())
+                                .createTime(DateUtil.DATE_FORMAT.format(new Date()))
+                                .upload(false)
+                                .build();
+                        WarnLogRepository.getInstance().saveWarnLog(warnLog);
+                    })
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(result -> {
+                        waitMessage.setValue("");
+                        resultMessage.setValue("数据已缓存，将于后台自动传输");
+                        saveFlag.setValue(Boolean.TRUE);
+                        PostalManager.getInstance().startPostal();
+                    }, throwable -> {
+                        waitMessage.setValue("");
+                        resultMessage.setValue("数据缓存失败，失败原因：\n" + throwable.getMessage());
+                    });
+        }
+    }
 
 }

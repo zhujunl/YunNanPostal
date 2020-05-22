@@ -64,6 +64,7 @@ public class IDCardRecord {
     private String verifyId;
     private Date verifyTime;
     private boolean upload;
+    private String verifyType; //1:人脸，2:指纹
 
     /** 身份证照片Bitmap **/
     @Ignore
@@ -101,6 +102,7 @@ public class IDCardRecord {
         setVerifyId(builder.verifyId);
         setVerifyTime(builder.verifyTime);
         setUpload(builder.upload);
+        setVerifyType(builder.verifyType);
         setCardBitmap(builder.cardBitmap);
         setFaceBitmap(builder.faceBitmap);
     }
@@ -305,6 +307,14 @@ public class IDCardRecord {
         this.upload = upload;
     }
 
+    public String getVerifyType() {
+        return verifyType;
+    }
+
+    public void setVerifyType(String verifyType) {
+        this.verifyType = verifyType;
+    }
+
     public Bitmap getCardBitmap() {
         return cardBitmap;
     }
@@ -347,6 +357,7 @@ public class IDCardRecord {
         private String verifyId;
         private Date verifyTime;
         private boolean upload;
+        private String verifyType;
         private Bitmap cardBitmap;
         private Bitmap faceBitmap;
 
@@ -475,6 +486,11 @@ public class IDCardRecord {
 
         public Builder upload(boolean val) {
             upload = val;
+            return this;
+        }
+
+        public Builder verifyType(String val) {
+            verifyType = val;
             return this;
         }
 

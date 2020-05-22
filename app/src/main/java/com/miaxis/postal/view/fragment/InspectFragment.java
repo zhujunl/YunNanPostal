@@ -106,6 +106,7 @@ public class InspectFragment extends BaseViewModelFragment<FragmentInspectBindin
                 ToastManager.toast("请至少选择一张实物照片", ToastManager.INFO);
             }
         }));
+        binding.fabAlarm.setOnLongClickListener(alarmListener);
         EventBus.getDefault().register(this);
     }
 
@@ -198,4 +199,11 @@ public class InspectFragment extends BaseViewModelFragment<FragmentInspectBindin
     public void setExpress(Express express) {
         this.express = express;
     }
+
+    private View.OnLongClickListener alarmListener = v -> {
+        viewModel.alarm();
+        mListener.backToStack(null);
+        return false;
+    };
+
 }

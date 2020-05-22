@@ -134,13 +134,21 @@ public class InspectViewModel extends BaseViewModel {
         return modified;
     }
 
-    public void showBarcodeImage(String barcode) {
+    private void showBarcodeImage(String barcode) {
         App.getInstance().getThreadExecutor().execute(() -> {
             barcodeBitmapCache = BarcodeUtil.createBarcodeBitmap(barcode);
             if (barcodeBitmapCache != null) {
                 barcodeImageUpdate.postValue(Boolean.TRUE);
             }
         });
+    }
+
+    public void alarm() {
+        Express local = express.get();
+        if (local != null) {
+            local.setPhotoList(getSelectList());
+            EventBus.getDefault().postSticky(new ExpressEditEvent(ExpressEditEvent.MODE_ALARM, local));
+        }
     }
 
 }

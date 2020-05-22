@@ -15,6 +15,7 @@ import com.miaxis.postal.data.exception.MyException;
 import com.miaxis.postal.data.model.CourierModel;
 import com.miaxis.postal.data.repository.LoginRepository;
 import com.miaxis.postal.manager.ConfigManager;
+import com.miaxis.postal.manager.DataCacheManager;
 import com.miaxis.postal.manager.ToastManager;
 import com.miaxis.postal.util.EncryptUtil;
 import com.miaxis.postal.util.ValueUtil;
@@ -39,6 +40,7 @@ public class LoginViewModel extends BaseViewModel {
     }
 
     private void loadCourier() {
+        DataCacheManager.getInstance().setCourier(null);
         Disposable subscribe = Observable.create((ObservableOnSubscribe<Courier>) emitter -> {
             Courier courier = LoginRepository.getInstance().loadCourierSync();
             emitter.onNext(courier);
@@ -82,6 +84,7 @@ public class LoginViewModel extends BaseViewModel {
     private void startLogin(Courier courier) {
         try {
             if (TextUtils.equals(courier.getPassword(), getInputPasswordMD5())) {
+                DataCacheManager.getInstance().setCourier(courier);
                 loginResult.postValue(Boolean.TRUE);
                 return;
             }

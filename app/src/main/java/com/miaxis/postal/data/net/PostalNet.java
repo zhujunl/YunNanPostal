@@ -31,9 +31,11 @@ public interface PostalNet {
     //获取订单信息列表，省略信息
     @FormUrlEncoded
     @POST("api/v1/order/getOrderByCodeAndName")
-    Call<ResponseEntity<List<SimpleOrderDto>>> getOrderByCodeAndNameSync(@Field("param") String param,
-                                                                         @Field("pageNum") int pageNum,
-                                                                         @Field("pageSize") int pageSize);
+    Call<ResponseEntity<List<SimpleOrderDto>>> getOrderByCodeAndNameSync(
+            @Field("param") String param,
+            @Field("pageNum") int pageNum,
+            @Field("pageSize") int pageSize
+    );
 
     //根据订单编号查询订单详细信息
     @FormUrlEncoded
@@ -43,9 +45,11 @@ public interface PostalNet {
     //设备心跳
     @FormUrlEncoded
     @POST("api/v1/device/deviceHeartBeat")
-    Call<ResponseEntity> deviceHeartBeatSync(@Field("macAddress") String macAddress,
-                                             @Field("lat") double lat,
-                                             @Field("lng") double lng);
+    Call<ResponseEntity> deviceHeartBeatSync(
+            @Field("macAddress") String macAddress,
+            @Field("lat") double lat,
+            @Field("lng") double lng
+    );
 
     //联网检查该单号是否重复
     @FormUrlEncoded
@@ -55,45 +59,67 @@ public interface PostalNet {
     //注册快递员
     @Multipart
     @POST("api/v1/expressman/registerExpressman")
-    Call<ResponseEntity> registerExpressmanSync(@Part("name") String name,
-                                                @Part("cardNo") String cardNo,
-                                                @Part("phone") String phone,
-                                                @Part("faceFeature") String faceFeature,
-                                                @Part("finger1Feature") String finger1Feature,
-                                                @Part("finger2Feature") String finger2Feature,
-                                                @Part MultipartBody.Part file);
+    Call<ResponseEntity> registerExpressmanSync(
+            @Part("name") String name,
+            @Part("cardNo") String cardNo,
+            @Part("phone") String phone,
+            @Part("faceFeature") String faceFeature,
+            @Part("finger1Feature") String finger1Feature,
+            @Part("finger2Feature") String finger2Feature,
+            @Part MultipartBody.Part file
+    );
 
     //上传人证核验记录，并获取核验编号
     @Multipart
     @POST("api/v1/person/savePersonFromApp")
-    Call<ResponseEntity<TempIdDto>> savePersonFromAppSync(@Part("name") String name,
-                                                          @Part("nation") String nation,
-                                                          @Part("birthday") String birthday,
-                                                          @Part("cardNo") String cardNo,
-                                                          @Part("cardAddress") String cardAddress,
-                                                          @Part("sex") String sex,
-                                                          @Part("signOrg") String signOrg,
-                                                          @Part("expireTime") String expireTime,
-                                                          @Part MultipartBody.Part checkFile,
-                                                          @Part MultipartBody.Part cardFile);
+    Call<ResponseEntity<TempIdDto>> savePersonFromAppSync(
+            @Part("name") String name,
+            @Part("nation") String nation,
+            @Part("birthday") String birthday,
+            @Part("cardNo") String cardNo,
+            @Part("cardAddress") String cardAddress,
+            @Part("sex") String sex,
+            @Part("signOrg") String signOrg,
+            @Part("expireTime") String expireTime,
+            @Part("verifyType") String verifyType,
+            @Part MultipartBody.Part checkFile,
+            @Part MultipartBody.Part cardFile
+    );
 
     //拿到核验编号后，上传订单信息
     @Multipart
     @POST("api/v1/order/saveOrderFromApp")
-    Call<ResponseEntity> saveOrderFromAppSync(@Part("personId") String personId,
-                                              @Part("sendAddress") String sendAddress,
-                                              @Part("sendPhone") String sendPhone,
-                                              @Part("orderCode") String orderCode,
-                                              @Part("orderInfo") String orderInfo,
-                                              @Part("addresseeName") String addresseeName,
-                                              @Part("addresseeAddress") String addresseeAddress,
-                                              @Part("addresseePhone") String addresseePhone,
-                                              @Part("pieceTime") String pieceTime,
-                                              @Part("receipTime") String receipTime,
-                                              @Part("lat") String lat,
-                                              @Part("lng") String lng,
-                                              @Part("checkId") String checkId,
-                                              @Part List<MultipartBody.Part> file);
+    Call<ResponseEntity> saveOrderFromAppSync(
+            @Part("personId") String personId,
+            @Part("sendAddress") String sendAddress,
+            @Part("sendPhone") String sendPhone,
+            @Part("orderCode") String orderCode,
+            @Part("orderInfo") String orderInfo,
+            @Part("addresseeName") String addresseeName,
+            @Part("addresseeAddress") String addresseeAddress,
+            @Part("addresseePhone") String addresseePhone,
+            @Part("pieceTime") String pieceTime,
+            @Part("receipTime") String receipTime,
+            @Part("lat") String lat,
+            @Part("lng") String lng,
+            @Part("checkId") String checkId,
+            @Part("warnLogId") String warnLogId,
+            @Part List<MultipartBody.Part> file
+    );
+
+    @FormUrlEncoded
+    @POST("api/v1/warn/saveWarnLog")
+    Call<ResponseEntity<Integer>> uploadWarnLog(
+            @Field("personId") String personId,
+            @Field("checkId") String checkId,
+            @Field("sendAddress") String sendAddress,
+            @Field("sendName") String sendName,
+            @Field("sendCardNo") String sendCardNo,
+            @Field("sendPhone") String sendPhone,
+            @Field("expressmanId") long expressmanId,
+            @Field("deviceIMEI") String deviceIMEI,
+            @Field("expressmanName") String expressmanName
+    );
 
     @FormUrlEncoded
     @POST("api/v1/update/updateApp")

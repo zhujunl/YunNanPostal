@@ -7,14 +7,29 @@ import android.util.Base64;
 import androidx.databinding.ObservableField;
 import androidx.lifecycle.MutableLiveData;
 
+import com.amap.api.location.AMapLocation;
 import com.miaxis.postal.app.App;
 import com.miaxis.postal.bridge.SingleLiveEvent;
 import com.miaxis.postal.bridge.Status;
+import com.miaxis.postal.data.entity.Courier;
 import com.miaxis.postal.data.entity.IDCardRecord;
+import com.miaxis.postal.data.entity.WarnLog;
+import com.miaxis.postal.data.repository.IDCardRecordRepository;
+import com.miaxis.postal.data.repository.WarnLogRepository;
+import com.miaxis.postal.manager.AmapManager;
+import com.miaxis.postal.manager.DataCacheManager;
 import com.miaxis.postal.manager.FingerManager;
+import com.miaxis.postal.manager.PostalManager;
+import com.miaxis.postal.util.DateUtil;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+
+import io.reactivex.Observable;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 public class FingerVerifyViewModel extends BaseViewModel {
 
@@ -24,6 +39,7 @@ public class FingerVerifyViewModel extends BaseViewModel {
 
     public MutableLiveData<Status> initFingerResult = new SingleLiveEvent<>();
     public MutableLiveData<Boolean> fingerResultFlag = new SingleLiveEvent<>();
+    public MutableLiveData<Boolean> saveFlag = new SingleLiveEvent<>();
 
     public FingerVerifyViewModel() {
     }
@@ -78,5 +94,45 @@ public class FingerVerifyViewModel extends BaseViewModel {
             }
         }
     };
+
+    public void alarm() {
+        IDCardRecord cardMessage = idCardRecordLiveData.getValue();
+        if (cardMessage != null) {
+            waitMessage.setValue("操作执行中");
+            Observable.create((ObservableOnSubscribe<String>) emitter -> {
+                cardMessage.setUpload(false);
+                String verifyId = IDCardRecordRepository.getInstance().saveIdCardRecord(cardMessage);
+                emitter.onNext(verifyId);
+            })
+                    .subscribeOn(Schedulers.from(App.getInstance().getThreadExecutor()))
+                    .observeOn(Schedulers.from(App.getInstance().getThreadExecutor()))
+                    .doOnNext(verifyId -> {
+                        Courier courier = DataCacheManager.getInstance().getCourier();
+                        AMapLocation aMapLocation = AmapManager.getInstance().getaMapLocation();
+                        WarnLog warnLog = new WarnLog.Builder()
+                                .verifyId(verifyId)
+                                .sendCardNo(cardMessage.getCardNumber())
+                                .sendName(cardMessage.getName())
+                                .sendAddress(aMapLocation != null ? aMapLocation.getAddress() : "")
+                                .expressmanId(courier.getId())
+                                .expressmanName(courier.getName())
+                                .expressmanPhone(courier.getPhone())
+                                .createTime(DateUtil.DATE_FORMAT.format(new Date()))
+                                .upload(false)
+                                .build();
+                        WarnLogRepository.getInstance().saveWarnLog(warnLog);
+                    })
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(result -> {
+                        waitMessage.setValue("");
+                        resultMessage.setValue("数据已缓存，将于后台自动传输");
+                        saveFlag.setValue(Boolean.TRUE);
+                        PostalManager.getInstance().startPostal();
+                    }, throwable -> {
+                        waitMessage.setValue("");
+                        resultMessage.setValue("数据缓存失败，失败原因：\n" + throwable.getMessage());
+                    });
+        }
+    }
 
 }

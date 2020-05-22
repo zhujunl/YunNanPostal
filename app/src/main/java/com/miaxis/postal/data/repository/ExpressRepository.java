@@ -57,6 +57,7 @@ public class ExpressRepository {
                 express.getLatitude(),
                 express.getLongitude(),
                 tempId.getCheckId(),
+                "",
                 fileList)
                 .execute();
         try {

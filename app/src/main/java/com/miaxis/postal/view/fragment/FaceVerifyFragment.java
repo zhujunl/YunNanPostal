@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModelProviders;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,7 @@ import com.miaxis.postal.data.entity.IDCardRecord;
 import com.miaxis.postal.databinding.FragmentFaceVerifyBinding;
 import com.miaxis.postal.manager.CameraManager;
 import com.miaxis.postal.manager.TTSManager;
+import com.miaxis.postal.manager.ToastManager;
 import com.miaxis.postal.view.auxiliary.OnLimitClickHelper;
 import com.miaxis.postal.view.base.BaseViewModelFragment;
 import com.miaxis.postal.view.custom.RoundBorderView;
@@ -69,6 +71,7 @@ public class FaceVerifyFragment extends BaseViewModelFragment<FragmentFaceVerify
         viewModel.idCardRecordLiveData.setValue(idCardRecord);
         viewModel.idCardRecordLiveData.observe(this, idCardRecordObserver);
         viewModel.verifyFlag.observe(this, verifyFlagObserver);
+        viewModel.saveFlag.observe(this, saveFlagObserver);
         binding.rtvCamera.getViewTreeObserver().addOnGlobalLayoutListener(globalListener);
         handler = new Handler(Looper.getMainLooper());
     }
@@ -79,6 +82,7 @@ public class FaceVerifyFragment extends BaseViewModelFragment<FragmentFaceVerify
         binding.tvSwitch.setOnClickListener(new OnLimitClickHelper(view -> {
             mListener.replaceFragment(FingerVerifyFragment.newInstance(idCardRecord));
         }));
+        binding.fabAlarm.setOnLongClickListener(alarmListener);
         handler.post(countDownRunnable);
     }
 
@@ -117,18 +121,26 @@ public class FaceVerifyFragment extends BaseViewModelFragment<FragmentFaceVerify
         viewModel.startFaceVerify(idCardRecord);
     };
 
-    private Observer<IDCardRecord> verifyFlagObserver = mIdCardRecord -> {
+    private Observer<Boolean> verifyFlagObserver = flag -> {
         pass = true;
         binding.ivBack.setEnabled(false);
         binding.tvSwitch.setEnabled(false);
-        handler.postDelayed(() -> {
-            try {
-                mListener.replaceFragment(ExpressFragment.newInstance(mIdCardRecord));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }, 1000);
+        IDCardRecord value = viewModel.idCardRecordLiveData.getValue();
+        if (value != null) {
+            value.setVerifyType("1");
+            handler.postDelayed(() -> {
+                try {
+                    mListener.replaceFragment(ExpressFragment.newInstance(value));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }, 1000);
+        } else {
+            ToastManager.toast("遇到错误，请退出重试", ToastManager.ERROR);
+        }
     };
+
+    private Observer<Boolean> saveFlagObserver = flag -> mListener.backToStack(HomeFragment.class);
 
     private ViewTreeObserver.OnGlobalLayoutListener globalListener = new ViewTreeObserver.OnGlobalLayoutListener() {
         @Override
@@ -172,6 +184,11 @@ public class FaceVerifyFragment extends BaseViewModelFragment<FragmentFaceVerify
             roundBorderView.setRadius(Math.min(roundBorderView.getWidth(), roundBorderView.getHeight()) / 2);
             roundBorderView.turnRound();
         });
+    };
+
+    private View.OnLongClickListener alarmListener = v -> {
+        viewModel.alarm();
+        return false;
     };
 
     public void setIdCardRecord(IDCardRecord idCardRecord) {

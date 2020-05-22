@@ -70,7 +70,7 @@ public class LoginFragment extends BaseViewModelFragment<FragmentLoginBinding, L
 
     private Observer<Boolean> loginResultObserver = result -> {
         if (result) {
-            mListener.replaceFragment(HomeFragment.newInstance(viewModel.courierLiveData.getValue()));
+            mListener.replaceFragment(HomeFragment.newInstance());
         } else {
             ToastManager.toast("登录失败", ToastManager.INFO);
         }

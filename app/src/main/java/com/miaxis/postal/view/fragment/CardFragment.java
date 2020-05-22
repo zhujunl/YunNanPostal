@@ -51,11 +51,13 @@ public class CardFragment extends BaseViewModelFragment<FragmentCardBinding, Car
     protected void initData() {
         viewModel.initCardResult.observe(this, initCardResultObserver);
         viewModel.readCardFlag.observe(this, readCardFlagObserver);
+        viewModel.saveFlag.observe(this, saveFlagObserver);
     }
 
     @Override
     protected void initView() {
         binding.ivBack.setOnClickListener(v -> onBackPressed());
+        binding.fabAlarm.setOnLongClickListener(alarmListener);
     }
 
     @Override
@@ -111,6 +113,13 @@ public class CardFragment extends BaseViewModelFragment<FragmentCardBinding, Car
 
     private Observer<Boolean> readCardFlagObserver = flag -> {
         mListener.replaceFragment(FaceVerifyFragment.newInstance(viewModel.getIdCardRecord()));
+    };
+
+    private Observer<Boolean> saveFlagObserver = flag -> mListener.backToStack(HomeFragment.class);
+
+    private View.OnLongClickListener alarmListener = v -> {
+        viewModel.alarm();
+        return false;
     };
 
 }

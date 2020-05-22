@@ -8,15 +8,20 @@ import androidx.lifecycle.MutableLiveData;
 import com.amap.api.location.AMapLocation;
 import com.miaxis.postal.app.App;
 import com.miaxis.postal.bridge.SingleLiveEvent;
+import com.miaxis.postal.data.entity.Courier;
 import com.miaxis.postal.data.entity.Express;
 import com.miaxis.postal.data.entity.IDCardRecord;
+import com.miaxis.postal.data.entity.WarnLog;
 import com.miaxis.postal.data.exception.MyException;
 import com.miaxis.postal.data.repository.ExpressRepository;
 import com.miaxis.postal.data.repository.IDCardRecordRepository;
 import com.miaxis.postal.data.repository.PostalRepository;
+import com.miaxis.postal.data.repository.WarnLogRepository;
 import com.miaxis.postal.manager.AmapManager;
+import com.miaxis.postal.manager.DataCacheManager;
 import com.miaxis.postal.manager.PostalManager;
 import com.miaxis.postal.manager.ScanManager;
+import com.miaxis.postal.util.DateUtil;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -28,6 +33,7 @@ import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
 public class ExpressViewModel extends BaseViewModel {
@@ -192,7 +198,7 @@ public class ExpressViewModel extends BaseViewModel {
                 .observeOn(Schedulers.from(App.getInstance().getThreadExecutor()))
                 .map(verifyId -> {
                     String phoneStr = phone.get();
-                    String addressStr = address.get();
+                    String addressStr = getAddress();
                     AMapLocation aMapLocation = AmapManager.getInstance().getaMapLocation();
                     for (Express express : expressList) {
                         express.setSenderAddress(addressStr);
@@ -306,6 +312,74 @@ public class ExpressViewModel extends BaseViewModel {
             }
         }
         return false;
+    }
+
+    private String getAddress() {
+        String addressStr = address.get();
+        if (TextUtils.isEmpty(addressStr)) {
+            AMapLocation aMapLocation = AmapManager.getInstance().getaMapLocation();
+            return aMapLocation != null ? aMapLocation.getAddress() : "";
+        }
+        return addressStr;
+    }
+
+    public void alarm() {
+        IDCardRecord cardMessage = idCardRecord.get();
+        String phoneStr = phone.get();
+        String addressStr = getAddress();
+        List<Express> expressList = getExpressList();
+        if (cardMessage == null) {
+            resultMessage.setValue("未找到待上传数据");
+            return;
+        }
+        waitMessage.setValue("正在保存...");
+        Observable.create((ObservableOnSubscribe<String>) emitter -> {
+            cardMessage.setUpload(false);
+            String verifyId = IDCardRecordRepository.getInstance().saveIdCardRecord(cardMessage);
+            emitter.onNext(verifyId);
+        })
+                .subscribeOn(Schedulers.from(App.getInstance().getThreadExecutor()))
+                .observeOn(Schedulers.from(App.getInstance().getThreadExecutor()))
+                .doOnNext(verifyId -> {
+                    Courier courier = DataCacheManager.getInstance().getCourier();
+                    WarnLog warnLog = new WarnLog.Builder()
+                            .verifyId(verifyId)
+                            .sendAddress(addressStr)
+                            .sendCardNo(cardMessage.getCardNumber())
+                            .sendPhone(phoneStr)
+                            .sendName(cardMessage.getName())
+                            .expressmanId(courier.getId())
+                            .expressmanName(courier.getName())
+                            .expressmanPhone(courier.getPhone())
+                            .createTime(DateUtil.DATE_FORMAT.format(new Date()))
+                            .upload(false)
+                            .build();
+                    WarnLogRepository.getInstance().saveWarnLog(warnLog);
+                })
+                .map(verifyId -> {
+                    AMapLocation aMapLocation = AmapManager.getInstance().getaMapLocation();
+                    for (Express express : expressList) {
+                        express.setSenderAddress(addressStr);
+                        express.setSenderPhone(phoneStr);
+                        express.setVerifyId(verifyId);
+                        express.setLatitude(aMapLocation != null ? String.valueOf(aMapLocation.getLatitude()) : "");
+                        express.setLongitude(aMapLocation != null ? String.valueOf(aMapLocation.getLongitude()) : "");
+                        express.setPieceTime(new Date());
+                        express.setUpload(false);
+                        ExpressRepository.getInstance().saveExpress(express);
+                    }
+                    return true;
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(result -> {
+                    waitMessage.setValue("");
+                    resultMessage.setValue("数据已缓存，将于后台自动传输");
+                    saveFlag.setValue(Boolean.TRUE);
+                    PostalManager.getInstance().startPostal();
+                }, throwable -> {
+                    waitMessage.setValue("");
+                    resultMessage.setValue("数据缓存失败，失败原因：\n" + throwable.getMessage());
+                });
     }
 
 }

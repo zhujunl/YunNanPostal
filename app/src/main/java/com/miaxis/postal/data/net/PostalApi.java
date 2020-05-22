@@ -29,7 +29,8 @@ public class PostalApi extends BaseAPI {
     public static Call<ResponseEntity<List<SimpleOrderDto>>> getOrderByCodeAndNameSync(String param,
                                                                                        int pageNum,
                                                                                        int pageSize) {
-        return getPostalNetSync().getOrderByCodeAndNameSync(param,
+        return getPostalNetSync().getOrderByCodeAndNameSync(
+                param,
                 pageNum,
                 pageSize);
     }
@@ -51,7 +52,8 @@ public class PostalApi extends BaseAPI {
                                                               File file) {
         RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
         MultipartBody.Part fileBody = MultipartBody.Part.createFormData("file", file.getName(), requestBody);
-        return getPostalNetSync().registerExpressmanSync(name,
+        return getPostalNetSync().registerExpressmanSync(
+                name,
                 cardNo,
                 phone,
                 faceFeature,
@@ -72,6 +74,7 @@ public class PostalApi extends BaseAPI {
                                                                     String sex,
                                                                     String signOrg,
                                                                     String expireTime,
+                                                                    String verifyType,
                                                                     File checkFile,
                                                                     File cardFile) {
         MultipartBody.Part checkFileBody = null;
@@ -84,7 +87,8 @@ public class PostalApi extends BaseAPI {
             RequestBody cardRequestFile = RequestBody.create(MediaType.parse("multipart/form-data"), cardFile);
             cardFileBody = MultipartBody.Part.createFormData("cardFile", cardFile.getName(), cardRequestFile);
         }
-        return getPostalNetSync().savePersonFromAppSync(name,
+        return getPostalNetSync().savePersonFromAppSync(
+                name,
                 nation,
                 birthday,
                 cardNo,
@@ -92,6 +96,7 @@ public class PostalApi extends BaseAPI {
                 sex,
                 signOrg,
                 expireTime,
+                verifyType,
                 checkFileBody,
                 cardFileBody);
     }
@@ -109,6 +114,7 @@ public class PostalApi extends BaseAPI {
                                                             String lat,
                                                             String lng,
                                                             String checkId,
+                                                            String warnLogId,
                                                             List<File> fileList) {
         List<MultipartBody.Part> parts = new ArrayList<>(fileList.size());
         for (File file : fileList) {
@@ -116,7 +122,8 @@ public class PostalApi extends BaseAPI {
             MultipartBody.Part part = MultipartBody.Part.createFormData("file", file.getName(), requestBody);
             parts.add(part);
         }
-        return getPostalNetSync().saveOrderFromAppSync(personId,
+        return getPostalNetSync().saveOrderFromAppSync(
+                personId,
                 sendAddress,
                 sendPhone,
                 orderCode,
@@ -129,7 +136,29 @@ public class PostalApi extends BaseAPI {
                 lat,
                 lng,
                 checkId,
+                warnLogId,
                 parts);
+    }
+
+    public static Call<ResponseEntity<Integer>> uploadWarnLog(String personId,
+                                                              String checkId,
+                                                              String sendAddress,
+                                                              String sendName,
+                                                              String sendCardNo,
+                                                              String sendPhone,
+                                                              long expressmanId,
+                                                              String deviceIMEI,
+                                                              String expressmanName) {
+        return getPostalNetSync().uploadWarnLog(
+                personId,
+                checkId,
+                sendAddress,
+                sendName,
+                sendCardNo,
+                sendPhone,
+                expressmanId,
+                deviceIMEI,
+                expressmanName);
     }
 
     public static Call<ResponseEntity<UpdateDto>> updateApp(String version) {
