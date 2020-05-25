@@ -32,6 +32,7 @@ public interface PostalNet {
     @FormUrlEncoded
     @POST("api/v1/order/getOrderByCodeAndName")
     Call<ResponseEntity<List<SimpleOrderDto>>> getOrderByCodeAndNameSync(
+            @Field("expressmanId") long expressmanId,
             @Field("param") String param,
             @Field("pageNum") int pageNum,
             @Field("pageSize") int pageSize
@@ -91,8 +92,12 @@ public interface PostalNet {
     @POST("api/v1/order/saveOrderFromApp")
     Call<ResponseEntity> saveOrderFromAppSync(
             @Part("personId") String personId,
+            @Part("checkId") String checkId,
+            @Part("warnLogId") String warnLogId,
+            @Part("expressmanId") String expressmanId,
             @Part("sendAddress") String sendAddress,
             @Part("sendPhone") String sendPhone,
+            @Part("sendName") String sendName,
             @Part("orderCode") String orderCode,
             @Part("orderInfo") String orderInfo,
             @Part("addresseeName") String addresseeName,
@@ -102,8 +107,6 @@ public interface PostalNet {
             @Part("receipTime") String receipTime,
             @Part("lat") String lat,
             @Part("lng") String lng,
-            @Part("checkId") String checkId,
-            @Part("warnLogId") String warnLogId,
             @Part List<MultipartBody.Part> file
     );
 

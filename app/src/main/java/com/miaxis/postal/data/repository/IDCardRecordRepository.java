@@ -102,4 +102,14 @@ public class IDCardRecordRepository {
         return IDCardRecordModel.loadIDCardRecord(verifyId);
     }
 
+    public void deleteIDCardRecord(IDCardRecord idCardRecord) {
+        if (!TextUtils.isEmpty(idCardRecord.getCardPicture())) {
+            FileUtil.deleteImg(idCardRecord.getCardPicture());
+        }
+        if (!TextUtils.isEmpty(idCardRecord.getCardPicture())) {
+            FileUtil.deleteImg(idCardRecord.getFacePicture());
+        }
+        IDCardRecordModel.deleteIDCardRecord(idCardRecord);
+    }
+
 }

@@ -26,10 +26,12 @@ public class PostalApi extends BaseAPI {
         return getPostalNetSync().getExpressmanByPhoneSync(macAddress);
     }
 
-    public static Call<ResponseEntity<List<SimpleOrderDto>>> getOrderByCodeAndNameSync(String param,
+    public static Call<ResponseEntity<List<SimpleOrderDto>>> getOrderByCodeAndNameSync(long expressmanId,
+                                                                                       String param,
                                                                                        int pageNum,
                                                                                        int pageSize) {
         return getPostalNetSync().getOrderByCodeAndNameSync(
+                expressmanId,
                 param,
                 pageNum,
                 pageSize);
@@ -102,8 +104,12 @@ public class PostalApi extends BaseAPI {
     }
 
     public static Call<ResponseEntity> saveOrderFromAppSync(String personId,
+                                                            String checkId,
+                                                            String warnLogId,
+                                                            String expressmanId,
                                                             String sendAddress,
                                                             String sendPhone,
+                                                            String sendName,
                                                             String orderCode,
                                                             String orderInfo,
                                                             String addresseeName,
@@ -113,8 +119,6 @@ public class PostalApi extends BaseAPI {
                                                             String receipTime,
                                                             String lat,
                                                             String lng,
-                                                            String checkId,
-                                                            String warnLogId,
                                                             List<File> fileList) {
         List<MultipartBody.Part> parts = new ArrayList<>(fileList.size());
         for (File file : fileList) {
@@ -124,8 +128,12 @@ public class PostalApi extends BaseAPI {
         }
         return getPostalNetSync().saveOrderFromAppSync(
                 personId,
+                checkId,
+                warnLogId,
+                expressmanId,
                 sendAddress,
                 sendPhone,
+                sendName,
                 orderCode,
                 orderInfo,
                 addresseeName,
@@ -135,8 +143,6 @@ public class PostalApi extends BaseAPI {
                 receipTime,
                 lat,
                 lng,
-                checkId,
-                warnLogId,
                 parts);
     }
 

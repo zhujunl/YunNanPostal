@@ -18,8 +18,6 @@ public class IDCardRecordModel {
 
     public static void deleteIDCardRecord(IDCardRecord idCardRecord) {
         AppDatabase.getInstance().idCardRecordDao().delete(idCardRecord);
-        FileUtil.deleteImg(idCardRecord.getCardPicture());
-        FileUtil.deleteImg(idCardRecord.getFacePicture());
     }
 
     public static List<IDCardRecord> loadAll() {

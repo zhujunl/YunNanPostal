@@ -11,6 +11,7 @@ import com.miaxis.postal.data.model.ExpressModel;
 import com.miaxis.postal.data.net.PostalApi;
 import com.miaxis.postal.data.net.ResponseEntity;
 import com.miaxis.postal.manager.AmapManager;
+import com.miaxis.postal.manager.DataCacheManager;
 import com.miaxis.postal.util.FileUtil;
 import com.miaxis.postal.util.ValueUtil;
 
@@ -38,15 +39,19 @@ public class ExpressRepository {
      * ================================ 静态内部类单例 ================================
      **/
 
-    public boolean uploadLocalExpress(Express express, TempId tempId, Integer warnLogId) throws IOException, MyException {
+    public boolean uploadLocalExpress(Express express, TempId tempId, Integer warnLogId, String sendName) throws IOException, MyException {
         List<File> fileList = new ArrayList<>();
         for (String path : express.getPhotoPathList()) {
             fileList.add(new File(path));
         }
         Response<ResponseEntity> execute = PostalApi.saveOrderFromAppSync(
                 tempId.getPersonId(),
+                tempId.getCheckId(),
+                warnLogId != null ? String.valueOf(warnLogId) : "",
+                String.valueOf(DataCacheManager.getInstance().getCourier().getCourierId()),
                 express.getSenderAddress(),
                 express.getSenderPhone(),
+                sendName,
                 express.getBarCode(),
                 express.getInfo(),
                 "",
@@ -56,8 +61,6 @@ public class ExpressRepository {
                 "",
                 express.getLatitude(),
                 express.getLongitude(),
-                tempId.getCheckId(),
-                warnLogId != null ? String.valueOf(warnLogId) : "",
                 fileList)
                 .execute();
         try {
@@ -99,6 +102,15 @@ public class ExpressRepository {
 
     public int loadExpressCount() {
         return ExpressModel.loadExpressCount();
+    }
+
+    public void deleteExpress(Express express) {
+        if (express.getPhotoPathList() != null) {
+            for (String path : express.getPhotoPathList()) {
+                FileUtil.deleteImg(path);
+            }
+        }
+        ExpressModel.deleteExpress(express);
     }
 
 }

@@ -18,9 +18,6 @@ public class ExpressModel {
 
     public static void deleteExpress(Express express) {
         AppDatabase.getInstance().expressDao().delete(express);
-        for (String path : express.getPhotoPathList()) {
-            FileUtil.deleteImg(path);
-        }
     }
 
     public static List<Express> loadAll() {

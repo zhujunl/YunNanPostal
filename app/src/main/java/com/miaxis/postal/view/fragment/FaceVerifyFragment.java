@@ -121,17 +121,16 @@ public class FaceVerifyFragment extends BaseViewModelFragment<FragmentFaceVerify
         viewModel.startFaceVerify(idCardRecord);
     };
 
-    private Observer<Boolean> verifyFlagObserver = flag -> {
+    private Observer<IDCardRecord> verifyFlagObserver = mIDCardRecord -> {
         pass = true;
         binding.ivBack.setEnabled(false);
         binding.tvSwitch.setEnabled(false);
         binding.fabAlarm.setEnabled(false);
-        IDCardRecord value = viewModel.idCardRecordLiveData.getValue();
-        if (value != null) {
-            value.setVerifyType("1");
+        if (mIDCardRecord != null) {
+            mIDCardRecord.setVerifyType("1");
             handler.postDelayed(() -> {
                 try {
-                    mListener.replaceFragment(ExpressFragment.newInstance(value));
+                    mListener.replaceFragment(ExpressFragment.newInstance(mIDCardRecord));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

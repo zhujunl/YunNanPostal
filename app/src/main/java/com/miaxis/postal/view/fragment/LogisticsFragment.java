@@ -86,6 +86,7 @@ public class LogisticsFragment extends BaseViewModelFragment<FragmentLogisticsBi
 
     @Override
     public void onBackPressed() {
+        hideInputMethod();
         mListener.backToStack(null);
     }
 
@@ -106,7 +107,7 @@ public class LogisticsFragment extends BaseViewModelFragment<FragmentLogisticsBi
     }
 
     private void initSearchView() {
-        binding.svSearch.setQueryHint("请输入寄件人姓名或快递单号...");
+        binding.svSearch.setQueryHint("请输入姓名或单号");
         binding.svSearch.setSubmitButtonEnabled(true);
         binding.svSearch.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override

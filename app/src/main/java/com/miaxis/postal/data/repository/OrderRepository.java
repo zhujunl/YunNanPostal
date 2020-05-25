@@ -10,6 +10,7 @@ import com.miaxis.postal.data.exception.MyException;
 import com.miaxis.postal.data.exception.NetResultFailedException;
 import com.miaxis.postal.data.net.PostalApi;
 import com.miaxis.postal.data.net.ResponseEntity;
+import com.miaxis.postal.manager.DataCacheManager;
 import com.miaxis.postal.util.ValueUtil;
 
 import java.io.IOException;
@@ -36,7 +37,8 @@ public class OrderRepository extends BaseRepository {
      **/
 
     public List<SimpleOrder> getOrderByCodeAndNameSync(String param, int pageNum, int pageSize) throws IOException, MyException, NetResultFailedException {
-        Response<ResponseEntity<List<SimpleOrderDto>>> execute = PostalApi.getOrderByCodeAndNameSync(param, pageNum, pageSize).execute();
+        long courierId = DataCacheManager.getInstance().getCourier().getCourierId();
+        Response<ResponseEntity<List<SimpleOrderDto>>> execute = PostalApi.getOrderByCodeAndNameSync(courierId, param, pageNum, pageSize).execute();
         try {
             ResponseEntity<List<SimpleOrderDto>> body = execute.body();
             if (body != null) {

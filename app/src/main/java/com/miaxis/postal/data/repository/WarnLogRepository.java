@@ -85,4 +85,8 @@ public class WarnLogRepository extends BaseRepository {
         return WarnLogModel.findOldestWarnLog();
     }
 
+    public void deleteWarnLog(WarnLog warnLog) {
+        WarnLogModel.deleteWarnLog(warnLog);
+    }
+
 }

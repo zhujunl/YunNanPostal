@@ -41,7 +41,7 @@ public class FaceVerifyViewModel extends BaseViewModel {
     public MutableLiveData<IDCardRecord> idCardRecordLiveData = new MutableLiveData<>();
     public ObservableField<String> hint = new ObservableField<>("");
 
-    public MutableLiveData<Boolean> verifyFlag = new SingleLiveEvent<>();
+    public MutableLiveData<IDCardRecord> verifyFlag = new SingleLiveEvent<>();
     public MutableLiveData<Boolean> saveFlag = new SingleLiveEvent<>();
 
     public ObservableField<String> countDown = new ObservableField<>();
@@ -105,8 +105,7 @@ public class FaceVerifyViewModel extends BaseViewModel {
                     if (value != null) {
                         value.setFaceBitmap(header);
                         value.setVerifyTime(new Date());
-                        idCardRecordLiveData.setValue(value);
-                        verifyFlag.postValue(Boolean.TRUE);
+                        verifyFlag.postValue(value);
                     } else {
                         toast.postValue(ToastManager.getToastBody("遇到错误，请退出后重试", ToastManager.ERROR));
                     }
