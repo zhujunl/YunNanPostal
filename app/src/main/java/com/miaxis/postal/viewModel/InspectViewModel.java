@@ -50,7 +50,6 @@ public class InspectViewModel extends BaseViewModel {
             }
             photographList.setValue(expressPhotoList);
         }
-        showBarcodeImage(express.getBarCode());
     }
 
     public void addPhotograph(List<Bitmap> bitmapList) {
@@ -134,7 +133,7 @@ public class InspectViewModel extends BaseViewModel {
         return modified;
     }
 
-    private void showBarcodeImage(String barcode) {
+    public void showBarcodeImage(String barcode) {
         App.getInstance().getThreadExecutor().execute(() -> {
             barcodeBitmapCache = BarcodeUtil.createBarcodeBitmap(barcode);
             if (barcodeBitmapCache != null) {

@@ -64,6 +64,10 @@ public class PostalApi extends BaseAPI {
                 fileBody);
     }
 
+    public static Call<ResponseEntity> editExpressmanSync(long id, String password) {
+        return getPostalNetSync().editExpressmanSync(id, password);
+    }
+
     public static Call<ResponseEntity> checkOrderByCodeSync(String code) {
         return getPostalNetSync().checkOrderByCodeSync(code);
     }

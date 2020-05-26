@@ -58,6 +58,7 @@ public class CameraFragment extends BaseViewModelFragment<FragmentCameraBinding,
     @Override
     protected void initData() {
         viewModel.thumbnail.observe(this, thumbnailObserver);
+        viewModel.confirmFlag.observe(this, confirmFlagObserver);
     }
 
     @Override
@@ -90,6 +91,12 @@ public class CameraFragment extends BaseViewModelFragment<FragmentCameraBinding,
                     .skipMemoryCache(true)
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .into(binding.ivThumbnail);
+        }
+    };
+
+    private Observer<Boolean> confirmFlagObserver = flag -> {
+        if (flag) {
+            onBackPressed();
         }
     };
 

@@ -9,6 +9,7 @@ import android.util.Log;
 import androidx.lifecycle.MutableLiveData;
 
 import com.miaxis.postal.app.App;
+import com.miaxis.postal.bridge.SingleLiveEvent;
 import com.miaxis.postal.bridge.Status;
 import com.miaxis.postal.data.event.TakePhotoEvent;
 import com.miaxis.postal.manager.CameraManager;
@@ -28,6 +29,8 @@ public class CameraViewModel extends BaseViewModel {
 
     public MutableLiveData<Status> shootFlag = new MutableLiveData<>(Status.FAILED);
     public MutableLiveData<Bitmap> thumbnail = new MutableLiveData<>();
+
+    public MutableLiveData<Boolean> confirmFlag = new SingleLiveEvent<>();
 
     private Bitmap bitmapCache;
     private List<Bitmap> photoList = new ArrayList<>();
@@ -57,6 +60,7 @@ public class CameraViewModel extends BaseViewModel {
             thumbnail.setValue(bitmapCache);
             photoList.add(bitmapCache);
         }
+        confirmFlag.setValue(Boolean.TRUE);
     }
 
     public void retry() {

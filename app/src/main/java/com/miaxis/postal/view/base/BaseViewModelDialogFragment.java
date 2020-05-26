@@ -6,18 +6,22 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatDialogFragment;
 import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ViewDataBinding;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
+import com.miaxis.postal.app.App;
 import com.miaxis.postal.manager.ToastManager;
 import com.miaxis.postal.viewModel.BaseViewModel;
 
-public abstract class BaseViewModelDialogFragment<V extends ViewDataBinding, VM extends BaseViewModel> extends DialogFragment {
+public abstract class BaseViewModelDialogFragment<V extends ViewDataBinding, VM extends BaseViewModel> extends AppCompatDialogFragment {
 
     protected OnFragmentInteractionListener mListener;
     protected V binding;
@@ -47,21 +51,21 @@ public abstract class BaseViewModelDialogFragment<V extends ViewDataBinding, VM 
         viewModelId = initVariableId();
         binding.setLifecycleOwner(this);
         binding.setVariable(viewModelId, viewModel);
-        viewModel.waitMessage.observe(this, s -> {
+        viewModel.waitMessage.observe(getViewLifecycleOwner(), s -> {
             if (TextUtils.isEmpty(s)) {
                 mListener.dismissWaitDialog();
             } else {
                 mListener.showWaitDialog(s);
             }
         });
-        viewModel.resultMessage.observe(this, s -> {
+        viewModel.resultMessage.observe(getViewLifecycleOwner(), s -> {
             if (TextUtils.isEmpty(s)) {
                 mListener.dismissResultDialog();
             } else {
                 mListener.showResultDialog(s);
             }
         });
-        viewModel.toast.observe(this, toastBody -> ToastManager.toast(toastBody.getMessage(), toastBody.getMode()));
+        viewModel.toast.observe(getViewLifecycleOwner(), toastBody -> ToastManager.toast(toastBody.getMessage(), toastBody.getMode()));
         initData();
         initView();
     }
@@ -88,6 +92,21 @@ public abstract class BaseViewModelDialogFragment<V extends ViewDataBinding, VM 
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    protected ViewModelProvider.AndroidViewModelFactory getViewModelProviderFactory() {
+        return ViewModelProvider.AndroidViewModelFactory.getInstance(App.getInstance());
+    }
+
+    public void hideInputMethod() {
+        try {
+            if (getActivity().getCurrentFocus() != null && getActivity().getCurrentFocus().getWindowToken() != null){
+                InputMethodManager manager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                manager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }

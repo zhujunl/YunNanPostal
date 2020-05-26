@@ -15,6 +15,7 @@ import com.miaxis.postal.view.auxiliary.GlideImageLoader;
 import com.miaxis.postal.view.auxiliary.OnLimitClickHelper;
 import com.miaxis.postal.view.auxiliary.OnLimitClickListener;
 import com.miaxis.postal.view.base.BaseViewModelFragment;
+import com.miaxis.postal.view.dialog.EditPasswordDialogFragment;
 import com.miaxis.postal.viewModel.HomeViewModel;
 
 import java.util.Arrays;
@@ -53,6 +54,9 @@ public class HomeFragment extends BaseViewModelFragment<FragmentHomeBinding, Hom
         binding.ivConfig.setOnClickListener(new OnLimitClickHelper(view -> mListener.replaceFragment(ConfigFragment.newInstance())));
         binding.clExpress.setOnClickListener(new OnLimitClickHelper(view -> mListener.replaceFragment(CardFragment.newInstance())));
         binding.clRecord.setOnClickListener(new OnLimitClickHelper(view -> mListener.replaceFragment(LogisticsFragment.newInstance())));
+        binding.tvEditPassword.setOnClickListener(new OnLimitClickHelper(view -> {
+            EditPasswordDialogFragment.newInstance().show(getChildFragmentManager(), "EditPasswordDialogFragment");
+        }));
     }
 
     @Override

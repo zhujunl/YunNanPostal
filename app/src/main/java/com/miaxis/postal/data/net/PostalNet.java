@@ -70,6 +70,14 @@ public interface PostalNet {
             @Part MultipartBody.Part file
     );
 
+    //注册快递员
+    @FormUrlEncoded
+    @POST("api/v1/expressman/editExpressman")
+    Call<ResponseEntity> editExpressmanSync(
+            @Field("id") long id,
+            @Field("password") String password
+    );
+
     //上传人证核验记录，并获取核验编号
     @Multipart
     @POST("api/v1/person/savePersonFromApp")

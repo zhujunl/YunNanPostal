@@ -11,6 +11,7 @@ import com.miaxis.postal.data.model.CourierModel;
 import com.miaxis.postal.data.net.PostalApi;
 import com.miaxis.postal.data.net.ResponseEntity;
 import com.miaxis.postal.manager.ConfigManager;
+import com.miaxis.postal.manager.DataCacheManager;
 import com.miaxis.postal.util.FileUtil;
 import com.miaxis.postal.util.ValueUtil;
 
@@ -88,6 +89,27 @@ public class LoginRepository extends BaseRepository {
             throw new MyException(e.getMessage());
         } finally {
             file.delete();
+        }
+        throw new MyException("服务端返回数据解析失败，或为空");
+    }
+
+    public void editExpressmanSync(String password) throws IOException, NetResultFailedException, MyException {
+        long courierId = DataCacheManager.getInstance().getCourier().getCourierId();
+        Response<ResponseEntity> execute = PostalApi.editExpressmanSync(courierId, password).execute();
+        try {
+            ResponseEntity body = execute.body();
+            if (body != null) {
+                if (TextUtils.equals(body.getCode(), ValueUtil.SUCCESS)) {
+                    return;
+                } else {
+                    throw new NetResultFailedException("服务端返回，" + body.getMessage());
+                }
+            }
+        } catch (NetResultFailedException e) {
+            throw e;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new MyException(e.getMessage());
         }
         throw new MyException("服务端返回数据解析失败，或为空");
     }

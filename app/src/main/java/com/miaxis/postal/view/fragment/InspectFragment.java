@@ -76,6 +76,7 @@ public class InspectFragment extends BaseViewModelFragment<FragmentInspectBindin
             viewModel.express.set(express);
             viewModel.initExpress(express);
         }
+        viewModel.showBarcodeImage(express.getBarCode());
         binding.ivBack.setOnClickListener(v -> onBackPressed());
         binding.ivDelete.setOnClickListener(new OnLimitClickHelper(view -> {
             new MaterialDialog.Builder(getContext())

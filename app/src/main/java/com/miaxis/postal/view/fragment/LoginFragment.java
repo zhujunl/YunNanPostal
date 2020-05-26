@@ -1,7 +1,13 @@
 package com.miaxis.postal.view.fragment;
 
+import android.text.Editable;
+import android.text.InputType;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
 
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -59,8 +65,10 @@ public class LoginFragment extends BaseViewModelFragment<FragmentLoginBinding, L
                 viewModel.getCourier();
             }
         });
+        addTextWatcher(binding.etPassword, binding.btnPasswordEye);
         //TODO:
-        viewModel.password.set("163.com");
+//        viewModel.password.set("163.com");
+        viewModel.password.set("");
     }
 
     @Override
@@ -109,6 +117,19 @@ public class LoginFragment extends BaseViewModelFragment<FragmentLoginBinding, L
             return false;
         }
         return true;
+    }
+
+    private void addTextWatcher(final EditText editText, final ImageButton btnEye) {
+        btnEye.setOnClickListener(v -> {
+            if (editText.getInputType() == (InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD)){
+                btnEye.setImageResource(R.drawable.ic_visibility_off_blue);
+                editText.setInputType(InputType.TYPE_CLASS_TEXT);
+            } else {
+                btnEye.setImageResource(R.drawable.ic_visibility_blue);
+                editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+            }
+            editText.setSelection(editText.getText().toString().length());
+        });
     }
 
 }
