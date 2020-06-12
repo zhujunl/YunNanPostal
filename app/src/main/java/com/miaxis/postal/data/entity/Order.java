@@ -17,6 +17,7 @@ public class Order {
     private String addresseeName;
     private String addresseeAddress;
     private String addresseePhone;
+    private String weight;
     private String pieceTime;
     private String checkImage;
     private String cardImage;
@@ -25,6 +26,29 @@ public class Order {
     private String createTime;
 
     public Order() {
+    }
+
+    private Order(Builder builder) {
+        setId(builder.id);
+        setPersonId(builder.personId);
+        setCheckId(builder.checkId);
+        setSenderAddress(builder.senderAddress);
+        setSenderPhone(builder.senderPhone);
+        setSenderName(builder.senderName);
+        setOrderCode(builder.orderCode);
+        setOrderInfo(builder.orderInfo);
+        setLatitude(builder.latitude);
+        setLongitude(builder.longitude);
+        setAddresseeName(builder.addresseeName);
+        setAddresseeAddress(builder.addresseeAddress);
+        setAddresseePhone(builder.addresseePhone);
+        setWeight(builder.weight);
+        setPieceTime(builder.pieceTime);
+        setCheckImage(builder.checkImage);
+        setCardImage(builder.cardImage);
+        setImageList(builder.imageList);
+        setReceiptTime(builder.receiptTime);
+        setCreateTime(builder.createTime);
     }
 
     public int getId() {
@@ -131,6 +155,14 @@ public class Order {
         this.addresseePhone = addresseePhone;
     }
 
+    public String getWeight() {
+        return weight;
+    }
+
+    public void setWeight(String weight) {
+        this.weight = weight;
+    }
+
     public String getPieceTime() {
         return pieceTime;
     }
@@ -179,7 +211,7 @@ public class Order {
         this.createTime = createTime;
     }
 
-    public static final class OrderBuilder {
+    public static final class Builder {
         private int id;
         private int personId;
         private int checkId;
@@ -193,6 +225,7 @@ public class Order {
         private String addresseeName;
         private String addresseeAddress;
         private String addresseePhone;
+        private String weight;
         private String pieceTime;
         private String checkImage;
         private String cardImage;
@@ -200,130 +233,111 @@ public class Order {
         private String receiptTime;
         private String createTime;
 
-        private OrderBuilder() {
+        public Builder() {
         }
 
-        public static OrderBuilder anOrder() {
-            return new OrderBuilder();
-        }
-
-        public OrderBuilder id(int id) {
-            this.id = id;
+        public Builder id(int val) {
+            id = val;
             return this;
         }
 
-        public OrderBuilder personId(int personId) {
-            this.personId = personId;
+        public Builder personId(int val) {
+            personId = val;
             return this;
         }
 
-        public OrderBuilder checkId(int checkId) {
-            this.checkId = checkId;
+        public Builder checkId(int val) {
+            checkId = val;
             return this;
         }
 
-        public OrderBuilder senderAddress(String senderAddress) {
-            this.senderAddress = senderAddress;
+        public Builder senderAddress(String val) {
+            senderAddress = val;
             return this;
         }
 
-        public OrderBuilder senderPhone(String senderPhone) {
-            this.senderPhone = senderPhone;
+        public Builder senderPhone(String val) {
+            senderPhone = val;
             return this;
         }
 
-        public OrderBuilder senderName(String senderName) {
-            this.senderName = senderName;
+        public Builder senderName(String val) {
+            senderName = val;
             return this;
         }
 
-        public OrderBuilder orderCode(String orderCode) {
-            this.orderCode = orderCode;
+        public Builder orderCode(String val) {
+            orderCode = val;
             return this;
         }
 
-        public OrderBuilder orderInfo(String orderInfo) {
-            this.orderInfo = orderInfo;
+        public Builder orderInfo(String val) {
+            orderInfo = val;
             return this;
         }
 
-        public OrderBuilder latitude(String latitude) {
-            this.latitude = latitude;
+        public Builder latitude(String val) {
+            latitude = val;
             return this;
         }
 
-        public OrderBuilder longitude(String longitude) {
-            this.longitude = longitude;
+        public Builder longitude(String val) {
+            longitude = val;
             return this;
         }
 
-        public OrderBuilder addresseeName(String addresseeName) {
-            this.addresseeName = addresseeName;
+        public Builder addresseeName(String val) {
+            addresseeName = val;
             return this;
         }
 
-        public OrderBuilder addresseeAddress(String addresseeAddress) {
-            this.addresseeAddress = addresseeAddress;
+        public Builder addresseeAddress(String val) {
+            addresseeAddress = val;
             return this;
         }
 
-        public OrderBuilder addresseePhone(String addresseePhone) {
-            this.addresseePhone = addresseePhone;
+        public Builder addresseePhone(String val) {
+            addresseePhone = val;
             return this;
         }
 
-        public OrderBuilder pieceTime(String pieceTime) {
-            this.pieceTime = pieceTime;
+        public Builder weight(String val) {
+            weight = val;
             return this;
         }
 
-        public OrderBuilder checkImage(String checkImage) {
-            this.checkImage = checkImage;
+        public Builder pieceTime(String val) {
+            pieceTime = val;
             return this;
         }
 
-        public OrderBuilder cardImage(String cardImage) {
-            this.cardImage = cardImage;
+        public Builder checkImage(String val) {
+            checkImage = val;
             return this;
         }
 
-        public OrderBuilder imageList(List<String> imageList) {
-            this.imageList = imageList;
+        public Builder cardImage(String val) {
+            cardImage = val;
             return this;
         }
 
-        public OrderBuilder receiptTime(String receiptTime) {
-            this.receiptTime = receiptTime;
+        public Builder imageList(List<String> val) {
+            imageList = val;
             return this;
         }
 
-        public OrderBuilder createTime(String createTime) {
-            this.createTime = createTime;
+        public Builder receiptTime(String val) {
+            receiptTime = val;
+            return this;
+        }
+
+        public Builder createTime(String val) {
+            createTime = val;
             return this;
         }
 
         public Order build() {
-            Order order = new Order();
-            order.setId(id);
-            order.setPersonId(personId);
-            order.setCheckId(checkId);
-            order.setSenderAddress(senderAddress);
-            order.setSenderPhone(senderPhone);
-            order.setSenderName(senderName);
-            order.setOrderCode(orderCode);
-            order.setOrderInfo(orderInfo);
-            order.setLatitude(latitude);
-            order.setLongitude(longitude);
-            order.setAddresseeName(addresseeName);
-            order.setAddresseeAddress(addresseeAddress);
-            order.setAddresseePhone(addresseePhone);
-            order.setPieceTime(pieceTime);
-            order.setCheckImage(checkImage);
-            order.setCardImage(cardImage);
-            order.setImageList(imageList);
-            order.setReceiptTime(receiptTime);
-            order.setCreateTime(createTime);
-            return order;
+            return new Order(this);
         }
     }
 }

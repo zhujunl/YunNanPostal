@@ -19,6 +19,8 @@ public class Courier {
     private String fingerFeature2;
     private String createTime;
     private String password;
+    private String orgCode;
+    private String orgNode;
 
     public Courier() {
     }
@@ -36,6 +38,8 @@ public class Courier {
         setFingerFeature2(builder.fingerFeature2);
         setCreateTime(builder.createTime);
         setPassword(builder.password);
+        setOrgCode(builder.orgCode);
+        setOrgNode(builder.orgNode);
     }
 
     public long getId() {
@@ -134,6 +138,22 @@ public class Courier {
         this.password = password;
     }
 
+    public String getOrgCode() {
+        return orgCode;
+    }
+
+    public void setOrgCode(String orgCode) {
+        this.orgCode = orgCode;
+    }
+
+    public String getOrgNode() {
+        return orgNode;
+    }
+
+    public void setOrgNode(String orgNode) {
+        this.orgNode = orgNode;
+    }
+
     public static final class Builder {
         private long id;
         private long courierId;
@@ -147,6 +167,8 @@ public class Courier {
         private String fingerFeature2;
         private String createTime;
         private String password;
+        private String orgCode;
+        private String orgNode;
 
         public Builder() {
         }
@@ -208,6 +230,16 @@ public class Courier {
 
         public Builder password(String val) {
             password = val;
+            return this;
+        }
+
+        public Builder orgCode(String val) {
+            orgCode = val;
+            return this;
+        }
+
+        public Builder orgNode(String val) {
+            orgNode = val;
             return this;
         }
 

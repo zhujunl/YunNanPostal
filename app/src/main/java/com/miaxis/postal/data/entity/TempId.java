@@ -8,6 +8,11 @@ public class TempId {
     public TempId() {
     }
 
+    public TempId(String personId, String checkId) {
+        this.personId = personId;
+        this.checkId = checkId;
+    }
+
     public String getPersonId() {
         return personId;
     }

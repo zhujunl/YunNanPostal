@@ -16,6 +16,8 @@ public class CourierDto implements Mapper<Courier> {
     private String finger2Feature;
     private String createTime;
     private String password;
+    private String orgCode;
+    private String orgNode;
 
     public CourierDto() {
     }
@@ -108,6 +110,22 @@ public class CourierDto implements Mapper<Courier> {
         this.password = password;
     }
 
+    public String getOrgCode() {
+        return orgCode;
+    }
+
+    public void setOrgCode(String orgCode) {
+        this.orgCode = orgCode;
+    }
+
+    public String getOrgNode() {
+        return orgNode;
+    }
+
+    public void setOrgNode(String orgNode) {
+        this.orgNode = orgNode;
+    }
+
     @Override
     public Courier transform() throws MyException {
         try {
@@ -124,6 +142,8 @@ public class CourierDto implements Mapper<Courier> {
                     .fingerFeature2(finger2Feature)
                     .createTime(createTime)
                     .password(password)
+                    .orgCode(orgCode)
+                    .orgNode(orgNode)
                     .build();
         } catch (Exception e) {
             e.printStackTrace();

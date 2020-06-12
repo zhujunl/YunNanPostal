@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "f6099197c2ca1bdee7f72d37d2b68d13",
+    "identityHash": "58116dd35c49a1ddbd85632463b5de94",
     "entities": [
       {
         "tableName": "Config",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER, `host` TEXT, `mac` TEXT, `loginMode` INTEGER NOT NULL, `qualityScore` INTEGER NOT NULL, `registerQualityScore` INTEGER NOT NULL, `verifyScore` REAL NOT NULL, `deviceId` INTEGER NOT NULL, `deviceStatus` TEXT, `heartBeatInterval` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER, `host` TEXT, `deviceIMEI` TEXT, `qualityScore` INTEGER NOT NULL, `registerQualityScore` INTEGER NOT NULL, `verifyScore` REAL NOT NULL, `verifyMaskScore` REAL NOT NULL, `maskScore` INTEGER NOT NULL, `deviceStatus` TEXT, `heartBeatInterval` INTEGER NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -21,16 +21,10 @@
             "notNull": false
           },
           {
-            "fieldPath": "mac",
-            "columnName": "mac",
+            "fieldPath": "deviceIMEI",
+            "columnName": "deviceIMEI",
             "affinity": "TEXT",
             "notNull": false
-          },
-          {
-            "fieldPath": "loginMode",
-            "columnName": "loginMode",
-            "affinity": "INTEGER",
-            "notNull": true
           },
           {
             "fieldPath": "qualityScore",
@@ -51,8 +45,14 @@
             "notNull": true
           },
           {
-            "fieldPath": "deviceId",
-            "columnName": "deviceId",
+            "fieldPath": "verifyMaskScore",
+            "columnName": "verifyMaskScore",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "maskScore",
+            "columnName": "maskScore",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -80,11 +80,17 @@
       },
       {
         "tableName": "Courier",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `name` TEXT, `cardNumber` TEXT, `phone` TEXT, `photo` TEXT, `faceFeature` TEXT, `fingerFeature1` TEXT, `fingerFeature2` TEXT, `createTime` TEXT, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `courierId` INTEGER NOT NULL, `name` TEXT, `cardNumber` TEXT, `phone` TEXT, `photo` TEXT, `faceFeature` TEXT, `maskFaceFeature` TEXT, `fingerFeature1` TEXT, `fingerFeature2` TEXT, `createTime` TEXT, `password` TEXT, `orgCode` TEXT, `orgNode` TEXT, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
             "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "courierId",
+            "columnName": "courierId",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -119,6 +125,12 @@
             "notNull": false
           },
           {
+            "fieldPath": "maskFaceFeature",
+            "columnName": "maskFaceFeature",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
             "fieldPath": "fingerFeature1",
             "columnName": "fingerFeature1",
             "affinity": "TEXT",
@@ -135,6 +147,24 @@
             "columnName": "createTime",
             "affinity": "TEXT",
             "notNull": false
+          },
+          {
+            "fieldPath": "password",
+            "columnName": "password",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "orgCode",
+            "columnName": "orgCode",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "orgNode",
+            "columnName": "orgNode",
+            "affinity": "TEXT",
+            "notNull": false
           }
         ],
         "primaryKey": {
@@ -148,7 +178,7 @@
       },
       {
         "tableName": "IDCardRecord",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `cardType` TEXT, `cardId` TEXT, `name` TEXT, `birthday` TEXT, `address` TEXT, `cardNumber` TEXT, `issuingAuthority` TEXT, `validateStart` TEXT, `validateEnd` TEXT, `sex` TEXT, `nation` TEXT, `fingerprint0` TEXT, `fingerprintPosition0` TEXT, `fingerprint1` TEXT, `fingerprintPosition1` TEXT, `passNumber` TEXT, `issueCount` TEXT, `chineseName` TEXT, `version` TEXT, `cardPicture` TEXT, `facePicture` TEXT, `verifyId` TEXT, `verifyTime` INTEGER, `upload` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `cardType` TEXT, `cardId` TEXT, `name` TEXT, `birthday` TEXT, `address` TEXT, `cardNumber` TEXT, `issuingAuthority` TEXT, `validateStart` TEXT, `validateEnd` TEXT, `sex` TEXT, `nation` TEXT, `passNumber` TEXT, `issueCount` TEXT, `chineseName` TEXT, `version` TEXT, `cardPicture` TEXT, `facePicture` TEXT, `verifyId` TEXT, `verifyTime` INTEGER, `upload` INTEGER NOT NULL, `verifyType` TEXT, `personId` TEXT, `checkId` TEXT)",
         "fields": [
           {
             "fieldPath": "id",
@@ -223,30 +253,6 @@
             "notNull": false
           },
           {
-            "fieldPath": "fingerprint0",
-            "columnName": "fingerprint0",
-            "affinity": "TEXT",
-            "notNull": false
-          },
-          {
-            "fieldPath": "fingerprintPosition0",
-            "columnName": "fingerprintPosition0",
-            "affinity": "TEXT",
-            "notNull": false
-          },
-          {
-            "fieldPath": "fingerprint1",
-            "columnName": "fingerprint1",
-            "affinity": "TEXT",
-            "notNull": false
-          },
-          {
-            "fieldPath": "fingerprintPosition1",
-            "columnName": "fingerprintPosition1",
-            "affinity": "TEXT",
-            "notNull": false
-          },
-          {
             "fieldPath": "passNumber",
             "columnName": "passNumber",
             "affinity": "TEXT",
@@ -299,6 +305,24 @@
             "columnName": "upload",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "verifyType",
+            "columnName": "verifyType",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "personId",
+            "columnName": "personId",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "checkId",
+            "columnName": "checkId",
+            "affinity": "TEXT",
+            "notNull": false
           }
         ],
         "primaryKey": {
@@ -312,7 +336,7 @@
       },
       {
         "tableName": "Express",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `barCode` TEXT, `photoPathList` TEXT, `senderPhone` TEXT, `senderAddress` TEXT, `verifyId` TEXT, `latitude` TEXT, `longitude` TEXT, `pieceTime` INTEGER, `upload` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `barCode` TEXT, `photoPathList` TEXT, `senderPhone` TEXT, `senderAddress` TEXT, `verifyId` TEXT, `latitude` TEXT, `longitude` TEXT, `pieceTime` INTEGER, `upload` INTEGER NOT NULL, `info` TEXT, `weight` TEXT, `addresseeName` TEXT, `addresseePhone` TEXT, `addresseeAddress` TEXT)",
         "fields": [
           {
             "fieldPath": "id",
@@ -373,6 +397,122 @@
             "columnName": "upload",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "info",
+            "columnName": "info",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "weight",
+            "columnName": "weight",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "addresseeName",
+            "columnName": "addresseeName",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "addresseePhone",
+            "columnName": "addresseePhone",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "addresseeAddress",
+            "columnName": "addresseeAddress",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "WarnLog",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `verifyId` TEXT, `sendAddress` TEXT, `sendCardNo` TEXT, `sendPhone` TEXT, `sendName` TEXT, `expressmanId` INTEGER NOT NULL, `expressmanName` TEXT, `expressmanPhone` TEXT, `createTime` TEXT, `upload` INTEGER NOT NULL, `warnId` INTEGER)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "verifyId",
+            "columnName": "verifyId",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "sendAddress",
+            "columnName": "sendAddress",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "sendCardNo",
+            "columnName": "sendCardNo",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "sendPhone",
+            "columnName": "sendPhone",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "sendName",
+            "columnName": "sendName",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "expressmanId",
+            "columnName": "expressmanId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "expressmanName",
+            "columnName": "expressmanName",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "expressmanPhone",
+            "columnName": "expressmanPhone",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "createTime",
+            "columnName": "createTime",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "upload",
+            "columnName": "upload",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "warnId",
+            "columnName": "warnId",
+            "affinity": "INTEGER",
+            "notNull": false
           }
         ],
         "primaryKey": {
@@ -388,7 +528,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'f6099197c2ca1bdee7f72d37d2b68d13')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '58116dd35c49a1ddbd85632463b5de94')"
     ]
   }
 }

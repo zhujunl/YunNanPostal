@@ -99,6 +99,8 @@ public interface PostalNet {
     @Multipart
     @POST("api/v1/order/saveOrderFromApp")
     Call<ResponseEntity> saveOrderFromAppSync(
+            @Part("orgCode") String orgCode,
+            @Part("orgNode") String orgNode,
             @Part("personId") String personId,
             @Part("checkId") String checkId,
             @Part("warnLogId") String warnLogId,
@@ -108,6 +110,7 @@ public interface PostalNet {
             @Part("sendName") String sendName,
             @Part("orderCode") String orderCode,
             @Part("orderInfo") String orderInfo,
+            @Part("weight") String weight,
             @Part("addresseeName") String addresseeName,
             @Part("addresseeAddress") String addresseeAddress,
             @Part("addresseePhone") String addresseePhone,
@@ -135,5 +138,25 @@ public interface PostalNet {
     @FormUrlEncoded
     @POST("api/v1/app/getAppByVersionName")
     Call<ResponseEntity<UpdateDto>> getAppByVersionName(@Field("versionName") String versionName);
+
+    //根据订单单号查询订单详细信息
+    @FormUrlEncoded
+    @POST("api/v1/order/getOrderByCode")
+    Call<ResponseEntity<OrderDto>> getOrderByCode(@Field("orderCode") String orderCode);
+
+    @Multipart
+    @POST("api/v1/order/updateOrderFromApp")
+    Call<ResponseEntity> updateOrderFromApp(
+            @Part("sendAddress") String sendAddress,
+            @Part("sendPhone") String sendPhone,
+            @Part("sendName") String sendName,
+            @Part("orderCode") String orderCode,
+            @Part("orderInfo") String orderInfo,
+            @Part("weight") String weight,
+            @Part("addresseeName") String addresseeName,
+            @Part("addresseeAddress") String addresseeAddress,
+            @Part("addresseePhone") String addresseePhone,
+            @Part List<MultipartBody.Part> file
+    );
 
 }

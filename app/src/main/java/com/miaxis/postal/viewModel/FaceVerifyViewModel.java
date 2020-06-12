@@ -2,7 +2,6 @@ package com.miaxis.postal.viewModel;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.util.Base64;
 
 import androidx.databinding.ObservableField;
 import androidx.lifecycle.MutableLiveData;
@@ -13,7 +12,7 @@ import com.miaxis.postal.bridge.SingleLiveEvent;
 import com.miaxis.postal.data.entity.Config;
 import com.miaxis.postal.data.entity.Courier;
 import com.miaxis.postal.data.entity.IDCardRecord;
-import com.miaxis.postal.data.entity.PhotoFaceFeature;
+import com.miaxis.postal.data.bean.PhotoFaceFeature;
 import com.miaxis.postal.data.entity.WarnLog;
 import com.miaxis.postal.data.exception.MyException;
 import com.miaxis.postal.data.repository.IDCardRecordRepository;

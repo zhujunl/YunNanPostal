@@ -1,18 +1,14 @@
 package com.miaxis.postal.viewModel;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.text.TextUtils;
 import android.util.Base64;
 
 import androidx.databinding.ObservableField;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
 
 import com.miaxis.postal.bridge.SingleLiveEvent;
 import com.miaxis.postal.data.entity.Config;
 import com.miaxis.postal.data.entity.Courier;
-import com.miaxis.postal.data.entity.MxRGBImage;
 import com.miaxis.postal.manager.CameraManager;
 import com.miaxis.postal.manager.ConfigManager;
 import com.miaxis.postal.manager.FaceManager;

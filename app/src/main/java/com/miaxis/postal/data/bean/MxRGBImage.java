@@ -1,4 +1,4 @@
-package com.miaxis.postal.data.entity;
+package com.miaxis.postal.data.bean;
 
 public class MxRGBImage {
 

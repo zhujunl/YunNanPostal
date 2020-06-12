@@ -8,11 +8,10 @@ import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.miaxis.postal.data.entity.Intermediary;
-import com.miaxis.postal.data.entity.MxRGBImage;
-import com.miaxis.postal.data.entity.PhotoFaceFeature;
+import com.miaxis.postal.data.bean.Intermediary;
+import com.miaxis.postal.data.bean.MxRGBImage;
+import com.miaxis.postal.data.bean.PhotoFaceFeature;
 import com.miaxis.postal.data.event.DrawRectEvent;
-import com.miaxis.postal.data.event.FeatureEvent;
 import com.miaxis.postal.util.FileUtil;
 
 import org.greenrobot.eventbus.EventBus;
@@ -21,7 +20,6 @@ import org.zz.api.MXFaceInfoEx;
 import org.zz.jni.mxImageTool;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 
 public class FaceManager {
 

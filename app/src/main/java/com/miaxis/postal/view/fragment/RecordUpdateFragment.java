@@ -6,26 +6,26 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.miaxis.postal.BR;
 import com.miaxis.postal.R;
 import com.miaxis.postal.bridge.GlideApp;
-import com.miaxis.postal.data.entity.Express;
+import com.miaxis.postal.data.entity.Order;
 import com.miaxis.postal.data.entity.Photograph;
-import com.miaxis.postal.data.event.ExpressEditEvent;
 import com.miaxis.postal.data.event.TakePhotoEvent;
-import com.miaxis.postal.databinding.FragmentInspectBinding;
+import com.miaxis.postal.databinding.FragmentRecordUpdateBinding;
 import com.miaxis.postal.manager.ToastManager;
 import com.miaxis.postal.view.adapter.InspectAdapter;
 import com.miaxis.postal.view.auxiliary.OnLimitClickHelper;
 import com.miaxis.postal.view.auxiliary.OnLimitClickListener;
 import com.miaxis.postal.view.base.BaseViewModelFragment;
 import com.miaxis.postal.viewModel.InspectViewModel;
+import com.miaxis.postal.viewModel.RecordUpdateViewModel;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -33,99 +33,63 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.List;
 
-public class InspectFragment extends BaseViewModelFragment<FragmentInspectBinding, InspectViewModel> {
+public class RecordUpdateFragment extends BaseViewModelFragment<FragmentRecordUpdateBinding, RecordUpdateViewModel> {
 
-    private Express express;
     private InspectAdapter inspectAdapter;
 
-    public static InspectFragment newInstance(Express express) {
-        InspectFragment inspectFragment = new InspectFragment();
-        inspectFragment.setExpress(express);
-        return inspectFragment;
+    private Order order;
+
+    public static RecordUpdateFragment newInstance(Order order) {
+        RecordUpdateFragment fragment = new RecordUpdateFragment();
+        fragment.setOrder(order);
+        return fragment;
     }
 
-    public InspectFragment() {
+    public RecordUpdateFragment() {
         // Required empty public constructor
     }
 
     @Override
     protected int setContentView() {
-        return R.layout.fragment_inspect;
+        return R.layout.fragment_record_update;
     }
 
     @Override
-    protected InspectViewModel initViewModel() {
-        return new ViewModelProvider(this, getViewModelProviderFactory()).get(InspectViewModel.class);
+    protected RecordUpdateViewModel initViewModel() {
+        return new ViewModelProvider(this, getViewModelProviderFactory()).get(RecordUpdateViewModel.class);
     }
 
     @Override
     public int initVariableId() {
-        return com.miaxis.postal.BR.viewModel;
+        return BR.viewModel;
     }
 
     @Override
     protected void initData() {
-        viewModel.barcodeImageUpdate.observe(this, barcodeImageUpdateObserver);
+        viewModel.orderCodeImageUpdate.observe(this, orderCodeImageUpdateObserver);
+        viewModel.updateResult.observe(this, updateResultObserver);
     }
 
     @Override
     protected void initView() {
         initRecycleView();
         viewModel.photographList.observe(this, photographObserver);
-        if (viewModel.express.get() == null) {
-            viewModel.express.set(express);
-            viewModel.initExpress(express);
-        }
-        viewModel.showBarcodeImage(express.getBarCode());
         binding.ivBack.setOnClickListener(v -> onBackPressed());
-        binding.ivDelete.setOnClickListener(new OnLimitClickHelper(view -> {
-            new MaterialDialog.Builder(getContext())
-                    .title("确认删除？")
-                    .positiveText("确认")
-                    .onPositive((dialog, which) -> {
-                        viewModel.makeDeleteResult();
-                        mListener.backToStack(null);
-                    })
-                    .negativeText("取消")
-                    .show();
-        }));
-        binding.btnConfirm.setOnClickListener(new OnLimitClickHelper(view -> {
-             if (checkInput()) {
-                 new MaterialDialog.Builder(getContext())
-                         .title("确认已选择的实物照片")
-                         .content("未选择的实物照片将会被删除")
-                         .positiveText("确认")
-                         .onPositive((dialog, which) -> {
-                             viewModel.makeModifyResult(binding.etInfo.getText().toString());
-                             mListener.backToStack(null);
-                         })
-                         .negativeText("取消")
-                         .show();
-             }
-        }));
-        binding.fabAlarm.setOnLongClickListener(alarmListener);
+        binding.btnUpdate.setOnClickListener(new OnLimitClickHelper(confirmClickListener));
+        viewModel.showBarcodeImage(order.getOrderCode());
+        viewModel.initOrder(order);
         EventBus.getDefault().register(this);
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
-    public void onTakePhotoEvent(TakePhotoEvent event) {
-        viewModel.addPhotograph(event.getPhotoList());
-        EventBus.getDefault().removeStickyEvent(event);
     }
 
     @Override
     public void onBackPressed() {
-        if (viewModel.needBackCheck()) {
-            new MaterialDialog.Builder(getContext())
-                    .title("确认退出？")
-                    .content("未选择和未确认的实物照片将会被删除")
-                    .positiveText("确认")
-                    .onPositive((dialog, which) -> mListener.backToStack(null))
-                    .negativeText("取消")
-                    .show();
-        } else {
-            mListener.backToStack(null);
-        }
+        new MaterialDialog.Builder(getContext())
+                .title("确认退出？")
+                .content("已修改内容将丢失")
+                .positiveText("确认")
+                .onPositive((dialog, which) -> mListener.backToStack(null))
+                .negativeText("取消")
+                .show();
     }
 
     @Override
@@ -135,16 +99,33 @@ public class InspectFragment extends BaseViewModelFragment<FragmentInspectBindin
         EventBus.getDefault().unregister(this);
     }
 
-    private void initRecycleView() {
-        inspectAdapter = new InspectAdapter(getContext());
-        inspectAdapter.setHeaderListener(headerListener);
-        inspectAdapter.setBodyListener(bodyListener);
-        inspectAdapter.setCheckBoxListener(checkBoxListener);
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 4);
-        binding.rvInspect.setLayoutManager(gridLayoutManager);
-        binding.rvInspect.setAdapter(inspectAdapter);
-        ((SimpleItemAnimator) binding.rvInspect.getItemAnimator()).setSupportsChangeAnimations(false);
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    public void onTakePhotoEvent(TakePhotoEvent event) {
+        viewModel.addPhotograph(event.getPhotoList());
+        EventBus.getDefault().removeStickyEvent(event);
     }
+
+    private Observer<List<Photograph>> photographObserver = photographList -> {
+        inspectAdapter.setDataList(photographList);
+        inspectAdapter.notifyDataSetChanged();
+        updateSelectText();
+    };
+
+    private Observer<Boolean> orderCodeImageUpdateObserver = flag -> {
+        if (flag) {
+            GlideApp.with(this)
+                    .load(viewModel.orderCodeBitmapCache)
+                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .skipMemoryCache(true)
+                    .into(binding.ivBarcode);
+        }
+    };
+
+    private Observer<Boolean> updateResultObserver = result -> {
+        if (result) {
+            mListener.backToStack(null);
+        }
+    };
 
     private InspectAdapter.OnHeaderClickListener headerListener = () -> {
         mListener.replaceFragment(CameraFragment.newInstance());
@@ -167,21 +148,29 @@ public class InspectFragment extends BaseViewModelFragment<FragmentInspectBindin
         }
     };
 
-    private Observer<List<Photograph>> photographObserver = photographList -> {
-        inspectAdapter.setDataList(photographList);
-        inspectAdapter.notifyDataSetChanged();
-        updateSelectText();
-    };
-
-    private Observer<Boolean> barcodeImageUpdateObserver = flag -> {
-        if (flag) {
-            GlideApp.with(this)
-                    .load(viewModel.barcodeBitmapCache)
-                    .diskCacheStrategy(DiskCacheStrategy.NONE)
-                    .skipMemoryCache(true)
-                    .into(binding.ivBarcode);
+    private OnLimitClickListener confirmClickListener = view -> {
+        if (checkInput()) {
+            new MaterialDialog.Builder(getContext())
+                    .content("确认修改？")
+                    .positiveText("确认")
+                    .onPositive((dialog, which) -> {
+                        viewModel.updateOrder();
+                    })
+                    .negativeText("取消")
+                    .show();
         }
     };
+
+    private void initRecycleView() {
+        inspectAdapter = new InspectAdapter(getContext());
+        inspectAdapter.setHeaderListener(headerListener);
+        inspectAdapter.setBodyListener(bodyListener);
+        inspectAdapter.setCheckBoxListener(checkBoxListener);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 4);
+        binding.rvInspect.setLayoutManager(gridLayoutManager);
+        binding.rvInspect.setAdapter(inspectAdapter);
+        ((SimpleItemAnimator) binding.rvInspect.getItemAnimator()).setSupportsChangeAnimations(false);
+    }
 
     private void updateSelectText() {
         binding.tvSelect.setText(String.format("已选 %s / %s", viewModel.getSelectSize(), InspectViewModel.MAX_COUNT));
@@ -192,16 +181,6 @@ public class InspectFragment extends BaseViewModelFragment<FragmentInspectBindin
         inspectAdapter.notifyItemChanged(position);
         updateSelectText();
     }
-
-    public void setExpress(Express express) {
-        this.express = express;
-    }
-
-    private View.OnLongClickListener alarmListener = v -> {
-        viewModel.alarm();
-        mListener.backToStack(null);
-        return false;
-    };
 
     private boolean checkInput() {
         if (TextUtils.isEmpty(binding.etInfo.getText().toString())) {
@@ -226,4 +205,7 @@ public class InspectFragment extends BaseViewModelFragment<FragmentInspectBindin
         return true;
     }
 
+    public void setOrder(Order order) {
+        this.order = order;
+    }
 }

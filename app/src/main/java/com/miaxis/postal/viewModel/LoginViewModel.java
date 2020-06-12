@@ -56,7 +56,7 @@ public class LoginViewModel extends BaseViewModel {
     }
 
     public void getCourier() {
-        waitMessage.setValue("查询中，请稍后");
+        waitMessage.setValue("登录中，请稍后");
         Disposable subscribe = Observable.create((ObservableOnSubscribe<Courier>) emitter -> {
             Courier courier = LoginRepository.getInstance().getCourierByPhoneSync(username.get());
             emitter.onNext(courier);

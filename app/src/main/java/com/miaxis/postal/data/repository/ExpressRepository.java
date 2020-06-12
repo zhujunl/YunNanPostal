@@ -4,14 +4,17 @@ import android.graphics.Bitmap;
 import android.text.TextUtils;
 
 import com.amap.api.location.AMapLocation;
+import com.miaxis.postal.data.entity.Courier;
 import com.miaxis.postal.data.entity.Express;
 import com.miaxis.postal.data.entity.TempId;
 import com.miaxis.postal.data.exception.MyException;
+import com.miaxis.postal.data.exception.NetResultFailedException;
 import com.miaxis.postal.data.model.ExpressModel;
 import com.miaxis.postal.data.net.PostalApi;
 import com.miaxis.postal.data.net.ResponseEntity;
 import com.miaxis.postal.manager.AmapManager;
 import com.miaxis.postal.manager.DataCacheManager;
+import com.miaxis.postal.util.DateUtil;
 import com.miaxis.postal.util.FileUtil;
 import com.miaxis.postal.util.ValueUtil;
 
@@ -39,25 +42,29 @@ public class ExpressRepository {
      * ================================ 静态内部类单例 ================================
      **/
 
-    public boolean uploadLocalExpress(Express express, TempId tempId, Integer warnLogId, String sendName) throws IOException, MyException {
+    public void uploadLocalExpress(Express express, TempId tempId, Integer warnLogId, String sendName) throws IOException, MyException, NetResultFailedException {
         List<File> fileList = new ArrayList<>();
         for (String path : express.getPhotoPathList()) {
             fileList.add(new File(path));
         }
+        Courier courier = DataCacheManager.getInstance().getCourier();
         Response<ResponseEntity> execute = PostalApi.saveOrderFromAppSync(
+                courier.getOrgCode(),
+                courier.getOrgNode(),
                 tempId.getPersonId(),
                 tempId.getCheckId(),
                 warnLogId != null ? String.valueOf(warnLogId) : "",
-                String.valueOf(DataCacheManager.getInstance().getCourier().getCourierId()),
+                String.valueOf(courier.getCourierId()),
                 express.getSenderAddress(),
                 express.getSenderPhone(),
                 sendName,
                 express.getBarCode(),
                 express.getInfo(),
-                "",
-                "",
-                "",
-                "",
+                express.getWeight(),
+                express.getAddresseeName(),
+                express.getAddresseeAddress(),
+                express.getAddresseePhone(),
+                DateUtil.DATE_FORMAT.format(express.getPieceTime()),
                 "",
                 express.getLatitude(),
                 express.getLongitude(),
@@ -66,8 +73,14 @@ public class ExpressRepository {
         try {
             ResponseEntity body = execute.body();
             if (body != null) {
-                return TextUtils.equals(body.getCode(), ValueUtil.SUCCESS);
+                if (TextUtils.equals(body.getCode(), ValueUtil.SUCCESS)) {
+                    return;
+                } else {
+                    throw new NetResultFailedException("服务端返回，" + body.getMessage());
+                }
             }
+        } catch (NetResultFailedException e) {
+            throw e;
         } catch (Exception e) {
             e.printStackTrace();
             throw new MyException(e.getMessage());

@@ -1,4 +1,4 @@
-package com.miaxis.postal.data.entity;
+package com.miaxis.postal.data.bean;
 
 import org.zz.api.MXFaceInfoEx;
 

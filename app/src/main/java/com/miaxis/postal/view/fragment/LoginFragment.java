@@ -66,9 +66,9 @@ public class LoginFragment extends BaseViewModelFragment<FragmentLoginBinding, L
             }
         });
         addTextWatcher(binding.etPassword, binding.btnPasswordEye);
-        //TODO:
-//        viewModel.password.set("163.com");
-        viewModel.password.set("");
+        viewModel.username.set("17857318080");
+        viewModel.password.set("8080");
+//        viewModel.password.set("");
     }
 
     @Override
@@ -80,7 +80,7 @@ public class LoginFragment extends BaseViewModelFragment<FragmentLoginBinding, L
         if (result) {
             mListener.replaceFragment(HomeFragment.newInstance());
         } else {
-            ToastManager.toast("登录失败", ToastManager.INFO);
+            ToastManager.toast("密码错误", ToastManager.INFO);
         }
     };
 
@@ -110,7 +110,7 @@ public class LoginFragment extends BaseViewModelFragment<FragmentLoginBinding, L
 
     private boolean checkInput() {
         if (TextUtils.isEmpty(viewModel.username.get())) {
-            ToastManager.toast("请输入用户名", ToastManager.INFO);
+            ToastManager.toast("请输入手机号码", ToastManager.INFO);
             return false;
         } else if (TextUtils.isEmpty(viewModel.password.get())) {
             ToastManager.toast("请输入密码", ToastManager.INFO);
@@ -122,10 +122,10 @@ public class LoginFragment extends BaseViewModelFragment<FragmentLoginBinding, L
     private void addTextWatcher(final EditText editText, final ImageButton btnEye) {
         btnEye.setOnClickListener(v -> {
             if (editText.getInputType() == (InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD)){
-                btnEye.setImageResource(R.drawable.ic_visibility_off_blue);
+                btnEye.setImageResource(R.drawable.ic_visibility_off_white);
                 editText.setInputType(InputType.TYPE_CLASS_TEXT);
             } else {
-                btnEye.setImageResource(R.drawable.ic_visibility_blue);
+                btnEye.setImageResource(R.drawable.ic_visibility_white);
                 editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
             }
             editText.setSelection(editText.getText().toString().length());

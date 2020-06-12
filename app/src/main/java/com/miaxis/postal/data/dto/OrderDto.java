@@ -15,6 +15,7 @@ public class OrderDto implements Mapper<Order> {
     private String sendName;
     private String orderCode;
     private String orderInfo;
+    private String weight;
     private String lat;
     private String lng;
     private String addresseeName;
@@ -182,10 +183,18 @@ public class OrderDto implements Mapper<Order> {
         this.createTime = createTime;
     }
 
+    public String getWeight() {
+        return weight;
+    }
+
+    public void setWeight(String weight) {
+        this.weight = weight;
+    }
+
     @Override
     public Order transform() throws MyException {
         try {
-            return Order.OrderBuilder.anOrder()
+            return new Order.Builder()
                     .id(id)
                     .personId(personId)
                     .checkId(checkId)
@@ -194,6 +203,7 @@ public class OrderDto implements Mapper<Order> {
                     .senderName(sendName)
                     .orderCode(orderCode)
                     .orderInfo(orderInfo)
+                    .weight(weight)
                     .latitude(lat)
                     .longitude(lng)
                     .addresseeName(addresseeName)

@@ -185,6 +185,17 @@ public class FileUtil {
 
     }
 
+    public static byte[] bitmapToByteArray(Bitmap bitmap) {
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            return baos.toByteArray();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public static byte[] toByteArray(File f) throws Exception {
         BufferedInputStream in = null;
         try (ByteArrayOutputStream bos = new ByteArrayOutputStream((int) f.length())) {

@@ -6,6 +6,7 @@ import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
+import com.miaxis.postal.app.App;
 import com.miaxis.postal.data.exception.MyException;
 import com.miaxis.postal.data.exception.NetResultFailedException;
 import com.miaxis.postal.data.repository.DeviceRepository;
@@ -40,6 +41,7 @@ public class AmapManager implements AMapLocationListener {
                 aMapLocationClient.stopLocation();
                 listener.onOneLocation(address);
                 this.aMapLocation = aMapLocation;
+                heatBeat(aMapLocation);
             }
         });
         AMapLocationClientOption option = new AMapLocationClientOption();
@@ -77,13 +79,19 @@ public class AmapManager implements AMapLocationListener {
     public void onLocationChanged(AMapLocation aMapLocation) {
         if (aMapLocation != null && aMapLocation.getErrorCode() == 0) {
             this.aMapLocation = aMapLocation;
+            heatBeat(aMapLocation);
+        }
+    }
+
+    private void heatBeat(AMapLocation aMapLocation) {
+        App.getInstance().getThreadExecutor().execute(() -> {
             String deviceIMEI = ConfigManager.getInstance().getConfig().getDeviceIMEI();
             try {
                 DeviceRepository.getInstance().deviceHeartBeat(deviceIMEI, aMapLocation.getLatitude(), aMapLocation.getLongitude());
             } catch (IOException | MyException | NetResultFailedException e) {
                 e.printStackTrace();
             }
-        }
+        });
     }
 
     public AMapLocation getaMapLocation() {

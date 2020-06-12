@@ -37,14 +37,7 @@ public class IDCardRecord {
     private String sex;
     /** 民族 / 空值 / 国籍或所在地区代码 **/
     private String nation;
-    /** 指纹0 **/
-    private String fingerprint0;
-    /** 指纹0指位 **/
-    private String fingerprintPosition0;
-    /** 指纹1 **/
-    private String fingerprint1;
-    /** 指纹1指位 **/
-    private String fingerprintPosition1;
+
 
     /** 港澳台：通行证号码 **/
     private String passNumber;
@@ -62,9 +55,16 @@ public class IDCardRecord {
 
     /** 人证核验缓存 **/
     private String verifyId;
+
     private Date verifyTime;
+
     private boolean upload;
+
     private String verifyType; //1:人脸，2:指纹
+
+    private String personId;
+
+    private String checkId;
 
     /** 身份证照片Bitmap **/
     @Ignore
@@ -72,6 +72,18 @@ public class IDCardRecord {
     /** 人脸比对通过照片Bitmap **/
     @Ignore
     private Bitmap faceBitmap;
+    /** 指纹0 **/
+    @Ignore
+    private String fingerprint0;
+    /** 指纹0指位 **/
+    @Ignore
+    private String fingerprintPosition0;
+    /** 指纹1 **/
+    @Ignore
+    private String fingerprint1;
+    /** 指纹1指位 **/
+    @Ignore
+    private String fingerprintPosition1;
 
     public IDCardRecord() {
     }
@@ -89,10 +101,6 @@ public class IDCardRecord {
         setValidateEnd(builder.validateEnd);
         setSex(builder.sex);
         setNation(builder.nation);
-        setFingerprint0(builder.fingerprint0);
-        setFingerprintPosition0(builder.fingerprintPosition0);
-        setFingerprint1(builder.fingerprint1);
-        setFingerprintPosition1(builder.fingerprintPosition1);
         setPassNumber(builder.passNumber);
         setIssueCount(builder.issueCount);
         setChineseName(builder.chineseName);
@@ -103,8 +111,14 @@ public class IDCardRecord {
         setVerifyTime(builder.verifyTime);
         setUpload(builder.upload);
         setVerifyType(builder.verifyType);
+        setPersonId(builder.personId);
+        setCheckId(builder.checkId);
         setCardBitmap(builder.cardBitmap);
         setFaceBitmap(builder.faceBitmap);
+        setFingerprint0(builder.fingerprint0);
+        setFingerprintPosition0(builder.fingerprintPosition0);
+        setFingerprint1(builder.fingerprint1);
+        setFingerprintPosition1(builder.fingerprintPosition1);
     }
 
     public Long getId() {
@@ -331,6 +345,22 @@ public class IDCardRecord {
         this.faceBitmap = faceBitmap;
     }
 
+    public String getPersonId() {
+        return personId;
+    }
+
+    public void setPersonId(String personId) {
+        this.personId = personId;
+    }
+
+    public String getCheckId() {
+        return checkId;
+    }
+
+    public void setCheckId(String checkId) {
+        this.checkId = checkId;
+    }
+
     public static final class Builder {
         private Long id;
         private String cardType;
@@ -344,10 +374,6 @@ public class IDCardRecord {
         private String validateEnd;
         private String sex;
         private String nation;
-        private String fingerprint0;
-        private String fingerprintPosition0;
-        private String fingerprint1;
-        private String fingerprintPosition1;
         private String passNumber;
         private String issueCount;
         private String chineseName;
@@ -358,8 +384,14 @@ public class IDCardRecord {
         private Date verifyTime;
         private boolean upload;
         private String verifyType;
+        private String personId;
+        private String checkId;
         private Bitmap cardBitmap;
         private Bitmap faceBitmap;
+        private String fingerprint0;
+        private String fingerprintPosition0;
+        private String fingerprint1;
+        private String fingerprintPosition1;
 
         public Builder() {
         }
@@ -424,26 +456,6 @@ public class IDCardRecord {
             return this;
         }
 
-        public Builder fingerprint0(String val) {
-            fingerprint0 = val;
-            return this;
-        }
-
-        public Builder fingerprintPosition0(String val) {
-            fingerprintPosition0 = val;
-            return this;
-        }
-
-        public Builder fingerprint1(String val) {
-            fingerprint1 = val;
-            return this;
-        }
-
-        public Builder fingerprintPosition1(String val) {
-            fingerprintPosition1 = val;
-            return this;
-        }
-
         public Builder passNumber(String val) {
             passNumber = val;
             return this;
@@ -494,6 +506,16 @@ public class IDCardRecord {
             return this;
         }
 
+        public Builder personId(String val) {
+            personId = val;
+            return this;
+        }
+
+        public Builder checkId(String val) {
+            checkId = val;
+            return this;
+        }
+
         public Builder cardBitmap(Bitmap val) {
             cardBitmap = val;
             return this;
@@ -501,6 +523,26 @@ public class IDCardRecord {
 
         public Builder faceBitmap(Bitmap val) {
             faceBitmap = val;
+            return this;
+        }
+
+        public Builder fingerprint0(String val) {
+            fingerprint0 = val;
+            return this;
+        }
+
+        public Builder fingerprintPosition0(String val) {
+            fingerprintPosition0 = val;
+            return this;
+        }
+
+        public Builder fingerprint1(String val) {
+            fingerprint1 = val;
+            return this;
+        }
+
+        public Builder fingerprintPosition1(String val) {
+            fingerprintPosition1 = val;
             return this;
         }
 

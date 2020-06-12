@@ -53,7 +53,7 @@ public class HomeFragment extends BaseViewModelFragment<FragmentHomeBinding, Hom
     protected void initView() {
         binding.ivConfig.setOnClickListener(new OnLimitClickHelper(view -> mListener.replaceFragment(ConfigFragment.newInstance())));
         binding.clExpress.setOnClickListener(new OnLimitClickHelper(view -> mListener.replaceFragment(CardFragment.newInstance())));
-        binding.clRecord.setOnClickListener(new OnLimitClickHelper(view -> mListener.replaceFragment(LogisticsFragment.newInstance())));
+        binding.clRecord.setOnClickListener(new OnLimitClickHelper(view -> mListener.replaceFragment(RecordTabFragment.newInstance())));
         binding.tvEditPassword.setOnClickListener(new OnLimitClickHelper(view -> {
             EditPasswordDialogFragment.newInstance().show(getChildFragmentManager(), "EditPasswordDialogFragment");
         }));

@@ -21,13 +21,26 @@
             android:id="@+id/iv_background"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:src="@drawable/homepage_background"
+            android:src="@drawable/homepage_background_1"
             android:adjustViewBounds="true"
             android:scaleType="centerCrop"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toTopOf="@id/guideline_middle"/>
+
+<!--        <TextView-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="云南数字邮管\n人证核识别验系统"-->
+<!--            android:textColor="@color/white"-->
+<!--            android:textSize="32sp"-->
+<!--            android:textStyle="bold"-->
+<!--            android:gravity="center"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintTop_toTopOf="parent"-->
+<!--            app:layout_constraintBottom_toTopOf="@id/guideline_middle"/>-->
 
         <TextView
             android:id="@+id/tv_name"
@@ -126,7 +139,7 @@
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="0dp"
-                    android:text="快递"
+                    android:text="两项核验"
                     android:gravity="center|top"
                     android:textSize="16sp"
                     android:textColor="@color/main_color"

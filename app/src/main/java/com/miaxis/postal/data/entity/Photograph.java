@@ -6,6 +6,7 @@ public class Photograph {
 
     private Bitmap bitmap;
     private boolean select;
+    private boolean local;
 
     public Photograph() {
     }
@@ -13,6 +14,12 @@ public class Photograph {
     public Photograph(Bitmap bitmap, boolean select) {
         this.bitmap = bitmap;
         this.select = select;
+    }
+
+    public Photograph(Bitmap bitmap, boolean select, boolean local) {
+        this.bitmap = bitmap;
+        this.select = select;
+        this.local = local;
     }
 
     public Bitmap getBitmap() {
@@ -29,5 +36,13 @@ public class Photograph {
 
     public void setSelect(boolean select) {
         this.select = select;
+    }
+
+    public boolean isLocal() {
+        return local;
+    }
+
+    public void setLocal(boolean local) {
+        this.local = local;
     }
 }

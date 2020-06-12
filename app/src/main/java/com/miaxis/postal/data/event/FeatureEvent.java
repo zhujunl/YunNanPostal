@@ -1,6 +1,6 @@
 package com.miaxis.postal.data.event;
 
-import com.miaxis.postal.data.entity.MxRGBImage;
+import com.miaxis.postal.data.bean.MxRGBImage;
 
 import org.zz.api.MXFaceInfoEx;
 

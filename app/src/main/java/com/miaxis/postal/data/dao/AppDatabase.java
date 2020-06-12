@@ -21,7 +21,7 @@ import com.miaxis.postal.util.FileUtil;
 
 import java.io.File;
 
-@Database(entities = {Config.class, Courier.class, IDCardRecord.class, Express.class, WarnLog.class}, version = 4)
+@Database(entities = {Config.class, Courier.class, IDCardRecord.class, Express.class, WarnLog.class}, version = 1)
 @TypeConverters({StringListConverter.class, DateConverter.class})
 public abstract class AppDatabase extends RoomDatabase {
 
@@ -29,7 +29,7 @@ public abstract class AppDatabase extends RoomDatabase {
 
     private static AppDatabase instance;
 
-    public static AppDatabase getInstance () {
+    public static AppDatabase getInstance() {
         return instance;
     }
 
@@ -55,15 +55,14 @@ public abstract class AppDatabase extends RoomDatabase {
                 .build();
     }
 
-    private static Migration MIGRATION_1_2 = new Migration(1, 2) {
-        @Override
-        public void migrate(SupportSQLiteDatabase database) {
-//          旧表添加新的字段
-//          database.execSQL("ALTER TABLE User " + " ADD COLUMN book_id TEXT");
-//          创建新的数据表
-//          database.execSQL("CREATE TABLE IF NOT EXISTS `book` (`book_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT)");
-        }
-    };
+//    private static Migration MIGRATION_4_5 = new Migration(4, 5) {
+//        @Override
+//        public void migrate(SupportSQLiteDatabase database) {
+//            database.execSQL("ALTER TABLE Express ADD COLUMN addresseeName TEXT default ''");
+//            database.execSQL("ALTER TABLE Express ADD COLUMN addresseePhone TEXT default ''");
+//            database.execSQL("ALTER TABLE Express ADD COLUMN addresseeAddress TEXT default ''");
+//        }
+//    };
 
     public abstract ConfigDao configDao();
 

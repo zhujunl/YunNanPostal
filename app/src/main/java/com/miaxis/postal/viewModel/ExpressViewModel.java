@@ -102,6 +102,7 @@ public class ExpressViewModel extends BaseViewModel {
                     waitMessage.setValue("");
                     makeNewExpress(mCode);
                 }, throwable -> {
+                    waitMessage.postValue("");
                     throwable.printStackTrace();
                     removeRepeatEdit(code);
                 });

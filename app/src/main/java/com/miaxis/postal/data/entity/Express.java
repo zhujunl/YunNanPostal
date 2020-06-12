@@ -26,6 +26,10 @@ public class Express {
     private Date pieceTime;
     private boolean upload;
     private String info;
+    private String weight;
+    private String addresseeName;
+    private String addresseePhone;
+    private String addresseeAddress;
 
     @Ignore
     private List<Bitmap> photoList;
@@ -45,6 +49,10 @@ public class Express {
         setPieceTime(builder.pieceTime);
         setUpload(builder.upload);
         setInfo(builder.info);
+        setWeight(builder.weight);
+        setAddresseeName(builder.addresseeName);
+        setAddresseePhone(builder.addresseePhone);
+        setAddresseeAddress(builder.addresseeAddress);
         setPhotoList(builder.photoList);
     }
 
@@ -136,6 +144,38 @@ public class Express {
         this.info = info;
     }
 
+    public String getWeight() {
+        return weight;
+    }
+
+    public void setWeight(String weight) {
+        this.weight = weight;
+    }
+
+    public String getAddresseeName() {
+        return addresseeName;
+    }
+
+    public void setAddresseeName(String addresseeName) {
+        this.addresseeName = addresseeName;
+    }
+
+    public String getAddresseePhone() {
+        return addresseePhone;
+    }
+
+    public void setAddresseePhone(String addresseePhone) {
+        this.addresseePhone = addresseePhone;
+    }
+
+    public String getAddresseeAddress() {
+        return addresseeAddress;
+    }
+
+    public void setAddresseeAddress(String addresseeAddress) {
+        this.addresseeAddress = addresseeAddress;
+    }
+
     public List<Bitmap> getPhotoList() {
         return photoList;
     }
@@ -156,6 +196,10 @@ public class Express {
         private Date pieceTime;
         private boolean upload;
         private String info;
+        private String weight;
+        private String addresseeName;
+        private String addresseePhone;
+        private String addresseeAddress;
         private List<Bitmap> photoList;
 
         public Builder() {
@@ -213,6 +257,26 @@ public class Express {
 
         public Builder info(String val) {
             info = val;
+            return this;
+        }
+
+        public Builder weight(String val) {
+            weight = val;
+            return this;
+        }
+
+        public Builder addresseeName(String val) {
+            addresseeName = val;
+            return this;
+        }
+
+        public Builder addresseePhone(String val) {
+            addresseePhone = val;
+            return this;
+        }
+
+        public Builder addresseeAddress(String val) {
+            addresseeAddress = val;
             return this;
         }
 

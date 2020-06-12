@@ -7,16 +7,14 @@ import android.hardware.Camera;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
-import android.widget.TextView;
 
-import androidx.databinding.ObservableBoolean;
 import androidx.databinding.ObservableField;
 import androidx.lifecycle.MutableLiveData;
 
 import com.miaxis.postal.app.App;
 import com.miaxis.postal.bridge.SingleLiveEvent;
 import com.miaxis.postal.bridge.Status;
-import com.miaxis.postal.data.entity.PhotoFaceFeature;
+import com.miaxis.postal.data.bean.PhotoFaceFeature;
 import com.miaxis.postal.data.event.FaceRegisterEvent;
 import com.miaxis.postal.data.exception.MyException;
 import com.miaxis.postal.manager.CameraManager;
@@ -26,11 +24,8 @@ import com.miaxis.postal.manager.ToastManager;
 import org.greenrobot.eventbus.EventBus;
 
 import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Consumer;
-import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 public class FaceRegisterViewModel extends BaseViewModel {

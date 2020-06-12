@@ -96,25 +96,17 @@ public class PostalManager {
                 idCardRecord = idCardRecordRepository.loadIDCardRecord(warnLog.getVerifyId());
             }
             if (idCardRecord != null) {
-                TempId tempId = idCardRecordRepository.uploadIDCardRecord(idCardRecord);
-                Integer warnId = warnLogRepository.uploadWarnLog(warnLog, tempId);
+                TempId tempId = getIdCardRecordTempId(idCardRecord);
+                Integer warnId = getWarnId(warnLog, tempId);
                 List<Express> expressList = expressRepository.loadExpressByVerifyId(idCardRecord.getVerifyId());
                 for (Express express : expressList) {
                     expressRepository.uploadLocalExpress(express, tempId, warnId, idCardRecord.getName());
-//                    express.setUpload(true);
-//                    ExpressRepository.getInstance().updateExpress(express);
                     expressRepository.deleteExpress(express);
                 }
-//                idCardRecord.setUpload(true);
-//                idCardRecordRepository.updateIdCardRecord(idCardRecord);
                 idCardRecordRepository.deleteIDCardRecord(idCardRecord);
-//                warnLog.setUpload(true);
-//                warnLogRepository.updateWarnLog(warnLog);
                 warnLogRepository.deleteWarnLog(warnLog);
             } else {
                 warnLogRepository.uploadWarnLog(warnLog, null);
-//                warnLog.setUpload(true);
-//                warnLogRepository.updateWarnLog(warnLog);
                 warnLogRepository.deleteWarnLog(warnLog);
             }
         }
@@ -123,17 +115,38 @@ public class PostalManager {
     private void postalNormalRecord() throws MyException, IOException, NetResultFailedException {
         IDCardRecord idCardRecord = idCardRecordRepository.findOldestIDCardRecord();
         if (idCardRecord == null) throw new MyException("未找到待上传日志");
-        TempId tempId = idCardRecordRepository.uploadIDCardRecord(idCardRecord);
+        TempId tempId = getIdCardRecordTempId(idCardRecord);
         List<Express> expressList = expressRepository.loadExpressByVerifyId(idCardRecord.getVerifyId());
         for (Express express : expressList) {
             expressRepository.uploadLocalExpress(express, tempId, null, idCardRecord.getName());
-//            express.setUpload(true);
-//            ExpressRepository.getInstance().updateExpress(express);
             expressRepository.deleteExpress(express);
         }
-//        idCardRecord.setUpload(true);
-//        idCardRecordRepository.updateIdCardRecord(idCardRecord);
         idCardRecordRepository.deleteIDCardRecord(idCardRecord);
+    }
+
+    private TempId getIdCardRecordTempId(IDCardRecord idCardRecord) throws IOException, MyException, NetResultFailedException {
+        TempId tempId;
+        if (TextUtils.isEmpty(idCardRecord.getPersonId()) || TextUtils.isEmpty(idCardRecord.getCheckId())) {
+            tempId = idCardRecordRepository.uploadIDCardRecord(idCardRecord);
+            idCardRecord.setPersonId(tempId.getPersonId());
+            idCardRecord.setCheckId(tempId.getCheckId());
+            idCardRecordRepository.saveIdCardRecord(idCardRecord);
+        } else {
+            tempId = new TempId(idCardRecord.getPersonId(), idCardRecord.getCheckId());
+        }
+        return tempId;
+    }
+
+    private Integer getWarnId(WarnLog warnLog, TempId tempId) throws IOException, MyException, NetResultFailedException {
+        Integer warnId;
+        if (warnLog.getWarnId() == null) {
+            warnId = warnLogRepository.uploadWarnLog(warnLog, tempId);
+            warnLog.setWarnId(warnId);
+            warnLogRepository.saveWarnLog(warnLog);
+        } else {
+            warnId = warnLog.getWarnId();
+        }
+        return warnId;
     }
 
 }

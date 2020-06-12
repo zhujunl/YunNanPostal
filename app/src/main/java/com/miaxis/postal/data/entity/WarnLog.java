@@ -19,6 +19,8 @@ public class WarnLog {
     private String createTime;
     private boolean upload;
 
+    private Integer warnId;
+
     public WarnLog() {
     }
 
@@ -34,6 +36,7 @@ public class WarnLog {
         setExpressmanPhone(builder.expressmanPhone);
         setCreateTime(builder.createTime);
         setUpload(builder.upload);
+        setWarnId(builder.warnId);
     }
 
     public int getId() {
@@ -124,6 +127,14 @@ public class WarnLog {
         this.upload = upload;
     }
 
+    public Integer getWarnId() {
+        return warnId;
+    }
+
+    public void setWarnId(Integer warnId) {
+        this.warnId = warnId;
+    }
+
     public static final class Builder {
         private int id;
         private String verifyId;
@@ -136,6 +147,7 @@ public class WarnLog {
         private String expressmanPhone;
         private String createTime;
         private boolean upload;
+        private Integer warnId;
 
         public Builder() {
         }
@@ -192,6 +204,11 @@ public class WarnLog {
 
         public Builder upload(boolean val) {
             upload = val;
+            return this;
+        }
+
+        public Builder warnId(Integer val) {
+            warnId = val;
             return this;
         }
 

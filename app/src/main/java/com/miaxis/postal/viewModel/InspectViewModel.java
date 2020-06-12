@@ -23,7 +23,7 @@ import java.util.List;
 
 public class InspectViewModel extends BaseViewModel {
 
-    public static final int MAX_COUNT = 5;
+    public static final int MAX_COUNT = 1;
 
     public ObservableField<Express> express = new ObservableField<>();
     public MutableLiveData<List<Photograph>> photographList = new MutableLiveData<>(new ArrayList<>());
