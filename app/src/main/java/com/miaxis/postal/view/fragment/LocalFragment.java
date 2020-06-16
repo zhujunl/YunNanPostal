@@ -64,10 +64,15 @@ public class LocalFragment extends BaseViewModelFragment<FragmentLocalBinding, L
     @Override
     protected void initView() {
         initRecycleView();
-//        initSearchView();
 //        binding.ivBack.setOnClickListener(v -> onBackPressed());
         binding.srlLocal.setOnRefreshListener(this::refresh);
         binding.srlLocal.setColorSchemeResources(R.color.main_color,R.color.main_color_dark);
+//        viewModel.loadIdCardRecord();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
         viewModel.loadIdCardRecord();
     }
 

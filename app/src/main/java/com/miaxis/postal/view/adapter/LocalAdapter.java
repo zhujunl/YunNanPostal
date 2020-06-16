@@ -47,7 +47,7 @@ public class LocalAdapter extends BaseViewModelAdapter<Local, ItemLocalBinding, 
             holder.getBinding().tvUpload.setTextColor(item.getExpress().isUpload()
                     ? context.getResources().getColor(R.color.darkgreen)
                     : context.getResources().getColor(R.color.darkred));
-            if (item.getExpress() != null && item.getExpress().getPhotoList() != null && !item.getExpress().getPhotoList().isEmpty()) {
+            if (item.getExpress() != null && item.getExpress().getPhotoPathList() != null && !item.getExpress().getPhotoPathList().isEmpty()) {
                 RequestOptions options = RequestOptions.bitmapTransform(new RoundedCorners(30));
                 GlideApp.with(context)
                         .load(item.getExpress().getPhotoPathList().get(0))

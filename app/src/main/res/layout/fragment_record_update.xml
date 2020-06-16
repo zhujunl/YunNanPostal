@@ -168,6 +168,7 @@
                         android:layout_marginStart="10dp"
                         android:layout_marginEnd="20dp"
                         android:hint="请输入手机号码"
+                        android:inputType="phone"
                         android:background="@null"
                         android:maxLength="20"
                         android:singleLine="true"

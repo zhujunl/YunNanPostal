@@ -1,5 +1,6 @@
 package com.miaxis.postal.view.fragment;
 
+import android.content.res.Configuration;
 import android.text.TextUtils;
 import android.view.View;
 
@@ -104,6 +105,7 @@ public class InspectFragment extends BaseViewModelFragment<FragmentInspectBindin
              }
         }));
         binding.fabAlarm.setOnLongClickListener(alarmListener);
+        binding.etWeight.setRawInputType(Configuration.KEYBOARD_QWERTY);
         EventBus.getDefault().register(this);
     }
 

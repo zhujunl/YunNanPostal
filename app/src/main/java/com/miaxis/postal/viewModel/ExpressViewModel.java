@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
@@ -49,6 +50,8 @@ public class ExpressViewModel extends BaseViewModel {
     public MutableLiveData<String> repeatExpress = new SingleLiveEvent<>();
     public MutableLiveData<Boolean> saveFlag = new SingleLiveEvent<>();
     public MutableLiveData<Boolean> scanFlag = new SingleLiveEvent<>();
+
+    private volatile AtomicLong timeFilter = new AtomicLong(0L);
 
     public ExpressViewModel() {
     }
@@ -72,6 +75,8 @@ public class ExpressViewModel extends BaseViewModel {
     private ScanManager.OnScanListener listener = this::handlerScanCode;
 
     public void handlerScanCode(String code) {
+        if (System.currentTimeMillis() - timeFilter.get() < 2000) return;
+        timeFilter.set(System.currentTimeMillis());
         stopScan();
         waitMessage.setValue("扫描成功，开始校验");
         Disposable disposable = Observable.just(code)
@@ -98,8 +103,8 @@ public class ExpressViewModel extends BaseViewModel {
                 })
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(mCode -> {
-                    removeRepeatEdit(mCode);
                     waitMessage.setValue("");
+                    removeRepeatEdit(mCode);
                     makeNewExpress(mCode);
                 }, throwable -> {
                     waitMessage.postValue("");
@@ -352,7 +357,7 @@ public class ExpressViewModel extends BaseViewModel {
                             .expressmanId(courier.getCourierId())
                             .expressmanName(courier.getName())
                             .expressmanPhone(courier.getPhone())
-                            .createTime(DateUtil.DATE_FORMAT.format(new Date()))
+                            .createTime(new Date())
                             .upload(false)
                             .build();
                     WarnLogRepository.getInstance().saveWarnLog(warnLog);

@@ -117,7 +117,7 @@ public class FingerVerifyViewModel extends BaseViewModel {
                                 .expressmanId(courier.getCourierId())
                                 .expressmanName(courier.getName())
                                 .expressmanPhone(courier.getPhone())
-                                .createTime(DateUtil.DATE_FORMAT.format(new Date()))
+                                .createTime(new Date())
                                 .upload(false)
                                 .build();
                         WarnLogRepository.getInstance().saveWarnLog(warnLog);

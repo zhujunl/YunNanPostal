@@ -82,6 +82,8 @@ public interface PostalNet {
     @Multipart
     @POST("api/v1/person/savePersonFromApp")
     Call<ResponseEntity<TempIdDto>> savePersonFromAppSync(
+            @Part("orgCode") String orgCode,
+            @Part("orgNode") String orgNode,
             @Part("name") String name,
             @Part("nation") String nation,
             @Part("birthday") String birthday,
@@ -91,6 +93,7 @@ public interface PostalNet {
             @Part("signOrg") String signOrg,
             @Part("expireTime") String expireTime,
             @Part("verifyType") String verifyType,
+            @Part("checkTime") String  checkTime,
             @Part MultipartBody.Part checkFile,
             @Part MultipartBody.Part cardFile
     );
@@ -124,6 +127,8 @@ public interface PostalNet {
     @FormUrlEncoded
     @POST("api/v1/warn/saveWarnLog")
     Call<ResponseEntity<Integer>> uploadWarnLog(
+            @Field("orgCode") String orgCode,
+            @Field("orgNode") String orgNode,
             @Field("personId") String personId,
             @Field("checkId") String checkId,
             @Field("sendAddress") String sendAddress,
@@ -132,7 +137,8 @@ public interface PostalNet {
             @Field("sendPhone") String sendPhone,
             @Field("expressmanId") long expressmanId,
             @Field("deviceIMEI") String deviceIMEI,
-            @Field("expressmanName") String expressmanName
+            @Field("expressmanName") String expressmanName,
+            @Field("createTime") String createTime
     );
 
     @FormUrlEncoded

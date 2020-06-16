@@ -3,6 +3,7 @@ package com.miaxis.postal.data.repository;
 import android.text.TextUtils;
 
 import com.miaxis.postal.data.entity.Config;
+import com.miaxis.postal.data.entity.Courier;
 import com.miaxis.postal.data.entity.TempId;
 import com.miaxis.postal.data.entity.WarnLog;
 import com.miaxis.postal.data.exception.MyException;
@@ -11,6 +12,8 @@ import com.miaxis.postal.data.model.WarnLogModel;
 import com.miaxis.postal.data.net.PostalApi;
 import com.miaxis.postal.data.net.ResponseEntity;
 import com.miaxis.postal.manager.ConfigManager;
+import com.miaxis.postal.manager.DataCacheManager;
+import com.miaxis.postal.util.DateUtil;
 import com.miaxis.postal.util.ValueUtil;
 
 import java.io.IOException;
@@ -37,7 +40,10 @@ public class WarnLogRepository extends BaseRepository {
 
     public Integer uploadWarnLog(WarnLog warnLog, TempId tempId) throws MyException, IOException, NetResultFailedException {
         Config config = ConfigManager.getInstance().getConfig();
+        Courier courier = DataCacheManager.getInstance().getCourier();
         Response<ResponseEntity<Integer>> execute = PostalApi.uploadWarnLog(
+                courier.getOrgCode(),
+                courier.getOrgNode(),
                 tempId != null ? tempId.getPersonId() : "",
                 tempId != null ? tempId.getCheckId() : "",
                 warnLog.getSendAddress(),
@@ -46,7 +52,8 @@ public class WarnLogRepository extends BaseRepository {
                 warnLog.getSendPhone(),
                 warnLog.getExpressmanId(),
                 config.getDeviceIMEI(),
-                warnLog.getExpressmanName()).execute();
+                warnLog.getExpressmanName(),
+                DateUtil.DATE_FORMAT.format(warnLog.getCreateTime())).execute();
         try {
             ResponseEntity<Integer> body = execute.body();
             if (body != null) {

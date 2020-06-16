@@ -1,5 +1,6 @@
 package com.miaxis.postal.view.fragment;
 
+import android.content.res.Configuration;
 import android.text.TextUtils;
 import android.view.View;
 
@@ -76,6 +77,7 @@ public class RecordUpdateFragment extends BaseViewModelFragment<FragmentRecordUp
         viewModel.photographList.observe(this, photographObserver);
         binding.ivBack.setOnClickListener(v -> onBackPressed());
         binding.btnUpdate.setOnClickListener(new OnLimitClickHelper(confirmClickListener));
+        binding.etWeight.setRawInputType(Configuration.KEYBOARD_QWERTY);
         viewModel.showBarcodeImage(order.getOrderCode());
         viewModel.initOrder(order);
         EventBus.getDefault().register(this);

@@ -75,6 +75,7 @@ public class RecordTabFragment extends BaseViewModelFragment<FragmentRecordTabBi
                 tab.setText("联网查询");
             }
         }).attach();
+        binding.vpPager.setOffscreenPageLimit(1);
     }
 
     @Override

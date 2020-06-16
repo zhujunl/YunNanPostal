@@ -90,7 +90,7 @@ public class LocalViewModel extends BaseViewModel {
                     refreshing.setValue(Boolean.FALSE);
                     if (pageNum == 1) {
                         if (mLocalList.isEmpty()) {
-                            toast.setValue(ToastManager.getToastBody("本地暂无缓存日志", ToastManager.SUCCESS));
+//                            toast.setValue(ToastManager.getToastBody("本地暂无缓存日志", ToastManager.SUCCESS));
                         }
                         localList.setValue(mLocalList);
                     } else {

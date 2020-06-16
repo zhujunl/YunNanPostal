@@ -130,7 +130,7 @@ public class PostalManager {
             tempId = idCardRecordRepository.uploadIDCardRecord(idCardRecord);
             idCardRecord.setPersonId(tempId.getPersonId());
             idCardRecord.setCheckId(tempId.getCheckId());
-            idCardRecordRepository.saveIdCardRecord(idCardRecord);
+            idCardRecordRepository.updateIdCardRecord(idCardRecord);
         } else {
             tempId = new TempId(idCardRecord.getPersonId(), idCardRecord.getCheckId());
         }

@@ -3,6 +3,8 @@ package com.miaxis.postal.data.entity;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+import java.util.Date;
+
 @Entity
 public class WarnLog {
 
@@ -16,7 +18,7 @@ public class WarnLog {
     private long expressmanId;
     private String expressmanName;
     private String expressmanPhone;
-    private String createTime;
+    private Date createTime;
     private boolean upload;
 
     private Integer warnId;
@@ -111,11 +113,11 @@ public class WarnLog {
         this.expressmanPhone = expressmanPhone;
     }
 
-    public String getCreateTime() {
+    public Date getCreateTime() {
         return createTime;
     }
 
-    public void setCreateTime(String createTime) {
+    public void setCreateTime(Date createTime) {
         this.createTime = createTime;
     }
 
@@ -145,7 +147,7 @@ public class WarnLog {
         private long expressmanId;
         private String expressmanName;
         private String expressmanPhone;
-        private String createTime;
+        private Date createTime;
         private boolean upload;
         private Integer warnId;
 
@@ -197,7 +199,7 @@ public class WarnLog {
             return this;
         }
 
-        public Builder createTime(String val) {
+        public Builder createTime(Date val) {
             createTime = val;
             return this;
         }

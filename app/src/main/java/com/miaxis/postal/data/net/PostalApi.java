@@ -79,6 +79,8 @@ public class PostalApi extends BaseAPI {
     }
 
     public static Call<ResponseEntity<TempIdDto>> savePersonFromApp(
+            String orgCode,
+            String orgNode,
             String name,
             String nation,
             String birthday,
@@ -88,6 +90,7 @@ public class PostalApi extends BaseAPI {
             String signOrg,
             String expireTime,
             String verifyType,
+            String  checkTime,
             File checkFile,
             File cardFile) {
         MultipartBody.Part checkFileBody = null;
@@ -101,6 +104,8 @@ public class PostalApi extends BaseAPI {
             cardFileBody = MultipartBody.Part.createFormData("cardFile", cardFile.getName(), cardRequestFile);
         }
         return getPostalNetSync().savePersonFromAppSync(
+                orgCode,
+                orgNode,
                 name,
                 nation,
                 birthday,
@@ -110,6 +115,7 @@ public class PostalApi extends BaseAPI {
                 signOrg,
                 expireTime,
                 verifyType,
+                checkTime,
                 checkFileBody,
                 cardFileBody);
     }
@@ -165,6 +171,8 @@ public class PostalApi extends BaseAPI {
     }
 
     public static Call<ResponseEntity<Integer>> uploadWarnLog(
+            String orgCode,
+            String orgNode,
             String personId,
             String checkId,
             String sendAddress,
@@ -173,8 +181,11 @@ public class PostalApi extends BaseAPI {
             String sendPhone,
             long expressmanId,
             String deviceIMEI,
-            String expressmanName) {
+            String expressmanName,
+            String createTime) {
         return getPostalNetSync().uploadWarnLog(
+                orgCode,
+                orgNode,
                 personId,
                 checkId,
                 sendAddress,
@@ -183,7 +194,8 @@ public class PostalApi extends BaseAPI {
                 sendPhone,
                 expressmanId,
                 deviceIMEI,
-                expressmanName);
+                expressmanName,
+                createTime);
     }
 
     public static Call<ResponseEntity<UpdateDto>> updateApp(String versionName) {

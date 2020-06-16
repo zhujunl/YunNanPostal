@@ -66,9 +66,9 @@ public class LoginFragment extends BaseViewModelFragment<FragmentLoginBinding, L
             }
         });
         addTextWatcher(binding.etPassword, binding.btnPasswordEye);
-        viewModel.username.set("17857318080");
-        viewModel.password.set("8080");
-//        viewModel.password.set("");
+//        viewModel.username.set("17857318080");
+//        viewModel.password.set("8080");
+        viewModel.password.set("");
     }
 
     @Override

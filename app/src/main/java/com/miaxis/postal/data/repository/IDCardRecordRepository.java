@@ -3,6 +3,7 @@ package com.miaxis.postal.data.repository;
 import android.text.TextUtils;
 
 import com.miaxis.postal.data.dto.TempIdDto;
+import com.miaxis.postal.data.entity.Courier;
 import com.miaxis.postal.data.entity.IDCardRecord;
 import com.miaxis.postal.data.entity.TempId;
 import com.miaxis.postal.data.exception.MyException;
@@ -10,6 +11,8 @@ import com.miaxis.postal.data.exception.NetResultFailedException;
 import com.miaxis.postal.data.model.IDCardRecordModel;
 import com.miaxis.postal.data.net.PostalApi;
 import com.miaxis.postal.data.net.ResponseEntity;
+import com.miaxis.postal.manager.DataCacheManager;
+import com.miaxis.postal.util.DateUtil;
 import com.miaxis.postal.util.FileUtil;
 import com.miaxis.postal.util.ValueUtil;
 
@@ -39,7 +42,10 @@ public class IDCardRecordRepository {
     public TempId uploadIDCardRecord(IDCardRecord idCardRecord) throws MyException, IOException, NetResultFailedException {
         File cardFile = !TextUtils.isEmpty(idCardRecord.getCardPicture()) ? new File(idCardRecord.getCardPicture()) : null;
         File faceFile = !TextUtils.isEmpty(idCardRecord.getFacePicture()) ? new File(idCardRecord.getFacePicture()) : null;
+        Courier courier = DataCacheManager.getInstance().getCourier();
         Response<ResponseEntity<TempIdDto>> execute = PostalApi.savePersonFromApp(
+                courier.getOrgCode(),
+                courier.getOrgNode(),
                 idCardRecord.getName(),
                 idCardRecord.getNation(),
                 idCardRecord.getBirthday(),
@@ -49,6 +55,7 @@ public class IDCardRecordRepository {
                 idCardRecord.getIssuingAuthority(),
                 idCardRecord.getValidateStart(),
                 idCardRecord.getVerifyType(),
+                DateUtil.DATE_FORMAT.format(idCardRecord.getVerifyTime()),
                 faceFile,
                 cardFile).execute();
         try {
