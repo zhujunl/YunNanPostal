@@ -6,6 +6,8 @@ import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import com.miaxis.postal.data.entity.Express;
 import com.miaxis.postal.data.entity.IDCardRecord;
 import com.miaxis.postal.data.entity.TempId;
@@ -18,6 +20,7 @@ import com.miaxis.postal.data.repository.WarnLogRepository;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
@@ -45,8 +48,9 @@ public class PostalManager {
     private HandlerThread handlerThread;
     private Handler handler;
 
-    private volatile boolean uploading = false;
-    
+    private volatile AtomicBoolean uploading = new AtomicBoolean(false);
+    private volatile AtomicBoolean updating = new AtomicBoolean(false);
+
     private ExpressRepository expressRepository = ExpressRepository.getInstance();
     private IDCardRecordRepository idCardRecordRepository = IDCardRecordRepository.getInstance();
     private WarnLogRepository warnLogRepository = WarnLogRepository.getInstance();
@@ -65,14 +69,28 @@ public class PostalManager {
     }
 
     public void startPostal() {
-        if (uploading) return;
+        if (uploading.get()) return;
         handler.removeMessages(0);
         handler.sendMessage(handler.obtainMessage(0));
     }
 
+    public interface OnPostalInterruptListener {
+        void onPostalInterrupt();
+    }
+
+    public void stopPostal(@NonNull OnPostalInterruptListener listener) {
+        handler.removeMessages(0);
+        updating.set(true);
+        if (!uploading.get()) {
+            listener.onPostalInterrupt();
+        } else {
+
+        }
+    }
+
     public void postal() {
         try {
-            uploading = true;
+            uploading.set(true);
             handler.removeMessages(0);
             if (warnLogRepository.loadWarnLogCount() > 0) {
                 postalWarnRecord();
@@ -84,7 +102,7 @@ public class PostalManager {
         } catch (Exception e) {
             Log.e("asd", "" + e.getMessage());
             handler.sendMessageDelayed(handler.obtainMessage(0), 30 * 60 * 1000);
-            uploading = false;
+            uploading.set(false);
         }
     }
 

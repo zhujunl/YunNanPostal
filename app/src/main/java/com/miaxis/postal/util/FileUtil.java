@@ -263,6 +263,15 @@ public class FileUtil {
 //        return bitmap;
     }
 
+    public static Bitmap loadBitmap(String filePath) {
+        try {
+            return BitmapFactory.decodeFile(filePath);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     public static Bitmap compressUri(Context context, Uri imageUri) {
         String[] filePathColumns = {MediaStore.Images.Media.DATA};
         Cursor c = context.getContentResolver().query(imageUri, filePathColumns, null, null, null);

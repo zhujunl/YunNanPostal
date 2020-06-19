@@ -1,28 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    xmlns:viewadapter="http://schemas.android.com/tools">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:viewadapter="http://schemas.android.com/apk/res-auto">
 
     <data>
 
         <variable
             name="viewModel"
-            type="com.miaxis.postal.viewModel.RecordUpdateViewModel" />
+            type="com.miaxis.postal.viewModel.RecordLocalUpdateViewModel" />
 
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".view.fragment.RecordUpdateFragment">
+        tools:context=".view.fragment.RecordLocalUpdateFragment">
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:background="@color/main_color"
             android:gravity="center"
-            android:text="订单详情"
+            android:text="本地订单详情"
             android:textColor="@color/white"
             android:textSize="20sp"
             app:layout_constraintBottom_toBottomOf="@id/iv_back"
@@ -62,61 +62,61 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/cl_verify"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="20dp"
-                android:layout_marginBottom="10dp"
-                android:background="@drawable/rounded_shape_main_color"
-                app:layout_constraintDimensionRatio="2.5:1"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0">
-
-                <TextView
-                    android:id="@+id/tv_verify_title"
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/cl_verify"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="0dp"
                     android:layout_marginStart="20dp"
-                    android:layout_marginTop="5dp"
-                    android:text="核验信息"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <ImageView
-                    android:id="@+id/iv_card_picture"
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:adjustViewBounds="true"
-                    android:scaleType="fitCenter"
-                    android:layout_margin="10dp"
-                    app:layout_constraintWidth_percent="0.3"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toStartOf="@id/iv_face_picture"
-                    app:layout_constraintTop_toBottomOf="@id/tv_verify_title"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    viewadapter:imageSource="@{viewModel.orderData.cardImage}"/>
-
-                <ImageView
-                    android:id="@+id/iv_face_picture"
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:adjustViewBounds="true"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/ic_fingerprint_blue"
-                    android:layout_margin="10dp"
-                    app:layout_constraintWidth_percent="0.3"
-                    app:layout_constraintStart_toEndOf="@id/iv_card_picture"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="20dp"
+                    android:layout_marginBottom="10dp"
+                    android:background="@drawable/rounded_shape_main_color"
+                    app:layout_constraintDimensionRatio="2.5:1"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/tv_verify_title"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    viewadapter:imageSource="@{viewModel.orderData.checkImage}"/>
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0">
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                    <TextView
+                        android:id="@+id/tv_verify_title"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginTop="5dp"
+                        android:text="核验信息"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <ImageView
+                        android:id="@+id/iv_card_picture"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:adjustViewBounds="true"
+                        android:scaleType="fitCenter"
+                        android:layout_margin="10dp"
+                        app:layout_constraintWidth_percent="0.3"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/iv_face_picture"
+                        app:layout_constraintTop_toBottomOf="@id/tv_verify_title"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        viewadapter:imageSource="@{viewModel.idCardRecord.cardPicture}"/>
+
+                    <ImageView
+                        android:id="@+id/iv_face_picture"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:adjustViewBounds="true"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/ic_fingerprint_blue"
+                        android:layout_margin="10dp"
+                        app:layout_constraintWidth_percent="0.3"
+                        app:layout_constraintStart_toEndOf="@id/iv_card_picture"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/tv_verify_title"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        viewadapter:imageSource="@{viewModel.idCardRecord.facePicture}"/>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/cl_sender"
@@ -155,7 +155,7 @@
                         android:gravity="center|start"
                         android:editable="false"
                         android:focusable="false"
-                        android:text="@={viewModel.orderData.senderName}"
+                        android:text="@={viewModel.idCardRecord.name}"
                         app:layout_constraintBottom_toTopOf="@id/et_sender_address"
                         app:layout_constraintEnd_toStartOf="@id/et_sender_phone"
                         app:layout_constraintStart_toStartOf="parent"
@@ -169,13 +169,12 @@
                         android:layout_marginEnd="20dp"
                         android:hint="请输入手机号码"
                         android:inputType="phone"
-                        android:digits="0123456789"
                         android:background="@null"
                         android:maxLength="20"
                         android:singleLine="true"
                         android:textColor="@color/darkgray"
                         android:textSize="14sp"
-                        android:text="@={viewModel.orderData.senderPhone}"
+                        android:text="@={viewModel.express.senderPhone}"
                         app:layout_constraintBottom_toTopOf="@id/et_sender_address"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@id/et_sender_name"
@@ -193,7 +192,7 @@
                         android:singleLine="true"
                         android:textColor="@color/darkgray"
                         android:textSize="14sp"
-                        android:text="@={viewModel.orderData.senderAddress}"
+                        android:text="@={viewModel.express.senderAddress}"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -236,7 +235,7 @@
                         android:singleLine="true"
                         android:textColor="@color/darkgray"
                         android:textSize="14sp"
-                        android:text="@={viewModel.orderData.addresseeName}"
+                        android:text="@={viewModel.express.addresseeName}"
                         app:layout_constraintBottom_toTopOf="@id/et_addressee_address"
                         app:layout_constraintEnd_toStartOf="@id/et_addressee_phone"
                         app:layout_constraintStart_toStartOf="parent"
@@ -251,12 +250,11 @@
                         android:hint="请输入手机号码"
                         android:background="@null"
                         android:inputType="phone"
-                        android:digits="0123456789"
                         android:maxLength="20"
                         android:singleLine="true"
                         android:textColor="@color/darkgray"
                         android:textSize="14sp"
-                        android:text="@={viewModel.orderData.addresseePhone}"
+                        android:text="@={viewModel.express.addresseePhone}"
                         app:layout_constraintBottom_toTopOf="@id/et_addressee_address"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@id/et_addressee_name"
@@ -274,7 +272,7 @@
                         android:singleLine="true"
                         android:textColor="@color/darkgray"
                         android:textSize="14sp"
-                        android:text="@={viewModel.orderData.addresseeAddress}"
+                        android:text="@={viewModel.express.addresseeAddress}"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -301,7 +299,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center|top"
                     android:textSize="14sp"
-                    android:text="@{viewModel.orderData.orderCode}"
+                    android:text="@{viewModel.express.barCode}"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/iv_barcode" />
@@ -346,7 +344,7 @@
                         android:hint="请输入物品名称及描述"
                         android:textColor="@color/darkgray"
                         android:textSize="14sp"
-                        android:text="@={viewModel.orderData.orderInfo}"
+                        android:text="@={viewModel.express.info}"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintHorizontal_bias="0"
@@ -403,7 +401,7 @@
                         android:textSize="14sp"
                         android:background="@null"
                         android:hint="请输入物品重量"
-                        android:text="@={viewModel.orderData.weight}"
+                        android:text="@={viewModel.express.weight}"
                         app:layout_constraintHorizontal_bias="0"
                         app:layout_constraintWidth_percent="0.75"
                         app:layout_constraintEnd_toEndOf="parent"

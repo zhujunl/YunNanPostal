@@ -115,9 +115,19 @@ public class ExpressViewModel extends BaseViewModel {
 
     private void removeRepeatEdit(String code) {
         String phoneStr = phone.get();
-        if (phoneStr != null && phoneStr.contains(code)) {
-            phoneStr = phoneStr.replace(code, "");
-            phone.set(phoneStr);
+        if (!TextUtils.isEmpty(phoneStr)) {
+            String phoneRegex = code.replaceAll("[^0-9.]", "");
+            if (phoneStr.contains(phoneRegex)) {
+                phoneStr = phoneStr.replace(phoneRegex, "");
+                phone.set(phoneStr);
+            }
+        }
+        String addressStr = address.get();
+        if (!TextUtils.isEmpty(addressStr)) {
+            if (addressStr.contains(code)) {
+                addressStr = addressStr.replace(code, "");
+                address.set(addressStr);
+            }
         }
     }
 

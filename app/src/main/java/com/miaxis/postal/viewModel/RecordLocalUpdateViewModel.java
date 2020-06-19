@@ -1,36 +1,27 @@
 package com.miaxis.postal.viewModel;
 
 import android.graphics.Bitmap;
-import android.text.TextUtils;
 
 import androidx.lifecycle.MutableLiveData;
 
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.FutureTarget;
 import com.miaxis.postal.app.App;
-import com.miaxis.postal.bridge.GlideApp;
 import com.miaxis.postal.bridge.SingleLiveEvent;
-import com.miaxis.postal.data.entity.Order;
+import com.miaxis.postal.data.entity.Express;
+import com.miaxis.postal.data.entity.IDCardRecord;
 import com.miaxis.postal.data.entity.Photograph;
-import com.miaxis.postal.data.repository.OrderRepository;
 import com.miaxis.postal.util.BarcodeUtil;
+import com.miaxis.postal.util.FileUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
-import io.reactivex.ObservableOnSubscribe;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Consumer;
-import io.reactivex.schedulers.Schedulers;
-
-public class RecordUpdateViewModel extends BaseViewModel {
+public class RecordLocalUpdateViewModel extends BaseViewModel {
 
     public static final int MAX_COUNT = 1;
 
-    public MutableLiveData<Order> orderData = new MutableLiveData<>(null);
+    public MutableLiveData<IDCardRecord> idCardRecord = new MutableLiveData<>(null);
+    public MutableLiveData<Express> express = new MutableLiveData<>(null);
     public MutableLiveData<List<Photograph>> photographList = new MutableLiveData<>(new ArrayList<>());
 
     public MutableLiveData<Boolean> orderCodeImageUpdate = new SingleLiveEvent<>();
@@ -38,13 +29,14 @@ public class RecordUpdateViewModel extends BaseViewModel {
 
     public Bitmap orderCodeBitmapCache = null;
 
-    public RecordUpdateViewModel() {
+    public RecordLocalUpdateViewModel() {
     }
 
-    public void initOrder(Order order) {
-        if (orderData.getValue() == null) {
-            orderData.setValue(order);
-            initOrderPhoto(order);
+    public void initData(IDCardRecord mIdCardRecord, Express mExpress) {
+        if (idCardRecord.getValue() == null && express.getValue() == null) {
+            idCardRecord.setValue(mIdCardRecord);
+            express.setValue(mExpress);
+            initExpressPhoto(mExpress);
         }
     }
 
@@ -68,28 +60,15 @@ public class RecordUpdateViewModel extends BaseViewModel {
         }
     }
 
-    private void initOrderPhoto(Order order) {
+    private void initExpressPhoto(Express express) {
         App.getInstance().getThreadExecutor().execute(() -> {
-            for (String url : order.getImageList()) {
-                try {
-                    Bitmap bitmap = downloadPicture(url);
+            for (String filePath : express.getPhotoPathList()) {
+                Bitmap bitmap = FileUtil.loadBitmap(filePath);
+                if (bitmap != null) {
                     addPhotograph(bitmap);
-                } catch (ExecutionException | InterruptedException e) {
-                    e.printStackTrace();
                 }
             }
         });
-    }
-
-    private Bitmap downloadPicture(String url) throws ExecutionException, InterruptedException {
-        if (TextUtils.isEmpty(url)) return null;
-        FutureTarget<Bitmap> futureTarget = GlideApp.with(App.getInstance().getApplicationContext())
-                .asBitmap()
-                .load(url + "?" + System.currentTimeMillis())
-                .skipMemoryCache(true)
-                .diskCacheStrategy(DiskCacheStrategy.NONE)
-                .submit();
-        return futureTarget.get();
     }
 
     public void addPhotograph(Bitmap bitmap) {
@@ -148,41 +127,6 @@ public class RecordUpdateViewModel extends BaseViewModel {
             }
         }
         return selectList;
-    }
-
-    public boolean isPhotoUpdate() {
-        for (Photograph photograph : getPhotographList()) {
-            if (!photograph.isLocal()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public void updateOrder() {
-        Order value = orderData.getValue();
-        if (value == null) return;
-        waitMessage.setValue("上传中，请稍后...");
-        Observable.create((ObservableOnSubscribe<Boolean>) emitter -> {
-            List<Bitmap> bitmapList;
-            if (isPhotoUpdate()) {
-                bitmapList = getSelectList();
-            } else {
-                bitmapList = new ArrayList<>();
-            }
-            OrderRepository.getInstance().updateOrderFromApp(value, bitmapList);
-            emitter.onNext(Boolean.TRUE);
-        })
-                .subscribeOn(Schedulers.from(App.getInstance().getThreadExecutor()))
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(result -> {
-                    waitMessage.setValue("");
-                    resultMessage.setValue("修改成功");
-                    updateResult.setValue(Boolean.TRUE);
-                }, throwable -> {
-                    waitMessage.setValue("");
-                    resultMessage.setValue(handleError(throwable));
-                });
     }
 
 }
