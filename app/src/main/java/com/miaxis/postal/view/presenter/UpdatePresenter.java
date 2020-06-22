@@ -102,7 +102,8 @@ public class UpdatePresenter {
                 .content(
                         "版本名称：" + update.getVersionCode() + "_" + update.getVersionName() + "\n"
                         + "更新时间：" + update.getUpdateTime() + "\n"
-                        + "更新内容：\n" + content
+                        + "更新内容：\n" + content + "\n"
+                        + "\n请在更新前确认本地信息已上传完成"
                 )
                 .positiveText("更新")
                 .onPositive((dialog, which) -> {

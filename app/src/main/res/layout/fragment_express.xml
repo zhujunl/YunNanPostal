@@ -248,6 +248,28 @@
             app:layout_constraintTop_toBottomOf="@id/cl_input" />
 
         <Button
+            android:id="@+id/btn_draft"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="存入草稿箱"
+            android:textSize="18sp"
+            android:textColor="@color/white"
+            android:background="@drawable/button_blue_background_right_angle"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/v_btn_line"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <View
+            android:id="@+id/v_btn_line"
+            android:layout_width="1dp"
+            android:layout_height="0dp"
+            android:background="@color/white"
+            app:layout_constraintStart_toEndOf="@id/btn_draft"
+            app:layout_constraintEnd_toStartOf="@id/btn_submit"
+            app:layout_constraintTop_toTopOf="@id/btn_draft"
+            app:layout_constraintBottom_toBottomOf="@id/btn_draft"/>
+
+        <Button
             android:id="@+id/btn_submit"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -255,7 +277,7 @@
             android:textSize="18sp"
             android:textColor="@color/white"
             android:background="@drawable/button_blue_background_right_angle"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="@id/v_btn_line"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"/>
 

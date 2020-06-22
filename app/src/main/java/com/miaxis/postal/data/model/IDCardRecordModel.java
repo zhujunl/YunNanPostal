@@ -28,4 +28,8 @@ public class IDCardRecordModel {
         return AppDatabase.getInstance().idCardRecordDao().findOldestIDCardRecord();
     }
 
+    public static List<IDCardRecord> loadDraftIDCardRecordByPage(int pageNum, int pageSize) {
+        return AppDatabase.getInstance().idCardRecordDao().loadDraftIDCardRecordByPage(pageNum, pageSize);
+    }
+
 }

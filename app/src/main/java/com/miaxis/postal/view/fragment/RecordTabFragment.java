@@ -57,6 +57,8 @@ public class RecordTabFragment extends BaseViewModelFragment<FragmentRecordTabBi
             @Override
             public Fragment createFragment(int position) {
                 if (position == 0) {
+                    return DraftFragment.newInstance();
+                } else if (position == 1) {
                     return LocalFragment.newInstance();
                 } else {
                     return RecordSearchFragment.newInstance();
@@ -65,11 +67,13 @@ public class RecordTabFragment extends BaseViewModelFragment<FragmentRecordTabBi
 
             @Override
             public int getItemCount() {
-                return 2;
+                return 3;
             }
         });
         new TabLayoutMediator(binding.tlPager, binding.vpPager, (tab, position) -> {
             if (position == 0) {
+                tab.setText("草稿箱");
+            } else if (position == 1) {
                 tab.setText("未上传订单");
             } else {
                 tab.setText("联网查询");

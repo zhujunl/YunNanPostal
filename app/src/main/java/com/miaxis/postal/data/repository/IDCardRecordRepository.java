@@ -56,6 +56,7 @@ public class IDCardRecordRepository {
                 idCardRecord.getValidateStart(),
                 idCardRecord.getVerifyType(),
                 DateUtil.DATE_FORMAT.format(idCardRecord.getVerifyTime()),
+                idCardRecord.getManualType(),
                 faceFile,
                 cardFile).execute();
         try {
@@ -113,10 +114,14 @@ public class IDCardRecordRepository {
         if (!TextUtils.isEmpty(idCardRecord.getCardPicture())) {
             FileUtil.deleteImg(idCardRecord.getCardPicture());
         }
-        if (!TextUtils.isEmpty(idCardRecord.getCardPicture())) {
+        if (!TextUtils.isEmpty(idCardRecord.getFacePicture())) {
             FileUtil.deleteImg(idCardRecord.getFacePicture());
         }
         IDCardRecordModel.deleteIDCardRecord(idCardRecord);
+    }
+
+    public List<IDCardRecord> loadDraftIDCardRecordByPage(int pageNum, int pageSize) {
+        return IDCardRecordModel.loadDraftIDCardRecordByPage(pageNum, pageSize);
     }
 
 }

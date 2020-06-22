@@ -30,9 +30,12 @@ public class Express {
     private String addresseeName;
     private String addresseePhone;
     private String addresseeAddress;
+    private boolean draft;
 
     @Ignore
     private List<Bitmap> photoList;
+    @Ignore
+    private boolean complete;
 
     public Express() {
     }
@@ -53,7 +56,9 @@ public class Express {
         setAddresseeName(builder.addresseeName);
         setAddresseePhone(builder.addresseePhone);
         setAddresseeAddress(builder.addresseeAddress);
+        setDraft(builder.draft);
         setPhotoList(builder.photoList);
+        setComplete(builder.complete);
     }
 
     public Long getId() {
@@ -184,6 +189,22 @@ public class Express {
         this.photoList = photoList;
     }
 
+    public boolean isDraft() {
+        return draft;
+    }
+
+    public void setDraft(boolean draft) {
+        this.draft = draft;
+    }
+
+    public boolean isComplete() {
+        return complete;
+    }
+
+    public void setComplete(boolean complete) {
+        this.complete = complete;
+    }
+
     public static final class Builder {
         private Long id;
         private String barCode;
@@ -200,7 +221,9 @@ public class Express {
         private String addresseeName;
         private String addresseePhone;
         private String addresseeAddress;
+        private boolean draft;
         private List<Bitmap> photoList;
+        private boolean complete;
 
         public Builder() {
         }
@@ -280,8 +303,18 @@ public class Express {
             return this;
         }
 
+        public Builder draft(boolean val) {
+            draft = val;
+            return this;
+        }
+
         public Builder photoList(List<Bitmap> val) {
             photoList = val;
+            return this;
+        }
+
+        public Builder complete(boolean val) {
+            complete = val;
             return this;
         }
 

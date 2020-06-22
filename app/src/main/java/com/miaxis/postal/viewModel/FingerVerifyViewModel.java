@@ -15,6 +15,7 @@ import com.miaxis.postal.data.entity.Courier;
 import com.miaxis.postal.data.entity.IDCardRecord;
 import com.miaxis.postal.data.entity.WarnLog;
 import com.miaxis.postal.data.repository.IDCardRecordRepository;
+import com.miaxis.postal.data.repository.IDCardRepository;
 import com.miaxis.postal.data.repository.WarnLogRepository;
 import com.miaxis.postal.manager.AmapManager;
 import com.miaxis.postal.manager.DataCacheManager;
@@ -84,6 +85,7 @@ public class FingerVerifyViewModel extends BaseViewModel {
                     }
                     if (result) {
                         hint.set("比对成功");
+                        IDCardRepository.getInstance().addNewIDCard(idCardRecord);
                         fingerResultFlag.postValue(Boolean.TRUE);
                         return;
                     }

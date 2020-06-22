@@ -15,13 +15,14 @@ import com.miaxis.postal.data.converter.StringListConverter;
 import com.miaxis.postal.data.entity.Config;
 import com.miaxis.postal.data.entity.Courier;
 import com.miaxis.postal.data.entity.Express;
+import com.miaxis.postal.data.entity.IDCard;
 import com.miaxis.postal.data.entity.IDCardRecord;
 import com.miaxis.postal.data.entity.WarnLog;
 import com.miaxis.postal.util.FileUtil;
 
 import java.io.File;
 
-@Database(entities = {Config.class, Courier.class, IDCardRecord.class, Express.class, WarnLog.class}, version = 6)
+@Database(entities = {Config.class, Courier.class, IDCardRecord.class, Express.class, WarnLog.class, IDCard.class}, version = 8)
 @TypeConverters({StringListConverter.class, DateConverter.class})
 public abstract class AppDatabase extends RoomDatabase {
 
@@ -73,5 +74,7 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract ExpressDao expressDao();
 
     public abstract WarnLogDao warnLogDao();
+
+    public abstract IDCardDao idCardDao();
 
 }

@@ -16,6 +16,7 @@ import com.miaxis.postal.data.bean.PhotoFaceFeature;
 import com.miaxis.postal.data.entity.WarnLog;
 import com.miaxis.postal.data.exception.MyException;
 import com.miaxis.postal.data.repository.IDCardRecordRepository;
+import com.miaxis.postal.data.repository.IDCardRepository;
 import com.miaxis.postal.data.repository.WarnLogRepository;
 import com.miaxis.postal.manager.AmapManager;
 import com.miaxis.postal.manager.CameraManager;
@@ -102,6 +103,7 @@ public class FaceVerifyViewModel extends BaseViewModel {
                     stopFaceVerify();
                     IDCardRecord value = idCardRecordLiveData.getValue();
                     if (value != null) {
+                        IDCardRepository.getInstance().addNewIDCard(value);
                         value.setFaceBitmap(header);
                         value.setVerifyTime(new Date());
                         verifyFlag.postValue(value);

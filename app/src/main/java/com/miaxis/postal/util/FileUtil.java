@@ -35,6 +35,7 @@ public class FileUtil {
     public static final String FACE_IMAGE_PATH = MAIN_PATH + File.separator + "recordImage";
     public static final String FACE_STOREHOUSE_PATH = MAIN_PATH + File.separator + "faceStorehouse";
     public static final String ORDER_STOREHOUSE_PATH = MAIN_PATH + File.separator + "orderStorehouse";
+    public static final String LOCAL_STOREHOUSE_PATH = MAIN_PATH + File.separator + "localStorehouse";
 
     public static void initDirectory() {
         File path = new File(FileUtil.PATH);
@@ -54,6 +55,10 @@ public class FileUtil {
             path.mkdirs();
         }
         path = new File(FileUtil.ORDER_STOREHOUSE_PATH);
+        if (!path.exists()) {
+            path.mkdirs();
+        }
+        path = new File(FileUtil.LOCAL_STOREHOUSE_PATH);
         if (!path.exists()) {
             path.mkdirs();
         }

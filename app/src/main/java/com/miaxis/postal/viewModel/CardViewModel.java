@@ -8,8 +8,10 @@ import com.miaxis.postal.app.App;
 import com.miaxis.postal.bridge.SingleLiveEvent;
 import com.miaxis.postal.bridge.Status;
 import com.miaxis.postal.data.entity.Courier;
+import com.miaxis.postal.data.entity.IDCard;
 import com.miaxis.postal.data.entity.IDCardRecord;
 import com.miaxis.postal.data.entity.WarnLog;
+import com.miaxis.postal.data.repository.IDCardRepository;
 import com.miaxis.postal.data.repository.WarnLogRepository;
 import com.miaxis.postal.manager.AmapManager;
 import com.miaxis.postal.manager.CardManager;
@@ -18,7 +20,10 @@ import com.miaxis.postal.manager.PostalManager;
 import com.miaxis.postal.manager.TTSManager;
 import com.miaxis.postal.manager.ToastManager;
 import com.miaxis.postal.util.DateUtil;
+import com.miaxis.postal.util.EncryptUtil;
+import com.miaxis.postal.util.FileUtil;
 
+import java.io.File;
 import java.util.Date;
 
 import io.reactivex.Observable;

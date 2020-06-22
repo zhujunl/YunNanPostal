@@ -94,6 +94,7 @@ public interface PostalNet {
             @Part("expireTime") String expireTime,
             @Part("verifyType") String verifyType,
             @Part("checkTime") String  checkTime,
+            @Part("type") String type,
             @Part MultipartBody.Part checkFile,
             @Part MultipartBody.Part cardFile
     );

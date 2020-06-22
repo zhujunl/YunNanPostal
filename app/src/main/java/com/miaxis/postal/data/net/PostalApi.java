@@ -90,7 +90,8 @@ public class PostalApi extends BaseAPI {
             String signOrg,
             String expireTime,
             String verifyType,
-            String  checkTime,
+            String checkTime,
+            String type,
             File checkFile,
             File cardFile) {
         MultipartBody.Part checkFileBody = null;
@@ -116,6 +117,7 @@ public class PostalApi extends BaseAPI {
                 expireTime,
                 verifyType,
                 checkTime,
+                type,
                 checkFileBody,
                 cardFileBody);
     }

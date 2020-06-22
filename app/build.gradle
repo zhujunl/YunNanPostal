@@ -90,6 +90,8 @@ dependencies {
     implementation 'com.youth.banner:banner:1.4.10'
     //FileDownloader
     implementation 'com.liulishuo.filedownloader:library:1.7.5'
+    //AutoSize
+    implementation 'me.jessyan:autosize:1.1.2'
     //Libs
     implementation files('src/main/libs/scandecode.jar')
     implementation files('src/main/libs/AMap_Location_V4.8.0_20191210.jar')

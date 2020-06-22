@@ -31,7 +31,7 @@ public class FingerVerifyFragment extends BaseViewModelFragment<FragmentFingerVe
 
     private MaterialDialog retryDialog;
 
-    private IDCardRecord idCardRecord;
+    private volatile IDCardRecord idCardRecord;
 
     private Handler handler;
     private int delay = 21;
@@ -119,7 +119,22 @@ public class FingerVerifyFragment extends BaseViewModelFragment<FragmentFingerVe
             delay--;
             viewModel.countDown.set(delay + " S");
             if (delay <= 0) {
-                onBackPressed();
+                new MaterialDialog.Builder(getContext())
+                        .title("核验超时")
+                        .content("是否进行人工干预？")
+                        .positiveText("确认")
+                        .onPositive((dialog, which) -> {
+                            dialog.dismiss();
+                            mListener.replaceFragment(ManualFragment.newInstance(idCardRecord));
+                        })
+                        .negativeText("放弃")
+                        .onNegative((dialog, which) -> {
+                            dialog.dismiss();
+                            onBackPressed();
+                        })
+                        .autoDismiss(false)
+                        .cancelable(false)
+                        .show();
             } else {
                 handler.postDelayed(countDownRunnable, 1000);
             }
@@ -164,6 +179,7 @@ public class FingerVerifyFragment extends BaseViewModelFragment<FragmentFingerVe
             binding.tvSwitch.setEnabled(false);
             binding.fabAlarm.setEnabled(false);
             idCardRecord.setVerifyType("2");
+            idCardRecord.setManualType("0");
             handler.postDelayed(() -> {
                 try {
                     idCardRecord.setVerifyTime(new Date());

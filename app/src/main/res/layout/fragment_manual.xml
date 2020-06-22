@@ -7,19 +7,19 @@
 
         <variable
             name="viewModel"
-            type="com.miaxis.postal.viewModel.InspectViewModel" />
+            type="com.miaxis.postal.viewModel.ManualViewModel" />
 
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".view.fragment.InspectFragment">
+        tools:context=".view.fragment.ManualFragment">
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:text="开箱验视"
+            android:text="人工干预"
             android:textSize="20sp"
             android:textColor="@color/white"
             android:gravity="center"
@@ -40,18 +40,8 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
 
-        <ImageView
-            android:id="@+id/iv_delete"
-            android:layout_width="0dp"
-            android:layout_height="@dimen/custom_toolbar_height"
-            android:src="@drawable/ic_delete_forever_white"
-            android:scaleType="fitCenter"
-            android:adjustViewBounds="true"
-            android:padding="14dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
-
         <View
+            android:id="@+id/v_title_line"
             android:layout_width="0dp"
             android:layout_height="1dp"
             android:background="@color/lightgrey"
@@ -59,45 +49,21 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
 
-        <ImageView
-            android:id="@+id/iv_barcode"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:adjustViewBounds="true"
-            android:scaleType="fitCenter"
-            android:layout_marginTop="10dp"
-            app:layout_constraintDimensionRatio="5:2"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/iv_back"
-            app:layout_constraintHeight_percent="0.13"/>
-
-        <TextView
-            android:id="@+id/tv_barcode"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:gravity="center|top"
-            android:textSize="14sp"
-            android:text="@{viewModel.express.barCode}"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/iv_barcode" />
-
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/cl_info"
+            android:id="@+id/cl_name"
             android:layout_width="0dp"
             android:layout_height="0dp"
             app:layout_constraintWidth_percent="0.9"
             app:layout_constraintHeight_percent="0.075"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_barcode">
+            app:layout_constraintTop_toBottomOf="@id/v_title_line">
 
             <TextView
-                android:id="@+id/tv_info"
+                android:id="@+id/tv_name"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:text="物品名称"
+                android:text="姓&#12288;&#12288;名"
                 android:textSize="14sp"
                 android:gravity="center"
                 app:layout_constraintWidth_percent="0.2"
@@ -112,18 +78,18 @@
                 app:layout_constraintHeight_percent="0.5"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/et_info"
-                app:layout_constraintStart_toEndOf="@id/tv_info"/>
+                app:layout_constraintEnd_toStartOf="@id/et_name"
+                app:layout_constraintStart_toEndOf="@id/tv_name"/>
 
             <EditText
-                android:id="@+id/et_info"
+                android:id="@+id/et_name"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:textColor="@color/darkgray"
                 android:textSize="14sp"
                 android:background="@null"
-                android:hint="请输入物品名称"
-                android:text="@={viewModel.express.info}"
+                android:hint="请输入被核验人姓名"
+                android:text="@={viewModel.name}"
                 app:layout_constraintHorizontal_bias="0"
                 app:layout_constraintWidth_percent="0.75"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -141,20 +107,20 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/cl_weight"
+            android:id="@+id/cl_identity_number"
             android:layout_width="0dp"
             android:layout_height="0dp"
             app:layout_constraintWidth_percent="0.9"
             app:layout_constraintHeight_percent="0.075"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/cl_info">
+            app:layout_constraintTop_toBottomOf="@id/cl_name">
 
             <TextView
-                android:id="@+id/tv_weight"
+                android:id="@+id/tv_number"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:text="物品重量"
+                android:text="证件号码"
                 android:textSize="14sp"
                 android:gravity="center"
                 app:layout_constraintWidth_percent="0.2"
@@ -169,18 +135,18 @@
                 app:layout_constraintHeight_percent="0.5"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/et_weight"
-                app:layout_constraintStart_toEndOf="@id/tv_weight"/>
+                app:layout_constraintEnd_toStartOf="@id/et_number"
+                app:layout_constraintStart_toEndOf="@id/tv_number"/>
 
             <EditText
-                android:id="@+id/et_weight"
+                android:id="@+id/et_number"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:textColor="@color/darkgray"
                 android:textSize="14sp"
                 android:background="@null"
-                android:hint="请输入物品重量"
-                android:text="@={viewModel.express.weight}"
+                android:hint="请输入被核验人证件号码"
+                android:text="@={viewModel.identityNumber}"
                 app:layout_constraintHorizontal_bias="0"
                 app:layout_constraintWidth_percent="0.75"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -194,88 +160,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"/>
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/cl_addressee"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:background="@drawable/rounded_shape_main_color"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"
-            app:layout_constraintTop_toBottomOf="@id/cl_weight"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/v_line"
-            app:layout_constraintHeight_percent="0.165">
-
-            <TextView
-                android:id="@+id/tv_addressee_title"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:text="收件人信息"
-                android:layout_marginTop="5dp"
-                android:layout_marginStart="20dp"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
-
-            <EditText
-                android:id="@+id/et_addressee_name"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:textColor="@color/darkgray"
-                android:textSize="14sp"
-                android:background="@null"
-                android:hint="请输入姓名"
-                android:text="@={viewModel.express.addresseeName}"
-                android:maxLength="20"
-                android:singleLine="true"
-                android:layout_marginStart="20dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tv_addressee_title"
-                app:layout_constraintEnd_toStartOf="@id/et_addressee_phone"
-                app:layout_constraintBottom_toTopOf="@id/et_addressee_address"/>
-
-            <EditText
-                android:id="@+id/et_addressee_phone"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:textColor="@color/darkgray"
-                android:textSize="14sp"
-                android:background="@null"
-                android:hint="请输入手机号码"
-                android:text="@={viewModel.express.addresseePhone}"
-                android:inputType="phone"
-                android:digits="0123456789"
-                android:maxLength="20"
-                android:singleLine="true"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="20dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintWidth_percent="0.55"
-                app:layout_constraintTop_toBottomOf="@id/tv_addressee_title"
-                app:layout_constraintStart_toEndOf="@id/et_addressee_name"
-                app:layout_constraintBottom_toTopOf="@id/et_addressee_address"/>
-
-            <EditText
-                android:id="@+id/et_addressee_address"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:textColor="@color/darkgray"
-                android:textSize="14sp"
-                android:background="@null"
-                android:hint="请输入收件地址"
-                android:text="@={viewModel.express.addresseeAddress}"
-                android:singleLine="true"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/et_addressee_name"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -285,7 +169,7 @@
             android:layout_height="1dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/cl_addressee"
+            app:layout_constraintTop_toBottomOf="@id/cl_identity_number"
             app:layout_constraintBottom_toTopOf="@id/rv_inspect"/>
 
         <androidx.recyclerview.widget.RecyclerView
@@ -309,36 +193,14 @@
             app:layout_constraintBottom_toTopOf="@id/btn_confirm"/>
 
         <Button
-            android:id="@+id/btn_draft"
+            android:id="@+id/btn_confirm"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="存入草稿箱"
+            android:text="确认"
             android:textSize="18sp"
             android:textColor="@color/white"
             android:background="@drawable/button_blue_background_right_angle"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/v_btn_line"
-            app:layout_constraintBottom_toBottomOf="parent"/>
-
-        <View
-            android:id="@+id/v_btn_line"
-            android:layout_width="1dp"
-            android:layout_height="0dp"
-            android:background="@color/white"
-            app:layout_constraintStart_toEndOf="@id/btn_draft"
-            app:layout_constraintEnd_toStartOf="@id/btn_confirm"
-            app:layout_constraintTop_toTopOf="@id/btn_draft"
-            app:layout_constraintBottom_toBottomOf="@id/btn_draft"/>
-
-        <Button
-            android:id="@+id/btn_confirm"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="完成"
-            android:textSize="18sp"
-            android:textColor="@color/white"
-            android:background="@drawable/button_blue_background_right_angle"
-            app:layout_constraintStart_toEndOf="@id/v_btn_line"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"/>
 

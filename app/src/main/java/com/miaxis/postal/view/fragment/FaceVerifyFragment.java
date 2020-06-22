@@ -3,6 +3,7 @@ package com.miaxis.postal.view.fragment;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -17,6 +18,8 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.miaxis.postal.R;
 import com.miaxis.postal.data.entity.IDCardRecord;
 import com.miaxis.postal.databinding.FragmentFaceVerifyBinding;
@@ -31,7 +34,7 @@ import com.miaxis.postal.viewModel.FaceVerifyViewModel;
 
 public class FaceVerifyFragment extends BaseViewModelFragment<FragmentFaceVerifyBinding, FaceVerifyViewModel> {
 
-    private IDCardRecord idCardRecord;
+    private volatile IDCardRecord idCardRecord;
 
     private RoundBorderView roundBorderView;
     private RoundFrameLayout roundFrameLayout;
@@ -109,7 +112,22 @@ public class FaceVerifyFragment extends BaseViewModelFragment<FragmentFaceVerify
             delay--;
             viewModel.countDown.set(delay + " S");
             if (delay <= 0) {
-                onBackPressed();
+                new MaterialDialog.Builder(getContext())
+                        .title("核验超时")
+                        .content("是否进行人工干预？")
+                        .positiveText("确认")
+                        .onPositive((dialog, which) -> {
+                            dialog.dismiss();
+                            mListener.replaceFragment(ManualFragment.newInstance(idCardRecord));
+                        })
+                        .negativeText("放弃")
+                        .onNegative((dialog, which) -> {
+                            dialog.dismiss();
+                            onBackPressed();
+                        })
+                        .autoDismiss(false)
+                        .cancelable(false)
+                        .show();
             } else {
                 handler.postDelayed(countDownRunnable, 1000);
             }
@@ -128,6 +146,7 @@ public class FaceVerifyFragment extends BaseViewModelFragment<FragmentFaceVerify
         binding.fabAlarm.setEnabled(false);
         if (mIDCardRecord != null) {
             mIDCardRecord.setVerifyType("1");
+            mIDCardRecord.setManualType("0");
             handler.postDelayed(() -> {
                 try {
                     mListener.replaceFragment(ExpressFragment.newInstance(mIDCardRecord));
