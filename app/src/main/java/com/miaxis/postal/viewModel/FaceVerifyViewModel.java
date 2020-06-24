@@ -42,6 +42,7 @@ public class FaceVerifyViewModel extends BaseViewModel {
     public ObservableField<String> hint = new ObservableField<>("");
 
     public MutableLiveData<IDCardRecord> verifyFlag = new SingleLiveEvent<>();
+    public MutableLiveData<Boolean> verifyFailedFlag = new SingleLiveEvent<>();
     public MutableLiveData<Boolean> saveFlag = new SingleLiveEvent<>();
 
     public ObservableField<String> countDown = new ObservableField<>();
@@ -113,6 +114,7 @@ public class FaceVerifyViewModel extends BaseViewModel {
                     return;
                 } else {
                     hint.set("识别不通过");
+                    verifyFailedFlag.postValue(Boolean.FALSE);
                 }
             } catch (Exception e) {
                 e.printStackTrace();

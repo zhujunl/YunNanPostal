@@ -226,6 +226,24 @@ public class FileUtil {
         }
     }
 
+    public static File saveQualityBitmap(Bitmap bitmap, String filePath) {
+        try {
+            File file = new File(filePath);
+            if (file.exists()) {
+                file.delete();
+            }
+            FileOutputStream out = new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+            out.flush();
+            out.getFD().sync();
+            out.close();
+            return file;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     public static File saveBitmap(Bitmap bitmap, String path) {
         try {
             File file = new File(path);

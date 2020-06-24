@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import com.miaxis.postal.BR;
 import com.miaxis.postal.R;
 import com.miaxis.postal.data.entity.Draft;
+import com.miaxis.postal.data.entity.DraftMessage;
 import com.miaxis.postal.databinding.FragmentDraftBinding;
 import com.miaxis.postal.view.adapter.DraftAdapter;
 import com.miaxis.postal.view.base.BaseViewModelFragment;
@@ -59,7 +60,8 @@ public class DraftFragment extends BaseViewModelFragment<FragmentDraftBinding, D
     @Override
     protected void initData() {
         viewModel.refreshing.observe(this, refreshingObserver);
-        viewModel.draftList.observe(this, localListObserver);
+        viewModel.draftList.observe(this, draftListObserver);
+        viewModel.draftMessageSearch.observe(this, draftMessageSearchObserver);
     }
 
     @Override
@@ -78,7 +80,7 @@ public class DraftFragment extends BaseViewModelFragment<FragmentDraftBinding, D
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        viewModel.draftList.removeObserver(localListObserver);
+        viewModel.draftList.removeObserver(draftListObserver);
     }
 
     private void initRecycleView() {
@@ -91,31 +93,29 @@ public class DraftFragment extends BaseViewModelFragment<FragmentDraftBinding, D
         ((SimpleItemAnimator) binding.rvDraft.getItemAnimator()).setSupportsChangeAnimations(false);
     }
 
-    private DraftAdapter.OnItemClickListener adapterListener = new DraftAdapter.OnItemClickListener() {
-        @Override
-        public void onItemClick(View view, int position) {
-        }
-
-        @Override
-        public void onThumbnail(String url) {
-        }
+    private DraftAdapter.OnItemClickListener adapterListener = (view, position) -> {
+        viewModel.getDraftMessage(draftAdapter.getData(position));
     };
 
-    private Observer<List<Draft>> localListObserver = localList -> {
+    private Observer<DraftMessage> draftMessageSearchObserver = draftMessage -> {
+        mListener.replaceFragment(ExpressFragment.newInstanceForDraft(draftMessage.getIdCardRecord(), draftMessage.getExpressList()));
+    };
+
+    private Observer<List<Draft>> draftListObserver = draftList -> {
         if (page == 1) {
-            draftAdapter.setDataList(localList);
+            draftAdapter.setDataList(draftList);
             draftAdapter.notifyDataSetChanged();
             if (localCount == 0) {
                 binding.rvDraft.scrollToPosition(0);
             }
-            localCount = localList.size();
+            localCount = draftList.size();
         } else {
-            draftAdapter.setDataList(localList);
-            draftAdapter.notifyItemRangeChanged(localCount, localList.size() - localCount);
+            draftAdapter.setDataList(draftList);
+            draftAdapter.notifyItemRangeChanged(localCount, draftList.size() - localCount);
             if (localCount != 0) {
                 binding.rvDraft.scrollToPosition(localCount);
             }
-            localCount = localList.size();
+            localCount = draftList.size();
         }
     };
 

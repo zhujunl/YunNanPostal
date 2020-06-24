@@ -31,11 +31,10 @@ public class Express {
     private String addresseePhone;
     private String addresseeAddress;
     private boolean draft;
+    private boolean complete;
 
     @Ignore
     private List<Bitmap> photoList;
-    @Ignore
-    private boolean complete;
 
     public Express() {
     }

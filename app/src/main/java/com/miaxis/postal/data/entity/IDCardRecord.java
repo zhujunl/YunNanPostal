@@ -70,6 +70,10 @@ public class IDCardRecord {
 
     private boolean draft;
 
+    private String senderPhone;
+
+    private String senderAddress;
+
     /** 身份证照片Bitmap **/
     @Ignore
     private Bitmap cardBitmap;
@@ -119,6 +123,8 @@ public class IDCardRecord {
         setCheckId(builder.checkId);
         setManualType(builder.manualType);
         setDraft(builder.draft);
+        setSenderPhone(builder.senderPhone);
+        setSenderAddress(builder.senderAddress);
         setCardBitmap(builder.cardBitmap);
         setFaceBitmap(builder.faceBitmap);
         setFingerprint0(builder.fingerprint0);
@@ -383,6 +389,22 @@ public class IDCardRecord {
         this.draft = draft;
     }
 
+    public String getSenderPhone() {
+        return senderPhone;
+    }
+
+    public void setSenderPhone(String senderPhone) {
+        this.senderPhone = senderPhone;
+    }
+
+    public String getSenderAddress() {
+        return senderAddress;
+    }
+
+    public void setSenderAddress(String senderAddress) {
+        this.senderAddress = senderAddress;
+    }
+
     public static final class Builder {
         private Long id;
         private String cardType;
@@ -410,6 +432,8 @@ public class IDCardRecord {
         private String checkId;
         private String manualType;
         private boolean draft;
+        private String senderPhone;
+        private String senderAddress;
         private Bitmap cardBitmap;
         private Bitmap faceBitmap;
         private String fingerprint0;
@@ -547,6 +571,16 @@ public class IDCardRecord {
 
         public Builder draft(boolean val) {
             draft = val;
+            return this;
+        }
+
+        public Builder senderPhone(String val) {
+            senderPhone = val;
+            return this;
+        }
+
+        public Builder senderAddress(String val) {
+            senderAddress = val;
             return this;
         }
 

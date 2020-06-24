@@ -64,8 +64,8 @@ public class LoginRepository extends BaseRepository {
                                        String finger1Feature,
                                        String finger2Feature,
                                        Bitmap bitmap) throws IOException, MyException, NetResultFailedException {
-        String faceFilePath = FileUtil.FACE_IMAGE_PATH + File.separator + "card_" + cardNo + System.currentTimeMillis() + ".jpg";
-        File file = FileUtil.saveBitmap(bitmap, faceFilePath);
+        String faceFilePath = FileUtil.FACE_IMAGE_PATH + File.separator + "card_" + cardNo + System.currentTimeMillis() + ".png";
+        File file = FileUtil.saveQualityBitmap(bitmap, faceFilePath);
         Response<ResponseEntity> execute = PostalApi.registerExpressmanSync(name,
                 cardNo,
                 phone,

@@ -126,4 +126,8 @@ public class ExpressRepository {
         ExpressModel.deleteExpress(express);
     }
 
+    public Express loadExpressWithCode(String code) {
+        return ExpressModel.loadExpressWithCode(code);
+    }
+
 }

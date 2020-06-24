@@ -91,18 +91,41 @@ public class InspectFragment extends BaseViewModelFragment<FragmentInspectBindin
                     .show();
         }));
         binding.btnConfirm.setOnClickListener(new OnLimitClickHelper(view -> {
-             if (checkInput()) {
-                 new MaterialDialog.Builder(getContext())
-                         .title("确认已选择的实物照片")
-                         .content("未选择的实物照片将会被删除")
-                         .positiveText("确认")
-                         .onPositive((dialog, which) -> {
-                             viewModel.makeModifyResult(binding.etInfo.getText().toString());
-                             mListener.backToStack(null);
-                         })
-                         .negativeText("取消")
-                         .show();
-             }
+            if (checkInput()) {
+                if (viewModel.getSelectSize() == viewModel.getPhotographList().size()) {
+                    viewModel.makeModifyResult();
+                    mListener.backToStack(null);
+                } else {
+                    new MaterialDialog.Builder(getContext())
+                            .title("确认已选择的实物照片")
+                            .content("未选择的实物照片将会被删除")
+                            .positiveText("确认")
+                            .onPositive((dialog, which) -> {
+                                viewModel.makeModifyResult();
+                                mListener.backToStack(null);
+                            })
+                            .negativeText("取消")
+                            .show();
+                }
+            }
+        }));
+        binding.btnDraft.setOnClickListener(new OnLimitClickHelper(view -> {
+            if (checkDraftInput()) {
+                if (viewModel.getSelectSize() == viewModel.getPhotographList().size()) {
+                    viewModel.makeDraftResult();
+                    mListener.backToStack(null);
+                } else {
+                    new MaterialDialog.Builder(getContext())
+                            .content("未选择的实物照片将会被删除")
+                            .positiveText("确认")
+                            .onPositive((dialog, which) -> {
+                                viewModel.makeDraftResult();
+                                mListener.backToStack(null);
+                            })
+                            .negativeText("取消")
+                            .show();
+                }
+            }
         }));
         binding.fabAlarm.setOnLongClickListener(alarmListener);
         binding.etWeight.setRawInputType(Configuration.KEYBOARD_QWERTY);
@@ -222,6 +245,14 @@ public class InspectFragment extends BaseViewModelFragment<FragmentInspectBindin
             ToastManager.toast("请输入收件地址", ToastManager.INFO);
             return false;
         } else if (viewModel.getSelectList().size() <= 0) {
+            ToastManager.toast("请至少选择一张实物照片", ToastManager.INFO);
+            return false;
+        }
+        return true;
+    }
+
+    private boolean checkDraftInput() {
+        if (viewModel.getSelectList().size() <= 0) {
             ToastManager.toast("请至少选择一张实物照片", ToastManager.INFO);
             return false;
         }

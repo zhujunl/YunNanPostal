@@ -75,11 +75,20 @@ public class InspectViewModel extends BaseViewModel {
         this.photographList.setValue(photoList);
     }
 
-    public void makeModifyResult(String info) {
+    public void makeModifyResult() {
         Express local = express.get();
         if (local != null) {
+            local.setComplete(true);
             local.setPhotoList(getSelectList());
-            local.setInfo(info);
+            EventBus.getDefault().postSticky(new ExpressEditEvent(ExpressEditEvent.MODE_MODIFY, local));
+        }
+    }
+
+    public void makeDraftResult() {
+        Express local = express.get();
+        if (local != null) {
+            local.setComplete(false);
+            local.setPhotoList(getSelectList());
             EventBus.getDefault().postSticky(new ExpressEditEvent(ExpressEditEvent.MODE_MODIFY, local));
         }
     }

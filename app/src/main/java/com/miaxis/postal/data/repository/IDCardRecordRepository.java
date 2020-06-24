@@ -102,12 +102,16 @@ public class IDCardRecordRepository {
         return IDCardRecordModel.findOldestIDCardRecord();
     }
 
-    public List<IDCardRecord> loadAll() {
-        return IDCardRecordModel.loadAll();
+    public List<IDCardRecord> loadAllNotDraft() {
+        return IDCardRecordModel.loadAllNotDraft();
     }
 
-    public IDCardRecord loadIDCardRecord(String verifyId) {
-        return IDCardRecordModel.loadIDCardRecord(verifyId);
+    public IDCardRecord loadIDCardRecordByVerifyId(String verifyId) {
+        return IDCardRecordModel.loadIDCardRecordByVerifyId(verifyId);
+    }
+
+    public IDCardRecord loadIDCardRecordById(Long id) {
+        return IDCardRecordModel.loadIDCardRecordById(id);
     }
 
     public void deleteIDCardRecord(IDCardRecord idCardRecord) {

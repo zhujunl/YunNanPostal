@@ -21,6 +21,7 @@ import com.miaxis.postal.data.entity.IDCardRecord;
 import com.miaxis.postal.databinding.FragmentFingerVerifyBinding;
 import com.miaxis.postal.manager.TTSManager;
 import com.miaxis.postal.view.auxiliary.OnLimitClickHelper;
+import com.miaxis.postal.view.auxiliary.OnLimitClickListener;
 import com.miaxis.postal.view.base.BaseViewModelDialogFragment;
 import com.miaxis.postal.view.base.BaseViewModelFragment;
 import com.miaxis.postal.viewModel.FingerVerifyViewModel;
@@ -32,6 +33,8 @@ public class FingerVerifyFragment extends BaseViewModelFragment<FragmentFingerVe
     private MaterialDialog retryDialog;
 
     private volatile IDCardRecord idCardRecord;
+
+    private MaterialDialog manualDialog;
 
     private Handler handler;
     private int delay = 21;
@@ -74,9 +77,15 @@ public class FingerVerifyFragment extends BaseViewModelFragment<FragmentFingerVe
 
     @Override
     protected void initView() {
+        initDialog();
         binding.ivBack.setOnClickListener(v -> onBackPressed());
         binding.tvSwitch.setOnClickListener(new OnLimitClickHelper(view -> {
             mListener.replaceFragment(FaceVerifyFragment.newInstance(idCardRecord));
+        }));
+        binding.tvManual.setOnClickListener(new OnLimitClickHelper(view -> {
+            if (!manualDialog.isShowing()) {
+                manualDialog.show();
+            }
         }));
         binding.fabAlarm.setOnLongClickListener(alarmListener);
         handler.post(countDownRunnable);
@@ -110,6 +119,7 @@ public class FingerVerifyFragment extends BaseViewModelFragment<FragmentFingerVe
         if (!pass) {
             TTSManager.getInstance().stop();
         }
+        manualDialog.dismiss();
         viewModel.releaseFingerDevice();
     }
 
@@ -119,22 +129,9 @@ public class FingerVerifyFragment extends BaseViewModelFragment<FragmentFingerVe
             delay--;
             viewModel.countDown.set(delay + " S");
             if (delay <= 0) {
-                new MaterialDialog.Builder(getContext())
-                        .title("核验超时")
-                        .content("是否进行人工干预？")
-                        .positiveText("确认")
-                        .onPositive((dialog, which) -> {
-                            dialog.dismiss();
-                            mListener.replaceFragment(ManualFragment.newInstance(idCardRecord));
-                        })
-                        .negativeText("放弃")
-                        .onNegative((dialog, which) -> {
-                            dialog.dismiss();
-                            onBackPressed();
-                        })
-                        .autoDismiss(false)
-                        .cancelable(false)
-                        .show();
+                if (!manualDialog.isShowing()) {
+                    manualDialog.show();
+                }
             } else {
                 handler.postDelayed(countDownRunnable, 1000);
             }
@@ -188,6 +185,8 @@ public class FingerVerifyFragment extends BaseViewModelFragment<FragmentFingerVe
                     e.printStackTrace();
                 }
             }, 1000);
+        } else {
+            binding.tvManual.setVisibility(View.VISIBLE);
         }
     };
 
@@ -197,6 +196,25 @@ public class FingerVerifyFragment extends BaseViewModelFragment<FragmentFingerVe
         viewModel.alarm();
         return false;
     };
+
+    private void initDialog() {
+        manualDialog = new MaterialDialog.Builder(getContext())
+                .title("人工干预")
+                .content("是否进行人工干预？")
+                .positiveText("确认")
+                .onPositive((dialog, which) -> {
+                    dialog.dismiss();
+                    mListener.replaceFragment(ManualFragment.newInstance(idCardRecord));
+                })
+                .negativeText("放弃")
+                .onNegative((dialog, which) -> {
+                    dialog.dismiss();
+                    onBackPressed();
+                })
+                .autoDismiss(false)
+                .cancelable(false)
+                .build();
+    }
 
     public void setIdCardRecord(IDCardRecord idCardRecord) {
         this.idCardRecord = idCardRecord;

@@ -1,5 +1,7 @@
 package com.miaxis.postal.data.model;
 
+import androidx.lifecycle.LiveData;
+
 import com.miaxis.postal.data.dao.AppDatabase;
 import com.miaxis.postal.data.entity.IDCard;
 
@@ -29,6 +31,14 @@ public class IDCardModel {
 
     public static IDCard findOldestIDCard() {
         return AppDatabase.getInstance().idCardDao().findOldestIDCard();
+    }
+
+    public static LiveData<List<IDCard>> loadAllWithLiveData() {
+        return AppDatabase.getInstance().idCardDao().loadAllWithLiveData();
+    }
+
+    public static List<IDCard> loadIDCardWithFilter(String filter) {
+        return AppDatabase.getInstance().idCardDao().loadIDCardWithFilter(filter + "%");
     }
     
 }

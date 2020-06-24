@@ -16,7 +16,7 @@ public interface ExpressDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(Express express);
 
-    @Query("select * from Express order by Express.id desc limit :pageSize offset :pageSize * (:pageNum - 1)")
+    @Query("select * from Express where Express.draft = 0 order by Express.id desc limit :pageSize offset :pageSize * (:pageNum - 1)")
     List<Express> loadExpressByPage(int pageNum, int pageSize);
 
     @Query("select * from Express where verifyId = :verifyId")
@@ -24,6 +24,9 @@ public interface ExpressDao {
 
     @Query("select * from Express")
     List<Express> loadAll();
+
+    @Query("select * from Express where Express.barCode = :code")
+    Express loadExpressWithCode(String code);
 
     @Query("select count(*) from Express")
     int loadExpressCount();

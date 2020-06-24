@@ -111,7 +111,7 @@ public class PostalManager {
         if (warnLog != null) {
             IDCardRecord idCardRecord = null;
             if (!TextUtils.isEmpty(warnLog.getVerifyId())) {
-                idCardRecord = idCardRecordRepository.loadIDCardRecord(warnLog.getVerifyId());
+                idCardRecord = idCardRecordRepository.loadIDCardRecordByVerifyId(warnLog.getVerifyId());
             }
             if (idCardRecord != null) {
                 TempId tempId = getIdCardRecordTempId(idCardRecord);

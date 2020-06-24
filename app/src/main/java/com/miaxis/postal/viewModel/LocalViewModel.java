@@ -38,7 +38,7 @@ public class LocalViewModel extends BaseViewModel {
     public void loadIdCardRecord() {
         waitMessage.setValue("正在加载数据");
         Observable.create((ObservableOnSubscribe<List<IDCardRecord>>) emitter -> {
-            List<IDCardRecord> idCardRecordList = IDCardRecordRepository.getInstance().loadAll();
+            List<IDCardRecord> idCardRecordList = IDCardRecordRepository.getInstance().loadAllNotDraft();
             emitter.onNext(idCardRecordList);
         })
                 .subscribeOn(Schedulers.from(App.getInstance().getThreadExecutor()))

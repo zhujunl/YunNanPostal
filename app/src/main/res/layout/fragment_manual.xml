@@ -135,23 +135,35 @@
                 app:layout_constraintHeight_percent="0.5"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/et_number"
+                app:layout_constraintEnd_toStartOf="@id/ll_card_number"
                 app:layout_constraintStart_toEndOf="@id/tv_number"/>
 
-            <EditText
-                android:id="@+id/et_number"
+            <LinearLayout
+                android:id="@+id/ll_card_number"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:textColor="@color/darkgray"
-                android:textSize="14sp"
-                android:background="@null"
-                android:hint="请输入被核验人证件号码"
-                android:text="@={viewModel.identityNumber}"
                 app:layout_constraintHorizontal_bias="0"
                 app:layout_constraintWidth_percent="0.75"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toTopOf="parent"/>
+                app:layout_constraintTop_toTopOf="parent">
+
+                <androidx.appcompat.widget.AppCompatAutoCompleteTextView
+                    android:id="@+id/et_card_number"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:textColor="@color/darkgray"
+                    android:textSize="14sp"
+                    android:background="@null"
+                    android:hint="请输入被核验人证件号码"
+                    android:text="@={viewModel.identityNumber}"
+                    android:singleLine="true"
+                    android:maxLength="18"
+                    android:digits="0123456789xX"
+                    android:completionThreshold="2"
+                    android:popupBackground="@color/transparent" />
+
+            </LinearLayout>
 
             <View
                 android:layout_width="0dp"

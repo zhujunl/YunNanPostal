@@ -87,6 +87,27 @@ public class ValueUtil {
         }
     }
 
+    public static String nameDesensitization(String name) {
+        if (TextUtils.isEmpty(name)) return "";
+        String myName = null;
+        char[] chars = name.toCharArray();
+        if (chars.length == 1) {
+            myName = name;
+        }
+        if (chars.length == 2) {
+            myName = name.replaceFirst(name.substring(1), " *");
+        }
+        if (chars.length > 2) {
+//            myName = name.replaceAll(name.substring(1, chars.length - 1), "*");
+            StringBuilder cache = new StringBuilder(name.substring(0, 1));
+            for (int i = 0; i < chars.length - 1; i++) {
+                cache.append(" *");
+            }
+            myName = cache.toString();
+        }
+        return myName;
+    }
+
     //身份证前三后四脱敏
     public static String cardNumberDesensitization(String id) {
         if (TextUtils.isEmpty(id) || (id.length() < 8)) {

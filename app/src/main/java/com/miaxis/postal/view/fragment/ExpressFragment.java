@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -27,6 +28,7 @@ import com.miaxis.postal.manager.ToastManager;
 import com.miaxis.postal.view.adapter.ExpressAdapter;
 import com.miaxis.postal.view.adapter.SpacesItemDecoration;
 import com.miaxis.postal.view.auxiliary.OnLimitClickHelper;
+import com.miaxis.postal.view.auxiliary.OnLimitClickListener;
 import com.miaxis.postal.view.base.BaseViewModelFragment;
 import com.miaxis.postal.view.component.ScanCodeReceiver;
 import com.miaxis.postal.viewModel.ExpressViewModel;
@@ -35,11 +37,13 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ExpressFragment extends BaseViewModelFragment<FragmentExpressBinding, ExpressViewModel> {
 
     private IDCardRecord idCardRecord;
+    private List<Express> expressList;
 
     private ExpressAdapter expressAdapter;
     private MaterialDialog scanDialog;
@@ -47,11 +51,23 @@ public class ExpressFragment extends BaseViewModelFragment<FragmentExpressBindin
     private Handler handler;
     private int delay = 5;
 
+    private boolean draft = false;
+
     public static ExpressFragment newInstance(IDCardRecord idCardRecord) {
         ExpressFragment fragment = new ExpressFragment();
         fragment.setIdCardRecord(idCardRecord);
+        fragment.setDraft(false);
+        fragment.setExpressList(new ArrayList<>());
         return fragment;
     }
+    public static ExpressFragment newInstanceForDraft(IDCardRecord idCardRecord, @NonNull List<Express> expressList) {
+        ExpressFragment fragment = new ExpressFragment();
+        fragment.setIdCardRecord(idCardRecord);
+        fragment.setDraft(true);
+        fragment.setExpressList(expressList);
+        return fragment;
+    }
+
 
     public ExpressFragment() {
         // Required empty public constructor
@@ -84,14 +100,29 @@ public class ExpressFragment extends BaseViewModelFragment<FragmentExpressBindin
         initReceiver();
         binding.ivBack.setOnClickListener(v -> onBackPressed());
         binding.ivAddress.setOnClickListener(new OnLimitClickHelper(view  -> viewModel.getLocation()));
-        binding.ivAddress.performClick();
+        if (expressList != null && !expressList.isEmpty()) {
+            viewModel.initExpressList(expressList);
+            expressAdapter.notifyDataSetChanged();
+        }
+        if (!TextUtils.isEmpty(idCardRecord.getSenderPhone())) {
+            viewModel.phone.set(idCardRecord.getSenderPhone());
+        }
+        if (!TextUtils.isEmpty(idCardRecord.getSenderAddress())) {
+            viewModel.address.set(idCardRecord.getSenderAddress());
+        } else {
+            binding.ivAddress.performClick();
+        }
+        binding.ivDelete.setVisibility(draft ? View.VISIBLE : View.INVISIBLE);
+        binding.ivDelete.setOnClickListener(deleteListener);
         binding.btnSubmit.setOnClickListener(submitClickListener);
+        binding.btnDraft.setOnClickListener(draftClickListener);
         binding.fabAlarm.setOnLongClickListener(alarmListener);
         viewModel.expressList.observe(this, expressListObserver);
         viewModel.newExpress.observe(this, newExpressObserver);
         viewModel.repeatExpress.observe(this, repeatExpressObserver);
         viewModel.scanFlag.observe(this, scanFlagObserver);
         viewModel.saveFlag.observe(this, saveFlagObserver);
+        viewModel.deleteFlag.observe(this, deleteFlagObserver);
         handler = new Handler(Looper.getMainLooper());
         EventBus.getDefault().register(this);
     }
@@ -114,7 +145,9 @@ public class ExpressFragment extends BaseViewModelFragment<FragmentExpressBindin
         new MaterialDialog.Builder(getContext())
                 .title("确认离开页面？")
                 .positiveText("确认")
-                .onPositive((dialog, which) -> mListener.backToStack(HomeFragment.class))
+                .onPositive((dialog, which) -> {
+                    mListener.backToStack(draft ? null : HomeFragment.class);
+                })
                 .negativeText("取消")
                 .show();
     }
@@ -237,6 +270,8 @@ public class ExpressFragment extends BaseViewModelFragment<FragmentExpressBindin
 
     private Observer<Boolean> saveFlagObserver = flag -> mListener.backToStack(HomeFragment.class);
 
+    private Observer<Boolean> deleteFlagObserver = flag -> mListener.backToStack(null);
+
     private View.OnClickListener submitClickListener = new OnLimitClickHelper(view -> {
         if (!viewModel.checkInput()) {
             ToastManager.toast("请输入寄件人手机号码和寄件地址", ToastManager.INFO);
@@ -246,10 +281,32 @@ public class ExpressFragment extends BaseViewModelFragment<FragmentExpressBindin
             ToastManager.toast("请至少完成一个订单", ToastManager.INFO);
             return;
         }
+        if (!viewModel.isAllComplete()) {
+            ToastManager.toast("有订单处于未完成状态", ToastManager.INFO);
+            return;
+        }
         new MaterialDialog.Builder(getContext())
                 .title("确认上传？")
                 .positiveText("确认")
-                .onPositive((dialog, which) -> viewModel.saveExpress())
+                .onPositive((dialog, which) -> viewModel.saveComplete())
+                .negativeText("取消")
+                .show();
+    });
+
+    private View.OnClickListener draftClickListener = new OnLimitClickHelper(view -> {
+        new MaterialDialog.Builder(getContext())
+                .title("确认存入草稿箱？")
+                .positiveText("确认")
+                .onPositive((dialog, which) -> viewModel.saveDraft())
+                .negativeText("取消")
+                .show();
+    });
+
+    private View.OnClickListener deleteListener = new OnLimitClickHelper(view -> {
+        new MaterialDialog.Builder(getContext())
+                .title("确认删除？")
+                .positiveText("确认")
+                .onPositive((dialog, which) -> viewModel.deleteSelf())
                 .negativeText("取消")
                 .show();
     });
@@ -261,5 +318,13 @@ public class ExpressFragment extends BaseViewModelFragment<FragmentExpressBindin
 
     public void setIdCardRecord(IDCardRecord idCardRecord) {
         this.idCardRecord = idCardRecord;
+    }
+
+    public void setDraft(boolean draft) {
+        this.draft = draft;
+    }
+
+    public void setExpressList(List<Express> expressList) {
+        this.expressList = expressList;
     }
 }

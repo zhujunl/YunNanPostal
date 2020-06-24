@@ -61,7 +61,7 @@ public class CardModeSelectDialogFragment extends BaseViewModelDialogFragment<Fr
 
     @Override
     protected void initData() {
-        viewModel.idCardSearch.observe(this, idCardObserver);
+//        viewModel.idCardSearch.observe(this, idCardObserver);
     }
 
     @Override
@@ -71,22 +71,24 @@ public class CardModeSelectDialogFragment extends BaseViewModelDialogFragment<Fr
             dismiss();
         }));
         binding.tvNoCard.setOnClickListener(new OnLimitClickHelper(view -> {
-            if (binding.clCardNumber.getVisibility() == View.GONE) {
-                binding.clCardNumber.setVisibility(View.VISIBLE);
-            }
+//            if (binding.clCardNumber.getVisibility() == View.GONE) {
+//                binding.clCardNumber.setVisibility(View.VISIBLE);
+//            }
+            mListener.replaceFragment(ManualFragment.newInstance(null));
+            dismiss();
         }));
-        binding.tvCardNumber.setOnClickListener(new OnLimitClickHelper(view -> {
-            String input = binding.etCardNumber.getText().toString();
-            if (TextUtils.isEmpty(input)) {
-                ToastManager.toast("请输入证件号码", ToastManager.INFO);
-            } else if (!PatternUtil.isIDNumber(input)) {
-                ToastManager.toast("请输入格式正确的证件号码", ToastManager.INFO);
-            } else {
-                viewModel.searchLocalIDCard(input);
-            }
-        }));
-        binding.etCardNumber.setText("");
-        binding.etCardNumber.setRawInputType(Configuration.KEYBOARD_QWERTY);
+//        binding.tvCardNumber.setOnClickListener(new OnLimitClickHelper(view -> {
+//            String input = binding.etCardNumber.getText().toString();
+//            if (TextUtils.isEmpty(input)) {
+//                ToastManager.toast("请输入证件号码", ToastManager.INFO);
+//            } else if (!PatternUtil.isIDNumber(input)) {
+//                ToastManager.toast("请输入格式正确的证件号码", ToastManager.INFO);
+//            } else {
+//                viewModel.searchLocalIDCard(input);
+//            }
+//        }));
+//        binding.etCardNumber.setText("");
+//        binding.etCardNumber.setRawInputType(Configuration.KEYBOARD_QWERTY);
     }
 
     @Override
@@ -105,13 +107,13 @@ public class CardModeSelectDialogFragment extends BaseViewModelDialogFragment<Fr
         win.setAttributes(params);
     }
 
-    private Observer<Boolean> idCardObserver = idCard -> {
-        if (idCard) {
-            mListener.replaceFragment(FaceVerifyFragment.newInstance(viewModel.idCardRecord));
-        } else {
-            mListener.replaceFragment(ManualFragment.newInstance(binding.etCardNumber.getText().toString()));
-        }
-        dismiss();
-    };
+//    private Observer<Boolean> idCardObserver = idCard -> {
+//        if (idCard) {
+//            mListener.replaceFragment(FaceVerifyFragment.newInstance(viewModel.idCardRecord));
+//        } else {
+//            mListener.replaceFragment(ManualFragment.newInstance(binding.etCardNumber.getText().toString()));
+//        }
+//        dismiss();
+//    };
 
 }

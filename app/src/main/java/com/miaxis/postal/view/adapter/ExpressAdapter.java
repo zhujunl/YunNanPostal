@@ -1,6 +1,7 @@
 package com.miaxis.postal.view.adapter;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,8 @@ import com.miaxis.postal.view.auxiliary.OnLimitClickHelper;
 import com.miaxis.postal.view.base.BaseAdapter;
 import com.miaxis.postal.view.base.BaseViewHolder;
 import com.miaxis.postal.viewModel.ExpressViewModel;
+
+import java.util.List;
 
 public class ExpressAdapter extends BaseAdapter<Express, RecyclerView.ViewHolder> {
 
@@ -68,6 +71,15 @@ public class ExpressAdapter extends BaseAdapter<Express, RecyclerView.ViewHolder
     private void setBodyItemValues(BodyViewHolder holder, int position) {
         Express express = dataList.get(position - 1);
         holder.getBinding().setItem(express);
+        if (express.isComplete()) {
+            holder.getBinding().ivStatus.setImageResource(R.drawable.icon_success);
+        } else {
+            holder.getBinding().ivStatus.setImageResource(R.drawable.icon_loading);
+        }
+        List<Bitmap> photoList = express.getPhotoList();
+        if (photoList != null && photoList.size() > 0) {
+            holder.getBinding().ivExpressImage.setImageBitmap(photoList.get(0));
+        }
         holder.itemView.setOnClickListener(new OnLimitClickHelper(view -> {
             if (bodyListener != null) {
                 bodyListener.onBodyClick(holder.itemView, holder.getLayoutPosition());

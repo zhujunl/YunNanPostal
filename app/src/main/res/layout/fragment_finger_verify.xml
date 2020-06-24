@@ -46,6 +46,7 @@
             android:layout_height="0dp"
             android:text="切换人脸核验"
             android:gravity="center"
+            android:textColor="@color/main_color"
             app:layout_constraintWidth_percent="0.3"
             app:layout_constraintHorizontal_bias="1"
             app:layout_constraintStart_toStartOf="parent"
@@ -132,10 +133,26 @@
             android:textSize="20sp"
             android:gravity="center"
             android:text="@{viewModel.hint}"
-            app:layout_constraintHeight_percent="0.12"
+            app:layout_constraintHeight_percent="0.06"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/cl_finger"/>
+
+        <TextView
+            android:id="@+id/tv_manual"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:textSize="14sp"
+            android:gravity="center"
+            android:text="进行人工干预"
+            android:textColor="@color/darkred"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:visibility="invisible"
+            app:layout_constraintHeight_percent="0.06"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_hint"/>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="0dp"
@@ -144,7 +161,7 @@
             android:layout_margin="10dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_hint"
+            app:layout_constraintTop_toBottomOf="@id/tv_manual"
             app:layout_constraintBottom_toBottomOf="parent">
 
             <ImageView

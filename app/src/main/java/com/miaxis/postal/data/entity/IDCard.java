@@ -1,5 +1,6 @@
 package com.miaxis.postal.data.entity;
 
+import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
@@ -8,9 +9,10 @@ import java.util.Date;
 @Entity
 public class IDCard {
 
-    @PrimaryKey(autoGenerate = true)
-    private Long id;
-
+    /** 身份证号码 / 身份证号 / 永久居留证号码 **/
+    @NonNull
+    @PrimaryKey
+    private String cardNumber;
     /* 注释说明：二代证 / 港澳台 / 外国人永久居留证 */
     /** 卡片类型 空值=二代证，J=港澳台，I=外国人永久居留证 **/
     private String cardType;
@@ -22,8 +24,6 @@ public class IDCard {
     private String birthday;
     /** 地址 / 地址 / 空值 **/
     private String address;
-    /** 身份证号码 / 身份证号 / 永久居留证号码 **/
-    private String cardNumber;
     /** 签发机构 / 签发机构 / 申请受理机关代码 **/
     private String issuingAuthority;
     /** 有效期开始 **/
@@ -53,7 +53,6 @@ public class IDCard {
     }
 
     private IDCard(Builder builder) {
-        setId(builder.id);
         setCardType(builder.cardType);
         setCardId(builder.cardId);
         setName(builder.name);
@@ -71,14 +70,6 @@ public class IDCard {
         setVersion(builder.version);
         setCardPicture(builder.cardPicture);
         setVerifyTime(builder.verifyTime);
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getCardType() {
@@ -218,7 +209,6 @@ public class IDCard {
     }
 
     public static final class Builder {
-        private Long id;
         private String cardType;
         private String cardId;
         private String name;
@@ -238,11 +228,6 @@ public class IDCard {
         private Date verifyTime;
 
         public Builder() {
-        }
-
-        public Builder id(Long val) {
-            id = val;
-            return this;
         }
 
         public Builder cardType(String val) {

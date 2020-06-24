@@ -12,16 +12,20 @@ public class IDCardRecordModel {
         AppDatabase.getInstance().idCardRecordDao().insert(idCardRecord);
     }
 
-    public static IDCardRecord loadIDCardRecord(String verifyId) {
-        return AppDatabase.getInstance().idCardRecordDao().loadIDCardRecord(verifyId);
+    public static IDCardRecord loadIDCardRecordByVerifyId(String verifyId) {
+        return AppDatabase.getInstance().idCardRecordDao().loadIDCardRecordByVerifyId(verifyId);
+    }
+
+    public static IDCardRecord loadIDCardRecordById(Long id) {
+        return AppDatabase.getInstance().idCardRecordDao().loadIDCardRecordById(id);
     }
 
     public static void deleteIDCardRecord(IDCardRecord idCardRecord) {
         AppDatabase.getInstance().idCardRecordDao().delete(idCardRecord);
     }
 
-    public static List<IDCardRecord> loadAll() {
-        return AppDatabase.getInstance().idCardRecordDao().loadAll();
+    public static List<IDCardRecord> loadAllNotDraft() {
+        return AppDatabase.getInstance().idCardRecordDao().loadAllNotDraft();
     }
 
     public static IDCardRecord findOldestIDCardRecord() {

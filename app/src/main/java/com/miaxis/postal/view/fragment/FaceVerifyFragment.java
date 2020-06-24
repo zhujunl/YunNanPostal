@@ -27,6 +27,7 @@ import com.miaxis.postal.manager.CameraManager;
 import com.miaxis.postal.manager.TTSManager;
 import com.miaxis.postal.manager.ToastManager;
 import com.miaxis.postal.view.auxiliary.OnLimitClickHelper;
+import com.miaxis.postal.view.auxiliary.OnLimitClickListener;
 import com.miaxis.postal.view.base.BaseViewModelFragment;
 import com.miaxis.postal.view.custom.RoundBorderView;
 import com.miaxis.postal.view.custom.RoundFrameLayout;
@@ -38,6 +39,8 @@ public class FaceVerifyFragment extends BaseViewModelFragment<FragmentFaceVerify
 
     private RoundBorderView roundBorderView;
     private RoundFrameLayout roundFrameLayout;
+
+    private MaterialDialog manualDialog;
 
     private Handler handler;
     private int delay = 21;
@@ -74,6 +77,7 @@ public class FaceVerifyFragment extends BaseViewModelFragment<FragmentFaceVerify
         viewModel.idCardRecordLiveData.setValue(idCardRecord);
         viewModel.idCardRecordLiveData.observe(this, idCardRecordObserver);
         viewModel.verifyFlag.observe(this, verifyFlagObserver);
+        viewModel.verifyFailedFlag.observe(this, verifyFailedObserver);
         viewModel.saveFlag.observe(this, saveFlagObserver);
         binding.rtvCamera.getViewTreeObserver().addOnGlobalLayoutListener(globalListener);
         handler = new Handler(Looper.getMainLooper());
@@ -81,9 +85,15 @@ public class FaceVerifyFragment extends BaseViewModelFragment<FragmentFaceVerify
 
     @Override
     protected void initView() {
+        initDialog();
         binding.ivBack.setOnClickListener(v -> onBackPressed());
         binding.tvSwitch.setOnClickListener(new OnLimitClickHelper(view -> {
             mListener.replaceFragment(FingerVerifyFragment.newInstance(idCardRecord));
+        }));
+        binding.tvManual.setOnClickListener(new OnLimitClickHelper(view -> {
+            if (!manualDialog.isShowing()) {
+                manualDialog.show();
+            }
         }));
         binding.fabAlarm.setOnLongClickListener(alarmListener);
         handler.post(countDownRunnable);
@@ -103,6 +113,7 @@ public class FaceVerifyFragment extends BaseViewModelFragment<FragmentFaceVerify
         if (!pass) {
             TTSManager.getInstance().stop();
         }
+        manualDialog.dismiss();
         CameraManager.getInstance().closeBackCamera();
     }
 
@@ -112,22 +123,9 @@ public class FaceVerifyFragment extends BaseViewModelFragment<FragmentFaceVerify
             delay--;
             viewModel.countDown.set(delay + " S");
             if (delay <= 0) {
-                new MaterialDialog.Builder(getContext())
-                        .title("核验超时")
-                        .content("是否进行人工干预？")
-                        .positiveText("确认")
-                        .onPositive((dialog, which) -> {
-                            dialog.dismiss();
-                            mListener.replaceFragment(ManualFragment.newInstance(idCardRecord));
-                        })
-                        .negativeText("放弃")
-                        .onNegative((dialog, which) -> {
-                            dialog.dismiss();
-                            onBackPressed();
-                        })
-                        .autoDismiss(false)
-                        .cancelable(false)
-                        .show();
+                if (!manualDialog.isShowing()) {
+                    manualDialog.show();
+                }
             } else {
                 handler.postDelayed(countDownRunnable, 1000);
             }
@@ -160,6 +158,8 @@ public class FaceVerifyFragment extends BaseViewModelFragment<FragmentFaceVerify
     };
 
     private Observer<Boolean> saveFlagObserver = flag -> mListener.backToStack(HomeFragment.class);
+
+    private Observer<Boolean> verifyFailedObserver = flag -> binding.tvManual.setVisibility(View.VISIBLE);
 
     private ViewTreeObserver.OnGlobalLayoutListener globalListener = new ViewTreeObserver.OnGlobalLayoutListener() {
         @Override
@@ -209,6 +209,25 @@ public class FaceVerifyFragment extends BaseViewModelFragment<FragmentFaceVerify
         viewModel.alarm();
         return false;
     };
+
+    private void initDialog() {
+        manualDialog = new MaterialDialog.Builder(getContext())
+                .title("人工干预")
+                .content("是否进行人工干预？")
+                .positiveText("确认")
+                .onPositive((dialog, which) -> {
+                    dialog.dismiss();
+                    mListener.replaceFragment(ManualFragment.newInstance(idCardRecord));
+                })
+                .negativeText("放弃")
+                .onNegative((dialog, which) -> {
+                    dialog.dismiss();
+                    onBackPressed();
+                })
+                .autoDismiss(false)
+                .cancelable(false)
+                .build();
+    }
 
     public void setIdCardRecord(IDCardRecord idCardRecord) {
         this.idCardRecord = idCardRecord;

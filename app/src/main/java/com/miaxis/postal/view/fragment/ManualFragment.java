@@ -1,28 +1,27 @@
 package com.miaxis.postal.view.fragment;
 
-import android.os.Bundle;
+import android.content.res.Configuration;
 
-import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 
+import android.text.Editable;
 import android.text.TextUtils;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.text.TextWatcher;
 
 import com.miaxis.postal.BR;
 import com.miaxis.postal.R;
+import com.miaxis.postal.data.entity.IDCard;
 import com.miaxis.postal.data.entity.IDCardRecord;
 import com.miaxis.postal.data.entity.Photograph;
 import com.miaxis.postal.data.event.TakePhotoEvent;
 import com.miaxis.postal.databinding.FragmentManualBinding;
 import com.miaxis.postal.manager.ToastManager;
+import com.miaxis.postal.view.adapter.IDCardFilterAdapter;
 import com.miaxis.postal.view.adapter.InspectAdapter;
 import com.miaxis.postal.view.auxiliary.OnLimitClickHelper;
-import com.miaxis.postal.view.auxiliary.OnLimitClickListener;
 import com.miaxis.postal.view.base.BaseViewModelFragment;
 import com.miaxis.postal.viewModel.InspectViewModel;
 import com.miaxis.postal.viewModel.ManualViewModel;
@@ -31,25 +30,19 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ManualFragment extends BaseViewModelFragment<FragmentManualBinding, ManualViewModel> {
 
     private InspectAdapter inspectAdapter;
+    private IDCardFilterAdapter idCardFilterAdapter;
 
     private IDCardRecord idCardRecord;
-
-    private String cardNumber;
 
     public static ManualFragment newInstance(IDCardRecord idCardRecord) {
         ManualFragment fragment = new ManualFragment();
         fragment.setIdCardRecord(idCardRecord);
-        return fragment;
-    }
-
-    public static ManualFragment newInstance(String cardNumber) {
-        ManualFragment fragment = new ManualFragment();
-        fragment.setCardNumber(cardNumber);
         return fragment;
     }
 
@@ -79,23 +72,26 @@ public class ManualFragment extends BaseViewModelFragment<FragmentManualBinding,
             viewModel.name.set(idCardRecord.getName());
             binding.etName.setEnabled(false);
             viewModel.identityNumber.set(idCardRecord.getCardNumber());
-            binding.etNumber.setEnabled(false);
+            binding.etCardNumber.setEnabled(false);
+        } else {
+            binding.etCardNumber.requestFocus();
         }
-        if (cardNumber != null) {
-            viewModel.identityNumber.set(cardNumber);
-        }
+        binding.etCardNumber.setRawInputType(Configuration.KEYBOARD_QWERTY);
         viewModel.confirm.observe(this, confirmObserver);
+        viewModel.idCardSearch.observe(this, idCardObserver);
+        viewModel.alarmFlag.observe(this, alarmFlagObserver);
     }
 
     @Override
     protected void initView() {
         binding.ivBack.setOnClickListener(v -> onBackPressed());
         initRecycleView();
+        initAutoComplete();
         viewModel.photographList.observe(this, photographObserver);
         binding.btnConfirm.setOnClickListener(new OnLimitClickHelper(view -> {
             if (TextUtils.isEmpty(binding.etName.getText().toString())) {
                 ToastManager.toast("请输入被核验人姓名", ToastManager.INFO);
-            } else if (TextUtils.isEmpty(binding.etNumber.getText().toString())) {
+            } else if (TextUtils.isEmpty(binding.etCardNumber.getText().toString())) {
                 ToastManager.toast("请输入被核验人证件号码", ToastManager.INFO);
             } else if (viewModel.getSelectSize() == 0) {
                 ToastManager.toast("请拍摄并选择被核验人现场留档照片", ToastManager.INFO);
@@ -103,6 +99,10 @@ public class ManualFragment extends BaseViewModelFragment<FragmentManualBinding,
                 viewModel.confirm();
             }
         }));
+        binding.fabAlarm.setOnLongClickListener(v -> {
+            viewModel.alarm();
+            return false;
+        });
         EventBus.getDefault().register(this);
     }
 
@@ -133,6 +133,25 @@ public class ManualFragment extends BaseViewModelFragment<FragmentManualBinding,
         binding.rvInspect.setLayoutManager(gridLayoutManager);
         binding.rvInspect.setAdapter(inspectAdapter);
         ((SimpleItemAnimator) binding.rvInspect.getItemAnimator()).setSupportsChangeAnimations(false);
+    }
+
+    private void initAutoComplete() {
+        binding.etCardNumber.setOnClickListener(v -> {
+            if (binding.etCardNumber.getText().toString().length() >= 2) {
+                binding.etCardNumber.showDropDown();
+            }
+        });
+        idCardFilterAdapter = new IDCardFilterAdapter(getContext());
+        binding.etCardNumber.setAdapter(idCardFilterAdapter);
+        idCardFilterAdapter.setListener((view, position) -> {
+            IDCard idCard = idCardFilterAdapter.getDataList().get(position);
+            viewModel.searchLocalIDCard(idCard.getCardNumber());
+        });
+        viewModel.loadIDCardList();
+        viewModel.idCardListLiveData.observe(this, idCardList -> {
+            idCardFilterAdapter.setUnfilteredData((ArrayList<IDCard>) idCardList);
+//            idCardFilterAdapter.notifyDataSetChanged();
+        });
     }
 
     private InspectAdapter.OnHeaderClickListener headerListener = () -> {
@@ -170,6 +189,14 @@ public class ManualFragment extends BaseViewModelFragment<FragmentManualBinding,
         }
     };
 
+    private Observer<Boolean> idCardObserver = flag -> {
+        if (flag && viewModel.idCardRecordCache != null) {
+            mListener.replaceFragment(FaceVerifyFragment.newInstance(viewModel.idCardRecordCache));
+        }
+    };
+
+    private Observer<Boolean> alarmFlagObserver = flag -> mListener.backToStack(HomeFragment.class);
+
     private void updateSelectText() {
         binding.tvSelect.setText(String.format("已选 %s / %s", viewModel.getSelectSize(), InspectViewModel.MAX_COUNT));
     }
@@ -182,9 +209,5 @@ public class ManualFragment extends BaseViewModelFragment<FragmentManualBinding,
 
     public void setIdCardRecord(IDCardRecord idCardRecord) {
         this.idCardRecord = idCardRecord;
-    }
-
-    public void setCardNumber(String cardNumber) {
-        this.cardNumber = cardNumber;
     }
 }

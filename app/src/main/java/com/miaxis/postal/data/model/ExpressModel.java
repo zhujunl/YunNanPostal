@@ -32,4 +32,8 @@ public class ExpressModel {
         return AppDatabase.getInstance().expressDao().loadExpressCount();
     }
 
+    public static Express loadExpressWithCode(String code) {
+        return AppDatabase.getInstance().expressDao().loadExpressWithCode(code);
+    }
+
 }
