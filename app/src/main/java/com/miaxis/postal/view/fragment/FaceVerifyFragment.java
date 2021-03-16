@@ -141,6 +141,7 @@ public class FaceVerifyFragment extends BaseViewModelFragment<FragmentFaceVerify
         pass = true;
         binding.ivBack.setEnabled(false);
         binding.tvSwitch.setEnabled(false);
+        binding.tvManual.setEnabled(false);
         binding.fabAlarm.setEnabled(false);
         if (mIDCardRecord != null) {
             mIDCardRecord.setVerifyType("1");

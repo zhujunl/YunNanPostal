@@ -191,6 +191,12 @@ public class RecordUpdateFragment extends BaseViewModelFragment<FragmentRecordUp
         } else if (TextUtils.isEmpty(binding.etWeight.getText().toString())) {
             ToastManager.toast("请输入物品重量", ToastManager.INFO);
             return false;
+        } else if (TextUtils.isEmpty(binding.etSenderPhone.getText().toString())) {
+            ToastManager.toast("请输入寄件人手机号码", ToastManager.INFO);
+            return false;
+        } else if (TextUtils.isEmpty(binding.etSenderAddress.getText().toString())) {
+            ToastManager.toast("请输入寄件地址", ToastManager.INFO);
+            return false;
         } else if (TextUtils.isEmpty(binding.etAddresseeName.getText().toString())) {
             ToastManager.toast("请输入收件人姓名", ToastManager.INFO);
             return false;
