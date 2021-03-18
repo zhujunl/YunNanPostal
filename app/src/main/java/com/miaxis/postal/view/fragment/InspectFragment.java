@@ -128,7 +128,6 @@ public class InspectFragment extends BaseViewModelFragment<FragmentInspectBindin
             }
         }));
         binding.fabAlarm.setOnLongClickListener(alarmListener);
-        binding.etWeight.setRawInputType(Configuration.KEYBOARD_QWERTY);
         EventBus.getDefault().register(this);
     }
 
@@ -229,22 +228,7 @@ public class InspectFragment extends BaseViewModelFragment<FragmentInspectBindin
     };
 
     private boolean checkInput() {
-        if (TextUtils.isEmpty(binding.etInfo.getText().toString())) {
-            ToastManager.toast("请输入物品名称", ToastManager.INFO);
-            return false;
-        } else if (TextUtils.isEmpty(binding.etWeight.getText().toString())) {
-            ToastManager.toast("请输入物品重量", ToastManager.INFO);
-            return false;
-        } else if (TextUtils.isEmpty(binding.etAddresseeName.getText().toString())) {
-            ToastManager.toast("请输入收件人姓名", ToastManager.INFO);
-            return false;
-        } else if (TextUtils.isEmpty(binding.etAddresseePhone.getText().toString())) {
-            ToastManager.toast("请输入收件人手机号码", ToastManager.INFO);
-            return false;
-        } else if (TextUtils.isEmpty(binding.etAddresseeAddress.getText().toString())) {
-            ToastManager.toast("请输入收件地址", ToastManager.INFO);
-            return false;
-        } else if (viewModel.getSelectList().size() <= 0) {
+       if (viewModel.getSelectList().size() <= 0) {
             ToastManager.toast("请至少选择一张实物照片", ToastManager.INFO);
             return false;
         }
