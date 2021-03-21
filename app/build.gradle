@@ -98,4 +98,6 @@ dependencies {
     implementation files('src/main/libs/MxMscFingerApi.jar')
     implementation files('src/main/libs/IDCardComDriver.jar')
     implementation files('src/main/libs/zxing.jar')
+    implementation 'com.github.kongqw:AndroidSerialPort:1.0.1'
+
 }

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.os.SystemClock;
 import android.serialport.DeviceControlSpd;
 import android.text.TextUtils;
 import android.util.Base64;
@@ -14,9 +15,12 @@ import androidx.annotation.NonNull;
 import com.miaxis.postal.app.App;
 import com.miaxis.postal.data.entity.IDCardRecord;
 import com.miaxis.postal.util.ValueUtil;
+import com.mx.finger.utils.LogUtils;
 import com.zz.impl.IDCardDeviceImpl;
 import com.zz.impl.IDCardInterfaceService;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -41,10 +45,10 @@ public class CardManager {
      * ================================ 静态内部类单例 ================================
      **/
 
-    private static final String SERIAL_PORT = "/dev/ttyMT1";
+    private static final String SERIAL_PORT = "/dev/ttyHSL2";
     private static final int BAUD_RATE = 115200;
 
-    private DeviceControlSpd deviceControl;
+
     private IDCardInterfaceService cardManager;
 
     private Context context;
@@ -73,9 +77,7 @@ public class CardManager {
     private void initDevice() {
         App.getInstance().getThreadExecutor().execute(() -> {
             try {
-                deviceControl = new DeviceControlSpd(DeviceControlSpd.PowerType.MAIN, 93, 94);
-                deviceControl.PowerOnDevice();
-                Thread.sleep(500);
+                openDevice();
                 cardManager = new IDCardDeviceImpl();
                 if (isDeviceOpen()) {
                     listener.onIDCardInitResult(true);
@@ -89,6 +91,35 @@ public class CardManager {
             }
         });
     }
+
+
+    private void openDevice() {
+        synchronized (CardManager.class) {
+            if (!GpioManager.getInstance().getCardDevicePowerStatus()) {
+                GpioManager.getInstance().fingerDevicePowerControl(true);
+                GpioManager.getInstance().cardDevicePowerControl(true);
+                GpioManager.getInstance().scanDevicePowerControl(true);
+                SystemClock.sleep(500);
+            }
+            if (cardManager == null) {
+                cardManager = new IDCardDeviceImpl();
+            }
+            Log.e("asd", "打开设备");
+        }
+    }
+
+
+    private void closeDevice() {
+        synchronized (CardManager.class) {
+            if (GpioManager.getInstance().getCardDevicePowerStatus()) {
+                cardManager = null;
+                //GpioManager.getInstance().cardDevicePowerControl(false);
+                SystemClock.sleep(200);
+                Log.e("asd", "关闭设备");
+            }
+        }
+    }
+
 
     private boolean isDeviceOpen() throws InterruptedException {
         int count = 4;
@@ -115,15 +146,9 @@ public class CardManager {
     }
 
     public void stopReadCard() {
-        try {
-            running.set(false);
-            cardManager = null;
-            if (deviceControl != null) {
-                deviceControl.PowerOffDevice();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        running.set(false);
+        cardManager = null;
+        closeDevice();
     }
 
     private class ReadCardThread extends Thread {

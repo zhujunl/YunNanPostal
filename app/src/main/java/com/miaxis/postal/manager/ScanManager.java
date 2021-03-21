@@ -1,18 +1,32 @@
 package com.miaxis.postal.manager;
 
 import android.content.Context;
-import android.content.Intent;
-import android.os.SystemProperties;
+import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import com.miaxis.postal.app.App;
-import com.scandecode.ScanDecode;
-import com.scandecode.inf.ScanInterface;
+import com.miaxis.postal.manager.scan.BP990S_ScanManager;
+import com.miaxis.postal.manager.scan.BP990_ScanManager;
+import com.miaxis.postal.manager.scan.IScanManager;
+
+import java.util.Objects;
 
 public class ScanManager {
 
+    IScanManager iScanManager;
+    private static final String TAG = "ScanManager";
     private ScanManager() {
+        Log.i(TAG, "MANUFACTURER: "+Build.MANUFACTURER);
+        Log.i(TAG, "MODEL: "+Build.MODEL);
+        if (Objects.equals(Build.MANUFACTURER,"QUALCOMM")){
+//            Objects.equals(Build.MODEL,"BP-900")
+            iScanManager = BP990_ScanManager.getInstance();
+        }else {
+            iScanManager = BP990S_ScanManager.getInstance();
+        }
     }
 
     public static ScanManager getInstance() {
@@ -27,84 +41,35 @@ public class ScanManager {
      * ================================ 静态内部类单例 ================================
      **/
 
-    private ScanInterface scanDecode;
-    private OnScanListener listener;
+
+
 
     public void powerOn() {
-        scanControl(true);
+        iScanManager.powerOn();
     }
 
     public void powerOff() {
-//        scanControl(false);
+        iScanManager.powerOff();
     }
 
+    Handler handler = new Handler(Looper.getMainLooper());
     public void initDevice(@NonNull Context context, @NonNull OnScanListener listener) {
-        this.listener = listener;
-        scanDecode = new ScanDecode(context);
-        scanDecode.initService("true");
-        scanDecode.getBarCode(new ScanInterface.OnScanListener() {
-            @Override
-            public void getBarcode(String data) {
-                listener.onScan(data);
-            }
-
-            @Override
-            public void getBarcodeByte(byte[] bytes) {
-            }
-        });
+       iScanManager.initDevice(context, code -> handler.post(() -> listener.onScan(code)));
     }
 
     public void startScan() {
-        if (scanDecode != null) {
-            scanDecode.starScan();
-        }
+        iScanManager.startScan();
     }
 
     public void stopScan() {
-        try {
-            if (scanDecode != null) {
-                scanDecode.stopScan();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        iScanManager.stopScan();
     }
 
     public void closeDevice() {
-        try {
-            if (scanDecode != null) {
-                scanDecode.onDestroy();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void scanControl(boolean scan) {
-        if (scan) {
-            SystemProperties.set("persist.sys.keyreport", "true");
-//            SystemProperties.set("persist.sys.keyreportshow", "true");
-            SystemProperties.set("persist.sys.iscamera","close");
-            SystemProperties.set("persist.sys.scanstopimme","false");
-            Intent Barcodeintent = new Intent();
-            Barcodeintent.setPackage("com.geomobile.oemscanservice");
-            App.getInstance().startService(Barcodeintent);
-        } else {
-            SystemProperties.set("persist.sys.keyreport", "false");
-//            SystemProperties.set("persist.sys.keyreportshow", "false");
-            SystemProperties.set("persist.sys.iscamera","close");
-            SystemProperties.set("persist.sys.scanstopimme","true");
-            Intent intentstop = new Intent();
-            intentstop.setAction("com.geomobile.se4500barcodestop");
-            App.getInstance().sendBroadcast(intentstop,null);
-            Intent Barcodeintent = new Intent();
-            Barcodeintent.setPackage("com.geomobile.oemscanservice");
-            App.getInstance().stopService(Barcodeintent);
-        }
+        iScanManager.closeDevice();
     }
 
     public interface OnScanListener {
         void onScan(String code);
     }
-
 }
