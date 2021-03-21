@@ -1,10 +1,10 @@
 package com.miaxis.postal.manager;
 
 import android.content.Context;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.os.SystemClock;
 import android.serialport.DeviceControlSpd;
 import android.text.TextUtils;
 import android.util.Base64;
@@ -14,18 +14,21 @@ import androidx.annotation.NonNull;
 
 import com.miaxis.postal.app.App;
 import com.miaxis.postal.data.entity.IDCardRecord;
+import com.miaxis.postal.manager.idpower.BP990_IdCardPower;
+import com.miaxis.postal.manager.idpower.BP990s_IdCardPower;
+import com.miaxis.postal.manager.idpower.IIdCardPower;
+import com.miaxis.postal.manager.scan.BP990S_ScanManager;
+import com.miaxis.postal.manager.scan.BP990_ScanManager;
 import com.miaxis.postal.util.ValueUtil;
-import com.mx.finger.utils.LogUtils;
 import com.zz.impl.IDCardDeviceImpl;
 import com.zz.impl.IDCardInterfaceService;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class CardManager {
@@ -45,7 +48,6 @@ public class CardManager {
      * ================================ 静态内部类单例 ================================
      **/
 
-    private static final String SERIAL_PORT = "/dev/ttyHSL2";
     private static final int BAUD_RATE = 115200;
 
 
@@ -56,10 +58,19 @@ public class CardManager {
     private IDCardListener listener;
 
     private volatile AtomicBoolean running = new AtomicBoolean(false);
+    IIdCardPower mPowerManager = null ;
+
 
     public void init(@NonNull Context context, @NonNull IDCardListener listener) {
         this.context = context;
         this.listener = listener;
+
+        if (Objects.equals(Build.MANUFACTURER,"QUALCOMM")){
+            mPowerManager = new BP990_IdCardPower();
+        }else {
+            mPowerManager = new BP990s_IdCardPower();
+        }
+
         handler = new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(@NonNull Message msg) {
@@ -74,10 +85,11 @@ public class CardManager {
         initDevice();
     }
 
+
     private void initDevice() {
         App.getInstance().getThreadExecutor().execute(() -> {
             try {
-                openDevice();
+                mPowerManager.powerOn();
                 cardManager = new IDCardDeviceImpl();
                 if (isDeviceOpen()) {
                     listener.onIDCardInitResult(true);
@@ -91,35 +103,6 @@ public class CardManager {
             }
         });
     }
-
-
-    private void openDevice() {
-        synchronized (CardManager.class) {
-            if (!GpioManager.getInstance().getCardDevicePowerStatus()) {
-                GpioManager.getInstance().fingerDevicePowerControl(true);
-                GpioManager.getInstance().cardDevicePowerControl(true);
-                GpioManager.getInstance().scanDevicePowerControl(true);
-                SystemClock.sleep(500);
-            }
-            if (cardManager == null) {
-                cardManager = new IDCardDeviceImpl();
-            }
-            Log.e("asd", "打开设备");
-        }
-    }
-
-
-    private void closeDevice() {
-        synchronized (CardManager.class) {
-            if (GpioManager.getInstance().getCardDevicePowerStatus()) {
-                cardManager = null;
-                //GpioManager.getInstance().cardDevicePowerControl(false);
-                SystemClock.sleep(200);
-                Log.e("asd", "关闭设备");
-            }
-        }
-    }
-
 
     private boolean isDeviceOpen() throws InterruptedException {
         int count = 4;
@@ -148,7 +131,7 @@ public class CardManager {
     public void stopReadCard() {
         running.set(false);
         cardManager = null;
-        closeDevice();
+        mPowerManager.powerOff();
     }
 
     private class ReadCardThread extends Thread {
@@ -159,7 +142,7 @@ public class CardManager {
                 if (cardManager != null) {
                     byte[] message = new byte[100];
                     try {
-                        int result = cardManager.readIDCard(SERIAL_PORT, BAUD_RATE, 10, message);
+                        int result = cardManager.readIDCard(mPowerManager.ioPath(), BAUD_RATE, 10, message);
                         if (result == 0x90) {
                             IDCardRecord transform;
                             int cardType = cardManager.getIDCardType();
@@ -280,7 +263,7 @@ public class CardManager {
         try {
             byte[] message = new byte[201];
             byte[] samVersion = new byte[201];
-            int result = cardManager.getSAMID(SERIAL_PORT, BAUD_RATE, samVersion, message);
+            int result = cardManager.getSAMID(mPowerManager.ioPath(), BAUD_RATE, samVersion, message);
             if (result == 0x90) {
                 return new String(samVersion);
             }

@@ -2,11 +2,17 @@ package com.miaxis.postal.manager;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.os.Build;
 import android.serialport.DeviceControlSpd;
 
 import androidx.annotation.NonNull;
 
 import com.miaxis.postal.app.App;
+import com.miaxis.postal.manager.fingerPower.BP990_FingerPower;
+import com.miaxis.postal.manager.fingerPower.BP990s_FingerPower;
+import com.miaxis.postal.manager.fingerPower.IFingerPower;
+import com.miaxis.postal.manager.idpower.BP990_IdCardPower;
+import com.miaxis.postal.manager.idpower.BP990s_IdCardPower;
 import com.mx.finger.alg.MxFingerAlg;
 import com.mx.finger.api.msc.MxMscBigFingerApi;
 import com.mx.finger.api.msc.MxMscBigFingerApiFactory;
@@ -17,6 +23,7 @@ import com.mx.finger.utils.RawBitmapUtils;
 import org.zz.jni.zzFingerAlgID;
 
 import java.io.IOException;
+import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -42,22 +49,27 @@ public class FingerManager {
     private Context context;
     private MxMscBigFingerApi mxMscBigFingerApi;
     private MxFingerAlg mxFingerAlg;
-    private DeviceControlSpd deviceControl;
+
     private FingerListener listener;
 
     private volatile boolean init = false;
+    IFingerPower mFingerPower = null;
 
     public void init(@NonNull Context context, @NonNull FingerListener listener) {
         this.context = context;
         this.listener = listener;
+        if (Objects.equals(Build.MANUFACTURER,"QUALCOMM")){
+            mFingerPower = new BP990_FingerPower();
+        }else {
+            mFingerPower = new BP990s_FingerPower();
+        }
         initDevice();
     }
 
     private void initDevice() {
         executor.execute(() -> {
             try {
-                deviceControl = new DeviceControlSpd(DeviceControlSpd.PowerType.MAIN, 93, 63);
-                deviceControl.PowerOnDevice();
+                mFingerPower.powerOn();
                 Thread.sleep(500);
                 MxMscBigFingerApiFactory fingerFactory = new MxMscBigFingerApiFactory(App.getInstance());
                 mxMscBigFingerApi = fingerFactory.getApi();
@@ -139,14 +151,8 @@ public class FingerManager {
     }
 
     public void release() {
-        try {
-            init = false;
-            if (deviceControl != null) {
-                deviceControl.PowerOffDevice();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        init = false;
+        mFingerPower.powerOff();
     }
 
     public interface FingerListener {
