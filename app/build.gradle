@@ -17,12 +17,29 @@ android {
             }
         }
         ndk {
-            abiFilters 'armeabi-v7a'//, 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64', 'mips', 'mips64'8
+            abiFilters 'armeabi-v7a'
+//, 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64', 'mips', 'mips64'8
         }
     }
+
+    signingConfigs {
+
+        config {
+            keyAlias 'Chronaxia'
+            keyPassword 'qq972625961'
+            storeFile file('../chronaxia.jks')
+            storePassword 'qq972625961'
+        }
+    }
+
+
     buildTypes {
+        debug {
+            signingConfig signingConfigs.config
+        }
         release {
             minifyEnabled false
+            signingConfig signingConfigs.config
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -37,6 +54,8 @@ android {
         disable 'CheckResult'
         disable 'GoogleAppIndexingWarning'
     }
+
+
 }
 
 dependencies {
