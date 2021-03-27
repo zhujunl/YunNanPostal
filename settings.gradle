@@ -1,2 +1,2 @@
 include ':app', ':scandecode-release'
-rootProject.name='Postal'
+rootProject.name='云南邮政'
