@@ -4,13 +4,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-
-import androidx.annotation.NonNull;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.SimpleItemAnimator;
-
 import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
@@ -28,7 +21,6 @@ import com.miaxis.postal.manager.ToastManager;
 import com.miaxis.postal.view.adapter.ExpressAdapter;
 import com.miaxis.postal.view.adapter.SpacesItemDecoration;
 import com.miaxis.postal.view.auxiliary.OnLimitClickHelper;
-import com.miaxis.postal.view.auxiliary.OnLimitClickListener;
 import com.miaxis.postal.view.base.BaseViewModelFragment;
 import com.miaxis.postal.view.component.ScanCodeReceiver;
 import com.miaxis.postal.viewModel.ExpressViewModel;
@@ -39,6 +31,12 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.SimpleItemAnimator;
 
 public class ExpressFragment extends BaseViewModelFragment<FragmentExpressBinding, ExpressViewModel> {
 
@@ -54,13 +52,16 @@ public class ExpressFragment extends BaseViewModelFragment<FragmentExpressBindin
     private boolean draft = false;
 
     public static ExpressFragment newInstance(IDCardRecord idCardRecord) {
+        Log.e("ExpressFragment", "newInstance:" + idCardRecord);
         ExpressFragment fragment = new ExpressFragment();
         fragment.setIdCardRecord(idCardRecord);
         fragment.setDraft(false);
         fragment.setExpressList(new ArrayList<>());
         return fragment;
     }
+
     public static ExpressFragment newInstanceForDraft(IDCardRecord idCardRecord, @NonNull List<Express> expressList) {
+        Log.e("ExpressFragment", "newInstanceForDraft:" + idCardRecord);
         ExpressFragment fragment = new ExpressFragment();
         fragment.setIdCardRecord(idCardRecord);
         fragment.setDraft(true);
@@ -99,7 +100,7 @@ public class ExpressFragment extends BaseViewModelFragment<FragmentExpressBindin
         initRecycleView();
         initReceiver();
         binding.ivBack.setOnClickListener(v -> onBackPressed());
-        binding.ivAddress.setOnClickListener(new OnLimitClickHelper(view  -> viewModel.getLocation()));
+        binding.ivAddress.setOnClickListener(new OnLimitClickHelper(view -> viewModel.getLocation()));
         if (expressList != null && !expressList.isEmpty()) {
             viewModel.initExpressList(expressList);
             expressAdapter.notifyDataSetChanged();
@@ -327,4 +328,5 @@ public class ExpressFragment extends BaseViewModelFragment<FragmentExpressBindin
     public void setExpressList(List<Express> expressList) {
         this.expressList = expressList;
     }
+
 }

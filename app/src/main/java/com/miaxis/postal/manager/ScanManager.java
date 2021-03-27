@@ -6,25 +6,26 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
-
 import com.miaxis.postal.manager.scan.BP990S_ScanManager;
 import com.miaxis.postal.manager.scan.BP990_ScanManager;
 import com.miaxis.postal.manager.scan.IScanManager;
 
 import java.util.Objects;
 
+import androidx.annotation.NonNull;
+
 public class ScanManager {
 
     IScanManager iScanManager;
     private static final String TAG = "ScanManager";
+
     private ScanManager() {
-        Log.i(TAG, "MANUFACTURER: "+Build.MANUFACTURER);
-        Log.i(TAG, "MODEL: "+Build.MODEL);
-        if (Objects.equals(Build.MANUFACTURER,"QUALCOMM")){
-//            Objects.equals(Build.MODEL,"BP-900")
+        Log.i(TAG, "MANUFACTURER: " + Build.MANUFACTURER);
+        Log.i(TAG, "MODEL: " + Build.MODEL);
+        if (Objects.equals(Build.MANUFACTURER, "QUALCOMM")) {
+            //            Objects.equals(Build.MODEL,"BP-900")
             iScanManager = BP990_ScanManager.getInstance();
-        }else {
+        } else {
             iScanManager = BP990S_ScanManager.getInstance();
         }
     }
@@ -42,8 +43,6 @@ public class ScanManager {
      **/
 
 
-
-
     public void powerOn() {
         iScanManager.powerOn();
     }
@@ -53,8 +52,9 @@ public class ScanManager {
     }
 
     Handler handler = new Handler(Looper.getMainLooper());
+
     public void initDevice(@NonNull Context context, @NonNull OnScanListener listener) {
-       iScanManager.initDevice(context, code -> handler.post(() -> listener.onScan(code)));
+        iScanManager.initDevice(context, code -> handler.post(() -> listener.onScan(code)));
     }
 
     public void startScan() {
@@ -70,6 +70,9 @@ public class ScanManager {
     }
 
     public interface OnScanListener {
+
         void onScan(String code);
+
     }
+
 }

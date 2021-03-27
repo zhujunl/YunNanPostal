@@ -2,11 +2,11 @@ package com.miaxis.postal.data.entity;
 
 import android.graphics.Bitmap;
 
+import java.util.Date;
+
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
-
-import java.util.Date;
 
 @Entity
 public class IDCardRecord {
@@ -15,45 +15,81 @@ public class IDCardRecord {
     private Long id;
 
     /* 注释说明：二代证 / 港澳台 / 外国人永久居留证 */
-    /** 卡片类型 空值=二代证，J=港澳台，I=外国人永久居留证 **/
+    /**
+     * 卡片类型 空值=二代证，J=港澳台，I=外国人永久居留证
+     **/
     private String cardType;
-    /** 物理编号 **/
+    /**
+     * 物理编号
+     **/
     private String cardId;
-    /** 姓名 **/
+    /**
+     * 姓名
+     **/
     private String name;
-    /** 出生日期 **/
+    /**
+     * 出生日期
+     **/
     private String birthday;
-    /** 地址 / 地址 / 空值 **/
+    /**
+     * 地址 / 地址 / 空值
+     **/
     private String address;
-    /** 身份证号码 / 身份证号 / 永久居留证号码 **/
+    /**
+     * 身份证号码 / 身份证号 / 永久居留证号码
+     **/
     private String cardNumber;
-    /** 签发机构 / 签发机构 / 申请受理机关代码 **/
+    /**
+     * 签发机构 / 签发机构 / 申请受理机关代码
+     **/
     private String issuingAuthority;
-    /** 有效期开始 **/
+    /**
+     * 有效期开始
+     **/
     private String validateStart;
-    /** 有效期结束 **/
+    /**
+     * 有效期结束
+     **/
     private String validateEnd;
-    /** 男/女 **/
+    /**
+     * 男/女
+     **/
     private String sex;
-    /** 民族 / 空值 / 国籍或所在地区代码 **/
+    /**
+     * 民族 / 空值 / 国籍或所在地区代码
+     **/
     private String nation;
 
 
-    /** 港澳台：通行证号码 **/
+    /**
+     * 港澳台：通行证号码
+     **/
     private String passNumber;
-    /** 港澳台：签发次数 **/
+    /**
+     * 港澳台：签发次数
+     **/
     private String issueCount;
-    /** 外国人：中文姓名 **/
+    /**
+     * 外国人：中文姓名
+     **/
     private String chineseName;
-    /** 外国人：证件版本号 **/
+    /**
+     * 外国人：证件版本号
+     **/
     private String version;
 
-    /** 身份证照片 **/
+    /**
+     * 身份证照片
+     **/
     private String cardPicture;
-    /** 现场人员照片 **/
+    /**
+     * 现场人员照片
+     **/
     private String facePicture;
 
-    /** 人证核验缓存 **/
+    /**
+     * 人证核验缓存
+     **/
     private String verifyId;
 
     private Date verifyTime;
@@ -61,6 +97,8 @@ public class IDCardRecord {
     private boolean upload;
 
     private String verifyType; //1:人脸，2:指纹
+
+    private boolean verifyStatus; //true:验证成功    false:验证失败
 
     private String personId;
 
@@ -74,22 +112,34 @@ public class IDCardRecord {
 
     private String senderAddress;
 
-    /** 身份证照片Bitmap **/
+    /**
+     * 身份证照片Bitmap
+     **/
     @Ignore
     private Bitmap cardBitmap;
-    /** 人脸比对通过照片Bitmap **/
+    /**
+     * 人脸比对通过照片Bitmap
+     **/
     @Ignore
     private Bitmap faceBitmap;
-    /** 指纹0 **/
+    /**
+     * 指纹0
+     **/
     @Ignore
     private String fingerprint0;
-    /** 指纹0指位 **/
+    /**
+     * 指纹0指位
+     **/
     @Ignore
     private String fingerprintPosition0;
-    /** 指纹1 **/
+    /**
+     * 指纹1
+     **/
     @Ignore
     private String fingerprint1;
-    /** 指纹1指位 **/
+    /**
+     * 指纹1指位
+     **/
     @Ignore
     private String fingerprintPosition1;
 
@@ -405,6 +455,14 @@ public class IDCardRecord {
         this.senderAddress = senderAddress;
     }
 
+    public boolean getVerifyStatus() {
+        return verifyStatus;
+    }
+
+    public void setVerifyStatus(boolean verifyStatus) {
+        this.verifyStatus = verifyStatus;
+    }
+
     public static final class Builder {
         private Long id;
         private String cardType;
@@ -617,5 +675,46 @@ public class IDCardRecord {
         public IDCardRecord build() {
             return new IDCardRecord(this);
         }
+    }
+
+    @Override
+    public String toString() {
+        return "IDCardRecord{" +
+                "id=" + id +
+                ", cardType='" + cardType + '\'' +
+                ", cardId='" + cardId + '\'' +
+                ", name='" + name + '\'' +
+                ", birthday='" + birthday + '\'' +
+                ", address='" + address + '\'' +
+                ", cardNumber='" + cardNumber + '\'' +
+                ", issuingAuthority='" + issuingAuthority + '\'' +
+                ", validateStart='" + validateStart + '\'' +
+                ", validateEnd='" + validateEnd + '\'' +
+                ", sex='" + sex + '\'' +
+                ", nation='" + nation + '\'' +
+                ", passNumber='" + passNumber + '\'' +
+                ", issueCount='" + issueCount + '\'' +
+                ", chineseName='" + chineseName + '\'' +
+                ", version='" + version + '\'' +
+                ", cardPicture='" + cardPicture + '\'' +
+                ", facePicture='" + facePicture + '\'' +
+                ", verifyId='" + verifyId + '\'' +
+                ", verifyTime=" + verifyTime +
+                ", upload=" + upload +
+                ", verifyType='" + verifyType + '\'' +
+                ", verifyStatus=" + verifyStatus +
+                ", personId='" + personId + '\'' +
+                ", checkId='" + checkId + '\'' +
+                ", manualType='" + manualType + '\'' +
+                ", draft=" + draft +
+                ", senderPhone='" + senderPhone + '\'' +
+                ", senderAddress='" + senderAddress + '\'' +
+                ", cardBitmap=" + cardBitmap +
+                ", faceBitmap=" + faceBitmap +
+                ", fingerprint0='" + fingerprint0 + '\'' +
+                ", fingerprintPosition0='" + fingerprintPosition0 + '\'' +
+                ", fingerprint1='" + fingerprint1 + '\'' +
+                ", fingerprintPosition1='" + fingerprintPosition1 + '\'' +
+                '}';
     }
 }

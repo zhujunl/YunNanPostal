@@ -1,18 +1,7 @@
 package com.miaxis.postal.view.fragment;
 
-import android.graphics.Bitmap;
-import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
-
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -27,11 +16,14 @@ import com.miaxis.postal.manager.CameraManager;
 import com.miaxis.postal.manager.TTSManager;
 import com.miaxis.postal.manager.ToastManager;
 import com.miaxis.postal.view.auxiliary.OnLimitClickHelper;
-import com.miaxis.postal.view.auxiliary.OnLimitClickListener;
 import com.miaxis.postal.view.base.BaseViewModelFragment;
 import com.miaxis.postal.view.custom.RoundBorderView;
 import com.miaxis.postal.view.custom.RoundFrameLayout;
 import com.miaxis.postal.viewModel.FaceVerifyViewModel;
+
+import androidx.annotation.NonNull;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 public class FaceVerifyFragment extends BaseViewModelFragment<FragmentFaceVerifyBinding, FaceVerifyViewModel> {
 
@@ -114,6 +106,7 @@ public class FaceVerifyFragment extends BaseViewModelFragment<FragmentFaceVerify
             TTSManager.getInstance().stop();
         }
         manualDialog.dismiss();
+        manualDialog2.dismiss();
         CameraManager.getInstance().closeBackCamera();
     }
 
@@ -137,30 +130,11 @@ public class FaceVerifyFragment extends BaseViewModelFragment<FragmentFaceVerify
         viewModel.startFaceVerify(idCardRecord);
     };
 
-    private Observer<IDCardRecord> verifyFlagObserver = mIDCardRecord -> {
-        pass = true;
-        binding.ivBack.setEnabled(false);
-        binding.tvSwitch.setEnabled(false);
-        binding.tvManual.setEnabled(false);
-        binding.fabAlarm.setEnabled(false);
-        if (mIDCardRecord != null) {
-            mIDCardRecord.setVerifyType("1");
-            mIDCardRecord.setManualType("0");
-            handler.postDelayed(() -> {
-                try {
-                    mListener.replaceFragment(ExpressFragment.newInstance(mIDCardRecord));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }, 1000);
-        } else {
-            ToastManager.toast("遇到错误，请退出重试", ToastManager.ERROR);
-        }
-    };
-
     private Observer<Boolean> saveFlagObserver = flag -> mListener.backToStack(HomeFragment.class);
 
-    private Observer<Boolean> verifyFailedObserver = flag -> binding.tvManual.setVisibility(View.VISIBLE);
+    private Observer<Boolean> verifyFailedObserver = flag -> {
+        binding.tvManual.setVisibility(View.VISIBLE);
+    };
 
     private ViewTreeObserver.OnGlobalLayoutListener globalListener = new ViewTreeObserver.OnGlobalLayoutListener() {
         @Override
@@ -211,6 +185,8 @@ public class FaceVerifyFragment extends BaseViewModelFragment<FragmentFaceVerify
         return false;
     };
 
+    private MaterialDialog manualDialog2;
+
     private void initDialog() {
         manualDialog = new MaterialDialog.Builder(getContext())
                 .title("人工干预")
@@ -228,7 +204,64 @@ public class FaceVerifyFragment extends BaseViewModelFragment<FragmentFaceVerify
                 .autoDismiss(false)
                 .cancelable(false)
                 .build();
+
+
+        manualDialog2 = new MaterialDialog.Builder(getContext())
+                .title("错误")
+                .content("人证核验不通过，重新人证核验或直接进入下一步。")
+                .positiveText("下一步")
+                .negativeText("重新核验")
+                .autoDismiss(false)
+                .cancelable(false)
+                .build();
     }
+
+    private Observer<IDCardRecord> verifyFlagObserver = mIDCardRecord -> {
+        if (mIDCardRecord != null) {
+            if (pass = mIDCardRecord.getVerifyStatus()) {
+                binding.ivBack.setEnabled(false);
+                binding.tvSwitch.setEnabled(false);
+                binding.tvManual.setEnabled(false);
+                binding.fabAlarm.setEnabled(false);
+            }
+            handler.removeCallbacks(countDownRunnable);
+            if (pass) {
+                mIDCardRecord.setVerifyType("1");
+                mIDCardRecord.setManualType("0");
+                handler.postDelayed(() -> {
+                    try {
+                        mListener.replaceFragment(ExpressFragment.newInstance(mIDCardRecord));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }, 1000);
+            } else {
+                MaterialDialog.Builder builder = manualDialog2.getBuilder();
+                builder.onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        dialog.dismiss();
+                        mIDCardRecord.setVerifyType("1");
+                        mIDCardRecord.setManualType("0");
+                        handler.post(() -> {
+                            try {
+                                mListener.replaceFragment(ExpressFragment.newInstance(mIDCardRecord));
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        });
+                    }
+                }).onNegative((dialog, which) -> {
+                    dialog.dismiss();
+                    delay = 21;
+                    handler.post(countDownRunnable);
+                    viewModel.startFaceVerify(idCardRecord);
+                }).build().show();
+            }
+        } else {
+            ToastManager.toast("遇到错误，请退出重试", ToastManager.ERROR);
+        }
+    };
 
     public void setIdCardRecord(IDCardRecord idCardRecord) {
         this.idCardRecord = idCardRecord;

@@ -63,6 +63,7 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation project(path: ':SerialPortLibrary')
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
@@ -117,6 +118,7 @@ dependencies {
     implementation files('src/main/libs/MxMscFingerApi.jar')
     implementation files('src/main/libs/IDCardComDriver.jar')
     implementation files('src/main/libs/zxing.jar')
-    implementation 'com.github.kongqw:AndroidSerialPort:1.0.1'
+    //串口通讯库  使用SerialPortLibrary替换
+//    implementation 'com.github.kongqw:AndroidSerialPort:1.0.1'
 
 }

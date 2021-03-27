@@ -3,16 +3,13 @@ package com.miaxis.postal.viewModel;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
-import androidx.databinding.ObservableField;
-import androidx.lifecycle.MutableLiveData;
-
 import com.amap.api.location.AMapLocation;
 import com.miaxis.postal.app.App;
 import com.miaxis.postal.bridge.SingleLiveEvent;
+import com.miaxis.postal.data.bean.PhotoFaceFeature;
 import com.miaxis.postal.data.entity.Config;
 import com.miaxis.postal.data.entity.Courier;
 import com.miaxis.postal.data.entity.IDCardRecord;
-import com.miaxis.postal.data.bean.PhotoFaceFeature;
 import com.miaxis.postal.data.entity.WarnLog;
 import com.miaxis.postal.data.exception.MyException;
 import com.miaxis.postal.data.repository.IDCardRecordRepository;
@@ -26,10 +23,11 @@ import com.miaxis.postal.manager.FaceManager;
 import com.miaxis.postal.manager.PostalManager;
 import com.miaxis.postal.manager.TTSManager;
 import com.miaxis.postal.manager.ToastManager;
-import com.miaxis.postal.util.DateUtil;
 
 import java.util.Date;
 
+import androidx.databinding.ObservableField;
+import androidx.lifecycle.MutableLiveData;
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -62,8 +60,7 @@ public class FaceVerifyViewModel extends BaseViewModel {
             } else {
                 throw new MyException(photoFaceFeature.getMessage());
             }
-        })
-                .subscribeOn(Schedulers.from(App.getInstance().getThreadExecutor()))
+        }).subscribeOn(Schedulers.from(App.getInstance().getThreadExecutor()))
                 .observeOn(Schedulers.from(App.getInstance().getThreadExecutor()))
                 .subscribe(photoFaceFeature -> {
                     cardFeature = photoFaceFeature;
@@ -95,26 +92,30 @@ public class FaceVerifyViewModel extends BaseViewModel {
                 } else {
                     score = FaceManager.getInstance().matchFeature(feature, cardFeature.getFaceFeature());
                 }
+                boolean verify = false;
                 Config config = ConfigManager.getInstance().getConfig();
                 if (mask ? score >= config.getVerifyMaskScore() : score >= config.getVerifyScore()) {
-                    byte[] fileImage = FaceManager.getInstance().imageEncode(mxRGBImage.getRgbImage(), mxRGBImage.getWidth(), mxRGBImage.getHeight());
-                    Bitmap header = BitmapFactory.decodeByteArray(fileImage, 0, fileImage.length);
-                    hint.set("人证核验成功");
+                    verify = true;
                     TTSManager.getInstance().playVoiceMessageFlush("核验通过");
-                    stopFaceVerify();
-                    IDCardRecord value = idCardRecordLiveData.getValue();
-                    if (value != null) {
-                        IDCardRepository.getInstance().addNewIDCard(value);
-                        value.setFaceBitmap(header);
-                        value.setVerifyTime(new Date());
-                        verifyFlag.postValue(value);
-                    } else {
-                        toast.postValue(ToastManager.getToastBody("遇到错误，请退出后重试", ToastManager.ERROR));
-                    }
-                    return;
+                    hint.set("人证核验成功");
+                    verifyFailedFlag.postValue(Boolean.TRUE);
                 } else {
                     hint.set("识别不通过");
                     verifyFailedFlag.postValue(Boolean.FALSE);
+                }
+                stopFaceVerify();
+                byte[] fileImage = FaceManager.getInstance().imageEncode(mxRGBImage.getRgbImage(), mxRGBImage.getWidth(), mxRGBImage.getHeight());
+                Bitmap header = BitmapFactory.decodeByteArray(fileImage, 0, fileImage.length);
+                IDCardRecord value = idCardRecordLiveData.getValue();
+                if (value != null) {
+                    IDCardRepository.getInstance().addNewIDCard(value);
+                    value.setFaceBitmap(header);
+                    value.setVerifyTime(new Date());
+                    value.setVerifyStatus(verify);
+                    verifyFlag.postValue(value);
+                    return;
+                } else {
+                    toast.postValue(ToastManager.getToastBody("遇到错误，请退出后重试", ToastManager.ERROR));
                 }
             } catch (Exception e) {
                 e.printStackTrace();

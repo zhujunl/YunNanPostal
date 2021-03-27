@@ -59,7 +59,7 @@ public class BP900GpioStrategy implements GpioManager.GpioStrategy {
     @Override
     public void scanDevicePowerControl(boolean status) {
         writeFile("/sys/nexgo/power_ctl/scan_power_en", status ? "1" : "0");
-//        writeFile("/sys/nexgo/power_ctl/scan_trip_en", status ? "1" : "0");
+        writeFile("/sys/nexgo/power_ctl/scan_trip_en", status ? "1" : "0");
     }
 
     @Override
@@ -75,7 +75,7 @@ public class BP900GpioStrategy implements GpioManager.GpioStrategy {
     @Override
     public boolean getScanDevicePowerStatus() {
         return getDeviceStatus("/sys/nexgo/power_ctl/scan_power_en");
-//                && getDeviceStatus("/sys/nexgo/power_ctl/scan_trip_en");
+        //&& getDeviceStatus("/sys/nexgo/power_ctl/scan_trip_en");
     }
 
     private void writeFile(String filePath, String writeData) {

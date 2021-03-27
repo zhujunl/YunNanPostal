@@ -2,9 +2,6 @@ package com.miaxis.postal.viewModel;
 
 import android.text.TextUtils;
 
-import androidx.databinding.ObservableField;
-import androidx.lifecycle.MutableLiveData;
-
 import com.amap.api.location.AMapLocation;
 import com.miaxis.postal.app.App;
 import com.miaxis.postal.bridge.SingleLiveEvent;
@@ -21,8 +18,6 @@ import com.miaxis.postal.manager.AmapManager;
 import com.miaxis.postal.manager.DataCacheManager;
 import com.miaxis.postal.manager.PostalManager;
 import com.miaxis.postal.manager.ScanManager;
-import com.miaxis.postal.manager.ToastManager;
-import com.miaxis.postal.util.DateUtil;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -31,12 +26,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
+import androidx.databinding.ObservableField;
+import androidx.lifecycle.MutableLiveData;
 import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
 public class ExpressViewModel extends BaseViewModel {
@@ -87,7 +82,10 @@ public class ExpressViewModel extends BaseViewModel {
     private ScanManager.OnScanListener listener = this::handlerScanCode;
 
     public void handlerScanCode(String code) {
-        if (System.currentTimeMillis() - timeFilter.get() < 2000) return;
+        if (System.currentTimeMillis() - timeFilter.get() < 2000) {
+            resultMessage.setValue("操作太频繁");
+            return;
+        }
         timeFilter.set(System.currentTimeMillis());
         stopScan();
         waitMessage.setValue("扫描成功，开始校验");

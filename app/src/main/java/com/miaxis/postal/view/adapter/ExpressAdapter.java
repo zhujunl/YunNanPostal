@@ -6,21 +6,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import androidx.annotation.NonNull;
-import androidx.databinding.DataBindingUtil;
-import androidx.recyclerview.widget.RecyclerView;
-
 import com.miaxis.postal.R;
-import com.miaxis.postal.bridge.GlideApp;
 import com.miaxis.postal.data.entity.Express;
 import com.miaxis.postal.databinding.ItemExpressBodyBinding;
 import com.miaxis.postal.databinding.ItemExpressHeaderBinding;
 import com.miaxis.postal.view.auxiliary.OnLimitClickHelper;
 import com.miaxis.postal.view.base.BaseAdapter;
 import com.miaxis.postal.view.base.BaseViewHolder;
-import com.miaxis.postal.viewModel.ExpressViewModel;
 
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.databinding.DataBindingUtil;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class ExpressAdapter extends BaseAdapter<Express, RecyclerView.ViewHolder> {
 
@@ -39,6 +37,11 @@ public class ExpressAdapter extends BaseAdapter<Express, RecyclerView.ViewHolder
         switch (viewType) {
             case TYPE_HEADER:
                 ItemExpressHeaderBinding headerBinding = DataBindingUtil.inflate(LayoutInflater.from(parent.getContext()), R.layout.item_express_header, parent, false);
+                headerBinding.getRoot().setOnClickListener(new OnLimitClickHelper(view -> {
+                    if (headerListener != null) {
+                        headerListener.onHeaderClick();
+                    }
+                }));
                 HeaderViewHolder headerViewHolder = new HeaderViewHolder(headerBinding.getRoot());
                 headerViewHolder.setBinding(headerBinding);
                 return headerViewHolder;
@@ -52,20 +55,10 @@ public class ExpressAdapter extends BaseAdapter<Express, RecyclerView.ViewHolder
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        if (holder instanceof HeaderViewHolder) {
-            setHeaderItemValues((HeaderViewHolder) holder, position);
-        } else if (holder instanceof BodyViewHolder) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+        if (holder instanceof BodyViewHolder) {
             setBodyItemValues((BodyViewHolder) holder, position);
         }
-    }
-
-    private void setHeaderItemValues(HeaderViewHolder holder, int position) {
-        holder.itemView.setOnClickListener(new OnLimitClickHelper(view -> {
-            if (headerListener != null) {
-                headerListener.onHeaderClick();
-            }
-        }));
     }
 
     private void setBodyItemValues(BodyViewHolder holder, int position) {
@@ -101,13 +94,13 @@ public class ExpressAdapter extends BaseAdapter<Express, RecyclerView.ViewHolder
         return dataList.size() + 1;
     }
 
-    class HeaderViewHolder extends BaseViewHolder<ItemExpressHeaderBinding> {
+    static class HeaderViewHolder extends BaseViewHolder<ItemExpressHeaderBinding> {
         HeaderViewHolder(View itemView) {
             super(itemView);
         }
     }
 
-    class BodyViewHolder extends BaseViewHolder<ItemExpressBodyBinding> {
+    static class BodyViewHolder extends BaseViewHolder<ItemExpressBodyBinding> {
         BodyViewHolder(View itemView) {
             super(itemView);
         }

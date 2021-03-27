@@ -1,2 +1,3 @@
-include ':app', ':scandecode-release'
 rootProject.name='云南邮政'
+include ':app', ':scandecode-release'
+include ':SerialPortLibrary'

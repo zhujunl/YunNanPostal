@@ -2,14 +2,6 @@ package com.miaxis.postal.data.dao;
 
 import android.app.Application;
 
-import androidx.annotation.NonNull;
-import androidx.room.Database;
-import androidx.room.Room;
-import androidx.room.RoomDatabase;
-import androidx.room.TypeConverters;
-import androidx.room.migration.Migration;
-import androidx.sqlite.db.SupportSQLiteDatabase;
-
 import com.miaxis.postal.data.converter.DateConverter;
 import com.miaxis.postal.data.converter.StringListConverter;
 import com.miaxis.postal.data.entity.Config;
@@ -22,7 +14,14 @@ import com.miaxis.postal.util.FileUtil;
 
 import java.io.File;
 
-@Database(entities = {Config.class, Courier.class, IDCardRecord.class, Express.class, WarnLog.class, IDCard.class}, version = 8)
+import androidx.annotation.NonNull;
+import androidx.room.Database;
+import androidx.room.Room;
+import androidx.room.RoomDatabase;
+import androidx.room.TypeConverters;
+import androidx.sqlite.db.SupportSQLiteDatabase;
+
+@Database(entities = {Config.class, Courier.class, IDCardRecord.class, Express.class, WarnLog.class, IDCard.class}, version = 9)
 @TypeConverters({StringListConverter.class, DateConverter.class})
 public abstract class AppDatabase extends RoomDatabase {
 
