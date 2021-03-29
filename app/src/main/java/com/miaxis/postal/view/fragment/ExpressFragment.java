@@ -105,9 +105,6 @@ public class ExpressFragment extends BaseViewModelFragment<FragmentExpressBindin
             viewModel.initExpressList(expressList);
             expressAdapter.notifyDataSetChanged();
         }
-        if (!TextUtils.isEmpty(idCardRecord.getSenderPhone())) {
-            viewModel.phone.set(idCardRecord.getSenderPhone());
-        }
         if (!TextUtils.isEmpty(idCardRecord.getSenderAddress())) {
             viewModel.address.set(idCardRecord.getSenderAddress());
         } else {

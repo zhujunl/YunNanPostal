@@ -40,7 +40,6 @@ public class ExpressViewModel extends BaseViewModel {
     public static final String RECE_DATA_ACTION = "com.se4500.onDecodeComplete";
 
     public ObservableField<IDCardRecord> idCardRecord = new ObservableField<>();
-    public ObservableField<String> phone = new ObservableField<>();
     public ObservableField<String> address = new ObservableField<>();
 
     public MutableLiveData<List<Express>> expressList = new MutableLiveData<>(new ArrayList<>());
@@ -66,7 +65,6 @@ public class ExpressViewModel extends BaseViewModel {
         expressList.setValue(mExpressList);
         if (mExpressList != null && !mExpressList.isEmpty()) {
             Express express = mExpressList.get(0);
-            phone.set(express.getSenderPhone());
             address.set(express.getSenderAddress());
         }
     }
@@ -134,14 +132,6 @@ public class ExpressViewModel extends BaseViewModel {
     }
 
     private void removeRepeatEdit(String code) {
-        String phoneStr = phone.get();
-        if (!TextUtils.isEmpty(phoneStr)) {
-            String phoneRegex = code.replaceAll("[^0-9.]", "");
-            if (phoneStr.contains(phoneRegex)) {
-                phoneStr = phoneStr.replace(phoneRegex, "");
-                phone.set(phoneStr);
-            }
-        }
         String addressStr = address.get();
         if (!TextUtils.isEmpty(addressStr)) {
             if (addressStr.contains(code)) {
@@ -249,7 +239,6 @@ public class ExpressViewModel extends BaseViewModel {
         waitMessage.setValue("正在保存...");
         Observable.create((ObservableOnSubscribe<String>) emitter -> {
             cardMessage.setUpload(false);
-            cardMessage.setSenderPhone(phone.get());
             cardMessage.setSenderAddress(getAddress());
             String verifyId = IDCardRecordRepository.getInstance().saveIdCardRecord(cardMessage);
             emitter.onNext(verifyId);
@@ -260,7 +249,6 @@ public class ExpressViewModel extends BaseViewModel {
                     AMapLocation aMapLocation = AmapManager.getInstance().getaMapLocation();
                     for (Express express : expressList) {
                         express.setSenderAddress(getAddress());
-                        express.setSenderPhone(phone.get());
                         express.setVerifyId(verifyId);
                         express.setLatitude(aMapLocation != null ? String.valueOf(aMapLocation.getLatitude()) : "");
                         express.setLongitude(aMapLocation != null ? String.valueOf(aMapLocation.getLongitude()) : "");
@@ -287,7 +275,7 @@ public class ExpressViewModel extends BaseViewModel {
     }
 
     public boolean checkInput() {
-        if (TextUtils.isEmpty(phone.get()) || TextUtils.isEmpty(address.get())) {
+        if ( TextUtils.isEmpty(address.get())) {
             return false;
         }
         return true;
@@ -356,7 +344,7 @@ public class ExpressViewModel extends BaseViewModel {
 
     public void alarm() {
         IDCardRecord cardMessage = idCardRecord.get();
-        String phoneStr = phone.get();
+
         String addressStr = getAddress();
         List<Express> expressList = getExpressList();
         if (cardMessage == null) {
@@ -378,7 +366,6 @@ public class ExpressViewModel extends BaseViewModel {
                             .verifyId(verifyId)
                             .sendAddress(addressStr)
                             .sendCardNo(cardMessage.getCardNumber())
-                            .sendPhone(phoneStr)
                             .sendName(cardMessage.getName())
                             .expressmanId(courier.getCourierId())
                             .expressmanName(courier.getName())
@@ -392,7 +379,6 @@ public class ExpressViewModel extends BaseViewModel {
                     AMapLocation aMapLocation = AmapManager.getInstance().getaMapLocation();
                     for (Express express : expressList) {
                         express.setSenderAddress(addressStr);
-                        express.setSenderPhone(phoneStr);
                         express.setVerifyId(verifyId);
                         express.setLatitude(aMapLocation != null ? String.valueOf(aMapLocation.getLatitude()) : "");
                         express.setLongitude(aMapLocation != null ? String.valueOf(aMapLocation.getLongitude()) : "");
