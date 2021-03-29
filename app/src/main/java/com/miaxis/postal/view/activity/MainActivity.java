@@ -39,7 +39,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 
     @Override
     protected void initData() {
-        ScanManager.getInstance().powerOff();
+        // ScanManager.getInstance().powerOff();
     }
 
     @Override

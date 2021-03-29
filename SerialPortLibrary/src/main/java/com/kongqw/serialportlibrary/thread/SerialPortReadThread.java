@@ -28,25 +28,25 @@ public abstract class SerialPortReadThread extends Thread {
     @Override
     public void run() {
         super.run();
+        Log.i(TAG, "SerialPortReadThread start !");
         while (!isInterrupted()) {
             try {
                 if (null == mInputStream) {
                     return;
                 }
-                Log.i(TAG, "run: ");
                 int size = mInputStream.read(mReadBuffer);
                 if (0 >= size) {
-                    return;
+                    break;
                 }
                 byte[] readBytes = new byte[size];
                 System.arraycopy(mReadBuffer, 0, readBytes, 0, size);
                 Log.i(TAG, "run: readBytes hex= " + ByteUtils.bytes2hex(readBytes));
                 onDataReceived(readBytes);
             } catch (IOException e) {
-                e.printStackTrace();
-                return;
+                break;
             }
         }
+        Log.i(TAG, "SerialPortReadThread close !");
     }
 
     @Override

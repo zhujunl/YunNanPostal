@@ -153,15 +153,19 @@ public class ExpressFragment extends BaseViewModelFragment<FragmentExpressBindin
                 .show();
     }
 
+    private static final String TAG = "Mx-ExpressFragment";
+
     @Override
-    public void onResume() {
-        super.onResume();
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        Log.i(TAG, "onAttach: ");
         ScanManager.getInstance().powerOn();
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
+    public void onDetach() {
+        super.onDetach();
+        Log.i(TAG, "onDetach: ");
         ScanManager.getInstance().powerOff();
     }
 

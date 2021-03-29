@@ -1,6 +1,7 @@
 package com.miaxis.postal.viewModel;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.amap.api.location.AMapLocation;
 import com.miaxis.postal.app.App;
@@ -52,6 +53,13 @@ public class ExpressViewModel extends BaseViewModel {
     private volatile AtomicLong timeFilter = new AtomicLong(0L);
 
     public ExpressViewModel() {
+        ScanManager.getInstance().initDevice(App.getInstance(), listener);
+    }
+
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        ScanManager.getInstance().closeDevice();
     }
 
     public void initExpressList(List<Express> mExpressList) {
@@ -65,14 +73,12 @@ public class ExpressViewModel extends BaseViewModel {
 
     public void startScan() {
         scanFlag.setValue(Boolean.TRUE);
-        ScanManager.getInstance().initDevice(App.getInstance(), listener);
         ScanManager.getInstance().startScan();
     }
 
     public void stopScan() {
         try {
             ScanManager.getInstance().stopScan();
-            ScanManager.getInstance().closeDevice();
             scanFlag.setValue(Boolean.FALSE);
         } catch (Exception e) {
             e.printStackTrace();
