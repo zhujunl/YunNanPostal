@@ -228,10 +228,10 @@ public class InspectFragment extends BaseViewModelFragment<FragmentInspectBindin
     };
 
     private boolean checkInput() {
-       if (viewModel.getSelectList().size() <= 0) {
-            ToastManager.toast("请至少选择一张实物照片", ToastManager.INFO);
-            return false;
-        }
+//       if (viewModel.getSelectList().size() <= 0) {
+//            ToastManager.toast("请至少选择一张实物照片", ToastManager.INFO);
+//            return false;
+//        }
         return true;
     }
 
