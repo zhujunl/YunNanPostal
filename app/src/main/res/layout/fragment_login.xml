@@ -49,7 +49,7 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="云南邮政业"
+            android:text="云南邮政快递业"
             android:textSize="30sp"
             android:gravity="center"
             android:textColor="@color/white"
