@@ -3,7 +3,6 @@ package com.miaxis.postal.data.repository;
 import android.graphics.Bitmap;
 import android.text.TextUtils;
 
-import com.amap.api.location.AMapLocation;
 import com.miaxis.postal.data.entity.Courier;
 import com.miaxis.postal.data.entity.Express;
 import com.miaxis.postal.data.entity.TempId;
@@ -12,7 +11,6 @@ import com.miaxis.postal.data.exception.NetResultFailedException;
 import com.miaxis.postal.data.model.ExpressModel;
 import com.miaxis.postal.data.net.PostalApi;
 import com.miaxis.postal.data.net.ResponseEntity;
-import com.miaxis.postal.manager.AmapManager;
 import com.miaxis.postal.manager.DataCacheManager;
 import com.miaxis.postal.util.DateUtil;
 import com.miaxis.postal.util.FileUtil;
@@ -42,7 +40,7 @@ public class ExpressRepository {
      * ================================ 静态内部类单例 ================================
      **/
 
-    public void uploadLocalExpress(Express express, TempId tempId, Integer warnLogId, String sendName) throws IOException, MyException, NetResultFailedException {
+    public void uploadLocalExpress(Express express, TempId tempId, Integer warnLogId, String sendName,int chekStatus) throws IOException, MyException, NetResultFailedException {
         List<File> fileList = new ArrayList<>();
         for (String path : express.getPhotoPathList()) {
             fileList.add(new File(path));
@@ -68,6 +66,7 @@ public class ExpressRepository {
                 "",
                 express.getLatitude(),
                 express.getLongitude(),
+                chekStatus,
                 fileList)
                 .execute();
         try {

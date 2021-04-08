@@ -1,32 +1,26 @@
 package com.miaxis.postal.view.fragment;
 
-import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
-
 import android.os.Handler;
 import android.os.Looper;
-import android.view.LayoutInflater;
+import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.miaxis.postal.BR;
 import com.miaxis.postal.R;
 import com.miaxis.postal.bridge.Status;
 import com.miaxis.postal.data.entity.IDCardRecord;
 import com.miaxis.postal.databinding.FragmentFingerVerifyBinding;
 import com.miaxis.postal.manager.TTSManager;
 import com.miaxis.postal.view.auxiliary.OnLimitClickHelper;
-import com.miaxis.postal.view.auxiliary.OnLimitClickListener;
-import com.miaxis.postal.view.base.BaseViewModelDialogFragment;
 import com.miaxis.postal.view.base.BaseViewModelFragment;
 import com.miaxis.postal.viewModel.FingerVerifyViewModel;
 
 import java.util.Date;
+
+import androidx.annotation.NonNull;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 public class FingerVerifyFragment extends BaseViewModelFragment<FragmentFingerVerifyBinding, FingerVerifyViewModel> {
 
@@ -74,6 +68,8 @@ public class FingerVerifyFragment extends BaseViewModelFragment<FragmentFingerVe
         viewModel.saveFlag.observe(this, saveFlagObserver);
         handler = new Handler(Looper.getMainLooper());
     }
+
+    private MaterialDialog manualDialog2;
 
     @Override
     protected void initView() {
@@ -168,26 +164,55 @@ public class FingerVerifyFragment extends BaseViewModelFragment<FragmentFingerVe
         }
     };
 
+    private boolean needFingerResult = true;
     private Observer<Boolean> fingerResultFlagObserver = flag -> {
-        if (flag) {
-            pass = true;
-            TTSManager.getInstance().playVoiceMessageFlush("核验通过");
+        Log.e("fingerResult", "1");
+        if (!needFingerResult) {
+            Log.e("fingerResult", "2");
+            return;
+        }
+        Log.e("fingerResult", "3");
+        TTSManager.getInstance().playVoiceMessageFlush((pass = flag) ? "核验通过" : "核验失败");
+        handler.removeCallbacks(countDownRunnable);
+        idCardRecord.setVerifyType("2");
+        idCardRecord.setManualType("0");
+        idCardRecord.setVerifyTime(new Date());
+        needFingerResult = false;
+        if (pass) {
             binding.ivBack.setEnabled(false);
             binding.tvSwitch.setEnabled(false);
             binding.tvManual.setEnabled(false);
             binding.fabAlarm.setEnabled(false);
-            idCardRecord.setVerifyType("2");
-            idCardRecord.setManualType("0");
+            idCardRecord.setChekStatus(2);
             handler.postDelayed(() -> {
                 try {
-                    idCardRecord.setVerifyTime(new Date());
                     mListener.replaceFragment(ExpressFragment.newInstance(idCardRecord));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }, 1000);
         } else {
-            binding.tvManual.setVisibility(View.VISIBLE);
+            idCardRecord.setChekStatus(1);
+            MaterialDialog.Builder builder = manualDialog2.getBuilder();
+            builder.onPositive(new MaterialDialog.SingleButtonCallback() {
+                @Override
+                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                    dialog.dismiss();
+                    needFingerResult = false;
+                    handler.post(() -> {
+                        try {
+                            mListener.replaceFragment(ExpressFragment.newInstance(idCardRecord));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    });
+                }
+            }).onNegative((dialog, which) -> {
+                dialog.dismiss();
+                delay = 21;
+                handler.post(countDownRunnable);
+                needFingerResult = true;
+            }).build().show();
         }
     };
 
@@ -212,6 +237,15 @@ public class FingerVerifyFragment extends BaseViewModelFragment<FragmentFingerVe
                     dialog.dismiss();
                     onBackPressed();
                 })
+                .autoDismiss(false)
+                .cancelable(false)
+                .build();
+
+        manualDialog2 = new MaterialDialog.Builder(getContext())
+                .title("错误")
+                .content("指纹核验不通过，重新指纹核验或直接进入下一步。")
+                .positiveText("下一步")
+                .negativeText("重新核验")
                 .autoDismiss(false)
                 .cancelable(false)
                 .build();

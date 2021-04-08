@@ -98,7 +98,7 @@ public class IDCardRecord {
 
     private String verifyType; //1:人脸，2:指纹
 
-    private boolean verifyStatus; //true:验证成功    false:验证失败
+    private int chekStatus; //核验状态 0：未核验 1：核验通过  2：核验未通过
 
     private String personId;
 
@@ -158,6 +158,7 @@ public class IDCardRecord {
         setValidateStart(builder.validateStart);
         setValidateEnd(builder.validateEnd);
         setSex(builder.sex);
+        setChekStatus(builder.chekStatus);
         setNation(builder.nation);
         setPassNumber(builder.passNumber);
         setIssueCount(builder.issueCount);
@@ -455,12 +456,12 @@ public class IDCardRecord {
         this.senderAddress = senderAddress;
     }
 
-    public boolean getVerifyStatus() {
-        return verifyStatus;
+    public int getChekStatus() {
+        return chekStatus;
     }
 
-    public void setVerifyStatus(boolean verifyStatus) {
-        this.verifyStatus = verifyStatus;
+    public void setChekStatus(int chekStatus) {
+        this.chekStatus = chekStatus;
     }
 
     public static final class Builder {
@@ -498,8 +499,14 @@ public class IDCardRecord {
         private String fingerprintPosition0;
         private String fingerprint1;
         private String fingerprintPosition1;
+        private int chekStatus; // 核验状态 0：未核验 1：核验通过  2：核验未通过
 
         public Builder() {
+        }
+
+        public Builder chekStatus(int chekStatus) {
+            this.chekStatus = chekStatus;
+            return this;
         }
 
         public Builder id(Long val) {
@@ -702,7 +709,7 @@ public class IDCardRecord {
                 ", verifyTime=" + verifyTime +
                 ", upload=" + upload +
                 ", verifyType='" + verifyType + '\'' +
-                ", verifyStatus=" + verifyStatus +
+                ", chekStatus=" + chekStatus +
                 ", personId='" + personId + '\'' +
                 ", checkId='" + checkId + '\'' +
                 ", manualType='" + manualType + '\'' +

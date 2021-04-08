@@ -7,7 +7,6 @@ import com.miaxis.postal.data.dto.OrderDto;
 import com.miaxis.postal.data.dto.SimpleOrderDto;
 import com.miaxis.postal.data.dto.TempIdDto;
 import com.miaxis.postal.data.dto.UpdateDto;
-import com.miaxis.postal.data.entity.Courier;
 import com.miaxis.postal.util.EncryptUtil;
 import com.miaxis.postal.util.FileUtil;
 
@@ -142,6 +141,7 @@ public class PostalApi extends BaseAPI {
             String receipTime,
             String lat,
             String lng,
+            int chekStatus,
             List<File> fileList) {
         List<MultipartBody.Part> parts = new ArrayList<>(fileList.size());
         for (File file : fileList) {
@@ -169,6 +169,7 @@ public class PostalApi extends BaseAPI {
                 receipTime,
                 lat,
                 lng,
+                String.valueOf(chekStatus),
                 parts);
     }
 

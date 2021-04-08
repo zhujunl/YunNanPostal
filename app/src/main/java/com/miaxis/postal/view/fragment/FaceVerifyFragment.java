@@ -218,7 +218,7 @@ public class FaceVerifyFragment extends BaseViewModelFragment<FragmentFaceVerify
 
     private Observer<IDCardRecord> verifyFlagObserver = mIDCardRecord -> {
         if (mIDCardRecord != null) {
-            if (pass = mIDCardRecord.getVerifyStatus()) {
+            if (pass = mIDCardRecord.getChekStatus() == 2) {
                 binding.ivBack.setEnabled(false);
                 binding.tvSwitch.setEnabled(false);
                 binding.tvManual.setEnabled(false);
@@ -266,4 +266,5 @@ public class FaceVerifyFragment extends BaseViewModelFragment<FragmentFaceVerify
     public void setIdCardRecord(IDCardRecord idCardRecord) {
         this.idCardRecord = idCardRecord;
     }
+
 }

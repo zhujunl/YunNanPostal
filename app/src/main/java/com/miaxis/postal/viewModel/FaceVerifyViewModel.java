@@ -92,14 +92,15 @@ public class FaceVerifyViewModel extends BaseViewModel {
                 } else {
                     score = FaceManager.getInstance().matchFeature(feature, cardFeature.getFaceFeature());
                 }
-                boolean verify = false;
+                int verify;
                 Config config = ConfigManager.getInstance().getConfig();
                 if (mask ? score >= config.getVerifyMaskScore() : score >= config.getVerifyScore()) {
-                    verify = true;
+                    verify = 1;
                     TTSManager.getInstance().playVoiceMessageFlush("核验通过");
                     hint.set("人证核验成功");
                     verifyFailedFlag.postValue(Boolean.TRUE);
                 } else {
+                    verify = 2;
                     hint.set("识别不通过");
                     verifyFailedFlag.postValue(Boolean.FALSE);
                 }
@@ -111,7 +112,7 @@ public class FaceVerifyViewModel extends BaseViewModel {
                     IDCardRepository.getInstance().addNewIDCard(value);
                     value.setFaceBitmap(header);
                     value.setVerifyTime(new Date());
-                    value.setVerifyStatus(verify);
+                    value.setChekStatus(verify);
                     verifyFlag.postValue(value);
                     return;
                 } else {

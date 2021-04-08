@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 9,
-    "identityHash": "f87497c69f35210781aa37a337034ad5",
+    "identityHash": "48c156be40edadf4527c8c44fb939a80",
     "entities": [
       {
         "tableName": "Config",
@@ -178,7 +178,7 @@
       },
       {
         "tableName": "IDCardRecord",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `cardType` TEXT, `cardId` TEXT, `name` TEXT, `birthday` TEXT, `address` TEXT, `cardNumber` TEXT, `issuingAuthority` TEXT, `validateStart` TEXT, `validateEnd` TEXT, `sex` TEXT, `nation` TEXT, `passNumber` TEXT, `issueCount` TEXT, `chineseName` TEXT, `version` TEXT, `cardPicture` TEXT, `facePicture` TEXT, `verifyId` TEXT, `verifyTime` INTEGER, `upload` INTEGER NOT NULL, `verifyType` TEXT, `verifyStatus` INTEGER NOT NULL, `personId` TEXT, `checkId` TEXT, `manualType` TEXT, `draft` INTEGER NOT NULL, `senderPhone` TEXT, `senderAddress` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `cardType` TEXT, `cardId` TEXT, `name` TEXT, `birthday` TEXT, `address` TEXT, `cardNumber` TEXT, `issuingAuthority` TEXT, `validateStart` TEXT, `validateEnd` TEXT, `sex` TEXT, `nation` TEXT, `passNumber` TEXT, `issueCount` TEXT, `chineseName` TEXT, `version` TEXT, `cardPicture` TEXT, `facePicture` TEXT, `verifyId` TEXT, `verifyTime` INTEGER, `upload` INTEGER NOT NULL, `verifyType` TEXT, `chekStatus` INTEGER NOT NULL, `personId` TEXT, `checkId` TEXT, `manualType` TEXT, `draft` INTEGER NOT NULL, `senderPhone` TEXT, `senderAddress` TEXT)",
         "fields": [
           {
             "fieldPath": "id",
@@ -313,8 +313,8 @@
             "notNull": false
           },
           {
-            "fieldPath": "verifyStatus",
-            "columnName": "verifyStatus",
+            "fieldPath": "chekStatus",
+            "columnName": "chekStatus",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -686,7 +686,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'f87497c69f35210781aa37a337034ad5')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '48c156be40edadf4527c8c44fb939a80')"
     ]
   }
 }

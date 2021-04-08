@@ -6,8 +6,6 @@ import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
-
 import com.miaxis.postal.data.entity.Express;
 import com.miaxis.postal.data.entity.IDCardRecord;
 import com.miaxis.postal.data.entity.TempId;
@@ -22,11 +20,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import io.reactivex.Observable;
-import io.reactivex.ObservableOnSubscribe;
-import io.reactivex.functions.Consumer;
-import io.reactivex.functions.Function;
-import io.reactivex.schedulers.Schedulers;
+import androidx.annotation.NonNull;
 
 public class PostalManager {
 
@@ -69,7 +63,8 @@ public class PostalManager {
     }
 
     public void startPostal() {
-        if (uploading.get()) return;
+        if (uploading.get())
+            return;
         handler.removeMessages(0);
         handler.sendMessage(handler.obtainMessage(0));
     }
@@ -118,7 +113,7 @@ public class PostalManager {
                 Integer warnId = getWarnId(warnLog, tempId);
                 List<Express> expressList = expressRepository.loadExpressByVerifyId(idCardRecord.getVerifyId());
                 for (Express express : expressList) {
-                    expressRepository.uploadLocalExpress(express, tempId, warnId, idCardRecord.getName());
+                    expressRepository.uploadLocalExpress(express, tempId, warnId, idCardRecord.getName(), idCardRecord.getChekStatus());
                     expressRepository.deleteExpress(express);
                 }
                 idCardRecordRepository.deleteIDCardRecord(idCardRecord);
@@ -132,11 +127,12 @@ public class PostalManager {
 
     private void postalNormalRecord() throws MyException, IOException, NetResultFailedException {
         IDCardRecord idCardRecord = idCardRecordRepository.findOldestIDCardRecord();
-        if (idCardRecord == null) throw new MyException("未找到待上传日志");
+        if (idCardRecord == null)
+            throw new MyException("未找到待上传日志");
         TempId tempId = getIdCardRecordTempId(idCardRecord);
         List<Express> expressList = expressRepository.loadExpressByVerifyId(idCardRecord.getVerifyId());
         for (Express express : expressList) {
-            expressRepository.uploadLocalExpress(express, tempId, null, idCardRecord.getName());
+            expressRepository.uploadLocalExpress(express, tempId, null, idCardRecord.getName(), idCardRecord.getChekStatus());
             expressRepository.deleteExpress(express);
         }
         idCardRecordRepository.deleteIDCardRecord(idCardRecord);
