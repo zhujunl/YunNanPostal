@@ -10,9 +10,6 @@ import com.miaxis.postal.data.entity.Express;
 import com.miaxis.postal.data.entity.IDCard;
 import com.miaxis.postal.data.entity.IDCardRecord;
 import com.miaxis.postal.data.entity.WarnLog;
-import com.miaxis.postal.util.FileUtil;
-
-import java.io.File;
 
 import androidx.annotation.NonNull;
 import androidx.room.Database;
@@ -25,7 +22,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 @TypeConverters({StringListConverter.class, DateConverter.class})
 public abstract class AppDatabase extends RoomDatabase {
 
-    private static final String DBName = FileUtil.MAIN_PATH + File.separator + "Postal.db";
+    private static final String DBName = "Postal.db";
 
     private static AppDatabase instance;
 

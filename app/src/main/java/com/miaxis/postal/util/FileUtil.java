@@ -13,7 +13,6 @@ import android.util.Log;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -252,7 +251,7 @@ public class FileUtil {
             }
             ByteArrayOutputStream baos = compressImage(bitmap);
             FileOutputStream out = new FileOutputStream(file);
-//            compressImage.compress(Bitmap.CompressFormat.JPEG, 100, out);
+            //            compressImage.compress(Bitmap.CompressFormat.JPEG, 100, out);
             out.write(baos.toByteArray());
             out.flush();
             out.getFD().sync();
@@ -279,11 +278,11 @@ public class FileUtil {
             }
         }
         return baos;
-//        ByteArrayInputStream isBm = new ByteArrayInputStream(baos.toByteArray());//
-//        // 把压缩后的数据baos存放到ByteArrayInputStream中
-//        Bitmap bitmap = BitmapFactory.decodeStream(isBm, null, null);//
-//        // 把ByteArrayInputStream数据生成图片
-//        return bitmap;
+        //        ByteArrayInputStream isBm = new ByteArrayInputStream(baos.toByteArray());//
+        //        // 把压缩后的数据baos存放到ByteArrayInputStream中
+        //        Bitmap bitmap = BitmapFactory.decodeStream(isBm, null, null);//
+        //        // 把ByteArrayInputStream数据生成图片
+        //        return bitmap;
     }
 
     public static Bitmap loadBitmap(String filePath) {

@@ -4,9 +4,6 @@ import android.graphics.Bitmap;
 import android.text.TextUtils;
 import android.util.Base64;
 
-import androidx.databinding.ObservableField;
-import androidx.lifecycle.MutableLiveData;
-
 import com.amap.api.location.AMapLocation;
 import com.miaxis.postal.app.App;
 import com.miaxis.postal.bridge.SingleLiveEvent;
@@ -21,12 +18,13 @@ import com.miaxis.postal.manager.AmapManager;
 import com.miaxis.postal.manager.DataCacheManager;
 import com.miaxis.postal.manager.FingerManager;
 import com.miaxis.postal.manager.PostalManager;
-import com.miaxis.postal.util.DateUtil;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import androidx.databinding.ObservableField;
+import androidx.lifecycle.MutableLiveData;
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -51,8 +49,12 @@ public class FingerVerifyViewModel extends BaseViewModel {
     }
 
     public void verifyFinger() {
-        hint.set("请按手指");
-        FingerManager.getInstance().getFingerFeature();
+        int fingerFeature = FingerManager.getInstance().getFingerFeature();
+        if (fingerFeature!=0){
+            hint.set("请先初始化");
+        }else {
+            hint.set("请按手指");
+        }
     }
 
     public void releaseFingerDevice() {
@@ -69,10 +71,10 @@ public class FingerVerifyViewModel extends BaseViewModel {
         public void onFingerReceive(byte[] feature, Bitmap image, boolean hasImage) {
             IDCardRecord idCardRecord = idCardRecordLiveData.getValue();
             if (idCardRecord == null) return;
-            if (TextUtils.isEmpty(idCardRecord.getFingerprint0()) || TextUtils.isEmpty(idCardRecord.getFingerprint1())) return;
-            if (feature == null) {
-                FingerManager.getInstance().getFingerFeature();
-            } else {
+            if (TextUtils.isEmpty(idCardRecord.getFingerprint0()) || TextUtils.isEmpty(idCardRecord.getFingerprint1())) {
+                return;
+            }
+            if (feature != null) {
                 List<String> featureList = new ArrayList<>();
                 featureList.add(idCardRecord.getFingerprint0());
                 featureList.add(idCardRecord.getFingerprint1());
@@ -92,8 +94,8 @@ public class FingerVerifyViewModel extends BaseViewModel {
                 }
                 fingerResultFlag.postValue(Boolean.FALSE);
                 hint.set("比对失败，请重按手指");
-                FingerManager.getInstance().getFingerFeature();
             }
+            FingerManager.getInstance().getFingerFeature();
         }
     };
 

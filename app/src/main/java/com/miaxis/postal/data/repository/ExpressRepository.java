@@ -40,10 +40,13 @@ public class ExpressRepository {
      * ================================ 静态内部类单例 ================================
      **/
 
-    public void uploadLocalExpress(Express express, TempId tempId, Integer warnLogId, String sendName,int chekStatus) throws IOException, MyException, NetResultFailedException {
+    public void uploadLocalExpress(Express express, TempId tempId, Integer warnLogId, String sendName, int chekStatus) throws IOException, MyException, NetResultFailedException {
         List<File> fileList = new ArrayList<>();
         for (String path : express.getPhotoPathList()) {
             fileList.add(new File(path));
+        }
+        if (TextUtils.isEmpty(express.getBarCode())) {
+            throw new MyException("订单号未空");
         }
         Courier courier = DataCacheManager.getInstance().getCourier();
         Response<ResponseEntity> execute = PostalApi.saveOrderFromAppSync(

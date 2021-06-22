@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     xmlns:viewadapter="http://schemas.android.com/tools">
 
     <data>
 
         <import type="com.miaxis.postal.bridge.Status" />
+
         <variable
             name="viewModel"
             type="com.miaxis.postal.viewModel.CameraViewModel" />
@@ -22,12 +23,12 @@
             android:id="@+id/fl_camera"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            app:layout_constraintVertical_bias="0"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHeight_percent="0.8"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0">
 
             <TextureView
                 android:id="@+id/tv_camera"
@@ -40,75 +41,77 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:background="@color/black"
-            app:layout_constraintHeight_percent="0.2"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent">
+            app:layout_constraintHeight_percent="0.2"
+            app:layout_constraintStart_toStartOf="parent">
 
             <ImageView
                 android:id="@+id/iv_take_photo"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_take_photo_white"
-                android:background="@drawable/circular_button_grey"
                 android:adjustViewBounds="true"
-                app:layout_constraintWidth_percent="0.2"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
+                android:background="@drawable/circular_button_grey"
+                android:src="@drawable/ic_take_photo_white"
                 app:layout_constraintBottom_toBottomOf="parent"
-                viewadapter:isInvisible="@{viewModel.shootFlag == Status.FAILED}"/>
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintWidth_percent="0.2"
+                viewadapter:isInvisible="@{viewModel.shootFlag == Status.FAILED}" />
 
             <ProgressBar
                 android:id="@+id/pb_loading"
-                android:visibility="invisible"
                 style="@style/progress_bar_style"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                app:layout_constraintStart_toStartOf="@id/iv_take_photo"
-                app:layout_constraintEnd_toEndOf="@id/iv_take_photo"
-                app:layout_constraintTop_toTopOf="@id/iv_take_photo"
+                android:visibility="invisible"
                 app:layout_constraintBottom_toBottomOf="@id/iv_take_photo"
-                viewadapter:isInvisible="@{viewModel.shootFlag == Status.LOADING}"/>
+                app:layout_constraintEnd_toEndOf="@id/iv_take_photo"
+                app:layout_constraintStart_toStartOf="@id/iv_take_photo"
+                app:layout_constraintTop_toTopOf="@id/iv_take_photo"
+                viewadapter:isInvisible="@{viewModel.shootFlag == Status.LOADING}" />
 
             <ImageView
                 android:id="@+id/iv_confirm"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_check_white"
-                android:background="@drawable/circular_button_grey"
                 android:adjustViewBounds="true"
+                android:background="@drawable/circular_button_grey"
                 android:padding="10dp"
-                app:layout_constraintWidth_percent="0.2"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
+                android:src="@drawable/ic_check_white"
                 app:layout_constraintBottom_toBottomOf="parent"
-                viewadapter:isInvisible="@{viewModel.shootFlag == Status.SUCCESS}"/>
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintWidth_percent="0.2"
+                viewadapter:isInvisible="@{viewModel.shootFlag == Status.SUCCESS}" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:background="@drawable/corner_rect_button_grey"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintDimensionRatio="1:1"
-                app:layout_constraintWidth_percent="0.12"
-                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/iv_take_photo"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent">
+                app:layout_constraintWidth_percent="0.12"
+                tools:visibility="visible">
 
                 <ImageView
                     android:id="@+id/iv_thumbnail"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
-                    android:src="@drawable/ic_wallpaper_white"
                     android:scaleType="centerCrop"
+                    android:src="@drawable/ic_wallpaper_white"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintDimensionRatio="1:1"
-                    app:layout_constraintWidth_percent="0.9"
-                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"/>
+                    app:layout_constraintWidth_percent="0.9" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -116,15 +119,15 @@
                 android:id="@+id/iv_retry"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_refresh_white"
-                android:background="@drawable/circular_button_grey"
                 android:adjustViewBounds="true"
-                app:layout_constraintWidth_percent="0.15"
+                android:background="@drawable/circular_button_grey"
+                android:src="@drawable/ic_refresh_white"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/iv_confirm"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                viewadapter:isInvisible="@{viewModel.shootFlag == Status.SUCCESS}"/>
+                app:layout_constraintWidth_percent="0.15"
+                viewadapter:isInvisible="@{viewModel.shootFlag == Status.SUCCESS}" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

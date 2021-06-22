@@ -1,9 +1,5 @@
 package com.miaxis.postal.view.activity;
 
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
-import android.content.Intent;
 import android.text.TextUtils;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -11,16 +7,13 @@ import com.miaxis.postal.R;
 import com.miaxis.postal.databinding.ActivityMainBinding;
 import com.miaxis.postal.manager.CardManager;
 import com.miaxis.postal.manager.PostalManager;
-import com.miaxis.postal.manager.ScanManager;
 import com.miaxis.postal.view.base.BaseActivity;
 import com.miaxis.postal.view.base.BaseViewModelFragment;
 import com.miaxis.postal.view.base.OnFragmentInteractionListener;
-import com.miaxis.postal.view.fragment.CameraFragment;
-import com.miaxis.postal.view.fragment.ExpressFragment;
-import com.miaxis.postal.view.fragment.HomeFragment;
-import com.miaxis.postal.view.fragment.InspectFragment;
 import com.miaxis.postal.view.fragment.PreludeFragment;
 import com.miaxis.postal.view.presenter.UpdatePresenter;
+
+import androidx.fragment.app.Fragment;
 
 public class MainActivity extends BaseActivity<ActivityMainBinding> implements OnFragmentInteractionListener {
 
@@ -29,7 +22,6 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
     private MaterialDialog quitDialog;
 
     private String root;
-
     private UpdatePresenter updatePresenter;
 
     @Override
@@ -72,7 +64,9 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
         }
     }
 
-    /** OnFragmentInteractionListener方法区 **/
+    /**
+     * OnFragmentInteractionListener方法区
+     **/
 
     @Override
     public void setRoot(Fragment fragment) {
@@ -148,7 +142,9 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
         quitDialog.show();
     }
 
-    /** OnFragmentInteractionListener方法区 **/
+    /**
+     * OnFragmentInteractionListener方法区
+     **/
 
     private void initDialog() {
         waitDialog = new MaterialDialog.Builder(this)

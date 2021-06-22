@@ -183,16 +183,15 @@ public class FingerVerifyFragment extends BaseViewModelFragment<FragmentFingerVe
             binding.tvSwitch.setEnabled(false);
             binding.tvManual.setEnabled(false);
             binding.fabAlarm.setEnabled(false);
-            idCardRecord.setChekStatus(2);
             handler.postDelayed(() -> {
                 try {
+                    idCardRecord.setChekStatus(1);
                     mListener.replaceFragment(ExpressFragment.newInstance(idCardRecord));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }, 1000);
         } else {
-            idCardRecord.setChekStatus(1);
             MaterialDialog.Builder builder = manualDialog2.getBuilder();
             builder.onPositive(new MaterialDialog.SingleButtonCallback() {
                 @Override
@@ -201,6 +200,7 @@ public class FingerVerifyFragment extends BaseViewModelFragment<FragmentFingerVe
                     needFingerResult = false;
                     handler.post(() -> {
                         try {
+                            idCardRecord.setChekStatus(2);
                             mListener.replaceFragment(ExpressFragment.newInstance(idCardRecord));
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -230,6 +230,7 @@ public class FingerVerifyFragment extends BaseViewModelFragment<FragmentFingerVe
                 .positiveText("确认")
                 .onPositive((dialog, which) -> {
                     dialog.dismiss();
+                    idCardRecord.setChekStatus(0);
                     mListener.replaceFragment(ManualFragment.newInstance(idCardRecord));
                 })
                 .negativeText("放弃")

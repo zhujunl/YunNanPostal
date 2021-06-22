@@ -1,11 +1,9 @@
 package com.miaxis.postal.manager.idpower;
 
 import android.os.SystemClock;
-import android.util.Log;
 
 import com.miaxis.postal.manager.CardManager;
 import com.miaxis.postal.manager.GpioManager;
-import com.zz.impl.IDCardDeviceImpl;
 
 /**
  * BP990_IdCardPower
@@ -44,7 +42,7 @@ public class BP990_IdCardPower implements IIdCardPower {
     private void closeDevice() {
         synchronized (CardManager.class) {
             if (GpioManager.getInstance().getCardDevicePowerStatus()) {
-                //GpioManager.getInstance().cardDevicePowerControl(false);
+                GpioManager.getInstance().cardDevicePowerControl(false);
                 SystemClock.sleep(200);
             }
         }

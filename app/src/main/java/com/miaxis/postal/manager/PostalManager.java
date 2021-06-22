@@ -6,6 +6,7 @@ import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.miaxis.postal.app.App;
 import com.miaxis.postal.data.entity.Express;
 import com.miaxis.postal.data.entity.IDCardRecord;
 import com.miaxis.postal.data.entity.TempId;
@@ -56,6 +57,9 @@ public class PostalManager {
             @Override
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
+                if (!App.getInstance().uploadEnable) {
+                    return;
+                }
                 postal();
             }
         };
@@ -63,8 +67,9 @@ public class PostalManager {
     }
 
     public void startPostal() {
-        if (uploading.get())
+        if (uploading.get()) {
             return;
+        }
         handler.removeMessages(0);
         handler.sendMessage(handler.obtainMessage(0));
     }
@@ -78,8 +83,6 @@ public class PostalManager {
         updating.set(true);
         if (!uploading.get()) {
             listener.onPostalInterrupt();
-        } else {
-
         }
     }
 
@@ -88,14 +91,17 @@ public class PostalManager {
             uploading.set(true);
             handler.removeMessages(0);
             if (warnLogRepository.loadWarnLogCount() > 0) {
+                Log.d("asd", "loadWarnLogCount() > 0");
                 postalWarnRecord();
+                Log.d("asd", "postalWarnRecord 成功");
             } else {
+                Log.d("asd", "loadWarnLogCount() <= 0");
                 postalNormalRecord();
+                Log.d("asd", "postalNormalRecord 成功");
             }
-            Log.e("asd", "Postal成功");
             handler.sendMessage(handler.obtainMessage(0));
         } catch (Exception e) {
-            Log.e("asd", "" + e.getMessage());
+            Log.e("asd", "Postal Exception:" + e.getMessage());
             handler.sendMessageDelayed(handler.obtainMessage(0), 30 * 60 * 1000);
             uploading.set(false);
         }
@@ -109,33 +115,68 @@ public class PostalManager {
                 idCardRecord = idCardRecordRepository.loadIDCardRecordByVerifyId(warnLog.getVerifyId());
             }
             if (idCardRecord != null) {
-                TempId tempId = getIdCardRecordTempId(idCardRecord);
-                Integer warnId = getWarnId(warnLog, tempId);
+                TempId tempId = null;
+                Integer warnId = null;
+                try {
+                    tempId = getIdCardRecordTempId(idCardRecord);
+                    warnId = getWarnId(warnLog, tempId);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 List<Express> expressList = expressRepository.loadExpressByVerifyId(idCardRecord.getVerifyId());
                 for (Express express : expressList) {
-                    expressRepository.uploadLocalExpress(express, tempId, warnId, idCardRecord.getName(), idCardRecord.getChekStatus());
-                    expressRepository.deleteExpress(express);
+                    if (tempId == null) {
+                        processException(express, new NetResultFailedException("请求服务器错误"));
+                    }
+                    try {
+                        expressRepository.uploadLocalExpress(express, tempId, warnId, idCardRecord.getName(), idCardRecord.getChekStatus());
+                        expressRepository.deleteExpress(express);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Log.e("asd", "PostalWarnRecord Exception:" + e.getMessage());
+                        processException(express, e);
+                    }
                 }
                 idCardRecordRepository.deleteIDCardRecord(idCardRecord);
-                warnLogRepository.deleteWarnLog(warnLog);
             } else {
                 warnLogRepository.uploadWarnLog(warnLog, null);
-                warnLogRepository.deleteWarnLog(warnLog);
             }
+            warnLogRepository.deleteWarnLog(warnLog);
         }
     }
 
     private void postalNormalRecord() throws MyException, IOException, NetResultFailedException {
         IDCardRecord idCardRecord = idCardRecordRepository.findOldestIDCardRecord();
-        if (idCardRecord == null)
+        if (idCardRecord == null) {
             throw new MyException("未找到待上传日志");
-        TempId tempId = getIdCardRecordTempId(idCardRecord);
+        }
+        TempId tempId = null;
+        try {
+            tempId = getIdCardRecordTempId(idCardRecord);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         List<Express> expressList = expressRepository.loadExpressByVerifyId(idCardRecord.getVerifyId());
         for (Express express : expressList) {
-            expressRepository.uploadLocalExpress(express, tempId, null, idCardRecord.getName(), idCardRecord.getChekStatus());
-            expressRepository.deleteExpress(express);
+            if (tempId == null) {
+                processException(express, new NetResultFailedException("请求服务器错误"));
+            }
+            try {
+                expressRepository.uploadLocalExpress(express, tempId, null, idCardRecord.getName(), idCardRecord.getChekStatus());
+                expressRepository.deleteExpress(express);
+            } catch (Exception e) {
+                e.printStackTrace();
+                Log.e("asd", "PostalNormalRecord Exception:" + e.getMessage());
+                processException(express, e);
+            }
         }
         idCardRecordRepository.deleteIDCardRecord(idCardRecord);
+    }
+
+    private void processException(Express express, Exception e) throws MyException {
+        express.setUploadError("" + e.getMessage());
+        expressRepository.updateExpress(express);
+        throw new MyException("上传失败");
     }
 
     private TempId getIdCardRecordTempId(IDCardRecord idCardRecord) throws IOException, MyException, NetResultFailedException {

@@ -53,7 +53,7 @@ public class IDCardRecordRepository {
                 idCardRecord.getAddress(),
                 idCardRecord.getSex(),
                 idCardRecord.getIssuingAuthority(),
-                idCardRecord.getValidateStart(),
+                idCardRecord.getValidateEnd(),
                 idCardRecord.getVerifyType(),
                 DateUtil.DATE_FORMAT.format(idCardRecord.getVerifyTime()),
                 idCardRecord.getManualType(),

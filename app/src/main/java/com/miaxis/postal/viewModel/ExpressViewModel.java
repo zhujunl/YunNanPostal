@@ -59,6 +59,13 @@ public class ExpressViewModel extends BaseViewModel {
     protected void onCleared() {
         super.onCleared();
         ScanManager.getInstance().closeDevice();
+        Log.d("ExpressViewModel", "onCleared");
+        if (address != null && address.get() != null) {
+            address.set("");
+        }
+        if (expressList != null && expressList.getValue() != null) {
+            expressList.setValue(new ArrayList<>());
+        }
     }
 
     public void initExpressList(List<Express> mExpressList) {
@@ -104,8 +111,7 @@ public class ExpressViewModel extends BaseViewModel {
                     } else {
                         waitMessage.setValue("正在校验单号是否重复...");
                     }
-                })
-                .observeOn(Schedulers.from(App.getInstance().getThreadExecutor()))
+                }).observeOn(Schedulers.from(App.getInstance().getThreadExecutor()))
                 .doOnNext(mCode -> {
                     if (checkCodeDataBaseRepeat(mCode)) {
                         waitMessage.postValue("");
@@ -118,8 +124,7 @@ public class ExpressViewModel extends BaseViewModel {
                     } else {
                         waitMessage.postValue("联网校验通过，正在生成快递订单...");
                     }
-                })
-                .observeOn(AndroidSchedulers.mainThread())
+                }).observeOn(AndroidSchedulers.mainThread())
                 .subscribe(mCode -> {
                     waitMessage.setValue("");
                     removeRepeatEdit(mCode);
@@ -238,12 +243,28 @@ public class ExpressViewModel extends BaseViewModel {
     private void saveExpress(IDCardRecord cardMessage, List<Express> expressList, boolean draft) {
         waitMessage.setValue("正在保存...");
         Observable.create((ObservableOnSubscribe<String>) emitter -> {
+            //核验状态 0：未核验 1：核验通过  2：核验未通过
+            if (cardMessage.getChekStatus() == 0 || cardMessage.getChekStatus() == 2) {
+                String addressStr = getAddress();
+                Courier courier = DataCacheManager.getInstance().getCourier();
+                WarnLog warnLog = new WarnLog.Builder()
+                        .verifyId(cardMessage.getCheckId())
+                        .sendAddress(addressStr)
+                        .sendCardNo(cardMessage.getCardNumber())
+                        .sendName(cardMessage.getName())
+                        .expressmanId(courier.getCourierId())
+                        .expressmanName(courier.getName())
+                        .expressmanPhone(courier.getPhone())
+                        .createTime(new Date())
+                        .upload(false)
+                        .build();
+                WarnLogRepository.getInstance().saveWarnLog(warnLog);
+            }
             cardMessage.setUpload(false);
             cardMessage.setSenderAddress(getAddress());
             String verifyId = IDCardRecordRepository.getInstance().saveIdCardRecord(cardMessage);
             emitter.onNext(verifyId);
-        })
-                .subscribeOn(Schedulers.from(App.getInstance().getThreadExecutor()))
+        }).subscribeOn(Schedulers.from(App.getInstance().getThreadExecutor()))
                 .observeOn(Schedulers.from(App.getInstance().getThreadExecutor()))
                 .map(verifyId -> {
                     AMapLocation aMapLocation = AmapManager.getInstance().getaMapLocation();
@@ -275,7 +296,7 @@ public class ExpressViewModel extends BaseViewModel {
     }
 
     public boolean checkInput() {
-        if ( TextUtils.isEmpty(address.get())) {
+        if (TextUtils.isEmpty(address.get())) {
             return false;
         }
         return true;
@@ -344,7 +365,6 @@ public class ExpressViewModel extends BaseViewModel {
 
     public void alarm() {
         IDCardRecord cardMessage = idCardRecord.get();
-
         String addressStr = getAddress();
         List<Express> expressList = getExpressList();
         if (cardMessage == null) {

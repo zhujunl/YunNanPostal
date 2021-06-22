@@ -2,13 +2,10 @@ package com.miaxis.postal.app;
 
 import android.app.Application;
 
-import androidx.annotation.NonNull;
-
 import com.liulishuo.filedownloader.FileDownloader;
 import com.miaxis.postal.MyEventBusIndex;
 import com.miaxis.postal.data.dao.AppDatabase;
 import com.miaxis.postal.data.net.PostalApi;
-import com.miaxis.postal.manager.AmapManager;
 import com.miaxis.postal.manager.ConfigManager;
 import com.miaxis.postal.manager.CrashExceptionManager;
 import com.miaxis.postal.manager.FaceManager;
@@ -20,10 +17,12 @@ import org.greenrobot.eventbus.EventBus;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import androidx.annotation.NonNull;
+
 public class App extends Application {
 
     private ExecutorService threadExecutor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 2);
-
+    public boolean uploadEnable = false;//是否启动后台上传订单号
     private static App instance;
 
     @Override
@@ -45,11 +44,10 @@ public class App extends Application {
             CrashExceptionManager.getInstance().init(this);
             PostalApi.rebuildRetrofit();
             FileDownloader.setup(this);
-            AmapManager.getInstance().startLocation(this);
             TTSManager.getInstance().init(getApplicationContext());
             int result = FaceManager.getInstance().initFaceST(getApplicationContext(), FileUtil.LICENCE_PATH);
             listener.onInit(result == FaceManager.INIT_SUCCESS, FaceManager.getFaceInitResultDetail(result));
-//            listener.onInit(true, "");
+            //listener.onInit(true, "");
         } catch (Exception e) {
             e.printStackTrace();
             listener.onInit(false, e.getMessage());

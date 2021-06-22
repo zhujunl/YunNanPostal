@@ -3,16 +3,11 @@ package com.miaxis.postal.manager;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Build;
-import android.serialport.DeviceControlSpd;
-
-import androidx.annotation.NonNull;
 
 import com.miaxis.postal.app.App;
 import com.miaxis.postal.manager.fingerPower.BP990_FingerPower;
 import com.miaxis.postal.manager.fingerPower.BP990s_FingerPower;
 import com.miaxis.postal.manager.fingerPower.IFingerPower;
-import com.miaxis.postal.manager.idpower.BP990_IdCardPower;
-import com.miaxis.postal.manager.idpower.BP990s_IdCardPower;
 import com.mx.finger.alg.MxFingerAlg;
 import com.mx.finger.api.msc.MxMscBigFingerApi;
 import com.mx.finger.api.msc.MxMscBigFingerApiFactory;
@@ -22,10 +17,11 @@ import com.mx.finger.utils.RawBitmapUtils;
 
 import org.zz.jni.zzFingerAlgID;
 
-import java.io.IOException;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import androidx.annotation.NonNull;
 
 public class FingerManager {
 
@@ -84,8 +80,8 @@ public class FingerManager {
         });
     }
 
-    public void getFingerFeature() {
-        if (!init) return;
+    public int getFingerFeature() {
+        if (!init) return -1;
         executor.execute(() -> {
             try {
                 Result<MxImage> result = mxMscBigFingerApi.getFingerImageBig(5000);
@@ -104,6 +100,7 @@ public class FingerManager {
             }
             listener.onFingerReceive(null, null, false);
         });
+        return 0;
     }
 
     public void getFingerFeatureAndImage() {

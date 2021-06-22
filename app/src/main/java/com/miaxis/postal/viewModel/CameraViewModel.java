@@ -6,8 +6,6 @@ import android.graphics.Matrix;
 import android.hardware.Camera;
 import android.util.Log;
 
-import androidx.lifecycle.MutableLiveData;
-
 import com.miaxis.postal.app.App;
 import com.miaxis.postal.bridge.SingleLiveEvent;
 import com.miaxis.postal.bridge.Status;
@@ -20,6 +18,7 @@ import org.greenrobot.eventbus.EventBus;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.lifecycle.MutableLiveData;
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;

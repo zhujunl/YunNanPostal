@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 9,
-    "identityHash": "48c156be40edadf4527c8c44fb939a80",
+    "identityHash": "390a73dbc17489e15ffb9864e0bf315b",
     "entities": [
       {
         "tableName": "Config",
@@ -366,7 +366,7 @@
       },
       {
         "tableName": "Express",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `barCode` TEXT, `photoPathList` TEXT, `senderPhone` TEXT, `senderAddress` TEXT, `verifyId` TEXT, `latitude` TEXT, `longitude` TEXT, `pieceTime` INTEGER, `upload` INTEGER NOT NULL, `info` TEXT, `weight` TEXT, `addresseeName` TEXT, `addresseePhone` TEXT, `addresseeAddress` TEXT, `draft` INTEGER NOT NULL, `complete` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `barCode` TEXT, `photoPathList` TEXT, `senderPhone` TEXT, `senderAddress` TEXT, `verifyId` TEXT, `latitude` TEXT, `longitude` TEXT, `pieceTime` INTEGER, `upload` INTEGER NOT NULL, `uploadError` TEXT, `info` TEXT, `weight` TEXT, `addresseeName` TEXT, `addresseePhone` TEXT, `addresseeAddress` TEXT, `draft` INTEGER NOT NULL, `complete` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -427,6 +427,12 @@
             "columnName": "upload",
             "affinity": "INTEGER",
             "notNull": true
+          },
+          {
+            "fieldPath": "uploadError",
+            "columnName": "uploadError",
+            "affinity": "TEXT",
+            "notNull": false
           },
           {
             "fieldPath": "info",
@@ -686,7 +692,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '48c156be40edadf4527c8c44fb939a80')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '390a73dbc17489e15ffb9864e0bf315b')"
     ]
   }
 }

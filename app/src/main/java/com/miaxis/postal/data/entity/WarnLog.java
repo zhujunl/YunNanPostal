@@ -1,9 +1,9 @@
 package com.miaxis.postal.data.entity;
 
+import java.util.Date;
+
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
-
-import java.util.Date;
 
 @Entity
 public class WarnLog {
@@ -19,8 +19,7 @@ public class WarnLog {
     private String expressmanName;
     private String expressmanPhone;
     private Date createTime;
-    private boolean upload;
-
+    private int upload;
     private Integer warnId;
 
     public WarnLog() {
@@ -122,10 +121,14 @@ public class WarnLog {
     }
 
     public boolean isUpload() {
+        return upload == 0;
+    }
+
+    public int getUpload() {
         return upload;
     }
 
-    public void setUpload(boolean upload) {
+    public void setUpload(int upload) {
         this.upload = upload;
     }
 
@@ -135,6 +138,24 @@ public class WarnLog {
 
     public void setWarnId(Integer warnId) {
         this.warnId = warnId;
+    }
+
+    @Override
+    public String toString() {
+        return "WarnLog{" +
+                "id=" + id +
+                ", verifyId='" + verifyId + '\'' +
+                ", sendAddress='" + sendAddress + '\'' +
+                ", sendCardNo='" + sendCardNo + '\'' +
+                ", sendPhone='" + sendPhone + '\'' +
+                ", sendName='" + sendName + '\'' +
+                ", expressmanId=" + expressmanId +
+                ", expressmanName='" + expressmanName + '\'' +
+                ", expressmanPhone='" + expressmanPhone + '\'' +
+                ", createTime=" + createTime +
+                ", upload=" + upload +
+                ", warnId=" + warnId +
+                '}';
     }
 
     public static final class Builder {
@@ -148,7 +169,7 @@ public class WarnLog {
         private String expressmanName;
         private String expressmanPhone;
         private Date createTime;
-        private boolean upload;
+        private int upload;
         private Integer warnId;
 
         public Builder() {
@@ -205,7 +226,7 @@ public class WarnLog {
         }
 
         public Builder upload(boolean val) {
-            upload = val;
+            upload = val ? 1 : 0;
             return this;
         }
 

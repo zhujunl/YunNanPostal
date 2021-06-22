@@ -41,9 +41,9 @@
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     android:gravity="center|start"
+                    android:text="@{item.express.barCode}"
                     android:textColor="@color/dark"
                     android:textSize="16sp"
-                    android:text="@{item.express.barCode}"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintHeight_percent="0.25"
                     app:layout_constraintStart_toStartOf="parent"
@@ -57,10 +57,10 @@
                     android:layout_height="0dp"
                     android:gravity="center"
                     android:textSize="18sp"
-                    app:layout_constraintStart_toEndOf="@id/tv_order_code"
+                    app:layout_constraintBottom_toBottomOf="@id/tv_order_code"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="@id/tv_order_code"/>
+                    app:layout_constraintStart_toEndOf="@id/tv_order_code"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/cl_image"
@@ -92,8 +92,8 @@
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     android:gravity="center|start"
-                    android:textSize="14sp"
                     android:text="@{item.idCardRecord.name}"
+                    android:textSize="14sp"
                     app:layout_constraintBottom_toTopOf="@id/tv_address"
                     app:layout_constraintEnd_toStartOf="@id/tv_phone"
                     app:layout_constraintHeight_percent="0.3"
@@ -106,8 +106,8 @@
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     android:gravity="center|start"
-                    android:textSize="14sp"
                     android:text="@{item.express.senderPhone}"
+                    android:textSize="14sp"
                     app:layout_constraintBottom_toBottomOf="@id/tv_name"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@id/tv_name"
@@ -117,12 +117,23 @@
                     android:id="@+id/tv_address"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
-                    android:textSize="12sp"
                     android:text="@{item.express.senderAddress}"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:textSize="12sp"
+                    app:layout_constraintBottom_toBottomOf="@+id/tv_error"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@id/cl_image"
                     app:layout_constraintTop_toBottomOf="@id/tv_name" />
+
+                <TextView
+                    android:id="@+id/tv_error"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:textSize="12sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toRightOf="@+id/cl_image"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_address" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

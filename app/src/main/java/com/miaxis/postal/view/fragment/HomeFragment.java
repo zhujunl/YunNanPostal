@@ -1,25 +1,18 @@
 package com.miaxis.postal.view.fragment;
 
-import android.view.View;
-
-import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
-
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.miaxis.postal.BR;
 import com.miaxis.postal.R;
-import com.miaxis.postal.data.entity.Courier;
+import com.miaxis.postal.app.App;
 import com.miaxis.postal.databinding.FragmentHomeBinding;
+import com.miaxis.postal.manager.AmapManager;
 import com.miaxis.postal.manager.PostalManager;
-import com.miaxis.postal.view.auxiliary.GlideImageLoader;
 import com.miaxis.postal.view.auxiliary.OnLimitClickHelper;
-import com.miaxis.postal.view.auxiliary.OnLimitClickListener;
 import com.miaxis.postal.view.base.BaseViewModelFragment;
 import com.miaxis.postal.view.dialog.CardModeSelectDialogFragment;
 import com.miaxis.postal.view.dialog.EditPasswordDialogFragment;
 import com.miaxis.postal.viewModel.HomeViewModel;
 
-import java.util.Arrays;
+import androidx.lifecycle.ViewModelProvider;
 
 public class HomeFragment extends BaseViewModelFragment<FragmentHomeBinding, HomeViewModel> {
 
@@ -61,6 +54,8 @@ public class HomeFragment extends BaseViewModelFragment<FragmentHomeBinding, Hom
         binding.tvEditPassword.setOnClickListener(new OnLimitClickHelper(view -> {
             EditPasswordDialogFragment.newInstance().show(getChildFragmentManager(), "EditPasswordDialogFragment");
         }));
+        AmapManager.getInstance().startLocation(getActivity().getApplication());//GPS初始化，登录后初始化
+        App.getInstance().uploadEnable=true;
     }
 
     @Override

@@ -4,19 +4,19 @@ import android.content.Context;
 import android.text.TextUtils;
 import android.view.View;
 
-import androidx.annotation.NonNull;
-
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.miaxis.postal.R;
 import com.miaxis.postal.bridge.GlideApp;
-import com.miaxis.postal.data.entity.Express;
 import com.miaxis.postal.data.entity.Local;
 import com.miaxis.postal.databinding.ItemLocalBinding;
+import com.miaxis.postal.manager.ToastManager;
 import com.miaxis.postal.view.auxiliary.OnLimitClickHelper;
 import com.miaxis.postal.view.base.BaseViewHolder;
 import com.miaxis.postal.view.base.BaseViewModelAdapter;
+
+import androidx.annotation.NonNull;
 
 public class LocalAdapter extends BaseViewModelAdapter<Local, ItemLocalBinding, LocalAdapter.MyViewHolder> {
 
@@ -44,12 +44,19 @@ public class LocalAdapter extends BaseViewModelAdapter<Local, ItemLocalBinding, 
             Local item = dataList.get(position);
             holder.getBinding().setItem(item);
             holder.getBinding().tvUpload.setText(item.getExpress().isUpload() ? "已上传" : "未上传");
+            holder.getBinding().tvError.setOnClickListener(null);
+            if (!item.getExpress().isUpload()) {
+                holder.getBinding().tvError.setText("信息提示：" + (TextUtils.isEmpty(item.getExpress().getUploadError()) ? "等待上传" : item.getExpress().getUploadError()));
+                if (!TextUtils.isEmpty(item.getExpress().getUploadError())) {
+                    holder.getBinding().tvError.setOnClickListener(v -> ToastManager.toast(item.getExpress().getUploadError(), ToastManager.ERROR));
+                }
+            }
             holder.getBinding().tvUpload.setTextColor(item.getExpress().isUpload()
                     ? context.getResources().getColor(R.color.darkgreen)
                     : context.getResources().getColor(R.color.darkred));
             if (item.getExpress() != null && item.getExpress().getPhotoPathList() != null && !item.getExpress().getPhotoPathList().isEmpty()) {
                 RequestOptions options = RequestOptions.bitmapTransform(new RoundedCorners(30));
-                GlideApp.with(context)
+                GlideApp.with(holder.getBinding().ivImage)
                         .load(item.getExpress().getPhotoPathList().get(0))
                         .apply(options)
                         .skipMemoryCache(true)
@@ -79,7 +86,7 @@ public class LocalAdapter extends BaseViewModelAdapter<Local, ItemLocalBinding, 
         this.listener = listener;
     }
 
-    class MyViewHolder extends BaseViewHolder<ItemLocalBinding> {
+    static class MyViewHolder extends BaseViewHolder<ItemLocalBinding> {
         MyViewHolder(View itemView) {
             super(itemView);
         }
@@ -87,6 +94,7 @@ public class LocalAdapter extends BaseViewModelAdapter<Local, ItemLocalBinding, 
 
     public interface OnItemClickListener {
         void onItemClick(View view, int position);
+
         void onThumbnail(String url);
     }
 

@@ -122,7 +122,7 @@ public interface PostalNet {
             @Part("receipTime") String receipTime,
             @Part("lat") String lat,
             @Part("lng") String lng,
-            @Part("chekStatus") String chekStatus,
+            @Part("checkStatus") String checkStatus,
             @Part List<MultipartBody.Part> file
     );
 

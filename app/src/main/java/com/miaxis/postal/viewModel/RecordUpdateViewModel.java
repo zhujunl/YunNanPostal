@@ -3,8 +3,6 @@ package com.miaxis.postal.viewModel;
 import android.graphics.Bitmap;
 import android.text.TextUtils;
 
-import androidx.lifecycle.MutableLiveData;
-
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.FutureTarget;
 import com.miaxis.postal.app.App;
@@ -19,11 +17,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import androidx.lifecycle.MutableLiveData;
 import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
 public class RecordUpdateViewModel extends BaseViewModel {

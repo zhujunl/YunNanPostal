@@ -2,14 +2,12 @@ package com.miaxis.postal.data.entity;
 
 import android.graphics.Bitmap;
 
+import java.util.Date;
+import java.util.List;
+
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
-
-import com.miaxis.postal.bridge.Status;
-
-import java.util.Date;
-import java.util.List;
 
 @Entity
 public class Express {
@@ -25,6 +23,7 @@ public class Express {
     private String longitude;
     private Date pieceTime;
     private boolean upload;
+    private String uploadError;
     private String info;
     private String weight;
     private String addresseeName;
@@ -50,6 +49,7 @@ public class Express {
         setLongitude(builder.longitude);
         setPieceTime(builder.pieceTime);
         setUpload(builder.upload);
+        setUploadError(builder.uploadError);
         setInfo(builder.info);
         setWeight(builder.weight);
         setAddresseeName(builder.addresseeName);
@@ -58,6 +58,14 @@ public class Express {
         setDraft(builder.draft);
         setPhotoList(builder.photoList);
         setComplete(builder.complete);
+    }
+
+    public void setUploadError(String uploadError) {
+        this.uploadError = uploadError;
+    }
+
+    public String getUploadError() {
+        return uploadError;
     }
 
     public Long getId() {
@@ -204,6 +212,31 @@ public class Express {
         this.complete = complete;
     }
 
+    @Override
+    public String toString() {
+        return "Express{" +
+                "id=" + id +
+                ", barCode='" + barCode + '\'' +
+                ", photoPathList=" + photoPathList +
+                ", senderPhone='" + senderPhone + '\'' +
+                ", senderAddress='" + senderAddress + '\'' +
+                ", verifyId='" + verifyId + '\'' +
+                ", latitude='" + latitude + '\'' +
+                ", longitude='" + longitude + '\'' +
+                ", pieceTime=" + pieceTime +
+                ", upload=" + upload +
+                ", uploadError='" + uploadError + '\'' +
+                ", info='" + info + '\'' +
+                ", weight='" + weight + '\'' +
+                ", addresseeName='" + addresseeName + '\'' +
+                ", addresseePhone='" + addresseePhone + '\'' +
+                ", addresseeAddress='" + addresseeAddress + '\'' +
+                ", draft=" + draft +
+                ", complete=" + complete +
+                ", photoList=" + photoList +
+                '}';
+    }
+
     public static final class Builder {
         private Long id;
         private String barCode;
@@ -215,6 +248,7 @@ public class Express {
         private String longitude;
         private Date pieceTime;
         private boolean upload;
+        private String uploadError;
         private String info;
         private String weight;
         private String addresseeName;
@@ -225,6 +259,11 @@ public class Express {
         private boolean complete;
 
         public Builder() {
+        }
+
+        public Builder uploadError(String val) {
+            uploadError = val;
+            return this;
         }
 
         public Builder id(Long val) {

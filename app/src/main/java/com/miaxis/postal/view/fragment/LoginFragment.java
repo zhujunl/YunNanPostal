@@ -1,31 +1,20 @@
 package com.miaxis.postal.view.fragment;
 
-import android.text.Editable;
 import android.text.InputType;
 import android.text.TextUtils;
-import android.text.TextWatcher;
-import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
-
 import com.miaxis.postal.R;
-import com.miaxis.postal.data.entity.Courier;
+import com.miaxis.postal.app.App;
 import com.miaxis.postal.databinding.FragmentLoginBinding;
-import com.miaxis.postal.manager.ConfigManager;
-import com.miaxis.postal.manager.TTSManager;
+import com.miaxis.postal.manager.AmapManager;
 import com.miaxis.postal.manager.ToastManager;
-import com.miaxis.postal.util.ValueUtil;
 import com.miaxis.postal.view.base.BaseViewModelFragment;
-import com.miaxis.postal.view.dialog.FingerVerifyDialogFragment;
 import com.miaxis.postal.viewModel.LoginViewModel;
 
-import java.util.ArrayList;
-import java.util.List;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 public class LoginFragment extends BaseViewModelFragment<FragmentLoginBinding, LoginViewModel> {
 
@@ -59,6 +48,7 @@ public class LoginFragment extends BaseViewModelFragment<FragmentLoginBinding, L
 
     @Override
     protected void initView() {
+        App.getInstance().uploadEnable=false;
         binding.ivConfig.setOnClickListener(v -> mListener.replaceFragment(ConfigFragment.newInstance()));
         binding.btnLogin.setOnClickListener(v -> {
             if (checkInput()) {
@@ -69,6 +59,12 @@ public class LoginFragment extends BaseViewModelFragment<FragmentLoginBinding, L
 //        viewModel.username.set("17857318080");
 //        viewModel.password.set("8080");
         viewModel.password.set("");
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        AmapManager.getInstance().stopLocation();
     }
 
     @Override

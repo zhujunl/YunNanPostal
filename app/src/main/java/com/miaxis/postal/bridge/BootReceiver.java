@@ -12,7 +12,7 @@ public class BootReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         if (TextUtils.equals(intent.getAction(), "android.intent.action.BOOT_COMPLETED")) {
-            Log.e("asd", "BootReceiver");
+            Log.d("asd", "BootReceiver");
             Intent sayHelloIntent = new Intent(context, MainActivity.class);
             sayHelloIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(sayHelloIntent);

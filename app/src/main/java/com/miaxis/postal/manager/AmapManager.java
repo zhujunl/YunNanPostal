@@ -11,15 +11,14 @@ import com.miaxis.postal.data.exception.MyException;
 import com.miaxis.postal.data.exception.NetResultFailedException;
 import com.miaxis.postal.data.repository.DeviceRepository;
 
-import org.greenrobot.eventbus.EventBus;
-
 import java.io.IOException;
 
 public class AmapManager implements AMapLocationListener {
 
-    private AmapManager() {}
+    private AmapManager() {
+    }
 
-    public static AmapManager getInstance () {
+    public static AmapManager getInstance() {
         return SingletonHolder.instance;
     }
 
@@ -27,21 +26,27 @@ public class AmapManager implements AMapLocationListener {
         private static final AmapManager instance = new AmapManager();
     }
 
-    /** ================================ 静态内部类单例写法 ================================ **/
+    /**
+     * ================================ 静态内部类单例写法 ================================
+     **/
 
     private Application application;
     private AMapLocationClient aMapLocationClient;
     private AMapLocation aMapLocation;
+    private AMapLocationListener mAMapLocationListener;
 
     public void getOneLocation(OnOneLocationListener listener) {
         AMapLocationClient aMapLocationClient = new AMapLocationClient(application);
-        aMapLocationClient.setLocationListener(aMapLocation -> {
-            if (aMapLocation.getErrorCode() == 0) {
-                String address = aMapLocation.getAddress();
-                aMapLocationClient.stopLocation();
-                listener.onOneLocation(address);
-                this.aMapLocation = aMapLocation;
-                heatBeat(aMapLocation);
+        aMapLocationClient.setLocationListener(mAMapLocationListener = new AMapLocationListener() {
+            @Override
+            public void onLocationChanged(AMapLocation location) {
+                if (aMapLocation.getErrorCode() == 0) {
+                    String address = aMapLocation.getAddress();
+                    aMapLocationClient.stopLocation();
+                    listener.onOneLocation(address);
+                    aMapLocation = location;
+                    heatBeat(aMapLocation);
+                }
             }
         });
         AMapLocationClientOption option = new AMapLocationClientOption();
@@ -65,14 +70,26 @@ public class AmapManager implements AMapLocationListener {
         aMapLocationClient = new AMapLocationClient(application);
         aMapLocationClient.setLocationListener(this);
         AMapLocationClientOption mLocationOption = new AMapLocationClientOption();
-        mLocationOption.setInterval(1000 * 60 * 10);
+        mLocationOption.setInterval(1000 * 60 * 5);
         mLocationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Battery_Saving);
         aMapLocationClient.setLocationOption(mLocationOption);
         aMapLocationClient.startLocation();
     }
 
+    public void stopLocation() {
+        try {
+            if (aMapLocationClient != null) {
+                aMapLocationClient.stopLocation();
+                aMapLocationClient.unRegisterLocationListener(mAMapLocationListener);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     /**
      * 定位回调，回调后查询天气信息
+     *
      * @param aMapLocation
      */
     @Override

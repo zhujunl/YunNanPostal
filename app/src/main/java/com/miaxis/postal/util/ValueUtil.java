@@ -16,8 +16,9 @@ public class ValueUtil {
 
     public final static Gson GSON = new Gson();
 
-//    public static final String DEFAULT_BASE_HOST = "http://192.168.5.125:8088/policebus/";
-    public static final String DEFAULT_BASE_HOST = "http://bnrzhysj.postaldata.top:8800/policebus/";
+    //    public static final String DEFAULT_BASE_HOST = "http://192.168.5.125:8088/policebus/";
+    public static final String DEFAULT_BASE_HOST = "http://192.168.5.94:8080/policebus/";
+    //    public static final String DEFAULT_BASE_HOST = "http://bnrzhysj.postaldata.top:8800/policebus/";
     public static final float DEFAULT_VERIFY_SCORE = 0.76f;
     public static final float DEFAULT_MASK_VERIFY_SCORE = 0.73f;
     public static final int DEFAULT_QUALITY_SCORE = 25;
@@ -88,7 +89,8 @@ public class ValueUtil {
     }
 
     public static String nameDesensitization(String name) {
-        if (TextUtils.isEmpty(name)) return "";
+        if (TextUtils.isEmpty(name))
+            return "";
         String myName = null;
         char[] chars = name.toCharArray();
         if (chars.length == 1) {
@@ -98,7 +100,7 @@ public class ValueUtil {
             myName = name.replaceFirst(name.substring(1), " *");
         }
         if (chars.length > 2) {
-//            myName = name.replaceAll(name.substring(1, chars.length - 1), "*");
+            //            myName = name.replaceAll(name.substring(1, chars.length - 1), "*");
             StringBuilder cache = new StringBuilder(name.substring(0, 1));
             for (int i = 0; i < chars.length - 1; i++) {
                 cache.append(" *");

@@ -35,7 +35,7 @@ public class BP990_FingerPower implements IFingerPower {
     private void closeDevice() {
         synchronized (CardManager.class) {
             if (GpioManager.getInstance().getCardDevicePowerStatus()) {
-                //GpioManager.getInstance().cardDevicePowerControl(false);
+                GpioManager.getInstance().fingerDevicePowerControl(false);
                 SystemClock.sleep(200);
             }
         }
