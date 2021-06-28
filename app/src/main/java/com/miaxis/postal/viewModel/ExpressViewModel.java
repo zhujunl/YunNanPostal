@@ -240,11 +240,26 @@ public class ExpressViewModel extends BaseViewModel {
         saveExpress(cardMessage, expressList, false);
     }
 
+    /**
+     * 快递是否有实物拍照
+     */
+    private boolean isExpressNoImage(List<Express> expressList) {
+        if (expressList == null || expressList.isEmpty()) {
+            return false;
+        }
+        for (Express express : expressList) {
+            if (express.getPhotoList() == null || express.getPhotoList().isEmpty()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private void saveExpress(IDCardRecord cardMessage, List<Express> expressList, boolean draft) {
         waitMessage.setValue("正在保存...");
         Observable.create((ObservableOnSubscribe<String>) emitter -> {
             //核验状态 0：未核验 1：核验通过  2：核验未通过
-            if (cardMessage.getChekStatus() == 0 || cardMessage.getChekStatus() == 2) {
+            if (cardMessage.getChekStatus() == 0 || cardMessage.getChekStatus() == 2 || isExpressNoImage(expressList)) {
                 String addressStr = getAddress();
                 Courier courier = DataCacheManager.getInstance().getCourier();
                 WarnLog warnLog = new WarnLog.Builder()
