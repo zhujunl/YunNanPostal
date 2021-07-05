@@ -1,6 +1,7 @@
 package com.miaxis.postal.data.net;
 
 import android.graphics.Bitmap;
+import android.util.Log;
 
 import com.miaxis.postal.data.dto.CourierDto;
 import com.miaxis.postal.data.dto.OrderDto;
@@ -46,6 +47,7 @@ public class PostalApi extends BaseAPI {
     }
 
     public static Call<ResponseEntity> deviceHeartBeatSync(String macAddress, double lat, double lng) {
+        Log.e("deviceHeart", "macAddress:" + macAddress + "  lat:" + lat + "   lng:" + lng);
         return getPostalNetSync().deviceHeartBeatSync(macAddress, lat, lng);
     }
 
@@ -121,6 +123,15 @@ public class PostalApi extends BaseAPI {
                 cardFileBody);
     }
 
+    public static Call<ResponseEntity> saveOrderPhoto(File file) {
+        MultipartBody.Part fileBody = null;
+        if (file != null) {
+            RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+            fileBody = MultipartBody.Part.createFormData("file", file.getName(), requestBody);
+        }
+        return getPostalNetSync().saveOrderPhoto(fileBody);
+    }
+
     public static Call<ResponseEntity> saveOrderFromAppSync(
             String orgCode,
             String orgNode,
@@ -142,13 +153,14 @@ public class PostalApi extends BaseAPI {
             String lat,
             String lng,
             int chekStatus,
-            List<File> fileList) {
-        List<MultipartBody.Part> parts = new ArrayList<>(fileList.size());
-        for (File file : fileList) {
-            RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
-            MultipartBody.Part part = MultipartBody.Part.createFormData("file", file.getName(), requestBody);
-            parts.add(part);
-        }
+            String fileList) {
+        //List<MultipartBody.Part> parts = new ArrayList<>(fileList.size());
+        //List<OrderImage> list = new ArrayList<>();
+        //        for (File file : fileList) {
+        //            //            RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+        //            //            MultipartBody.Part part = MultipartBody.Part.createFormData("file", file.getName(), requestBody);
+        //            //            parts.add(part);
+        //        }
         return getPostalNetSync().saveOrderFromAppSync(
                 orgCode,
                 orgNode,
@@ -169,8 +181,9 @@ public class PostalApi extends BaseAPI {
                 receipTime,
                 lat,
                 lng,
-                String.valueOf(chekStatus),
-                parts);
+                String.valueOf(chekStatus)
+                , fileList
+        );
     }
 
     public static Call<ResponseEntity<Integer>> uploadWarnLog(

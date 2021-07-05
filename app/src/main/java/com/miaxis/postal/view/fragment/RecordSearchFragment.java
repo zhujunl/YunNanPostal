@@ -1,9 +1,5 @@
 package com.miaxis.postal.view.fragment;
 
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-
-import android.content.res.Configuration;
 import android.text.TextUtils;
 
 import com.miaxis.postal.BR;
@@ -14,6 +10,9 @@ import com.miaxis.postal.manager.ToastManager;
 import com.miaxis.postal.view.auxiliary.OnLimitClickHelper;
 import com.miaxis.postal.view.base.BaseViewModelFragment;
 import com.miaxis.postal.viewModel.RecordSearchViewModel;
+
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 public class RecordSearchFragment extends BaseViewModelFragment<FragmentRecordSearchBinding, RecordSearchViewModel> {
 
@@ -57,8 +56,8 @@ public class RecordSearchFragment extends BaseViewModelFragment<FragmentRecordSe
                 viewModel.getOrderById(orderCode);
             }
         }));
-        binding.etSearch.setRawInputType(Configuration.KEYBOARD_QWERTY);
-//        binding.etSearch.setText("7302289336");
+        //binding.etSearch.setRawInputType(Configuration.KEYBOARD_QWERTY);
+        //        binding.etSearch.setText("7302289336");
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.miaxis.postal.data.repository;
 
 import android.graphics.Bitmap;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.miaxis.postal.data.entity.Courier;
 import com.miaxis.postal.data.entity.Express;
@@ -14,6 +15,7 @@ import com.miaxis.postal.data.net.ResponseEntity;
 import com.miaxis.postal.manager.DataCacheManager;
 import com.miaxis.postal.util.DateUtil;
 import com.miaxis.postal.util.FileUtil;
+import com.miaxis.postal.util.StringUtils;
 import com.miaxis.postal.util.ValueUtil;
 
 import java.io.File;
@@ -21,6 +23,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import okhttp3.ResponseBody;
+import retrofit2.Call;
 import retrofit2.Response;
 
 public class ExpressRepository {
@@ -41,10 +45,31 @@ public class ExpressRepository {
      **/
 
     public void uploadLocalExpress(Express express, TempId tempId, Integer warnLogId, String sendName, int chekStatus) throws IOException, MyException, NetResultFailedException {
-        List<File> fileList = new ArrayList<>();
+        //        List<File> fileList = new ArrayList<>();
+        //        for (String path : express.getPhotoPathList()) {
+        //            fileList.add(new File(path));
+        //        }
+        StringBuilder stringBuilder = new StringBuilder();
         for (String path : express.getPhotoPathList()) {
-            fileList.add(new File(path));
+            try {
+                Call<ResponseEntity> responseEntityCall = PostalApi.saveOrderPhoto(new File(path));
+                Response<ResponseEntity> execute = responseEntityCall.execute();
+                ResponseEntity body = execute.body();
+                //Log.e("saveOrderPhoto", "" + body);
+                if (StringUtils.isEquals(ValueUtil.SUCCESS, body.getCode())) {
+                    stringBuilder.append((String) body.getData()).append(",");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                //Log.e("saveOrderPhoto", "Exception:" + e);
+                throw new MyException("" + e);
+            }
         }
+        //Log.e("saveOrderPhoto", "FileList:" + stringBuilder.toString());
+        if (stringBuilder.toString().endsWith(",")) {
+            stringBuilder.deleteCharAt(stringBuilder.length() - 1);
+        }
+        //Log.e("saveOrderPhoto", "FileList:" + stringBuilder.toString());
         if (TextUtils.isEmpty(express.getBarCode())) {
             throw new MyException("订单号未空");
         }
@@ -70,16 +95,21 @@ public class ExpressRepository {
                 express.getLatitude(),
                 express.getLongitude(),
                 chekStatus,
-                fileList)
+                stringBuilder.toString())
                 .execute();
         try {
             ResponseEntity body = execute.body();
             if (body != null) {
-                if (TextUtils.equals(body.getCode(), ValueUtil.SUCCESS)) {
-                    return;
-                } else {
+                if (!TextUtils.equals(body.getCode(), ValueUtil.SUCCESS)) {
                     throw new NetResultFailedException("服务端返回，" + body.getMessage());
                 }
+            } else {
+                int code = execute.code();
+                Log.e("uploadLocalExpress", "code:" + code);
+                ResponseBody responseBody = execute.errorBody();
+                String string = responseBody.string();
+                Log.e("uploadLocalExpress", "errorBody:" + string);
+                throw new MyException("服务端返回，空数据，code:" + code + " error:" + string);
             }
         } catch (NetResultFailedException e) {
             throw e;
@@ -87,7 +117,6 @@ public class ExpressRepository {
             e.printStackTrace();
             throw new MyException(e.getMessage());
         }
-        throw new MyException("服务端返回，空数据");
     }
 
     public void saveExpress(Express express) {

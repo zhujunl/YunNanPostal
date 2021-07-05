@@ -31,6 +31,7 @@ public class Express {
     private String addresseeAddress;
     private boolean draft;
     private boolean complete;
+    private String phone;
 
     @Ignore
     private List<Bitmap> photoList;
@@ -58,6 +59,15 @@ public class Express {
         setDraft(builder.draft);
         setPhotoList(builder.photoList);
         setComplete(builder.complete);
+        setPhone(builder.phone);
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
     public void setUploadError(String uploadError) {
@@ -216,6 +226,7 @@ public class Express {
     public String toString() {
         return "Express{" +
                 "id=" + id +
+                ", phone='" + phone + '\'' +
                 ", barCode='" + barCode + '\'' +
                 ", photoPathList=" + photoPathList +
                 ", senderPhone='" + senderPhone + '\'' +
@@ -257,10 +268,15 @@ public class Express {
         private boolean draft;
         private List<Bitmap> photoList;
         private boolean complete;
+        private String phone;
 
         public Builder() {
         }
 
+        public Builder phone(String val) {
+            phone = val;
+            return this;
+        }
         public Builder uploadError(String val) {
             uploadError = val;
             return this;

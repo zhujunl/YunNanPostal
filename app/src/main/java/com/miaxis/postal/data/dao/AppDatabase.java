@@ -3,6 +3,7 @@ package com.miaxis.postal.data.dao;
 import android.app.Application;
 
 import com.miaxis.postal.data.converter.DateConverter;
+import com.miaxis.postal.data.converter.OrderImageListConverter;
 import com.miaxis.postal.data.converter.StringListConverter;
 import com.miaxis.postal.data.entity.Config;
 import com.miaxis.postal.data.entity.Courier;
@@ -16,10 +17,11 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
+import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
-@Database(entities = {Config.class, Courier.class, IDCardRecord.class, Express.class, WarnLog.class, IDCard.class}, version = 9)
-@TypeConverters({StringListConverter.class, DateConverter.class})
+@Database(entities = {Config.class, Courier.class, IDCardRecord.class, Express.class, WarnLog.class, IDCard.class}, version = 10)
+@TypeConverters({StringListConverter.class, OrderImageListConverter.class, DateConverter.class})
 public abstract class AppDatabase extends RoomDatabase {
 
     private static final String DBName = "Postal.db";
@@ -48,18 +50,17 @@ public abstract class AppDatabase extends RoomDatabase {
                         super.onOpen(db);
                     }
                 })
+                .addMigrations(MIGRATION_9_10)
                 .fallbackToDestructiveMigration()
                 .build();
     }
 
-//    private static Migration MIGRATION_4_5 = new Migration(4, 5) {
-//        @Override
-//        public void migrate(SupportSQLiteDatabase database) {
-//            database.execSQL("ALTER TABLE Express ADD COLUMN addresseeName TEXT default ''");
-//            database.execSQL("ALTER TABLE Express ADD COLUMN addresseePhone TEXT default ''");
-//            database.execSQL("ALTER TABLE Express ADD COLUMN addresseeAddress TEXT default ''");
-//        }
-//    };
+    static final Migration MIGRATION_9_10 = new Migration(9, 10) {
+        @Override
+        public void migrate(SupportSQLiteDatabase database) {
+            database.execSQL("ALTER TABLE Express ADD COLUMN phone TEXT");
+        }
+    };
 
     public abstract ConfigDao configDao();
 

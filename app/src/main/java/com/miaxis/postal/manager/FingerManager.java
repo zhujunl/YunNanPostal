@@ -66,7 +66,7 @@ public class FingerManager {
         executor.execute(() -> {
             try {
                 mFingerPower.powerOn();
-                Thread.sleep(500);
+                Thread.sleep(800);
                 MxMscBigFingerApiFactory fingerFactory = new MxMscBigFingerApiFactory(App.getInstance());
                 mxMscBigFingerApi = fingerFactory.getApi();
                 mxFingerAlg = fingerFactory.getAlg();

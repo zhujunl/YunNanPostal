@@ -2,6 +2,7 @@ package com.miaxis.postal.view.fragment;
 
 import android.text.InputType;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
@@ -10,6 +11,7 @@ import com.miaxis.postal.app.App;
 import com.miaxis.postal.databinding.FragmentLoginBinding;
 import com.miaxis.postal.manager.AmapManager;
 import com.miaxis.postal.manager.ToastManager;
+import com.miaxis.postal.util.ValueUtil;
 import com.miaxis.postal.view.base.BaseViewModelFragment;
 import com.miaxis.postal.viewModel.LoginViewModel;
 
@@ -48,7 +50,8 @@ public class LoginFragment extends BaseViewModelFragment<FragmentLoginBinding, L
 
     @Override
     protected void initView() {
-        App.getInstance().uploadEnable=false;
+        ValueUtil.GlobalPhone = null;
+        App.getInstance().uploadEnable = false;
         binding.ivConfig.setOnClickListener(v -> mListener.replaceFragment(ConfigFragment.newInstance()));
         binding.btnLogin.setOnClickListener(v -> {
             if (checkInput()) {
@@ -56,8 +59,8 @@ public class LoginFragment extends BaseViewModelFragment<FragmentLoginBinding, L
             }
         });
         addTextWatcher(binding.etPassword, binding.btnPasswordEye);
-//        viewModel.username.set("17857318080");
-//        viewModel.password.set("8080");
+        //        viewModel.username.set("17857318080");
+        //        viewModel.password.set("8080");
         viewModel.password.set("");
     }
 
@@ -74,35 +77,37 @@ public class LoginFragment extends BaseViewModelFragment<FragmentLoginBinding, L
 
     private Observer<Boolean> loginResultObserver = result -> {
         if (result) {
+            ValueUtil.GlobalPhone = viewModel.username.get();
+            Log.e("login", "username:" + ValueUtil.GlobalPhone);
             mListener.replaceFragment(HomeFragment.newInstance());
         } else {
-            ToastManager.toast("密码错误", ToastManager.INFO);
+            ToastManager.toast("手机号码或密码错误", ToastManager.INFO);
         }
     };
 
-//    private Observer<Boolean> loginFaceFlagObserver = flag -> {
-//        mListener.replaceFragment(FaceLoginFragment.newInstance(viewModel.courierLiveData.getValue()));
-//    };
-//
-//    private Observer<Boolean> loginFingerFlagObserver = flag -> {
-//        Courier courier = viewModel.courierLiveData.getValue();
-//        if (courier != null) {
-//            String fingerFeature1 = courier.getFingerFeature1();
-//            String fingerFeature2 = courier.getFingerFeature2();
-//            List<String> featureList = new ArrayList<>();
-//            featureList.add(fingerFeature1);
-//            featureList.add(fingerFeature2);
-//            FingerVerifyDialogFragment.newInstance(featureList, result -> {
-//                if (result) {
-//                    TTSManager.getInstance().playVoiceMessageFlush("指纹登录成功");
-//                    ToastManager.toast("登录成功", ToastManager.SUCCESS);
-//                    mListener.replaceFragment(HomeFragment.newInstance(viewModel.courierLiveData.getValue()));
-//                } else {
-//                    ToastManager.toast("登录失败", ToastManager.INFO);
-//                }
-//            }).show(getChildFragmentManager(), "FingerVerifyDialogFragment");
-//        }
-//    };
+    //    private Observer<Boolean> loginFaceFlagObserver = flag -> {
+    //        mListener.replaceFragment(FaceLoginFragment.newInstance(viewModel.courierLiveData.getValue()));
+    //    };
+    //
+    //    private Observer<Boolean> loginFingerFlagObserver = flag -> {
+    //        Courier courier = viewModel.courierLiveData.getValue();
+    //        if (courier != null) {
+    //            String fingerFeature1 = courier.getFingerFeature1();
+    //            String fingerFeature2 = courier.getFingerFeature2();
+    //            List<String> featureList = new ArrayList<>();
+    //            featureList.add(fingerFeature1);
+    //            featureList.add(fingerFeature2);
+    //            FingerVerifyDialogFragment.newInstance(featureList, result -> {
+    //                if (result) {
+    //                    TTSManager.getInstance().playVoiceMessageFlush("指纹登录成功");
+    //                    ToastManager.toast("登录成功", ToastManager.SUCCESS);
+    //                    mListener.replaceFragment(HomeFragment.newInstance(viewModel.courierLiveData.getValue()));
+    //                } else {
+    //                    ToastManager.toast("登录失败", ToastManager.INFO);
+    //                }
+    //            }).show(getChildFragmentManager(), "FingerVerifyDialogFragment");
+    //        }
+    //    };
 
     private boolean checkInput() {
         if (TextUtils.isEmpty(viewModel.username.get())) {
@@ -117,7 +122,7 @@ public class LoginFragment extends BaseViewModelFragment<FragmentLoginBinding, L
 
     private void addTextWatcher(final EditText editText, final ImageButton btnEye) {
         btnEye.setOnClickListener(v -> {
-            if (editText.getInputType() == (InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD)){
+            if (editText.getInputType() == (InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD)) {
                 btnEye.setImageResource(R.drawable.ic_visibility_off_white);
                 editText.setInputType(InputType.TYPE_CLASS_TEXT);
             } else {

@@ -1,6 +1,7 @@
 package com.miaxis.postal.manager;
 
 import android.app.Application;
+import android.util.Log;
 
 import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
@@ -12,6 +13,8 @@ import com.miaxis.postal.data.exception.NetResultFailedException;
 import com.miaxis.postal.data.repository.DeviceRepository;
 
 import java.io.IOException;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class AmapManager implements AMapLocationListener {
 
@@ -33,19 +36,20 @@ public class AmapManager implements AMapLocationListener {
     private Application application;
     private AMapLocationClient aMapLocationClient;
     private AMapLocation aMapLocation;
-    private AMapLocationListener mAMapLocationListener;
 
     public void getOneLocation(OnOneLocationListener listener) {
         AMapLocationClient aMapLocationClient = new AMapLocationClient(application);
-        aMapLocationClient.setLocationListener(mAMapLocationListener = new AMapLocationListener() {
+        aMapLocationClient.setLocationListener(new AMapLocationListener() {
             @Override
             public void onLocationChanged(AMapLocation location) {
-                if (aMapLocation.getErrorCode() == 0) {
-                    String address = aMapLocation.getAddress();
+                if (location.getErrorCode() == 0) {
+                    String address = location.getAddress();
                     aMapLocationClient.stopLocation();
                     listener.onOneLocation(address);
-                    aMapLocation = location;
-                    heatBeat(aMapLocation);
+                    // aMapLocation = location;
+                    heatBeat(location);
+                    aMapLocationClient.stopLocation();
+                    aMapLocationClient.unRegisterLocationListener(this);
                 }
             }
         });
@@ -62,25 +66,50 @@ public class AmapManager implements AMapLocationListener {
         void onOneLocation(String address);
     }
 
+    private long getPositionTime = 1000 * (60 * 5 - 20);
+    //    private long getPositionTime = 1000 * (20);
+    private Timer timer;
+
     /**
      * 开始定位
      */
     public void startLocation(Application application) {
         this.application = application;
+        stopLocation();
         aMapLocationClient = new AMapLocationClient(application);
         aMapLocationClient.setLocationListener(this);
-        AMapLocationClientOption mLocationOption = new AMapLocationClientOption();
-        mLocationOption.setInterval(1000 * 60 * 5);
-        mLocationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Battery_Saving);
-        aMapLocationClient.setLocationOption(mLocationOption);
+        AMapLocationClientOption aMapLocationClientOption = new AMapLocationClientOption();
+        aMapLocationClientOption.setInterval(1000 * 60);
+        aMapLocationClientOption.setHttpTimeOut(1000 * 10);
+        aMapLocationClientOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Battery_Saving);
+        aMapLocationClient.setLocationOption(aMapLocationClientOption);
         aMapLocationClient.startLocation();
+        Log.e("deviceHeart", "start");
+        timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                Log.e("deviceHeart", "---------------");
+                if (aMapLocationClient != null) {
+                    AMapLocation lastKnownLocation = aMapLocationClient.getLastKnownLocation();
+                    if (lastKnownLocation != null && lastKnownLocation.getErrorCode() == 0) {
+                        aMapLocation = lastKnownLocation;
+                        heatBeat(lastKnownLocation);
+                    }
+                }
+            }
+        }, 100, getPositionTime);
     }
 
     public void stopLocation() {
         try {
             if (aMapLocationClient != null) {
                 aMapLocationClient.stopLocation();
-                aMapLocationClient.unRegisterLocationListener(mAMapLocationListener);
+                aMapLocationClient.unRegisterLocationListener(this);
+            }
+            if (timer != null) {
+                timer.cancel();
+                timer = null;
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -94,10 +123,10 @@ public class AmapManager implements AMapLocationListener {
      */
     @Override
     public void onLocationChanged(AMapLocation aMapLocation) {
-        if (aMapLocation != null && aMapLocation.getErrorCode() == 0) {
-            this.aMapLocation = aMapLocation;
-            heatBeat(aMapLocation);
-        }
+        //        if (aMapLocation != null && aMapLocation.getErrorCode() == 0) {
+        //            this.aMapLocation = aMapLocation;
+        //            heatBeat(aMapLocation);
+        //        }
     }
 
     private void heatBeat(AMapLocation aMapLocation) {

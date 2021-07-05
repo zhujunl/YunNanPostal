@@ -93,37 +93,39 @@ public interface PostalNet {
             @Part("signOrg") String signOrg,
             @Part("expireTime") String expireTime,
             @Part("verifyType") String verifyType,
-            @Part("checkTime") String  checkTime,
+            @Part("checkTime") String checkTime,
             @Part("type") String type,
             @Part MultipartBody.Part checkFile,
             @Part MultipartBody.Part cardFile
     );
 
     //拿到核验编号后，上传订单信息
-    @Multipart
+    @FormUrlEncoded
     @POST("api/v1/order/saveOrderFromApp")
     Call<ResponseEntity> saveOrderFromAppSync(
-            @Part("orgCode") String orgCode,
-            @Part("orgNode") String orgNode,
-            @Part("personId") String personId,
-            @Part("checkId") String checkId,
-            @Part("warnLogId") String warnLogId,
-            @Part("expressmanId") String expressmanId,
-            @Part("sendAddress") String sendAddress,
-            @Part("sendPhone") String sendPhone,
-            @Part("sendName") String sendName,
-            @Part("orderCode") String orderCode,
-            @Part("orderInfo") String orderInfo,
-            @Part("weight") String weight,
-            @Part("addresseeName") String addresseeName,
-            @Part("addresseeAddress") String addresseeAddress,
-            @Part("addresseePhone") String addresseePhone,
-            @Part("pieceTime") String pieceTime,
-            @Part("receipTime") String receipTime,
-            @Part("lat") String lat,
-            @Part("lng") String lng,
-            @Part("checkStatus") String checkStatus,
-            @Part List<MultipartBody.Part> file
+            @Field("orgCode") String orgCode,
+            @Field("orgNode") String orgNode,
+            @Field("personId") String personId,
+            @Field("checkId") String checkId,
+            @Field("warnLogId") String warnLogId,
+            @Field("expressmanId") String expressmanId,
+            @Field("sendAddress") String sendAddress,
+            @Field("sendPhone") String sendPhone,
+            @Field("sendName") String sendName,
+            @Field("orderCode") String orderCode,
+            @Field("orderInfo") String orderInfo,
+            @Field("weight") String weight,
+            @Field("addresseeName") String addresseeName,
+            @Field("addresseeAddress") String addresseeAddress,
+            @Field("addresseePhone") String addresseePhone,
+            @Field("pieceTime") String pieceTime,
+            @Field("receipTime") String receipTime,
+            @Field("lat") String lat,
+            @Field("lng") String lng,
+            @Field("checkStatus") String checkStatus,
+            //@Part List<MultipartBody.Part> file
+            //@Field("url") List<String> file
+            @Field("urls") String files
     );
 
     @FormUrlEncoded
@@ -165,6 +167,15 @@ public interface PostalNet {
             @Part("addresseeAddress") String addresseeAddress,
             @Part("addresseePhone") String addresseePhone,
             @Part List<MultipartBody.Part> file
+    );
+
+    /**
+     * 上传图片
+     */
+    @Multipart
+    @POST("api/v1/order/saveOrderPhoto")
+    Call<ResponseEntity> saveOrderPhoto(
+            @Part MultipartBody.Part file
     );
 
 }

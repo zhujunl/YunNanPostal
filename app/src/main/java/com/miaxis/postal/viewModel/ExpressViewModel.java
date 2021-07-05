@@ -19,6 +19,7 @@ import com.miaxis.postal.manager.AmapManager;
 import com.miaxis.postal.manager.DataCacheManager;
 import com.miaxis.postal.manager.PostalManager;
 import com.miaxis.postal.manager.ScanManager;
+import com.miaxis.postal.util.ValueUtil;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -243,23 +244,12 @@ public class ExpressViewModel extends BaseViewModel {
     /**
      * 快递是否有实物拍照
      */
-    private boolean isExpressNoImage(List<Express> expressList) {
+    private void isExpressNoImage(IDCardRecord cardMessage, List<Express> expressList) {
         if (expressList == null || expressList.isEmpty()) {
-            return false;
+            return;
         }
         for (Express express : expressList) {
             if (express.getPhotoList() == null || express.getPhotoList().isEmpty()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private void saveExpress(IDCardRecord cardMessage, List<Express> expressList, boolean draft) {
-        waitMessage.setValue("正在保存...");
-        Observable.create((ObservableOnSubscribe<String>) emitter -> {
-            //核验状态 0：未核验 1：核验通过  2：核验未通过
-            if (cardMessage.getChekStatus() == 0 || cardMessage.getChekStatus() == 2 || isExpressNoImage(expressList)) {
                 String addressStr = getAddress();
                 Courier courier = DataCacheManager.getInstance().getCourier();
                 WarnLog warnLog = new WarnLog.Builder()
@@ -275,6 +265,30 @@ public class ExpressViewModel extends BaseViewModel {
                         .build();
                 WarnLogRepository.getInstance().saveWarnLog(warnLog);
             }
+        }
+    }
+
+    private void saveExpress(IDCardRecord cardMessage, List<Express> expressList, boolean draft) {
+        waitMessage.setValue("正在保存...");
+        Observable.create((ObservableOnSubscribe<String>) emitter -> {
+            //核验状态 0：未核验 1：核验通过  2：核验未通过
+            if (cardMessage.getChekStatus() == 0 || cardMessage.getChekStatus() == 2) {
+                String addressStr = getAddress();
+                Courier courier = DataCacheManager.getInstance().getCourier();
+                WarnLog warnLog = new WarnLog.Builder()
+                        .verifyId(cardMessage.getCheckId())
+                        .sendAddress(addressStr)
+                        .sendCardNo(cardMessage.getCardNumber())
+                        .sendName(cardMessage.getName())
+                        .expressmanId(courier.getCourierId())
+                        .expressmanName(courier.getName())
+                        .expressmanPhone(courier.getPhone())
+                        .createTime(new Date())
+                        .upload(false)
+                        .build();
+                WarnLogRepository.getInstance().saveWarnLog(warnLog);
+            }
+            isExpressNoImage(cardMessage, expressList);
             cardMessage.setUpload(false);
             cardMessage.setSenderAddress(getAddress());
             String verifyId = IDCardRecordRepository.getInstance().saveIdCardRecord(cardMessage);
@@ -290,6 +304,7 @@ public class ExpressViewModel extends BaseViewModel {
                         express.setLongitude(aMapLocation != null ? String.valueOf(aMapLocation.getLongitude()) : "");
                         express.setPieceTime(new Date());
                         express.setUpload(false);
+                        express.setPhone(ValueUtil.GlobalPhone);
                         ExpressRepository.getInstance().saveExpress(express);
                     }
                     return true;
@@ -419,6 +434,7 @@ public class ExpressViewModel extends BaseViewModel {
                         express.setLongitude(aMapLocation != null ? String.valueOf(aMapLocation.getLongitude()) : "");
                         express.setPieceTime(new Date());
                         express.setUpload(false);
+                        express.setPhone(ValueUtil.GlobalPhone);
                         ExpressRepository.getInstance().saveExpress(express);
                     }
                     return true;

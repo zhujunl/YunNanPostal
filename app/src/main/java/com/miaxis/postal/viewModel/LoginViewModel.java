@@ -3,23 +3,18 @@ package com.miaxis.postal.viewModel;
 import android.text.TextUtils;
 import android.util.Log;
 
-import androidx.databinding.ObservableBoolean;
-import androidx.databinding.ObservableField;
-import androidx.lifecycle.MutableLiveData;
-
 import com.miaxis.postal.app.App;
 import com.miaxis.postal.bridge.SingleLiveEvent;
-import com.miaxis.postal.data.entity.Config;
 import com.miaxis.postal.data.entity.Courier;
 import com.miaxis.postal.data.exception.MyException;
 import com.miaxis.postal.data.model.CourierModel;
 import com.miaxis.postal.data.repository.LoginRepository;
-import com.miaxis.postal.manager.ConfigManager;
 import com.miaxis.postal.manager.DataCacheManager;
 import com.miaxis.postal.manager.ToastManager;
 import com.miaxis.postal.util.EncryptUtil;
-import com.miaxis.postal.util.ValueUtil;
 
+import androidx.databinding.ObservableField;
+import androidx.lifecycle.MutableLiveData;
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -60,8 +55,7 @@ public class LoginViewModel extends BaseViewModel {
         Disposable subscribe = Observable.create((ObservableOnSubscribe<Courier>) emitter -> {
             Courier courier = LoginRepository.getInstance().getCourierByPhoneSync(username.get());
             emitter.onNext(courier);
-        })
-                .subscribeOn(Schedulers.from(App.getInstance().getThreadExecutor()))
+        }).subscribeOn(Schedulers.from(App.getInstance().getThreadExecutor()))
                 .observeOn(Schedulers.from(App.getInstance().getThreadExecutor()))
                 .doOnNext(CourierModel::saveCourier)
                 .observeOn(AndroidSchedulers.mainThread())
@@ -88,7 +82,6 @@ public class LoginViewModel extends BaseViewModel {
                 loginResult.postValue(Boolean.TRUE);
                 return;
             }
-
         } catch (MyException e) {
             e.printStackTrace();
         }

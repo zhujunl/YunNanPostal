@@ -2,21 +2,12 @@ package com.miaxis.postal.view.dialog;
 
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.os.Bundle;
-
-import androidx.databinding.library.baseAdapters.BR;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-
-import android.text.Editable;
+import android.text.InputFilter;
 import android.text.InputType;
+import android.text.Spanned;
 import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
-import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
@@ -30,10 +21,12 @@ import com.miaxis.postal.manager.DataCacheManager;
 import com.miaxis.postal.manager.ToastManager;
 import com.miaxis.postal.util.EncryptUtil;
 import com.miaxis.postal.view.auxiliary.OnLimitClickHelper;
-import com.miaxis.postal.view.auxiliary.OnLimitClickListener;
 import com.miaxis.postal.view.base.BaseViewModelDialogFragment;
-import com.miaxis.postal.view.base.BaseViewModelFragment;
 import com.miaxis.postal.viewModel.EditPasswordViewModel;
+
+import androidx.databinding.library.baseAdapters.BR;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 public class EditPasswordDialogFragment extends BaseViewModelDialogFragment<FragmentEditPasswordDialogBinding, EditPasswordViewModel> {
 
@@ -83,13 +76,13 @@ public class EditPasswordDialogFragment extends BaseViewModelDialogFragment<Frag
         super.onStart();
         Window win = getDialog().getWindow();
         // 一定要设置Background，如果不设置，window属性设置无效
-        win.setBackgroundDrawable( new ColorDrawable(Color.TRANSPARENT));
+        win.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         DisplayMetrics dm = new DisplayMetrics();
-        getActivity().getWindowManager().getDefaultDisplay().getMetrics( dm );
+        getActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
         WindowManager.LayoutParams params = win.getAttributes();
         params.gravity = Gravity.CENTER;
         // 使用ViewGroup.LayoutParams，以便Dialog 宽度充满整个屏幕
-        params.width =  ViewGroup.LayoutParams.WRAP_CONTENT;
+        params.width = ViewGroup.LayoutParams.WRAP_CONTENT;
         params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
         win.setAttributes(params);
     }
@@ -106,15 +99,17 @@ public class EditPasswordDialogFragment extends BaseViewModelDialogFragment<Frag
         String again = viewModel.checkPassword.get();
         String originalPsw = DataCacheManager.getInstance().getCourier().getPassword();
         try {
-            if (TextUtils.isEmpty(psw)){
+            if (TextUtils.isEmpty(psw)) {
                 ToastManager.toast("请输入原始密码", ToastManager.INFO);
+            } else if (TextUtils.isEmpty(newPsw) || newPsw == null || newPsw.trim().isEmpty()) {
+                ToastManager.toast("请输入新密码", ToastManager.INFO);
             } else if (!TextUtils.equals(originalPsw, getPasswordMD5(psw))) {
                 ToastManager.toast("输入的密码与原始密码不一致", ToastManager.INFO);
             } else if (TextUtils.equals(originalPsw, getPasswordMD5(newPsw))) {
                 ToastManager.toast("输入的新密码与原始密码不能一致", ToastManager.INFO);
             } else if (TextUtils.isEmpty(again)) {
                 ToastManager.toast("请再次输入新密码", ToastManager.INFO);
-            } else if (!TextUtils.equals(newPsw, again)){
+            } else if (!TextUtils.equals(newPsw, again)) {
                 ToastManager.toast("再次输入的新密码不一致", ToastManager.INFO);
             } else {
                 return true;
@@ -138,7 +133,7 @@ public class EditPasswordDialogFragment extends BaseViewModelDialogFragment<Frag
 
     private void addTextWatcher(EditText editText, Button btnEye) {
         btnEye.setOnClickListener(v -> {
-            if (editText.getInputType() == (InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD)){
+            if (editText.getInputType() == (InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD)) {
                 btnEye.setBackgroundResource(R.drawable.ic_visibility_off_blue);
                 editText.setInputType(InputType.TYPE_CLASS_TEXT);
             } else {
@@ -147,6 +142,16 @@ public class EditPasswordDialogFragment extends BaseViewModelDialogFragment<Frag
             }
             editText.setSelection(editText.getText().toString().length());
         });
+        editText.setFilters(new InputFilter[]{new InputFilter() {
+            @Override
+            public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+                if (source.toString().trim().isEmpty()) {
+                    return "";
+                } else {
+                    return null;
+                }
+            }
+        }});
     }
 
 }

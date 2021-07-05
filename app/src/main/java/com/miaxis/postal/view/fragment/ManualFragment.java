@@ -1,15 +1,6 @@
 package com.miaxis.postal.view.fragment;
 
-import android.content.res.Configuration;
-
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.SimpleItemAnimator;
-
-import android.text.Editable;
 import android.text.TextUtils;
-import android.text.TextWatcher;
 
 import com.miaxis.postal.BR;
 import com.miaxis.postal.R;
@@ -32,6 +23,11 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.SimpleItemAnimator;
 
 public class ManualFragment extends BaseViewModelFragment<FragmentManualBinding, ManualViewModel> {
 
@@ -76,7 +72,7 @@ public class ManualFragment extends BaseViewModelFragment<FragmentManualBinding,
         } else {
             binding.etCardNumber.requestFocus();
         }
-        binding.etCardNumber.setRawInputType(Configuration.KEYBOARD_QWERTY);
+        //binding.etCardNumber.setRawInputType(Configuration.KEYBOARD_QWERTY);
         viewModel.confirm.observe(this, confirmObserver);
         viewModel.idCardSearch.observe(this, idCardObserver);
         viewModel.alarmFlag.observe(this, alarmFlagObserver);
@@ -89,10 +85,12 @@ public class ManualFragment extends BaseViewModelFragment<FragmentManualBinding,
         initAutoComplete();
         viewModel.photographList.observe(this, photographObserver);
         binding.btnConfirm.setOnClickListener(new OnLimitClickHelper(view -> {
-            if (TextUtils.isEmpty(binding.etName.getText().toString())) {
+            if (TextUtils.isEmpty(binding.etName.getText().toString().replace((char) 12288, ' ').trim())) {
                 ToastManager.toast("请输入被核验人姓名", ToastManager.INFO);
-            } else if (TextUtils.isEmpty(binding.etCardNumber.getText().toString())) {
+            } else if (TextUtils.isEmpty(binding.etCardNumber.getText().toString().trim())) {
                 ToastManager.toast("请输入被核验人证件号码", ToastManager.INFO);
+            } else if (binding.etCardNumber.getText().toString().trim().length() != 18) {
+                ToastManager.toast("证件号码错误", ToastManager.ERROR);
             } else if (viewModel.getSelectSize() == 0) {
                 ToastManager.toast("请拍摄并选择被核验人现场留档照片", ToastManager.INFO);
             } else {
@@ -150,7 +148,7 @@ public class ManualFragment extends BaseViewModelFragment<FragmentManualBinding,
         viewModel.loadIDCardList();
         viewModel.idCardListLiveData.observe(this, idCardList -> {
             idCardFilterAdapter.setUnfilteredData((ArrayList<IDCard>) idCardList);
-//            idCardFilterAdapter.notifyDataSetChanged();
+            //            idCardFilterAdapter.notifyDataSetChanged();
         });
     }
 
