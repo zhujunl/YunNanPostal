@@ -47,7 +47,7 @@ public class AmapManager implements AMapLocationListener {
                     aMapLocationClient.stopLocation();
                     listener.onOneLocation(address);
                     // aMapLocation = location;
-                    heatBeat(location);
+                    //heatBeat(location);
                     aMapLocationClient.stopLocation();
                     aMapLocationClient.unRegisterLocationListener(this);
                 }
