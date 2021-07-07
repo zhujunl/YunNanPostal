@@ -33,7 +33,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.List;
-
+//开箱验视
 public class InspectFragment extends BaseViewModelFragment<FragmentInspectBinding, InspectViewModel> {
 
     private Express express;

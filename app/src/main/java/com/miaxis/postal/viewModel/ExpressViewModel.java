@@ -376,8 +376,27 @@ public class ExpressViewModel extends BaseViewModel {
                     e.printStackTrace();
                 }
             }
+
             IDCardRecord idCardRecord = this.idCardRecord.get();
+            //删除警报(暂不清楚是否有关联)
+//            WarnLogRepository instance = WarnLogRepository.getInstance();
+//            List<WarnLog> warnLogs = instance.loadAll();
+//            if (warnLogs!=null&&!warnLogs.isEmpty()){
+//                for (WarnLog warnLog:warnLogs){
+//                    if (TextUtils.isEmpty(warnLog.getVerifyId())){
+//                        continue;
+//                    }
+//                    if (idCardRecord==null){
+//                        break;
+//                    }
+//                    if (warnLog.getVerifyId().equals(idCardRecord.getCheckId())){
+//                        instance.deleteWarnLog(warnLog);
+//                        break;
+//                    }
+//                }
+//            }
             IDCardRecordRepository.getInstance().deleteIDCardRecord(idCardRecord);
+
             emitter.onNext(Boolean.TRUE);
         })
                 .subscribeOn(Schedulers.from(App.getInstance().getThreadExecutor()))

@@ -129,8 +129,12 @@ public class PostalManager {
                         processException(express, new NetResultFailedException("请求服务器错误"));
                     }
                     try {
-                        expressRepository.uploadLocalExpress(express, tempId, warnId, idCardRecord.getName(), idCardRecord.getChekStatus());
-                        expressRepository.deleteExpress(express);
+                        //是否是草稿 草稿不进行上传
+                        if (!express.isDraft()) {
+                            Log.e("asd", "数据发送 true");
+                            expressRepository.uploadLocalExpress(express, tempId, warnId, idCardRecord.getName(), idCardRecord.getChekStatus());
+                            expressRepository.deleteExpress(express);
+                        }
                     } catch (Exception e) {
                         e.printStackTrace();
                         Log.e("asd", "PostalWarnRecord Exception:" + e.getMessage());
@@ -161,9 +165,12 @@ public class PostalManager {
             if (tempId == null) {
                 processException(express, new NetResultFailedException("请求服务器错误"));
             }
-            try {
-                expressRepository.uploadLocalExpress(express, tempId, null, idCardRecord.getName(), idCardRecord.getChekStatus());
-                expressRepository.deleteExpress(express);
+            try {//是否草稿
+                if (!express.isDraft()) {
+                    Log.e("asd 1", "数据发送 true");
+                    expressRepository.uploadLocalExpress(express, tempId, null, idCardRecord.getName(), idCardRecord.getChekStatus());
+                    expressRepository.deleteExpress(express);
+                }
             } catch (Exception e) {
                 e.printStackTrace();
                 Log.e("asd", "PostalNormalRecord Exception:" + e.getMessage());

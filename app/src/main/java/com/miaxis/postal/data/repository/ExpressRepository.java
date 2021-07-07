@@ -55,9 +55,10 @@ public class ExpressRepository {
                 Call<ResponseEntity> responseEntityCall = PostalApi.saveOrderPhoto(new File(path));
                 Response<ResponseEntity> execute = responseEntityCall.execute();
                 ResponseEntity body = execute.body();
-                //Log.e("saveOrderPhoto", "" + body);
-                if (StringUtils.isEquals(ValueUtil.SUCCESS, body.getCode())) {
-                    stringBuilder.append((String) body.getData()).append(",");
+                if (body!=null) {
+                    if (StringUtils.isEquals(ValueUtil.SUCCESS, body.getCode())) {
+                        stringBuilder.append((String) body.getData()).append(",");
+                    }
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -71,7 +72,7 @@ public class ExpressRepository {
         }
         //Log.e("saveOrderPhoto", "FileList:" + stringBuilder.toString());
         if (TextUtils.isEmpty(express.getBarCode())) {
-            throw new MyException("订单号未空");
+            throw new MyException("订单号为空");
         }
         Courier courier = DataCacheManager.getInstance().getCourier();
         Response<ResponseEntity> execute = PostalApi.saveOrderFromAppSync(

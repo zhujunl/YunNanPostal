@@ -178,4 +178,13 @@ public interface PostalNet {
             @Part MultipartBody.Part file
     );
 
+    /**
+     * 上传图片
+     */
+//    @Multipart
+//    @POST("api/v1/order/saveOrderPhoto")
+//    Call<String> deletePicture(
+//            @Part MultipartBody.Part file
+//    );
+
 }
