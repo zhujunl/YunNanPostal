@@ -112,6 +112,10 @@ public class IDCardRecord {
 
     private String senderAddress;
 
+    private String webCardPath;
+
+    private  String webFacePath;
+
     /**
      * 身份证照片Bitmap
      **/
@@ -182,6 +186,8 @@ public class IDCardRecord {
         setFingerprintPosition0(builder.fingerprintPosition0);
         setFingerprint1(builder.fingerprint1);
         setFingerprintPosition1(builder.fingerprintPosition1);
+        setWebCardPath(builder.webCardPath);
+        setWebFacePath(builder.webFacePath);
     }
 
     public Long getId() {
@@ -464,6 +470,22 @@ public class IDCardRecord {
         this.chekStatus = chekStatus;
     }
 
+    public String getWebCardPath() {
+        return webCardPath;
+    }
+
+    public void setWebCardPath(String webCardPath) {
+        this.webCardPath = webCardPath;
+    }
+
+    public String getWebFacePath() {
+        return webFacePath;
+    }
+
+    public void setWebFacePath(String webFacePath) {
+        this.webFacePath = webFacePath;
+    }
+
     public static final class Builder {
         private Long id;
         private String cardType;
@@ -500,12 +522,24 @@ public class IDCardRecord {
         private String fingerprint1;
         private String fingerprintPosition1;
         private int chekStatus; // 核验状态 0：未核验 1：核验通过  2：核验未通过
+        private String webCardPath;
+        private String webFacePath;
 
         public Builder() {
         }
 
         public Builder chekStatus(int chekStatus) {
             this.chekStatus = chekStatus;
+            return this;
+        }
+
+        public Builder setWebCardPath(String webCardPath) {
+            this.webCardPath = webCardPath;
+            return this;
+        }
+
+        public Builder setWebFacePath(String webFacePath) {
+            this.webFacePath = webFacePath;
             return this;
         }
 

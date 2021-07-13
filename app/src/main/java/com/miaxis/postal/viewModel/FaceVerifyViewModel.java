@@ -2,8 +2,13 @@ package com.miaxis.postal.viewModel;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.Log;
+
+import androidx.databinding.ObservableField;
+import androidx.lifecycle.MutableLiveData;
 
 import com.amap.api.location.AMapLocation;
+import com.bumptech.glide.load.model.StringLoader;
 import com.miaxis.postal.app.App;
 import com.miaxis.postal.bridge.SingleLiveEvent;
 import com.miaxis.postal.data.bean.PhotoFaceFeature;
@@ -12,6 +17,7 @@ import com.miaxis.postal.data.entity.Courier;
 import com.miaxis.postal.data.entity.IDCardRecord;
 import com.miaxis.postal.data.entity.WarnLog;
 import com.miaxis.postal.data.exception.MyException;
+import com.miaxis.postal.data.repository.ExpressRepository;
 import com.miaxis.postal.data.repository.IDCardRecordRepository;
 import com.miaxis.postal.data.repository.IDCardRepository;
 import com.miaxis.postal.data.repository.WarnLogRepository;
@@ -23,11 +29,12 @@ import com.miaxis.postal.manager.FaceManager;
 import com.miaxis.postal.manager.PostalManager;
 import com.miaxis.postal.manager.TTSManager;
 import com.miaxis.postal.manager.ToastManager;
+import com.miaxis.postal.util.FileUtil;
 
+import java.io.File;
 import java.util.Date;
+import java.util.List;
 
-import androidx.databinding.ObservableField;
-import androidx.lifecycle.MutableLiveData;
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -46,6 +53,8 @@ public class FaceVerifyViewModel extends BaseViewModel {
     public ObservableField<String> countDown = new ObservableField<>();
 
     private PhotoFaceFeature cardFeature;
+
+    public String readCardNum="";
 
     public FaceVerifyViewModel() {
     }
@@ -109,11 +118,15 @@ public class FaceVerifyViewModel extends BaseViewModel {
                 Bitmap header = BitmapFactory.decodeByteArray(fileImage, 0, fileImage.length);
                 IDCardRecord value = idCardRecordLiveData.getValue();
                 if (value != null) {
-                    IDCardRepository.getInstance().addNewIDCard(value);
-                    value.setFaceBitmap(header);
-                    value.setVerifyTime(new Date());
-                    value.setChekStatus(verify);
-                    verifyFlag.postValue(value);
+                    if (verify==1) {
+                        saveImage(header, value, verify);
+                    }else{
+                        IDCardRepository.getInstance().addNewIDCard(value);
+                        value.setFaceBitmap(header);
+                        value.setVerifyTime(new Date());
+                        value.setChekStatus(verify);
+                        verifyFlag.postValue(value);
+                    }
                     return;
                 } else {
                     toast.postValue(ToastManager.getToastBody("遇到错误，请退出后重试", ToastManager.ERROR));
@@ -124,6 +137,41 @@ public class FaceVerifyViewModel extends BaseViewModel {
             FaceManager.getInstance().setNeedNextFeature(true);
         }
     };
+
+    //保存身份证图片和人证核验图片
+    private void saveImage(Bitmap header, IDCardRecord value, int verify) {
+        Observable.create((ObservableOnSubscribe<List<String>>) emitter -> {
+            List<String> strings = IDCardRecordRepository.getInstance().saveFace(readCardNum, value.getCardBitmap(), header);
+            List<String> stringList = ExpressRepository.getInstance().saveImage(strings);
+            //上传成功后删除照片
+            if (strings!=null&&!strings.isEmpty()&&strings.size()>=2){
+                File f = new File(strings.get(0));
+                boolean delete = f.delete();
+                File f1 = new File(strings.get(1));
+                boolean delete1 = f1.delete();
+            }
+            emitter.onNext(stringList);
+        })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(stringList -> {
+                    if (stringList != null && !stringList.isEmpty() && stringList.size() >= 2) {
+                        value.setWebCardPath(stringList.get(0));
+                        value.setWebFacePath(stringList.get(1));
+                    }
+                    IDCardRepository.getInstance().addNewIDCard(value);
+                    value.setFaceBitmap(header);
+                    value.setVerifyTime(new Date());
+                    value.setChekStatus(verify);
+                    verifyFlag.postValue(value);
+                }, throwable -> {
+                    IDCardRepository.getInstance().addNewIDCard(value);
+                    value.setFaceBitmap(header);
+                    value.setVerifyTime(new Date());
+                    value.setChekStatus(verify);
+                    verifyFlag.postValue(value);
+                });
+    }
 
     public void alarm() {
         IDCardRecord cardMessage = idCardRecordLiveData.getValue();

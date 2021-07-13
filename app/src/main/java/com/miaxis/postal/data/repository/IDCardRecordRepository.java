@@ -1,6 +1,8 @@
 package com.miaxis.postal.data.repository;
 
+import android.graphics.Bitmap;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.miaxis.postal.data.dto.TempIdDto;
 import com.miaxis.postal.data.entity.Courier;
@@ -18,6 +20,7 @@ import com.miaxis.postal.util.ValueUtil;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Response;
@@ -40,8 +43,23 @@ public class IDCardRecordRepository {
      **/
 
     public TempId uploadIDCardRecord(IDCardRecord idCardRecord) throws MyException, IOException, NetResultFailedException {
-        File cardFile = !TextUtils.isEmpty(idCardRecord.getCardPicture()) ? new File(idCardRecord.getCardPicture()) : null;
-        File faceFile = !TextUtils.isEmpty(idCardRecord.getFacePicture()) ? new File(idCardRecord.getFacePicture()) : null;
+//        File cardFile = !TextUtils.isEmpty(idCardRecord.getCardPicture()) ? new File(idCardRecord.getCardPicture()) : null;
+//        File faceFile = !TextUtils.isEmpty(idCardRecord.getFacePicture()) ? new File(idCardRecord.getFacePicture()) : null;
+        //拆分成两个接口
+        String webCardPath=null;
+        String webFacePath=null;
+        if (TextUtils.isEmpty(idCardRecord.getWebCardPath())||TextUtils.isEmpty(idCardRecord.getWebFacePath())){
+            if(!TextUtils.isEmpty(idCardRecord.getCardPicture())&&!TextUtils.isEmpty(idCardRecord.getFacePicture())){
+                List<String> paths=new ArrayList<>();
+                paths.add(idCardRecord.getCardPicture());
+                paths.add(idCardRecord.getFacePicture());
+                ExpressRepository.getInstance().saveImage(paths);
+            }
+        }else{
+            webCardPath=idCardRecord.getWebCardPath();
+            webFacePath=idCardRecord.getWebFacePath();
+        }
+
         Courier courier = DataCacheManager.getInstance().getCourier();
         Response<ResponseEntity<TempIdDto>> execute = PostalApi.savePersonFromApp(
                 courier.getOrgCode(),
@@ -57,8 +75,8 @@ public class IDCardRecordRepository {
                 idCardRecord.getVerifyType(),
                 DateUtil.DATE_FORMAT.format(idCardRecord.getVerifyTime()),
                 idCardRecord.getManualType(),
-                faceFile,
-                cardFile).execute();
+                webCardPath,
+                webFacePath).execute();
         try {
             ResponseEntity<TempIdDto> body = execute.body();
             if (body != null) {
@@ -78,13 +96,14 @@ public class IDCardRecordRepository {
     }
 
     public String saveIdCardRecord(IDCardRecord idCardRecord) {
+        Log.i("TAG===","执行");
         if (idCardRecord.getCardBitmap() != null) {
-            String cardPath = FileUtil.FACE_STOREHOUSE_PATH + File.separator + "card_" +idCardRecord.getCardNumber() + System.currentTimeMillis() + ".jpg";
+            String cardPath = FileUtil.FACE_STOREHOUSE_PATH + File.separator + "card_" + idCardRecord.getCardNumber() + System.currentTimeMillis() + ".jpg";
             FileUtil.saveBitmap(idCardRecord.getCardBitmap(), cardPath);
             idCardRecord.setCardPicture(cardPath);
         }
         if (idCardRecord.getFaceBitmap() != null) {
-            String facePath = FileUtil.FACE_STOREHOUSE_PATH + File.separator + "face_" +idCardRecord.getCardNumber() + System.currentTimeMillis() + ".jpg";
+            String facePath = FileUtil.FACE_STOREHOUSE_PATH + File.separator + "face_" + idCardRecord.getCardNumber() + System.currentTimeMillis() + ".jpg";
             FileUtil.saveBitmap(idCardRecord.getFaceBitmap(), facePath);
             idCardRecord.setFacePicture(facePath);
         }
@@ -93,6 +112,20 @@ public class IDCardRecordRepository {
         IDCardRecordModel.saveIDCardRecord(idCardRecord);
         return verifyId;
     }
+
+    //保存身份证头像 人证核验头像
+    public List<String> saveFace(String cardNum, Bitmap cardBitmap, Bitmap faceBitmap) {
+        Log.i("TAG===","执行2");
+        List<String> path = new ArrayList<>();
+        String cardPath = FileUtil.FACE_STOREHOUSE_PATH + File.separator + "card_" + cardNum + System.currentTimeMillis() + ".jpg";
+        FileUtil.saveBitmap(cardBitmap, cardPath);
+        String facePath = FileUtil.FACE_STOREHOUSE_PATH + File.separator + "face_" + cardNum + System.currentTimeMillis() + ".jpg";
+        FileUtil.saveBitmap(faceBitmap, facePath);
+        path.add(cardPath);
+        path.add(facePath);
+        return path;
+    }
+
 
     public void updateIdCardRecord(IDCardRecord idCardRecord) {
         IDCardRecordModel.saveIDCardRecord(idCardRecord);

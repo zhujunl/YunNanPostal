@@ -78,9 +78,10 @@ public class FaceManager {
      */
     public int initFaceST(Context context, String licencePath) {
         final String sLicence = FileUtil.readLicence(licencePath);
-        if (TextUtils.isEmpty(sLicence)) {
-            return ERR_LICENCE;
-        }
+        //BP-990 不用授权文件自动授权
+//        if (TextUtils.isEmpty(sLicence)) {
+//            return ERR_LICENCE;
+//        }
         int re = mxFaceAPI.mxInitAlg(context, "", sLicence);
         asyncDetectThread = new HandlerThread("detect_thread");
         asyncDetectThread.setPriority(3);
@@ -104,6 +105,7 @@ public class FaceManager {
         };
         return re;
     }
+
 
     public static String getFaceInitResultDetail(int result) {
         switch (result) {

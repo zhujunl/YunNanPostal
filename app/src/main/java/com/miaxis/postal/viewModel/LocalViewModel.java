@@ -1,6 +1,7 @@
 package com.miaxis.postal.viewModel;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 
@@ -10,10 +11,13 @@ import com.miaxis.postal.data.entity.Express;
 import com.miaxis.postal.data.entity.IDCardRecord;
 import com.miaxis.postal.data.entity.Local;
 import com.miaxis.postal.data.exception.MyException;
+import com.miaxis.postal.data.exception.NetResultFailedException;
 import com.miaxis.postal.data.repository.ExpressRepository;
 import com.miaxis.postal.data.repository.IDCardRecordRepository;
+import com.miaxis.postal.manager.PostalManager;
 import com.miaxis.postal.manager.ToastManager;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -104,6 +108,48 @@ public class LocalViewModel extends BaseViewModel {
                 }, throwable -> {
                     refreshing.setValue(Boolean.FALSE);
                     resultMessage.setValue(handleError(throwable));
+                });
+    }
+
+    public void deleteSelf(long id, IDCardRecord idCardRecord, Express express) {
+        Observable.create((ObservableOnSubscribe<Boolean>) emitter -> {
+            ExpressRepository expressRepository = ExpressRepository.getInstance();
+            ExpressRepository.getInstance().deleteExpress(express);
+
+            if (idCardRecord!=null) {
+                if (!TextUtils.isEmpty(idCardRecord.getWebCardPath()) && !TextUtils.isEmpty(idCardRecord.getWebFacePath())) {
+                    List<String> webPath = new ArrayList<>();
+                    webPath.add(idCardRecord.getWebCardPath());
+                    webPath.add(idCardRecord.getWebFacePath());
+                    for (String path : webPath) {
+                        expressRepository.deleteWebPicture(path);
+                    }
+                }
+                IDCardRecordRepository.getInstance().deleteIDCardRecord(idCardRecord);
+            }
+            List<Local> value = localList.getValue();
+            List<Local> locals = new ArrayList<>();
+            if (value != null && !value.isEmpty()) {
+                for (Local local : value) {
+                    Express express1 = local.getExpress();
+                    if (express1 == null) {
+                        continue;
+                    }
+                    if (express1.getId() != id) {
+                        locals.add(local);
+                    }
+                }
+            }
+            localList.postValue(locals);
+            emitter.onNext(Boolean.TRUE);
+        })
+                .subscribeOn(Schedulers.from(App.getInstance().getThreadExecutor()))
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(result -> {
+
+
+                }, throwable -> {
+                    throwable.printStackTrace();
                 });
     }
 

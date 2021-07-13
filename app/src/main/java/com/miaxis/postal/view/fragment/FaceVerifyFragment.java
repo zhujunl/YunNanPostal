@@ -66,6 +66,7 @@ public class FaceVerifyFragment extends BaseViewModelFragment<FragmentFaceVerify
 
     @Override
     protected void initData() {
+        viewModel.readCardNum=idCardRecord.getCardNumber();
         viewModel.idCardRecordLiveData.setValue(idCardRecord);
         viewModel.idCardRecordLiveData.observe(this, idCardRecordObserver);
         viewModel.verifyFlag.observe(this, verifyFlagObserver);

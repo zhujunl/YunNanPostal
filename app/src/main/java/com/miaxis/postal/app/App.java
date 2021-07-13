@@ -45,7 +45,8 @@ public class App extends Application {
             PostalApi.rebuildRetrofit();
             FileDownloader.setup(this);
             TTSManager.getInstance().init(getApplicationContext());
-            int result = FaceManager.getInstance().initFaceST(getApplicationContext(), FileUtil.LICENCE_PATH);
+            //FileUtil.LICENCE_PATH
+            int result = FaceManager.getInstance().initFaceST(getApplicationContext(), "");
             listener.onInit(result == FaceManager.INIT_SUCCESS, FaceManager.getFaceInitResultDetail(result));
             //listener.onInit(true, "");
         } catch (Exception e) {

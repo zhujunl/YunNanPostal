@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 
@@ -21,6 +22,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Objects;
 
 /**
  * Created by tang.yf on 2018/11/15.
@@ -263,6 +265,60 @@ public class FileUtil {
         }
     }
 
+    /**
+     * 删除指定目录下文件及目录
+     */
+    public static void deleteFolderFile(String filePath, boolean deleteThisPath) {
+        if (!TextUtils.isEmpty(filePath)) {
+            try {
+                File file = new File(filePath);
+                if (file.isDirectory()) {// 处理目录
+                    File[] files = file.listFiles();
+                    if (files == null || files.length == 0) {
+                        return;
+                    }
+                    for (File value : files) {
+                        deleteFolderFile(value.getAbsolutePath(), true);
+                    }
+                }
+                if (deleteThisPath) {
+                    if (!file.isDirectory()) {// 如果是文件，删除
+                        boolean delete = file.delete();
+                    } else {// 目录
+                        if (Objects.requireNonNull(file.listFiles()).length == 0) {// 目录下没有文件或者目录，删除
+                            boolean delete = file.delete();
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+    }
+
+    //删除文件夹下的文件
+    public static void deleteFIleChildFile(String filePath) {
+        if (!TextUtils.isEmpty(filePath)) {
+            try {
+                File file = new File(filePath);
+                if (file.isDirectory()) {// 处理目录
+                    File[] files = file.listFiles();
+                    if (files == null || files.length == 0) {
+                        return;
+                    }
+                    for (File value : files) {
+                        if (value != null) {
+                            boolean delete = value.delete();
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     public static ByteArrayOutputStream compressImage(Bitmap image) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         image.compress(Bitmap.CompressFormat.JPEG, 100, baos);// 质量压缩方法，这里100表示不压缩，把压缩后的数据存放到baos中
@@ -322,6 +378,7 @@ public class FileUtil {
 
     public static void deleteImg(String path) {
         try {
+            Log.e("asd", "路径" + path);
             File f = new File(path);
             if (!f.delete()) {
                 Log.e("asd", "删除失败" + path);

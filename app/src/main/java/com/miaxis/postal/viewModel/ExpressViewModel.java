@@ -2,6 +2,9 @@ package com.miaxis.postal.viewModel;
 
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.TextureView;
+import android.widget.EditText;
+import android.widget.MultiAutoCompleteTextView;
 
 import com.amap.api.location.AMapLocation;
 import com.miaxis.postal.app.App;
@@ -21,6 +24,7 @@ import com.miaxis.postal.manager.PostalManager;
 import com.miaxis.postal.manager.ScanManager;
 import com.miaxis.postal.util.ValueUtil;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -30,6 +34,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import androidx.databinding.ObservableField;
 import androidx.lifecycle.MutableLiveData;
+
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -378,23 +383,16 @@ public class ExpressViewModel extends BaseViewModel {
             }
 
             IDCardRecord idCardRecord = this.idCardRecord.get();
-            //删除警报(暂不清楚是否有关联)
-//            WarnLogRepository instance = WarnLogRepository.getInstance();
-//            List<WarnLog> warnLogs = instance.loadAll();
-//            if (warnLogs!=null&&!warnLogs.isEmpty()){
-//                for (WarnLog warnLog:warnLogs){
-//                    if (TextUtils.isEmpty(warnLog.getVerifyId())){
-//                        continue;
-//                    }
-//                    if (idCardRecord==null){
-//                        break;
-//                    }
-//                    if (warnLog.getVerifyId().equals(idCardRecord.getCheckId())){
-//                        instance.deleteWarnLog(warnLog);
-//                        break;
-//                    }
-//                }
-//            }
+            //删除网络图片
+            if (idCardRecord != null && !TextUtils.isEmpty(idCardRecord.getWebCardPath()) && !TextUtils.isEmpty(idCardRecord.getWebFacePath())) {
+                List<String> webPath = new ArrayList<>();
+                webPath.add(idCardRecord.getWebCardPath());
+                webPath.add(idCardRecord.getWebFacePath());
+                for (String path : webPath) {
+                    ExpressRepository.getInstance().deleteWebPicture(path);
+                }
+            }
+
             IDCardRecordRepository.getInstance().deleteIDCardRecord(idCardRecord);
 
             emitter.onNext(Boolean.TRUE);

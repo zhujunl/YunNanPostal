@@ -31,6 +31,9 @@ public interface ExpressDao {
     @Query("select count(*) from Express where Express.phone = :phone")
     int loadExpressCount(String phone);
 
+    @Query("select count(*) from Express")
+    int loadExpressAllCount();
+
     @Query("delete from Express where Express.phone = :phone")
     void deleteAll(String phone);
 

@@ -10,6 +10,12 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 
+import androidx.annotation.NonNull;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.SimpleItemAnimator;
+
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.miaxis.postal.R;
 import com.miaxis.postal.data.entity.Express;
@@ -31,12 +37,6 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import androidx.annotation.NonNull;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.SimpleItemAnimator;
 
 public class ExpressFragment extends BaseViewModelFragment<FragmentExpressBinding, ExpressViewModel> {
 
@@ -230,6 +230,7 @@ public class ExpressFragment extends BaseViewModelFragment<FragmentExpressBindin
     };
 
     private ExpressAdapter.OnHeaderClickListener headerListener = () -> {
+        //如果不为空并且没有正在扫描
         viewModel.startScan();
     };
 

@@ -1,10 +1,15 @@
 package com.miaxis.postal.manager;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
+
+import androidx.annotation.NonNull;
 
 import com.miaxis.postal.app.App;
 import com.miaxis.postal.data.entity.Express;
@@ -13,15 +18,28 @@ import com.miaxis.postal.data.entity.TempId;
 import com.miaxis.postal.data.entity.WarnLog;
 import com.miaxis.postal.data.exception.MyException;
 import com.miaxis.postal.data.exception.NetResultFailedException;
+import com.miaxis.postal.data.net.PostalApi;
+import com.miaxis.postal.data.net.ResponseEntity;
 import com.miaxis.postal.data.repository.ExpressRepository;
 import com.miaxis.postal.data.repository.IDCardRecordRepository;
+import com.miaxis.postal.data.repository.IDCardRepository;
 import com.miaxis.postal.data.repository.WarnLogRepository;
+import com.miaxis.postal.util.FileUtil;
+import com.miaxis.postal.util.StringUtils;
+import com.miaxis.postal.util.ValueUtil;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import androidx.annotation.NonNull;
+import io.reactivex.Observable;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
+import retrofit2.Call;
+import retrofit2.Response;
 
 public class PostalManager {
 
@@ -66,6 +84,7 @@ public class PostalManager {
         handler.sendMessage(handler.obtainMessage(0));
     }
 
+    //去掉MainActivity HomeFragment 在onResume中的刷新 减少刷新频率
     public void startPostal() {
         if (uploading.get()) {
             return;
@@ -114,7 +133,12 @@ public class PostalManager {
             if (!TextUtils.isEmpty(warnLog.getVerifyId())) {
                 idCardRecord = idCardRecordRepository.loadIDCardRecordByVerifyId(warnLog.getVerifyId());
             }
+            //是否草稿
+            if (idCardRecord!=null&&idCardRecord.isDraft()){
+                return;
+            }
             if (idCardRecord != null) {
+
                 TempId tempId = null;
                 Integer warnId = null;
                 try {
@@ -127,6 +151,7 @@ public class PostalManager {
                 for (Express express : expressList) {
                     if (tempId == null) {
                         processException(express, new NetResultFailedException("请求服务器错误"));
+                        throw new MyException("服务器请求错误");
                     }
                     try {
                         //是否是草稿 草稿不进行上传
@@ -154,6 +179,10 @@ public class PostalManager {
         if (idCardRecord == null) {
             throw new MyException("未找到待上传日志");
         }
+        //是否草稿
+        if (idCardRecord.isDraft()){
+            return;
+        }
         TempId tempId = null;
         try {
             tempId = getIdCardRecordTempId(idCardRecord);
@@ -180,12 +209,13 @@ public class PostalManager {
         idCardRecordRepository.deleteIDCardRecord(idCardRecord);
     }
 
-    private void processException(Express express, Exception e) throws MyException {
+    //抛出异常后就无法执行下面的请求了 所以去掉
+    private void processException(Express express, Exception e) {
         express.setUploadError("" + e.getMessage());
         expressRepository.updateExpress(express);
-        throw new MyException("上传失败");
     }
 
+    //根据身份证信息和人证核验信息得到核验编号（不能使用数据库保存读取  因为TempId checkId 得到的是不固定的值）
     private TempId getIdCardRecordTempId(IDCardRecord idCardRecord) throws IOException, MyException, NetResultFailedException {
         TempId tempId;
         if (TextUtils.isEmpty(idCardRecord.getPersonId()) || TextUtils.isEmpty(idCardRecord.getCheckId())) {
@@ -199,6 +229,7 @@ public class PostalManager {
         return tempId;
     }
 
+    //得到报警Id
     private Integer getWarnId(WarnLog warnLog, TempId tempId) throws IOException, MyException, NetResultFailedException {
         Integer warnId;
         if (warnLog.getWarnId() == null) {
@@ -211,4 +242,23 @@ public class PostalManager {
         return warnId;
     }
 
+    /**
+     * 判断网络连接是否可用
+     */
+    public static boolean isNetworkAvailable() {
+        ConnectivityManager cm = (ConnectivityManager) App.getInstance().getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (cm == null) {
+            return false;
+        } else {
+            //如果仅仅是用来判断网络连接
+            //则可以使用 cm.getActiveNetworkInfo().isAvailable();
+            NetworkInfo[] info = cm.getAllNetworkInfo();
+            for (NetworkInfo networkInfo : info) {
+                if (networkInfo.getState() == NetworkInfo.State.CONNECTED) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 }

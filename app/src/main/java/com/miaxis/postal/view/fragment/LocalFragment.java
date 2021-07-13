@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.SimpleItemAnimator;
 
 import android.view.View;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.miaxis.postal.BR;
 import com.miaxis.postal.R;
 import com.miaxis.postal.data.entity.Express;
@@ -66,7 +67,7 @@ public class LocalFragment extends BaseViewModelFragment<FragmentLocalBinding, L
         initRecycleView();
 //        binding.ivBack.setOnClickListener(v -> onBackPressed());
         binding.srlLocal.setOnRefreshListener(this::refresh);
-        binding.srlLocal.setColorSchemeResources(R.color.main_color,R.color.main_color_dark);
+        binding.srlLocal.setColorSchemeResources(R.color.main_color, R.color.main_color_dark);
 //        viewModel.loadIdCardRecord();
     }
 
@@ -123,6 +124,19 @@ public class LocalFragment extends BaseViewModelFragment<FragmentLocalBinding, L
     private LocalAdapter.OnItemClickListener adapterListener = new LocalAdapter.OnItemClickListener() {
         @Override
         public void onItemClick(View view, int position) {
+            Local local = viewModel.getLocalList().get(position);
+            if (local == null || local.getExpress() == null) {
+                return;
+            }
+            new MaterialDialog.Builder(getContext())
+                    .title("提示！")
+                    .content("是否删除此订单？")
+                    .positiveText("确认")
+                    .onPositive((dialog, which) -> {
+                        viewModel.deleteSelf(local.getExpress().getId(), local.getIdCardRecord(), local.getExpress());
+                    })
+                    .negativeText("取消")
+                    .show();
 //            viewModel.getOrderById(orderAdapter.getData(position));
         }
 
@@ -156,6 +170,7 @@ public class LocalFragment extends BaseViewModelFragment<FragmentLocalBinding, L
 
     private RecyclerView.OnScrollListener onScrollListener = new RecyclerView.OnScrollListener() {
         private boolean loadingMore = true;
+
         @Override
         public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
             super.onScrollStateChanged(recyclerView, newState);

@@ -49,22 +49,37 @@ public class ExpressRepository {
         //        for (String path : express.getPhotoPathList()) {
         //            fileList.add(new File(path));
         //        }
-        StringBuilder stringBuilder = new StringBuilder();
+
+        //上传订单图片 判断是否一致
+        List<String> stringList = new ArrayList<>();
         for (String path : express.getPhotoPathList()) {
             try {
                 Call<ResponseEntity> responseEntityCall = PostalApi.saveOrderPhoto(new File(path));
                 Response<ResponseEntity> execute = responseEntityCall.execute();
                 ResponseEntity body = execute.body();
-                if (body!=null) {
+                if (body != null) {
                     if (StringUtils.isEquals(ValueUtil.SUCCESS, body.getCode())) {
-                        stringBuilder.append((String) body.getData()).append(",");
+                        stringList.add((String) body.getData());
                     }
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                //Log.e("saveOrderPhoto", "Exception:" + e);
-                throw new MyException("" + e);
             }
+        }
+        //如果长度不相等证明订单图片丢失 则不上传
+        if (stringList.size() == 0 || (stringList.size() != express.getPhotoPathList().size())) {
+            //删除图片操作 如果不通过图片记录需要删除
+            for (String path : stringList) {
+                if (!TextUtils.isEmpty(path)) {
+                    deleteWebPicture(path);
+                }
+            }
+            throw new MyException("订单异常，请删除后重试！");
+        }
+        StringBuilder stringBuilder = new StringBuilder();
+        //添加图片
+        for (String s : stringList) {
+            stringBuilder.append(s).append(",");
         }
         //Log.e("saveOrderPhoto", "FileList:" + stringBuilder.toString());
         if (stringBuilder.toString().endsWith(",")) {
@@ -120,6 +135,41 @@ public class ExpressRepository {
         }
     }
 
+    //删除网络图片
+    public void deleteWebPicture(String path) {
+        try {
+            Call<ResponseEntity> responseEntityCall = PostalApi.deleteWebPicture(path);
+            Response<ResponseEntity> execute = responseEntityCall.execute();
+//            ResponseEntity body = execute.body();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    //保存图片
+    public List<String> saveImage(List<String> path) {
+        List<String> webPicturePath = new ArrayList<>();
+        if (path == null || path.isEmpty()) {
+            return webPicturePath;
+        }
+        for (String s : path) {
+            try {
+                Call<ResponseEntity> responseEntityCall = PostalApi.saveOrderPhoto(new File(s));
+                Response<ResponseEntity> execute = responseEntityCall.execute();
+                ResponseEntity body = execute.body();
+                if (body != null) {
+                    if (StringUtils.isEquals(ValueUtil.SUCCESS, body.getCode())) {
+                        webPicturePath.add((String) body.getData());
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return webPicturePath;
+    }
+
     public void saveExpress(Express express) {
         List<Bitmap> photoList = express.getPhotoList();
         List<String> pathList = new ArrayList<>();
@@ -148,6 +198,11 @@ public class ExpressRepository {
     public int loadExpressCount() {
         return ExpressModel.loadExpressCount();
     }
+
+    public int loadExpressAllCount() {
+        return ExpressModel.loadExpressAllCount();
+    }
+
 
     public void deleteExpress(Express express) {
         if (express.getPhotoPathList() != null) {

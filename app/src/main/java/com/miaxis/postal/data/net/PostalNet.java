@@ -95,8 +95,10 @@ public interface PostalNet {
             @Part("verifyType") String verifyType,
             @Part("checkTime") String checkTime,
             @Part("type") String type,
-            @Part MultipartBody.Part checkFile,
-            @Part MultipartBody.Part cardFile
+            @Part("CardPhoto") String cardPhoto,
+            @Part("CheckPhoto") String checkPhoto
+//            @Part MultipartBody.Part checkFile,
+//            @Part MultipartBody.Part cardFile
     );
 
     //拿到核验编号后，上传订单信息
@@ -177,6 +179,14 @@ public interface PostalNet {
     Call<ResponseEntity> saveOrderPhoto(
             @Part MultipartBody.Part file
     );
+
+
+    @Multipart
+    @POST("api/v1/order/deleteOrderPhoto")
+    Call<ResponseEntity> deletePhoto(
+            @Part("path") String path
+    );
+
 
     /**
      * 上传图片

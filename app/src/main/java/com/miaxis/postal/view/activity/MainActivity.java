@@ -44,9 +44,9 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
     @Override
     protected void onResume() {
         super.onResume();
-        if (!TextUtils.isEmpty(root)) {
-            PostalManager.getInstance().startPostal();
-        }
+//        if (!TextUtils.isEmpty(root)) {
+//            PostalManager.getInstance().startPostal();
+//        }
     }
 
     @Override

@@ -55,13 +55,13 @@ public class HomeFragment extends BaseViewModelFragment<FragmentHomeBinding, Hom
             EditPasswordDialogFragment.newInstance().show(getChildFragmentManager(), "EditPasswordDialogFragment");
         }));
         AmapManager.getInstance().startLocation(getActivity().getApplication());//GPS初始化，登录后初始化
-        App.getInstance().uploadEnable=true;
+        App.getInstance().uploadEnable = true;
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        PostalManager.getInstance().startPostal();
+//        PostalManager.getInstance().startPostal();
     }
 
     @Override

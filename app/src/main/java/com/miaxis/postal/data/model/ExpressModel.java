@@ -32,6 +32,10 @@ public class ExpressModel {
         return AppDatabase.getInstance().expressDao().loadExpressCount(ValueUtil.GlobalPhone);
     }
 
+    public static int loadExpressAllCount() {
+        return AppDatabase.getInstance().expressDao().loadExpressAllCount();
+    }
+
     public static Express loadExpressWithCode(String code) {
         return AppDatabase.getInstance().expressDao().loadExpressWithCode(ValueUtil.GlobalPhone,code);
     }

@@ -87,7 +87,7 @@ public class ManualFragment extends BaseViewModelFragment<FragmentManualBinding,
         binding.btnConfirm.setOnClickListener(new OnLimitClickHelper(view -> {
             if (TextUtils.isEmpty(binding.etName.getText().toString().replace((char) 12288, ' ').trim())) {
                 ToastManager.toast("请输入被核验人姓名", ToastManager.INFO);
-            } else if (TextUtils.isEmpty(binding.etCardNumber.getText().toString().trim())) {
+            }else if (TextUtils.isEmpty(binding.etCardNumber.getText().toString().trim())) {
                 ToastManager.toast("请输入被核验人证件号码", ToastManager.INFO);
             } else if (binding.etCardNumber.getText().toString().trim().length() != 18) {
                 ToastManager.toast("证件号码错误", ToastManager.ERROR);

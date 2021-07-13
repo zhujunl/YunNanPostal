@@ -11,6 +11,7 @@ import com.miaxis.postal.R;
 import com.miaxis.postal.bridge.GlideApp;
 import com.miaxis.postal.data.entity.Local;
 import com.miaxis.postal.databinding.ItemLocalBinding;
+import com.miaxis.postal.manager.PostalManager;
 import com.miaxis.postal.manager.ToastManager;
 import com.miaxis.postal.view.auxiliary.OnLimitClickHelper;
 import com.miaxis.postal.view.base.BaseViewHolder;
@@ -45,10 +46,15 @@ public class LocalAdapter extends BaseViewModelAdapter<Local, ItemLocalBinding, 
             holder.getBinding().setItem(item);
             holder.getBinding().tvUpload.setText(item.getExpress().isUpload() ? "已上传" : "未上传");
             holder.getBinding().tvError.setOnClickListener(null);
+
             if (!item.getExpress().isUpload()) {
-                holder.getBinding().tvError.setText("信息提示：" + (TextUtils.isEmpty(item.getExpress().getUploadError()) ? "等待上传" : item.getExpress().getUploadError()));
-                if (!TextUtils.isEmpty(item.getExpress().getUploadError())) {
-                    holder.getBinding().tvError.setOnClickListener(v -> ToastManager.toast(item.getExpress().getUploadError(), ToastManager.ERROR));
+                if (PostalManager.isNetworkAvailable()) {
+                    holder.getBinding().tvError.setText("信息提示：" + (TextUtils.isEmpty(item.getExpress().getUploadError()) ? "等待上传" : item.getExpress().getUploadError()));
+                    if (!TextUtils.isEmpty(item.getExpress().getUploadError())) {
+                        holder.getBinding().tvError.setOnClickListener(v -> ToastManager.toast(item.getExpress().getUploadError(), ToastManager.ERROR));
+                    }
+                } else {
+                    holder.getBinding().tvError.setText("网络连接失败！请检查网络");
                 }
             }
             holder.getBinding().tvUpload.setTextColor(item.getExpress().isUpload()

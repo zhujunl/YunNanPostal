@@ -20,7 +20,7 @@ import androidx.room.TypeConverters;
 import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
-@Database(entities = {Config.class, Courier.class, IDCardRecord.class, Express.class, WarnLog.class, IDCard.class}, version = 10)
+@Database(entities = {Config.class, Courier.class, IDCardRecord.class, Express.class, WarnLog.class, IDCard.class}, version = 11)
 @TypeConverters({StringListConverter.class, OrderImageListConverter.class, DateConverter.class})
 public abstract class AppDatabase extends RoomDatabase {
 

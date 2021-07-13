@@ -33,7 +33,9 @@ public class TTSManager {
     public void init(Context context) {
         ttsRef = new WeakReference<>(new TextToSpeech(context, status -> {
             if (status == TextToSpeech.SUCCESS) {
-                ttsRef.get().setLanguage(Locale.CHINESE);
+                if (ttsRef != null&&ttsRef.get()!=null) {
+                    ttsRef.get().setLanguage(Locale.CHINESE);
+                }
             }
         }));
     }
@@ -43,7 +45,9 @@ public class TTSManager {
      * @param message
      */
     public void playVoiceMessageFlush(String message) {
-        ttsRef.get().speak(message, TextToSpeech.QUEUE_FLUSH, null);
+        if (ttsRef != null&&ttsRef.get()!=null) {
+            ttsRef.get().speak(message, TextToSpeech.QUEUE_FLUSH, null);
+        }
     }
 
     /**
@@ -51,21 +55,25 @@ public class TTSManager {
      * @param message
      */
     public void playVoiceMessageAdd(String message) {
-        ttsRef.get().speak(message, TextToSpeech.QUEUE_ADD, null);
+        if (ttsRef != null&&ttsRef.get()!=null) {
+            ttsRef.get().speak(message, TextToSpeech.QUEUE_ADD, null);
+        }
     }
 
     /**
      * 停止播放
      */
     public void stop() {
-        ttsRef.get().stop();
+        if (ttsRef != null&&ttsRef.get()!=null) {
+            ttsRef.get().stop();
+        }
     }
 
     /**
      * 关闭
      */
     public void close() {
-        if (ttsRef != null) {
+        if (ttsRef != null&&ttsRef.get()!=null) {
             ttsRef.get().shutdown();
         }
     }

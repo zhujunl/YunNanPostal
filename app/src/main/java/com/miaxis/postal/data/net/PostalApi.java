@@ -19,6 +19,7 @@ import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.Call;
+import retrofit2.http.Part;
 
 public class PostalApi extends BaseAPI {
 
@@ -93,18 +94,18 @@ public class PostalApi extends BaseAPI {
             String verifyType,
             String checkTime,
             String type,
-            File checkFile,
-            File cardFile) {
-        MultipartBody.Part checkFileBody = null;
-        if (checkFile != null) {
-            RequestBody checkRequestFile = RequestBody.create(MediaType.parse("multipart/form-data"), checkFile);
-            checkFileBody = MultipartBody.Part.createFormData("checkFile", checkFile.getName(), checkRequestFile);
-        }
-        MultipartBody.Part cardFileBody = null;
-        if (cardFile != null) {
-            RequestBody cardRequestFile = RequestBody.create(MediaType.parse("multipart/form-data"), cardFile);
-            cardFileBody = MultipartBody.Part.createFormData("cardFile", cardFile.getName(), cardRequestFile);
-        }
+            String cardPhoto,
+            String checkPhoto) {
+//        MultipartBody.Part checkFileBody = null;
+//        if (checkFile != null) {
+//            RequestBody checkRequestFile = RequestBody.create(MediaType.parse("multipart/form-data"), checkFile);
+//            checkFileBody = MultipartBody.Part.createFormData("checkFile", checkFile.getName(), checkRequestFile);
+//        }
+//        MultipartBody.Part cardFileBody = null;
+//        if (cardFile != null) {
+//            RequestBody cardRequestFile = RequestBody.create(MediaType.parse("multipart/form-data"), cardFile);
+//            cardFileBody = MultipartBody.Part.createFormData("cardFile", cardFile.getName(), cardRequestFile);
+//        }
         return getPostalNetSync().savePersonFromAppSync(
                 orgCode,
                 orgNode,
@@ -119,8 +120,9 @@ public class PostalApi extends BaseAPI {
                 verifyType,
                 checkTime,
                 type,
-                checkFileBody,
-                cardFileBody);
+                cardPhoto,
+                checkPhoto
+        );
     }
 
     public static Call<ResponseEntity> saveOrderPhoto(File file) {
@@ -220,6 +222,10 @@ public class PostalApi extends BaseAPI {
 
     public static Call<ResponseEntity<OrderDto>> getOrderByCode(String orderCode) {
         return getPostalNetSync().getOrderByCode(orderCode);
+    }
+
+    public static Call<ResponseEntity> deleteWebPicture(String path) {
+        return getPostalNetSync().deletePhoto(path);
     }
 
     public static Call<ResponseEntity> updateOrderFromApp(
