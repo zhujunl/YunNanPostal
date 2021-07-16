@@ -36,4 +36,5 @@ public class IDCardRecordModel {
         return AppDatabase.getInstance().idCardRecordDao().loadDraftIDCardRecordByPage(pageNum, pageSize);
     }
 
+
 }

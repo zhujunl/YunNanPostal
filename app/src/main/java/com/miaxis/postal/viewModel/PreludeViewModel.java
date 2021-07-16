@@ -7,13 +7,19 @@ import androidx.databinding.ObservableBoolean;
 import androidx.databinding.ObservableField;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import com.miaxis.postal.app.App;
 import com.miaxis.postal.bridge.SingleLiveEvent;
+import com.miaxis.postal.data.dao.AppDatabase;
 import com.miaxis.postal.data.entity.Config;
+import com.miaxis.postal.data.entity.Courier;
 import com.miaxis.postal.data.exception.NetResultFailedException;
+import com.miaxis.postal.data.model.CourierModel;
 import com.miaxis.postal.data.repository.DeviceRepository;
+import com.miaxis.postal.data.repository.LoginRepository;
 import com.miaxis.postal.manager.ConfigManager;
+import com.miaxis.postal.manager.DataCacheManager;
 import com.miaxis.postal.manager.ToastManager;
 import com.miaxis.postal.util.ValueUtil;
 import com.tbruyelle.rxpermissions2.RxPermissions;
@@ -30,6 +36,8 @@ public class PreludeViewModel extends BaseViewModel {
     public ObservableBoolean errorMode = new ObservableBoolean(Boolean.FALSE);
 
     private SingleLiveEvent<Boolean> initSuccess = new SingleLiveEvent<>();
+
+    public MutableLiveData<Boolean> isLoginState=new MutableLiveData<>();
 
     public PreludeViewModel() {
     }
@@ -114,4 +122,22 @@ public class PreludeViewModel extends BaseViewModel {
         hint.set(message + "\n" + "设备IMEI：" + config.getDeviceIMEI());
     }
 
+    public   void  isLogin(){
+        Disposable subscribe = Observable.create((ObservableOnSubscribe<Boolean>) emitter -> {
+            Courier courier =   AppDatabase.getInstance().courierDao().loadCourier();
+            if (courier!=null&&courier.getLogin()){
+                ValueUtil.GlobalPhone=courier.getPhone();
+                DataCacheManager.getInstance().setCourier(courier);
+                emitter.onNext(Boolean.TRUE);
+            }else{
+                emitter.onNext(Boolean.FALSE);
+            }
+        }).subscribeOn(Schedulers.from(App.getInstance().getThreadExecutor()))
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(b -> {
+                    isLoginState.postValue(b);
+                }, throwable -> {
+                    isLoginState.postValue(false);
+                });
+    }
 }

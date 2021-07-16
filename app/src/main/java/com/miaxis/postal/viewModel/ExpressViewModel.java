@@ -326,8 +326,18 @@ public class ExpressViewModel extends BaseViewModel {
                 });
     }
 
+    //如果失败了重复两到3此获取
+    private int addressCount = 3;
+
     public void getLocation() {
-        AmapManager.getInstance().getOneLocation(addressStr -> address.set(addressStr));
+        AmapManager.getInstance().getOneLocation(addressStr -> {
+            addressCount--;
+            if (TextUtils.isEmpty(addressStr) || (addressCount < 3 && addressCount > 0)) {
+                getLocation();
+            } else {
+                address.set(addressStr);
+            }
+        });
     }
 
     public boolean checkInput() {

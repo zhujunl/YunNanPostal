@@ -1,6 +1,7 @@
 package com.miaxis.postal.manager;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Handler;
@@ -12,6 +13,8 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import com.miaxis.postal.app.App;
+import com.miaxis.postal.data.dao.AppDatabase;
+import com.miaxis.postal.data.entity.Courier;
 import com.miaxis.postal.data.entity.Express;
 import com.miaxis.postal.data.entity.IDCardRecord;
 import com.miaxis.postal.data.entity.TempId;
@@ -86,9 +89,9 @@ public class PostalManager {
 
     //去掉MainActivity HomeFragment 在onResume中的刷新 减少刷新频率
     public void startPostal() {
-        if (uploading.get()) {
-            return;
-        }
+//        if (uploading.get()) {
+//            return;
+//        }
         handler.removeMessages(0);
         handler.sendMessage(handler.obtainMessage(0));
     }
@@ -118,10 +121,9 @@ public class PostalManager {
                 postalNormalRecord();
                 Log.d("asd", "postalNormalRecord 成功");
             }
-            handler.sendMessage(handler.obtainMessage(0));
         } catch (Exception e) {
             Log.e("asd", "Postal Exception:" + e.getMessage());
-            handler.sendMessageDelayed(handler.obtainMessage(0), 30 * 60 * 1000);
+//            handler.sendMessageDelayed(handler.obtainMessage(0), 30 * 60 * 1000);
             uploading.set(false);
         }
     }
@@ -134,7 +136,7 @@ public class PostalManager {
                 idCardRecord = idCardRecordRepository.loadIDCardRecordByVerifyId(warnLog.getVerifyId());
             }
             //是否草稿
-            if (idCardRecord!=null&&idCardRecord.isDraft()){
+            if (idCardRecord != null && idCardRecord.isDraft()) {
                 return;
             }
             if (idCardRecord != null) {
@@ -148,6 +150,13 @@ public class PostalManager {
                     e.printStackTrace();
                 }
                 List<Express> expressList = expressRepository.loadExpressByVerifyId(idCardRecord.getVerifyId());
+                int draftCount = 0;
+                int draftAllCount = 0;
+                for (Express express : expressList) {
+                    if (!express.isDraft()) {
+                        draftAllCount++;
+                    }
+                }
                 for (Express express : expressList) {
                     if (tempId == null) {
                         processException(express, new NetResultFailedException("请求服务器错误"));
@@ -159,6 +168,7 @@ public class PostalManager {
                             Log.e("asd", "数据发送 true");
                             expressRepository.uploadLocalExpress(express, tempId, warnId, idCardRecord.getName(), idCardRecord.getChekStatus());
                             expressRepository.deleteExpress(express);
+                            draftCount++;
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -166,7 +176,9 @@ public class PostalManager {
                         processException(express, e);
                     }
                 }
-                idCardRecordRepository.deleteIDCardRecord(idCardRecord);
+                if (draftCount == draftAllCount) {
+                    idCardRecordRepository.deleteIDCardRecord(idCardRecord);
+                }
             } else {
                 warnLogRepository.uploadWarnLog(warnLog, null);
             }
@@ -180,7 +192,7 @@ public class PostalManager {
             throw new MyException("未找到待上传日志");
         }
         //是否草稿
-        if (idCardRecord.isDraft()){
+        if (idCardRecord.isDraft()) {
             return;
         }
         TempId tempId = null;
@@ -190,15 +202,24 @@ public class PostalManager {
             e.printStackTrace();
         }
         List<Express> expressList = expressRepository.loadExpressByVerifyId(idCardRecord.getVerifyId());
+        int draftCount = 0;
+        int draftAllCount = 0;
+        for (Express express : expressList) {
+            if (!express.isDraft()) {
+                draftAllCount++;
+            }
+        }
         for (Express express : expressList) {
             if (tempId == null) {
                 processException(express, new NetResultFailedException("请求服务器错误"));
+                throw new MyException("服务器请求错误");
             }
             try {//是否草稿
                 if (!express.isDraft()) {
                     Log.e("asd 1", "数据发送 true");
                     expressRepository.uploadLocalExpress(express, tempId, null, idCardRecord.getName(), idCardRecord.getChekStatus());
                     expressRepository.deleteExpress(express);
+                    draftCount++;
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -206,7 +227,11 @@ public class PostalManager {
                 processException(express, e);
             }
         }
-        idCardRecordRepository.deleteIDCardRecord(idCardRecord);
+        //如果当前执行完后
+        if (draftCount == draftAllCount) {
+            idCardRecordRepository.deleteIDCardRecord(idCardRecord);
+        }
+
     }
 
     //抛出异常后就无法执行下面的请求了 所以去掉
@@ -261,4 +286,71 @@ public class PostalManager {
         }
         return false;
     }
+
+    /**
+     * 保存身份证图片和人证核验图片
+     *
+     * @param header      头像
+     * @param value       idCard信息
+     * @param readCardNum 卡号
+     */
+    public void saveImage(Bitmap header, IDCardRecord value, String readCardNum) {
+        Observable.create((ObservableOnSubscribe<Boolean>) emitter -> {
+            List<String> strings = IDCardRecordRepository.getInstance().saveFace(readCardNum, value.getCardBitmap(), header);
+            List<String> stringList = ExpressRepository.getInstance().saveImage(strings);
+            //上传成功后删除照片
+            if (strings != null && !strings.isEmpty() && strings.size() >= 2) {
+                File f = new File(strings.get(0));
+                boolean delete = f.delete();
+                File f1 = new File(strings.get(1));
+                boolean delete1 = f1.delete();
+            }
+            if (stringList != null && !stringList.isEmpty() && stringList.size() >= 2) {
+                value.setWebCardPath(stringList.get(0));
+                value.setWebFacePath(stringList.get(1));
+            }
+            IDCardRepository.getInstance().addNewIDCard(value);
+            emitter.onNext(Boolean.TRUE);
+        })
+                .subscribeOn(Schedulers.io())
+                .observeOn(Schedulers.io())
+                .subscribe(stringList -> {
+
+                }, throwable -> {
+
+                });
+    }
+
+    public void outLogin() {
+        Observable.create((ObservableOnSubscribe<Boolean>) emitter -> {
+            Courier courier = AppDatabase.getInstance().courierDao().loadCourier();
+            courier.setLogin(false);
+            AppDatabase.getInstance().courierDao().updateCourier(courier);
+            emitter.onNext(Boolean.TRUE);
+        }).subscribeOn(Schedulers.from(App.getInstance().getThreadExecutor()))
+                .observeOn(Schedulers.io())
+                .subscribe(b -> {
+                }, throwable -> {
+                });
+    }
+
+    public void clearAll() {
+        Observable.create((ObservableOnSubscribe<Boolean>) emitter -> {
+            AppDatabase.getInstance().idCardRecordDao().deleteAll();
+            AppDatabase.getInstance().expressDao().deleteAll();
+            FileUtil.deleteFolderFile(FileUtil.FACE_IMAGE_PATH, false);
+            FileUtil.deleteFolderFile(FileUtil.FACE_STOREHOUSE_PATH, false);
+            FileUtil.deleteFolderFile(FileUtil.ORDER_STOREHOUSE_PATH, false);
+            FileUtil.deleteFolderFile(FileUtil.LOCAL_STOREHOUSE_PATH, false);
+            emitter.onNext(Boolean.TRUE);
+        }).subscribeOn(Schedulers.from(App.getInstance().getThreadExecutor()))
+                .observeOn(Schedulers.io())
+                .subscribe(b -> {
+                }, throwable -> {
+                });
+
+
+    }
+
+
 }

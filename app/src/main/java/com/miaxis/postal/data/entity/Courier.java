@@ -21,6 +21,7 @@ public class Courier {
     private String password;
     private String orgCode;
     private String orgNode;
+    private Boolean isLogin;
 
     public Courier() {
     }
@@ -40,6 +41,7 @@ public class Courier {
         setPassword(builder.password);
         setOrgCode(builder.orgCode);
         setOrgNode(builder.orgNode);
+        setLogin(builder.isLogin);
     }
 
     public long getId() {
@@ -154,6 +156,14 @@ public class Courier {
         this.orgNode = orgNode;
     }
 
+    public Boolean getLogin() {
+        return isLogin;
+    }
+
+    public void setLogin(Boolean login) {
+        isLogin = login;
+    }
+
     public static final class Builder {
         private long id;
         private long courierId;
@@ -169,6 +179,7 @@ public class Courier {
         private String password;
         private String orgCode;
         private String orgNode;
+        private Boolean isLogin;
 
         public Builder() {
         }
@@ -241,6 +252,10 @@ public class Courier {
         public Builder orgNode(String val) {
             orgNode = val;
             return this;
+        }
+
+        public void setLogin(Boolean login) {
+            isLogin = login;
         }
 
         public Courier build() {

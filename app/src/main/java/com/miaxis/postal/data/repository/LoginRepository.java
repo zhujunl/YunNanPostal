@@ -3,6 +3,8 @@ package com.miaxis.postal.data.repository;
 import android.graphics.Bitmap;
 import android.text.TextUtils;
 
+import com.miaxis.postal.app.App;
+import com.miaxis.postal.data.dao.AppDatabase;
 import com.miaxis.postal.data.dto.CourierDto;
 import com.miaxis.postal.data.entity.Courier;
 import com.miaxis.postal.data.exception.MyException;
@@ -18,6 +20,10 @@ import com.miaxis.postal.util.ValueUtil;
 import java.io.File;
 import java.io.IOException;
 
+import io.reactivex.Observable;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 import retrofit2.Response;
 
 public class LoginRepository extends BaseRepository {
@@ -117,5 +123,20 @@ public class LoginRepository extends BaseRepository {
     public Courier loadCourierSync() {
         return CourierModel.loadCourier();
     }
+
+    public void outLogin() {
+        Disposable subscribe = Observable.create((ObservableOnSubscribe<Courier>) emitter -> {
+            Courier c = AppDatabase.getInstance().courierDao().loadCourier();
+            c.setLogin(false);
+            AppDatabase.getInstance().courierDao().updateCourier(c);
+            emitter.onNext(c);
+        }).subscribeOn(Schedulers.from(App.getInstance().getThreadExecutor()))
+                .observeOn(Schedulers.io())
+                .subscribe(courier -> {
+                }, throwable -> {
+
+                });
+    }
+
 
 }

@@ -3,6 +3,8 @@ package com.miaxis.postal.view.fragment;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.miaxis.postal.R;
 import com.miaxis.postal.app.App;
+import com.miaxis.postal.data.dao.AppDatabase;
+import com.miaxis.postal.data.entity.Courier;
 import com.miaxis.postal.databinding.FragmentHomeBinding;
 import com.miaxis.postal.manager.AmapManager;
 import com.miaxis.postal.manager.PostalManager;
@@ -13,6 +15,12 @@ import com.miaxis.postal.view.dialog.EditPasswordDialogFragment;
 import com.miaxis.postal.viewModel.HomeViewModel;
 
 import androidx.lifecycle.ViewModelProvider;
+
+import io.reactivex.Observable;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 public class HomeFragment extends BaseViewModelFragment<FragmentHomeBinding, HomeViewModel> {
 
@@ -64,13 +72,22 @@ public class HomeFragment extends BaseViewModelFragment<FragmentHomeBinding, Hom
 //        PostalManager.getInstance().startPostal();
     }
 
+
+
     @Override
     public void onBackPressed() {
         new MaterialDialog.Builder(getContext())
                 .title("确认退出登录？")
                 .positiveText("确认")
-                .onPositive((dialog, which) -> mListener.backToStack(LoginFragment.class))
+                .onPositive((dialog, which) -> {
+                    PostalManager.getInstance().outLogin();
+                    if (getActivity()!=null) {
+                        getActivity().getSupportFragmentManager().popBackStack(LoginFragment.class.getName(), 0);
+                    }
+                })
                 .negativeText("取消")
                 .show();
     }
+
+
 }

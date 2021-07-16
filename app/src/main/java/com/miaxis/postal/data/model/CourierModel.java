@@ -8,6 +8,7 @@ public class CourierModel {
     public static void saveCourier(Courier courier) {
         courier.setId(1L);
         AppDatabase.getInstance().courierDao().deleteAll();
+        courier.setLogin(true);
         AppDatabase.getInstance().courierDao().insert(courier);
     }
 

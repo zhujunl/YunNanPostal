@@ -1,8 +1,8 @@
 {
   "formatVersion": 1,
   "database": {
-    "version": 10,
-    "identityHash": "7db42eabb31b6851ae3eb8e6b8e4d824",
+    "version": 11,
+    "identityHash": "28e97b2340fa532b539b74e6f9faaa1e",
     "entities": [
       {
         "tableName": "Config",
@@ -80,7 +80,7 @@
       },
       {
         "tableName": "Courier",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `courierId` INTEGER NOT NULL, `name` TEXT, `cardNumber` TEXT, `phone` TEXT, `photo` TEXT, `faceFeature` TEXT, `maskFaceFeature` TEXT, `fingerFeature1` TEXT, `fingerFeature2` TEXT, `createTime` TEXT, `password` TEXT, `orgCode` TEXT, `orgNode` TEXT, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `courierId` INTEGER NOT NULL, `name` TEXT, `cardNumber` TEXT, `phone` TEXT, `photo` TEXT, `faceFeature` TEXT, `maskFaceFeature` TEXT, `fingerFeature1` TEXT, `fingerFeature2` TEXT, `createTime` TEXT, `password` TEXT, `orgCode` TEXT, `orgNode` TEXT, `isLogin` INTEGER, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -164,6 +164,12 @@
             "fieldPath": "orgNode",
             "columnName": "orgNode",
             "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "isLogin",
+            "columnName": "isLogin",
+            "affinity": "INTEGER",
             "notNull": false
           }
         ],
@@ -710,7 +716,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '7db42eabb31b6851ae3eb8e6b8e4d824')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '28e97b2340fa532b539b74e6f9faaa1e')"
     ]
   }
 }

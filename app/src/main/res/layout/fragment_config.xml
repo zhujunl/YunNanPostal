@@ -143,7 +143,6 @@
 
                     <EditText style="@style/SettingBody"
                         android:id="@+id/et_base_url"
-                        android:text="@={viewModel.config.host}"
                         android:background="@color/white"
                         android:singleLine="true" />
 

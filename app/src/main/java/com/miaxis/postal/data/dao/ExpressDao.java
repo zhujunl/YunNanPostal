@@ -37,6 +37,9 @@ public interface ExpressDao {
     @Query("delete from Express where Express.phone = :phone")
     void deleteAll(String phone);
 
+    @Query("delete from Express")
+    void deleteAll();
+
     @Delete
     void delete(Express express);
 

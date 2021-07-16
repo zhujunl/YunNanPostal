@@ -45,8 +45,11 @@ public class App extends Application {
             PostalApi.rebuildRetrofit();
             FileDownloader.setup(this);
             TTSManager.getInstance().init(getApplicationContext());
-            //FileUtil.LICENCE_PATH
-            int result = FaceManager.getInstance().initFaceST(getApplicationContext(), "");
+            //FileUtil.LICENCE_PATH 有可能带路径的报错
+            int result = FaceManager.getInstance().initFaceST(getApplicationContext(), FileUtil.LICENCE_PATH);
+            if (result != FaceManager.INIT_SUCCESS){
+                 result = FaceManager.getInstance().initFaceST(getApplicationContext(), "");
+            }
             listener.onInit(result == FaceManager.INIT_SUCCESS, FaceManager.getFaceInitResultDetail(result));
             //listener.onInit(true, "");
         } catch (Exception e) {

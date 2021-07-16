@@ -2,7 +2,9 @@ package com.miaxis.postal.data.repository;
 
 import android.text.TextUtils;
 
+import com.google.android.material.internal.ViewUtils;
 import com.miaxis.postal.data.dto.UpdateDto;
+import com.miaxis.postal.data.entity.Config;
 import com.miaxis.postal.data.entity.Update;
 import com.miaxis.postal.data.exception.MyException;
 import com.miaxis.postal.data.exception.NetResultFailedException;
@@ -31,8 +33,16 @@ public class DeviceRepository extends BaseRepository {
     /**
      * ================================ 静态内部类单例写法 ================================
      **/
+    private static   boolean isSetHost=true;
 
     public String getDeviceStatus() throws IOException, MyException, NetResultFailedException {
+        //每次进入显示默认地址
+        if (isSetHost) {
+            Config config = ConfigManager.getInstance().getConfig();
+            config.setHost(ValueUtil.DEFAULT_BASE_HOST);
+            ConfigManager.getInstance().saveConfigSync(config);
+            isSetHost=false;
+        }
         String deviceIMEI = ConfigManager.getInstance().getConfig().getDeviceIMEI();
         Response<ResponseEntity<String>> execute = PostalApi.getDeviceStatusSync(deviceIMEI).execute();
         try {

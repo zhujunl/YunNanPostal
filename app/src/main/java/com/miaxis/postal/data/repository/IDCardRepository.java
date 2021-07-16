@@ -48,11 +48,11 @@ public class IDCardRepository {
 
     private IDCard makeIDCard(IDCardRecord idCardRecord) {
         IDCard idCard = transIDCard(idCardRecord);
-        String path = FileUtil.LOCAL_STOREHOUSE_PATH + File.separator + idCard.getCardNumber() + System.currentTimeMillis() + EncryptUtil.getRandomString(10) + ".png";
-        File file = FileUtil.saveQualityBitmap(idCardRecord.getCardBitmap(), path);
-        if (file != null) {
-            idCard.setCardPicture(path);
-        }
+//        String path = FileUtil.LOCAL_STOREHOUSE_PATH + File.separator + idCard.getCardNumber() + System.currentTimeMillis() + EncryptUtil.getRandomString(10) + ".png";
+//        File file = FileUtil.saveQualityBitmap(idCardRecord.getCardBitmap(), path);
+//        if (file != null) {
+//            idCard.setCardPicture(path);
+//        }
         idCard.setVerifyTime(new Date());
         return idCard;
     }

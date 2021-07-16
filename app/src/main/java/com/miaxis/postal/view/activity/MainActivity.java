@@ -1,6 +1,8 @@
 package com.miaxis.postal.view.activity;
 
+import android.os.Environment;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.miaxis.postal.R;
@@ -14,6 +16,8 @@ import com.miaxis.postal.view.fragment.PreludeFragment;
 import com.miaxis.postal.view.presenter.UpdatePresenter;
 
 import androidx.fragment.app.Fragment;
+
+import java.io.File;
 
 public class MainActivity extends BaseActivity<ActivityMainBinding> implements OnFragmentInteractionListener {
 
@@ -95,7 +99,8 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
         int backStackEntryCount = getSupportFragmentManager().getBackStackEntryCount();
         if (backStackEntryCount > 1) {
             if (fragment != null) {
-                getSupportFragmentManager().popBackStackImmediate(fragment.getName(), 0);
+                getSupportFragmentManager()
+                        .popBackStackImmediate(fragment.getName(), 0);
             } else {
                 getSupportFragmentManager().popBackStackImmediate(null, 0);
             }

@@ -53,7 +53,11 @@ public class IDCardRecordRepository {
                 List<String> paths=new ArrayList<>();
                 paths.add(idCardRecord.getCardPicture());
                 paths.add(idCardRecord.getFacePicture());
-                ExpressRepository.getInstance().saveImage(paths);
+                List<String> stringList = ExpressRepository.getInstance().saveImage(paths);
+                if (stringList!=null&&!stringList.isEmpty()&&stringList.size()>=2){
+                    webCardPath=stringList.get(0);
+                    webFacePath=stringList.get(1);
+                }
             }
         }else{
             webCardPath=idCardRecord.getWebCardPath();
@@ -97,6 +101,12 @@ public class IDCardRecordRepository {
 
     public String saveIdCardRecord(IDCardRecord idCardRecord) {
         Log.i("TAG===","执行");
+        if (idCardRecord.getCardPicture()!=null){
+            FileUtil.deleteFolderFile(idCardRecord.getCardPicture(),false);
+        }
+        if (idCardRecord.getFacePicture()!=null){
+            FileUtil.deleteFolderFile(idCardRecord.getFacePicture(),false);
+        }
         if (idCardRecord.getCardBitmap() != null) {
             String cardPath = FileUtil.FACE_STOREHOUSE_PATH + File.separator + "card_" + idCardRecord.getCardNumber() + System.currentTimeMillis() + ".jpg";
             FileUtil.saveBitmap(idCardRecord.getCardBitmap(), cardPath);

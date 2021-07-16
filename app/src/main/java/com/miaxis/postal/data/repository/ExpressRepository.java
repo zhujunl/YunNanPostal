@@ -66,15 +66,17 @@ public class ExpressRepository {
                 e.printStackTrace();
             }
         }
-        //如果长度不相等证明订单图片丢失 则不上传
-        if (stringList.size() == 0 || (stringList.size() != express.getPhotoPathList().size())) {
-            //删除图片操作 如果不通过图片记录需要删除
-            for (String path : stringList) {
-                if (!TextUtils.isEmpty(path)) {
-                    deleteWebPicture(path);
+        if (express.getPhotoPathList().size()!=0) {
+            //如果长度不相等证明订单图片丢失 则不上传
+            if (stringList.size() != express.getPhotoPathList().size()) {
+                //删除图片操作 如果不通过图片记录需要删除
+                for (String path : stringList) {
+                    if (!TextUtils.isEmpty(path)) {
+                        deleteWebPicture(path);
+                    }
                 }
+                throw new MyException("订单异常，请删除后重试！");
             }
-            throw new MyException("订单异常，请删除后重试！");
         }
         StringBuilder stringBuilder = new StringBuilder();
         //添加图片

@@ -111,7 +111,7 @@ public class LocalViewModel extends BaseViewModel {
                 });
     }
 
-    public void deleteSelf(long id, IDCardRecord idCardRecord, Express express) {
+    public void deleteSelf( IDCardRecord idCardRecord, Express express) {
         Observable.create((ObservableOnSubscribe<Boolean>) emitter -> {
             ExpressRepository expressRepository = ExpressRepository.getInstance();
             ExpressRepository.getInstance().deleteExpress(express);
@@ -135,7 +135,7 @@ public class LocalViewModel extends BaseViewModel {
                     if (express1 == null) {
                         continue;
                     }
-                    if (express1.getId() != id) {
+                    if (express1.getId().longValue() != express.getId().longValue()) {
                         locals.add(local);
                     }
                 }

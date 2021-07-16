@@ -118,15 +118,12 @@ public class FaceVerifyViewModel extends BaseViewModel {
                 Bitmap header = BitmapFactory.decodeByteArray(fileImage, 0, fileImage.length);
                 IDCardRecord value = idCardRecordLiveData.getValue();
                 if (value != null) {
-                    if (verify==1) {
-                        saveImage(header, value, verify);
-                    }else{
-                        IDCardRepository.getInstance().addNewIDCard(value);
-                        value.setFaceBitmap(header);
-                        value.setVerifyTime(new Date());
-                        value.setChekStatus(verify);
-                        verifyFlag.postValue(value);
-                    }
+                    IDCardRepository.getInstance().addNewIDCard(value);
+                    value.setFaceBitmap(header);
+                    value.setVerifyTime(new Date());
+                    value.setChekStatus(verify);
+                    verifyFlag.postValue(value);
+                    PostalManager.getInstance().saveImage(header,value,readCardNum);
                     return;
                 } else {
                     toast.postValue(ToastManager.getToastBody("遇到错误，请退出后重试", ToastManager.ERROR));
@@ -137,41 +134,6 @@ public class FaceVerifyViewModel extends BaseViewModel {
             FaceManager.getInstance().setNeedNextFeature(true);
         }
     };
-
-    //保存身份证图片和人证核验图片
-    private void saveImage(Bitmap header, IDCardRecord value, int verify) {
-        Observable.create((ObservableOnSubscribe<List<String>>) emitter -> {
-            List<String> strings = IDCardRecordRepository.getInstance().saveFace(readCardNum, value.getCardBitmap(), header);
-            List<String> stringList = ExpressRepository.getInstance().saveImage(strings);
-            //上传成功后删除照片
-            if (strings!=null&&!strings.isEmpty()&&strings.size()>=2){
-                File f = new File(strings.get(0));
-                boolean delete = f.delete();
-                File f1 = new File(strings.get(1));
-                boolean delete1 = f1.delete();
-            }
-            emitter.onNext(stringList);
-        })
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(stringList -> {
-                    if (stringList != null && !stringList.isEmpty() && stringList.size() >= 2) {
-                        value.setWebCardPath(stringList.get(0));
-                        value.setWebFacePath(stringList.get(1));
-                    }
-                    IDCardRepository.getInstance().addNewIDCard(value);
-                    value.setFaceBitmap(header);
-                    value.setVerifyTime(new Date());
-                    value.setChekStatus(verify);
-                    verifyFlag.postValue(value);
-                }, throwable -> {
-                    IDCardRepository.getInstance().addNewIDCard(value);
-                    value.setFaceBitmap(header);
-                    value.setVerifyTime(new Date());
-                    value.setChekStatus(verify);
-                    verifyFlag.postValue(value);
-                });
-    }
 
     public void alarm() {
         IDCardRecord cardMessage = idCardRecordLiveData.getValue();

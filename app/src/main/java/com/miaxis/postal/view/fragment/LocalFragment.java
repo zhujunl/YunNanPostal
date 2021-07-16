@@ -133,7 +133,7 @@ public class LocalFragment extends BaseViewModelFragment<FragmentLocalBinding, L
                     .content("是否删除此订单？")
                     .positiveText("确认")
                     .onPositive((dialog, which) -> {
-                        viewModel.deleteSelf(local.getExpress().getId(), local.getIdCardRecord(), local.getExpress());
+                        viewModel.deleteSelf(local.getIdCardRecord(), local.getExpress());
                     })
                     .negativeText("取消")
                     .show();

@@ -108,7 +108,7 @@ public class ExpressFragment extends BaseViewModelFragment<FragmentExpressBindin
         if (!TextUtils.isEmpty(idCardRecord.getSenderAddress())) {
             viewModel.address.set(idCardRecord.getSenderAddress());
         } else {
-            binding.ivAddress.performClick();
+            viewModel.getLocation();
         }
         binding.ivDelete.setVisibility(draft ? View.VISIBLE : View.INVISIBLE);
         binding.ivDelete.setOnClickListener(deleteListener);
