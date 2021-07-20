@@ -1,5 +1,6 @@
 package com.miaxis.postal.view.fragment;
 
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.View;
@@ -22,6 +23,7 @@ import com.miaxis.postal.view.custom.RoundFrameLayout;
 import com.miaxis.postal.viewModel.FaceVerifyViewModel;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -39,11 +41,33 @@ public class FaceVerifyFragment extends BaseViewModelFragment<FragmentFaceVerify
 
     private boolean pass = false;
 
+    private boolean isAgreementCustomer = false;
+
     public static FaceVerifyFragment newInstance(IDCardRecord idCardRecord) {
         FaceVerifyFragment fragment = new FaceVerifyFragment();
         fragment.setIdCardRecord(idCardRecord);
         return fragment;
     }
+
+
+    public static FaceVerifyFragment newInstance(IDCardRecord idCardRecord, boolean isAgreementCustomer) {
+        FaceVerifyFragment fragment = new FaceVerifyFragment();
+        fragment.setIdCardRecord(idCardRecord);
+        Bundle bundle = new Bundle();
+        bundle.putBoolean("agreementCustomer", isAgreementCustomer);
+        fragment.setArguments(bundle);
+        return fragment;
+    }
+
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            isAgreementCustomer = getArguments().getBoolean("agreementCustomer", false);
+        }
+    }
+
 
     public FaceVerifyFragment() {
         // Required empty public constructor
@@ -66,8 +90,11 @@ public class FaceVerifyFragment extends BaseViewModelFragment<FragmentFaceVerify
 
     @Override
     protected void initData() {
-        viewModel.readCardNum=idCardRecord.getCardNumber();
+        viewModel.readCardNum = idCardRecord.getCardNumber();
         viewModel.idCardRecordLiveData.setValue(idCardRecord);
+        if (viewModel.idCardRecordLiveData.getValue() != null ) {
+            viewModel.cardFingerprint.set(viewModel.idCardRecordLiveData.getValue().getFingerprint0());
+        }
         viewModel.idCardRecordLiveData.observe(this, idCardRecordObserver);
         viewModel.verifyFlag.observe(this, verifyFlagObserver);
         viewModel.verifyFailedFlag.observe(this, verifyFailedObserver);
@@ -195,7 +222,7 @@ public class FaceVerifyFragment extends BaseViewModelFragment<FragmentFaceVerify
                 .positiveText("确认")
                 .onPositive((dialog, which) -> {
                     dialog.dismiss();
-                    mListener.replaceFragment(ManualFragment.newInstance(idCardRecord));
+                    mListener.replaceFragment(ManualFragment.newInstance(idCardRecord, isAgreementCustomer));
                 })
                 .negativeText("放弃")
                 .onNegative((dialog, which) -> {
@@ -231,7 +258,11 @@ public class FaceVerifyFragment extends BaseViewModelFragment<FragmentFaceVerify
                 mIDCardRecord.setManualType("0");
                 handler.postDelayed(() -> {
                     try {
-                        mListener.replaceFragment(ExpressFragment.newInstance(mIDCardRecord));
+                        if (isAgreementCustomer) {
+                            mListener.replaceFragment(AgreementCustomersFragment.newInstance(mIDCardRecord));
+                        } else {
+                            mListener.replaceFragment(ExpressFragment.newInstance(mIDCardRecord));
+                        }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -246,7 +277,11 @@ public class FaceVerifyFragment extends BaseViewModelFragment<FragmentFaceVerify
                         mIDCardRecord.setManualType("0");
                         handler.post(() -> {
                             try {
-                                mListener.replaceFragment(ExpressFragment.newInstance(mIDCardRecord));
+                                if (isAgreementCustomer) {
+                                    mListener.replaceFragment(AgreementCustomersFragment.newInstance(mIDCardRecord));
+                                } else {
+                                    mListener.replaceFragment(ExpressFragment.newInstance(mIDCardRecord));
+                                }
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }

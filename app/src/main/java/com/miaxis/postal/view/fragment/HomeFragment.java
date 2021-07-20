@@ -1,5 +1,7 @@
 package com.miaxis.postal.view.fragment;
 
+import android.view.View;
+
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.miaxis.postal.R;
 import com.miaxis.postal.app.App;
@@ -62,6 +64,7 @@ public class HomeFragment extends BaseViewModelFragment<FragmentHomeBinding, Hom
         binding.tvEditPassword.setOnClickListener(new OnLimitClickHelper(view -> {
             EditPasswordDialogFragment.newInstance().show(getChildFragmentManager(), "EditPasswordDialogFragment");
         }));
+        binding.clProtocol.setOnClickListener(v -> mListener.replaceFragment(CardFragment.newInstance(true)));
         AmapManager.getInstance().startLocation(getActivity().getApplication());//GPS初始化，登录后初始化
         App.getInstance().uploadEnable = true;
     }

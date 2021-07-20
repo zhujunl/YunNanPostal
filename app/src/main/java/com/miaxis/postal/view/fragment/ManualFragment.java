@@ -36,9 +36,19 @@ public class ManualFragment extends BaseViewModelFragment<FragmentManualBinding,
 
     private IDCardRecord idCardRecord;
 
+    //是否协议客户
+    private boolean isAgreementCustomer = false;
+
     public static ManualFragment newInstance(IDCardRecord idCardRecord) {
         ManualFragment fragment = new ManualFragment();
         fragment.setIdCardRecord(idCardRecord);
+
+        return fragment;
+    }
+
+    public static ManualFragment newInstance(IDCardRecord idCardRecord, boolean isAgreementCustomer) {
+        ManualFragment fragment = new ManualFragment();
+        fragment.setIdCardRecord(idCardRecord, isAgreementCustomer);
         return fragment;
     }
 
@@ -87,7 +97,7 @@ public class ManualFragment extends BaseViewModelFragment<FragmentManualBinding,
         binding.btnConfirm.setOnClickListener(new OnLimitClickHelper(view -> {
             if (TextUtils.isEmpty(binding.etName.getText().toString().replace((char) 12288, ' ').trim())) {
                 ToastManager.toast("请输入被核验人姓名", ToastManager.INFO);
-            }else if (TextUtils.isEmpty(binding.etCardNumber.getText().toString().trim())) {
+            } else if (TextUtils.isEmpty(binding.etCardNumber.getText().toString().trim())) {
                 ToastManager.toast("请输入被核验人证件号码", ToastManager.INFO);
             } else if (binding.etCardNumber.getText().toString().trim().length() != 18) {
                 ToastManager.toast("证件号码错误", ToastManager.ERROR);
@@ -181,7 +191,11 @@ public class ManualFragment extends BaseViewModelFragment<FragmentManualBinding,
 
     private Observer<Boolean> confirmObserver = flag -> {
         if (flag) {
-            mListener.replaceFragment(ExpressFragment.newInstance(viewModel.idCardRecord));
+            if (isAgreementCustomer) {
+                mListener.replaceFragment(AgreementCustomersFragment.newInstance(viewModel.idCardRecord));
+            } else {
+                mListener.replaceFragment(ExpressFragment.newInstance(viewModel.idCardRecord));
+            }
         } else {
             ToastManager.toast("发生错误，请重新确认", ToastManager.ERROR);
         }
@@ -189,7 +203,7 @@ public class ManualFragment extends BaseViewModelFragment<FragmentManualBinding,
 
     private Observer<Boolean> idCardObserver = flag -> {
         if (flag && viewModel.idCardRecordCache != null) {
-            mListener.replaceFragment(FaceVerifyFragment.newInstance(viewModel.idCardRecordCache));
+            mListener.replaceFragment(FaceVerifyFragment.newInstance(viewModel.idCardRecordCache, isAgreementCustomer));
         }
     };
 
@@ -207,5 +221,10 @@ public class ManualFragment extends BaseViewModelFragment<FragmentManualBinding,
 
     public void setIdCardRecord(IDCardRecord idCardRecord) {
         this.idCardRecord = idCardRecord;
+    }
+
+    public void setIdCardRecord(IDCardRecord idCardRecord, boolean isAgreementCustomer) {
+        this.idCardRecord = idCardRecord;
+        this.isAgreementCustomer = isAgreementCustomer;
     }
 }

@@ -54,7 +54,7 @@
             app:layout_constraintTop_toTopOf="@id/iv_back"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="@id/iv_back"
-            viewadapter:isInvisible="@{!TextUtils.isEmpty(viewModel.idCardRecordLiveData.fingerprint0)}"/>
+            viewadapter:isInvisible="@{!TextUtils.isEmpty(viewModel.cardFingerprint)}"/>
 
         <FrameLayout
             android:id="@+id/fl_camera"
