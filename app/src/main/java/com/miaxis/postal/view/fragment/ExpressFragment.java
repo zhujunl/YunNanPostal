@@ -100,16 +100,16 @@ public class ExpressFragment extends BaseViewModelFragment<FragmentExpressBindin
         initRecycleView();
         initReceiver();
         binding.ivBack.setOnClickListener(v -> onBackPressed());
-        binding.ivAddress.setOnClickListener(new OnLimitClickHelper(view -> viewModel.getLocation()));
-        if (expressList != null && !expressList.isEmpty()) {
-            viewModel.initExpressList(expressList);
-            expressAdapter.notifyDataSetChanged();
-        }
-        if (!TextUtils.isEmpty(idCardRecord.getSenderAddress())) {
-            viewModel.address.set(idCardRecord.getSenderAddress());
-        } else {
-            viewModel.getLocation();
-        }
+//        binding.ivAddress.setOnClickListener(new OnLimitClickHelper(view -> viewModel.getLocation()));
+//        if (expressList != null && !expressList.isEmpty()) {
+//            viewModel.initExpressList(expressList);
+//            expressAdapter.notifyDataSetChanged();
+//        }
+//        if (!TextUtils.isEmpty(idCardRecord.getSenderAddress())) {
+//            viewModel.address.set(idCardRecord.getSenderAddress());
+//        } else {
+//            viewModel.getLocation();
+//        }
         binding.ivDelete.setVisibility(draft ? View.VISIBLE : View.INVISIBLE);
         binding.ivDelete.setOnClickListener(deleteListener);
         binding.btnSubmit.setOnClickListener(submitClickListener);
@@ -276,10 +276,10 @@ public class ExpressFragment extends BaseViewModelFragment<FragmentExpressBindin
     private Observer<Boolean> deleteFlagObserver = flag -> mListener.backToStack(null);
 
     private View.OnClickListener submitClickListener = new OnLimitClickHelper(view -> {
-        if (!viewModel.checkInput()) {
-            ToastManager.toast("请输入寄件人手机号码和寄件地址", ToastManager.INFO);
-            return;
-        }
+//        if (!viewModel.checkInput()) {
+//            ToastManager.toast("请输入寄件人手机号码和寄件地址", ToastManager.INFO);
+//            return;
+//        }
         if (viewModel.getExpressList().isEmpty()) {
             ToastManager.toast("请至少完成一个订单", ToastManager.INFO);
             return;
