@@ -57,7 +57,7 @@ public class CardManager {
     IIdCardPower mPowerManager = null;
 
 
-    public void init(@NonNull Context context, @NonNull IDCardListener listener) {
+    public void init(@NonNull Context context,  IDCardListener listener) {
         this.context = context;
         this.listener = listener;
         Log.e("asd", "MANUFACTURER：" + Build.MANUFACTURER);
@@ -71,10 +71,12 @@ public class CardManager {
             @Override
             public void handleMessage(@NonNull Message msg) {
                 super.handleMessage(msg);
-                if (msg.what == 0) {
-                    listener.onIDCardReceive((IDCardRecord) msg.obj, "读卡成功");
-                } else if (msg.what == 1) {
-                    listener.onIDCardReceive(null, (String) msg.obj);
+                if (listener!=null) {
+                    if (msg.what == 0) {
+                        listener.onIDCardReceive((IDCardRecord) msg.obj, "读卡成功");
+                    } else if (msg.what == 1) {
+                        listener.onIDCardReceive(null, (String) msg.obj);
+                    }
                 }
             }
         };
@@ -87,11 +89,7 @@ public class CardManager {
             try {
                 mPowerManager.powerOn();
                 cardManager = new IDCardDeviceImpl();
-                if (isDeviceOpen()) {
-                    listener.onIDCardInitResult(true);
-                } else {
-                    listener.onIDCardInitResult(false);
-                }
+                listener.onIDCardInitResult(isDeviceOpen());
                 startReadCard();
             } catch (Exception e) {
                 e.printStackTrace();
@@ -151,7 +149,7 @@ public class CardManager {
                                     transform = transformGAT(cardManager);
                                 }
                                 transformFingerprint(cardManager, transform);
-                                if (listener != null) {
+                                if (listener != null&&handler!=null) {
                                     stopReadCard();
                                     handler.sendMessage(handler.obtainMessage(0, transform));
                                     break;
