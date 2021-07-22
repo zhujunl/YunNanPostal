@@ -74,6 +74,10 @@ public class FaceVerifyViewModel extends BaseViewModel {
         }).subscribeOn(Schedulers.from(App.getInstance().getThreadExecutor()))
                 .observeOn(Schedulers.from(App.getInstance().getThreadExecutor()))
                 .subscribe(photoFaceFeature -> {
+                    if(photoFaceFeature==null){
+                        hint.set("出现错误");
+                        return;
+                    }
                     cardFeature = photoFaceFeature;
                     FaceManager.getInstance().setFeatureListener(faceListener);
                     FaceManager.getInstance().setNeedNextFeature(true);

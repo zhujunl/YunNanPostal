@@ -300,6 +300,10 @@ public class FaceManager {
 
     public PhotoFaceFeature getCardFaceFeatureByBitmapPosting(Bitmap bitmap) {
         String message = "";
+        if (bitmap==null){
+            message = "图片为空";
+            return new PhotoFaceFeature(message);
+        }
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream(bitmap.getByteCount());
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream);
         byte[] rgbData = imageFileDecode(outputStream.toByteArray(), bitmap.getWidth(), bitmap.getHeight());
@@ -312,7 +316,7 @@ public class FaceManager {
         boolean result = faceDetect(rgbData, bitmap.getWidth(), bitmap.getHeight(), pFaceNum, pFaceBuffer);
         if (result && pFaceNum[0] > 0) {
             if (pFaceNum[0] == 1) {
-                result = faceQuality(rgbData, bitmap.getWidth(), bitmap.getHeight(), pFaceNum[0], pFaceBuffer);
+//                result = faceQuality(rgbData, bitmap.getWidth(), bitmap.getHeight(), pFaceNum[0], pFaceBuffer);
                 MXFaceInfoEx mxFaceInfoEx = sortMXFaceInfoEx(pFaceBuffer);
 //                if (result && mxFaceInfoEx.quality > ConfigManager.getInstance().getConfig().getRegisterQualityScore()) {
                 byte[] faceFeature = extractFeature(rgbData, bitmap.getWidth(), bitmap.getHeight(), mxFaceInfoEx);
@@ -399,6 +403,9 @@ public class FaceManager {
         byte[] rgbData = new byte[width * height * 3];
         int[] oX = new int[1];
         int[] oY = new int[1];
+        if (data==null||data.length<=0){
+            return null;
+        }
         int result = dtTool.ImageDecode(data, data.length, rgbData, oX, oY);
         if (result > 0) {
             return rgbData;

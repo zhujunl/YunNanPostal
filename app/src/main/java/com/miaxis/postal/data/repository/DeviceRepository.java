@@ -42,6 +42,7 @@ public class DeviceRepository extends BaseRepository {
             config.setHost(ValueUtil.DEFAULT_BASE_HOST);
             ConfigManager.getInstance().saveConfigSync(config);
             isSetHost=false;
+            PostalApi.rebuildRetrofit();
         }
         String deviceIMEI = ConfigManager.getInstance().getConfig().getDeviceIMEI();
         Response<ResponseEntity<String>> execute = PostalApi.getDeviceStatusSync(deviceIMEI).execute();

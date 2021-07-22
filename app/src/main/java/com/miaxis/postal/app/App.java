@@ -30,8 +30,8 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
         instance = this;
-//        CrashHandler crashHandler = CrashHandler.getInstance();
-//        crashHandler.init(this);
+        CrashHandler crashHandler = CrashHandler.getInstance();
+        crashHandler.init(this);
         EventBus.builder().addIndex(new MyEventBusIndex()).installDefaultEventBus();
     }
 

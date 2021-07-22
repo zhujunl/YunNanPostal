@@ -67,7 +67,6 @@ public class AgreementCustomersModel extends BaseViewModel {
 
     public AgreementCustomersModel() {
         ScanManager.getInstance().initDevice(App.getInstance(), listener);
-        clientPhone.set(DataCacheManager.getInstance().getCourier().getPhone());
     }
 
     @Override
