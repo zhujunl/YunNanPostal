@@ -11,6 +11,7 @@ import com.miaxis.postal.manager.CrashExceptionManager;
 import com.miaxis.postal.manager.FaceManager;
 import com.miaxis.postal.manager.TTSManager;
 import com.miaxis.postal.util.FileUtil;
+import com.miaxis.postal.util.carch.CrashHandler;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -29,6 +30,8 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
         instance = this;
+//        CrashHandler crashHandler = CrashHandler.getInstance();
+//        crashHandler.init(this);
         EventBus.builder().addIndex(new MyEventBusIndex()).installDefaultEventBus();
     }
 

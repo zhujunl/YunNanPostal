@@ -16,7 +16,10 @@ import com.miaxis.postal.view.dialog.CardModeSelectDialogFragment;
 import com.miaxis.postal.view.dialog.EditPasswordDialogFragment;
 import com.miaxis.postal.viewModel.HomeViewModel;
 
+import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+
+import java.util.List;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
@@ -58,13 +61,14 @@ public class HomeFragment extends BaseViewModelFragment<FragmentHomeBinding, Hom
         binding.ivConfig.setOnClickListener(new OnLimitClickHelper(view -> mListener.replaceFragment(ConfigFragment.newInstance())));
 //        binding.clExpress.setOnClickListener(new OnLimitClickHelper(view -> mListener.replaceFragment(CardFragment.newInstance())));
         binding.clExpress.setOnClickListener(new OnLimitClickHelper(view -> {
-            CardModeSelectDialogFragment.newInstance().show(getChildFragmentManager(), "CardModeSelectDialogFragment");
+            CardModeSelectDialogFragment.newInstance(false).show(getChildFragmentManager(), "CardModeSelectDialogFragment");
         }));
         binding.clRecord.setOnClickListener(new OnLimitClickHelper(view -> mListener.replaceFragment(RecordTabFragment.newInstance())));
         binding.tvEditPassword.setOnClickListener(new OnLimitClickHelper(view -> {
             EditPasswordDialogFragment.newInstance().show(getChildFragmentManager(), "EditPasswordDialogFragment");
         }));
-        binding.clProtocol.setOnClickListener(v -> mListener.replaceFragment(CardFragment.newInstance(true)));
+        binding.clProtocol.setOnClickListener(v ->
+                CardModeSelectDialogFragment.newInstance(true).show(getChildFragmentManager(), "CardModeSelectDialogFragment"));
         AmapManager.getInstance().startLocation(getActivity().getApplication());//GPS初始化，登录后初始化
         App.getInstance().uploadEnable = true;
     }
@@ -76,7 +80,6 @@ public class HomeFragment extends BaseViewModelFragment<FragmentHomeBinding, Hom
     }
 
 
-
     @Override
     public void onBackPressed() {
         new MaterialDialog.Builder(getContext())
@@ -84,8 +87,22 @@ public class HomeFragment extends BaseViewModelFragment<FragmentHomeBinding, Hom
                 .positiveText("确认")
                 .onPositive((dialog, which) -> {
                     PostalManager.getInstance().outLogin();
-                    if (getActivity()!=null) {
-                        getActivity().getSupportFragmentManager().popBackStack(LoginFragment.class.getName(), 0);
+                    if (getActivity() != null) {
+                        boolean isHaveLoginFragment = false;
+                        List<Fragment> fragments = getActivity().getSupportFragmentManager().getFragments();
+                        for (Fragment fragment : fragments) {
+                            if (fragment instanceof LoginFragment) {
+                                isHaveLoginFragment = true;
+                                break;
+                            }
+                        }
+                        if (mListener != null) {
+                            if (isHaveLoginFragment) {
+                                mListener.backToStack(LoginFragment.class);
+                            } else {
+                                mListener.replaceFragment(LoginFragment.newInstance());
+                            }
+                        }
                     }
                 })
                 .negativeText("取消")

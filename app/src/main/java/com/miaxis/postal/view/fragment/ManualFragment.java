@@ -156,10 +156,12 @@ public class ManualFragment extends BaseViewModelFragment<FragmentManualBinding,
             viewModel.searchLocalIDCard(idCard.getCardNumber());
         });
         viewModel.loadIDCardList();
-        viewModel.idCardListLiveData.observe(this, idCardList -> {
-            idCardFilterAdapter.setUnfilteredData((ArrayList<IDCard>) idCardList);
-            //            idCardFilterAdapter.notifyDataSetChanged();
-        });
+        if (viewModel.idCardListLiveData!=null) {
+            viewModel.idCardListLiveData.observe(this, idCardList -> {
+                idCardFilterAdapter.setUnfilteredData((ArrayList<IDCard>) idCardList);
+                //            idCardFilterAdapter.notifyDataSetChanged();
+            });
+        }
     }
 
     private InspectAdapter.OnHeaderClickListener headerListener = () -> {

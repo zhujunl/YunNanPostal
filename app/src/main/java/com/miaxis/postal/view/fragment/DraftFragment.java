@@ -98,7 +98,13 @@ public class DraftFragment extends BaseViewModelFragment<FragmentDraftBinding, D
     };
 
     private Observer<DraftMessage> draftMessageSearchObserver = draftMessage -> {
-        mListener.replaceFragment(ExpressFragment.newInstanceForDraft(draftMessage.getIdCardRecord(), draftMessage.getExpressList()));
+       if (!draftMessage.getExpressList().isEmpty()){
+         if ("1".equals( draftMessage.getExpressList().get(0).getCustomerType())){
+             mListener.replaceFragment(ExpressFragment.newInstanceForDraft(draftMessage.getIdCardRecord(), draftMessage.getExpressList()));
+         }else{
+             mListener.replaceFragment(AgreementCustomersFragment.newInstanceForDraft(draftMessage.getIdCardRecord(), draftMessage.getExpressList()));
+         }
+       }
     };
 
     private Observer<List<Draft>> draftListObserver = draftList -> {

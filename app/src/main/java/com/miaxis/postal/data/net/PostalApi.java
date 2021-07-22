@@ -19,6 +19,7 @@ import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.Call;
+import retrofit2.http.Field;
 import retrofit2.http.Part;
 
 public class PostalApi extends BaseAPI {
@@ -156,13 +157,6 @@ public class PostalApi extends BaseAPI {
             String lng,
             int chekStatus,
             String fileList) {
-        //List<MultipartBody.Part> parts = new ArrayList<>(fileList.size());
-        //List<OrderImage> list = new ArrayList<>();
-        //        for (File file : fileList) {
-        //            //            RequestBody requestBody = RequestBody.create(MediaType.parse("multipart/form-data"), file);
-        //            //            MultipartBody.Part part = MultipartBody.Part.createFormData("file", file.getName(), requestBody);
-        //            //            parts.add(part);
-        //        }
         return getPostalNetSync().saveOrderFromAppSync(
                 orgCode,
                 orgNode,
@@ -184,7 +178,55 @@ public class PostalApi extends BaseAPI {
                 lat,
                 lng,
                 String.valueOf(chekStatus)
-                , fileList
+                , fileList, 1
+        );
+    }
+
+
+    public static Call<ResponseEntity> saveOrderFromAppSync(
+            String orgCode,
+            String orgNode,
+            String personId,
+            String checkId,
+            String warnLogId,
+            String expressmanId,
+            String sendAddress,
+            String sendPhone,
+            String sendName,
+            String orderCode,
+            String orderInfo,
+            String weight,
+            String addresseeName,
+            String addresseeAddress,
+            String addresseePhone,
+            String pieceTime,
+            String receipTime,
+            String lat,
+            String lng,
+            int chekStatus,
+            String fileList, String customerName, String goodsName, int goodsNumber) {
+        return getPostalNetSync().saveOrderFromAppSync(
+                orgCode,
+                orgNode,
+                personId,
+                checkId,
+                warnLogId,
+                expressmanId,
+                sendAddress,
+                sendPhone,
+                sendName,
+                orderCode,
+                orderInfo,
+                weight,
+                addresseeName,
+                addresseeAddress,
+                addresseePhone,
+                pieceTime,
+                receipTime,
+                lat,
+                lng,
+                String.valueOf(chekStatus)
+                , fileList, customerName, goodsName, goodsNumber, 2
         );
     }
 

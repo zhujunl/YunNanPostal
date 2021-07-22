@@ -36,8 +36,12 @@ import com.miaxis.postal.viewModel.CardModeSelectViewModel;
 
 public class CardModeSelectDialogFragment extends BaseViewModelDialogFragment<FragmentCardModeSelectDialogBinding, CardModeSelectViewModel> {
 
-    public static CardModeSelectDialogFragment newInstance() {
-        return new CardModeSelectDialogFragment();
+    private  boolean  isAgreementCustomer=false;
+
+    public static CardModeSelectDialogFragment newInstance(boolean isAgreementCustomer) {
+        CardModeSelectDialogFragment fragment=  new CardModeSelectDialogFragment();
+        fragment.setState(isAgreementCustomer);
+        return fragment;
     }
 
     public CardModeSelectDialogFragment() {
@@ -67,14 +71,14 @@ public class CardModeSelectDialogFragment extends BaseViewModelDialogFragment<Fr
     @Override
     protected void initView() {
         binding.tvHasCard.setOnClickListener(new OnLimitClickHelper(view -> {
-            mListener.replaceFragment(CardFragment.newInstance());
+            mListener.replaceFragment(CardFragment.newInstance(isAgreementCustomer));
             dismiss();
         }));
         binding.tvNoCard.setOnClickListener(new OnLimitClickHelper(view -> {
 //            if (binding.clCardNumber.getVisibility() == View.GONE) {
 //                binding.clCardNumber.setVisibility(View.VISIBLE);
 //            }
-            mListener.replaceFragment(ManualFragment.newInstance(null));
+            mListener.replaceFragment(ManualFragment.newInstance(null,isAgreementCustomer));
             dismiss();
         }));
 //        binding.tvCardNumber.setOnClickListener(new OnLimitClickHelper(view -> {
@@ -115,5 +119,9 @@ public class CardModeSelectDialogFragment extends BaseViewModelDialogFragment<Fr
 //        }
 //        dismiss();
 //    };
+
+    public   void setState(boolean isAgreementCustomer){
+        this.isAgreementCustomer=isAgreementCustomer;
+    }
 
 }

@@ -45,11 +45,6 @@ public class ExpressRepository {
      **/
 
     public void uploadLocalExpress(Express express, TempId tempId, Integer warnLogId, String sendName, int chekStatus) throws IOException, MyException, NetResultFailedException {
-        //        List<File> fileList = new ArrayList<>();
-        //        for (String path : express.getPhotoPathList()) {
-        //            fileList.add(new File(path));
-        //        }
-
         //上传订单图片 判断是否一致
         List<String> stringList = new ArrayList<>();
         for (String path : express.getPhotoPathList()) {
@@ -66,7 +61,7 @@ public class ExpressRepository {
                 e.printStackTrace();
             }
         }
-        if (express.getPhotoPathList().size()!=0) {
+        if (express.getPhotoPathList().size() != 0) {
             //如果长度不相等证明订单图片丢失 则不上传
             if (stringList.size() != express.getPhotoPathList().size()) {
                 //删除图片操作 如果不通过图片记录需要删除
@@ -83,38 +78,15 @@ public class ExpressRepository {
         for (String s : stringList) {
             stringBuilder.append(s).append(",");
         }
-        //Log.e("saveOrderPhoto", "FileList:" + stringBuilder.toString());
         if (stringBuilder.toString().endsWith(",")) {
             stringBuilder.deleteCharAt(stringBuilder.length() - 1);
         }
-        //Log.e("saveOrderPhoto", "FileList:" + stringBuilder.toString());
         if (TextUtils.isEmpty(express.getBarCode())) {
             throw new MyException("订单号为空");
         }
         Courier courier = DataCacheManager.getInstance().getCourier();
-        Response<ResponseEntity> execute = PostalApi.saveOrderFromAppSync(
-                courier.getOrgCode(),
-                courier.getOrgNode(),
-                tempId.getPersonId(),
-                tempId.getCheckId(),
-                warnLogId != null ? String.valueOf(warnLogId) : "",
-                String.valueOf(courier.getCourierId()),
-                express.getSenderAddress(),
-                express.getSenderPhone(),
-                sendName,
-                express.getBarCode(),
-                express.getInfo(),
-                express.getWeight(),
-                express.getAddresseeName(),
-                express.getAddresseeAddress(),
-                express.getAddresseePhone(),
-                DateUtil.DATE_FORMAT.format(express.getPieceTime()),
-                "",
-                express.getLatitude(),
-                express.getLongitude(),
-                chekStatus,
-                stringBuilder.toString())
-                .execute();
+        String type = express.getCustomerType();
+        Response<ResponseEntity> execute = sendOrder(("1".equals(type)), courier, tempId, warnLogId, sendName, chekStatus, express, stringBuilder.toString());
         try {
             ResponseEntity body = execute.body();
             if (body != null) {
@@ -135,6 +107,60 @@ public class ExpressRepository {
             e.printStackTrace();
             throw new MyException(e.getMessage());
         }
+    }
+
+    //提交订单筛选
+    private Response<ResponseEntity> sendOrder(boolean type, Courier courier, TempId tempId, Integer warnLogId, String sendName, int chekStatus, Express express, String photos) throws IOException, MyException, NetResultFailedException {
+        Response<ResponseEntity> execute;
+        String warnLog= warnLogId != null ? String.valueOf(warnLogId) : "";
+        if (type) {
+            execute = PostalApi.saveOrderFromAppSync(
+                    courier.getOrgCode(),
+                    courier.getOrgNode(),
+                    tempId.getPersonId(),
+                    tempId.getCheckId(),
+                   warnLog,
+                    String.valueOf(courier.getCourierId()),
+                    express.getSenderAddress(),
+                    express.getSenderPhone(),
+                    sendName,
+                    express.getBarCode(),
+                    express.getInfo(),
+                    express.getWeight(),
+                    express.getAddresseeName(),
+                    express.getAddresseeAddress(),
+                    express.getAddresseePhone(),
+                    DateUtil.DATE_FORMAT.format(express.getPieceTime()),
+                    "",
+                    express.getLatitude(),
+                    express.getLongitude(),
+                    chekStatus,
+                    photos).execute();
+        } else {
+            execute = PostalApi.saveOrderFromAppSync(
+                    courier.getOrgCode(),
+                    courier.getOrgNode(),
+                    tempId.getPersonId(),
+                    tempId.getCheckId(),
+                    warnLog,
+                    String.valueOf(courier.getCourierId()),
+                    express.getSenderAddress(),
+                    express.getPhone(),
+                    sendName,
+                    express.getBarCode(),
+                    express.getInfo(),
+                    express.getWeight(),
+                    express.getAddresseeName(),
+                    express.getAddresseeAddress(),
+                    express.getAddresseePhone(),
+                    DateUtil.DATE_FORMAT.format(express.getPieceTime()),
+                    "",
+                    express.getLatitude(),
+                    express.getLongitude(),
+                    chekStatus,
+                    photos, express.getCustomerName(), express.getGoodsName(), Integer.valueOf(express.getGoodsNumber())).execute();
+        }
+        return execute;
     }
 
     //删除网络图片

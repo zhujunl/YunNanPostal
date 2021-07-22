@@ -35,9 +35,12 @@ public class FingerVerifyFragment extends BaseViewModelFragment<FragmentFingerVe
 
     private boolean pass = false;
 
-    public static FingerVerifyFragment newInstance(IDCardRecord idCardRecord) {
+    private boolean isAgreementCustomer = false;
+
+    public static FingerVerifyFragment newInstance(IDCardRecord idCardRecord,boolean isAgreementCustomer) {
         FingerVerifyFragment fragment = new FingerVerifyFragment();
         fragment.setIdCardRecord(idCardRecord);
+        fragment.setAgreementCustomer(isAgreementCustomer);
         return fragment;
     }
 
@@ -186,7 +189,11 @@ public class FingerVerifyFragment extends BaseViewModelFragment<FragmentFingerVe
             handler.postDelayed(() -> {
                 try {
                     idCardRecord.setChekStatus(1);
-                    mListener.replaceFragment(ExpressFragment.newInstance(idCardRecord));
+                    if (isAgreementCustomer){
+                        mListener.replaceFragment(AgreementCustomersFragment.newInstance(idCardRecord));
+                    }else {
+                        mListener.replaceFragment(ExpressFragment.newInstance(idCardRecord));
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -201,7 +208,11 @@ public class FingerVerifyFragment extends BaseViewModelFragment<FragmentFingerVe
                     handler.post(() -> {
                         try {
                             idCardRecord.setChekStatus(2);
-                            mListener.replaceFragment(ExpressFragment.newInstance(idCardRecord));
+                            if(isAgreementCustomer){
+                                mListener.replaceFragment(AgreementCustomersFragment.newInstance(idCardRecord));
+                            }else {
+                                mListener.replaceFragment(ExpressFragment.newInstance(idCardRecord));
+                            }
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -254,5 +265,9 @@ public class FingerVerifyFragment extends BaseViewModelFragment<FragmentFingerVe
 
     public void setIdCardRecord(IDCardRecord idCardRecord) {
         this.idCardRecord = idCardRecord;
+    }
+
+    public  void  setAgreementCustomer(boolean isAgreementCustomer){
+        this.isAgreementCustomer=isAgreementCustomer;
     }
 }

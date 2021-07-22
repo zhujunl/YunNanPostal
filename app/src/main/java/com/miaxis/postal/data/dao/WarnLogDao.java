@@ -31,6 +31,9 @@ public interface WarnLogDao {
     @Query("delete from WarnLog")
     void deleteAll();
 
+    @Query("delete from WarnLog where WarnLog.verifyId = :id")
+    void delete(String id);
+
     @Delete
     void delete(WarnLog warnLog);
 

@@ -107,7 +107,18 @@ public class ManualViewModel extends BaseViewModel {
     }
 
     public void loadIDCardList() {
-        idCardListLiveData = IDCardRepository.getInstance().loadAllWithLiveData();
+        LiveData<List<IDCard>> listLiveData = IDCardRepository.getInstance().loadAllWithLiveData();
+        List<IDCard> lists = new ArrayList<>();
+        MutableLiveData<List<IDCard>> liveLists = new MutableLiveData<>();
+        if (listLiveData.getValue() != null) {
+            for (IDCard idCard : listLiveData.getValue()) {
+                if (!TextUtils.isEmpty(idCard.getCardPicture())) {
+                    lists.add(idCard);
+                }
+            }
+            liveLists.setValue(lists);
+            idCardListLiveData = listLiveData;
+        }
     }
 
     public void confirm() {
@@ -120,7 +131,7 @@ public class ManualViewModel extends BaseViewModel {
                     idCardRecord.setManualType("1");
                 }
                 if (idCardRecord.getCardBitmap() != null) {
-                    String cardPath = FileUtil.FACE_STOREHOUSE_PATH + File.separator + "card_" +idCardRecord.getCardNumber() + System.currentTimeMillis() + ".jpg";
+                    String cardPath = FileUtil.FACE_STOREHOUSE_PATH + File.separator + "card_" + idCardRecord.getCardNumber() + System.currentTimeMillis() + ".jpg";
                     FileUtil.saveBitmap(idCardRecord.getCardBitmap(), cardPath);
                     idCardRecord.setCardPicture(cardPath);
                 }
@@ -150,7 +161,7 @@ public class ManualViewModel extends BaseViewModel {
         Matcher m = p.matcher(nameStr);
         nameStr = m.replaceAll("");
 
-        Log.i("TAG",nameStr);
+        Log.i("TAG", nameStr);
         String identityNumberStr = identityNumber.get();
         if (!TextUtils.isEmpty(identityNumberStr)) {
             identityNumberStr = identityNumberStr.toUpperCase();

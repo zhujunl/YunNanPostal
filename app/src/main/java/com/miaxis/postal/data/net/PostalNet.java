@@ -127,8 +127,43 @@ public interface PostalNet {
             @Field("checkStatus") String checkStatus,
             //@Part List<MultipartBody.Part> file
             //@Field("url") List<String> file
-            @Field("urls") String files
+            @Field("urls") String files,
+            @Field("customerType") int customerType
+
     );
+
+    @FormUrlEncoded
+    @POST("api/v1/order/saveOrderFromApp")
+    Call<ResponseEntity> saveOrderFromAppSync(
+            @Field("orgCode") String orgCode,
+            @Field("orgNode") String orgNode,
+            @Field("personId") String personId,
+            @Field("checkId") String checkId,
+            @Field("warnLogId") String warnLogId,
+            @Field("expressmanId") String expressmanId,
+            @Field("sendAddress") String sendAddress,
+            @Field("sendPhone") String sendPhone,
+            @Field("sendName") String sendName,
+            @Field("orderCode") String orderCode,
+            @Field("orderInfo") String orderInfo,
+            @Field("weight") String weight,
+            @Field("addresseeName") String addresseeName,
+            @Field("addresseeAddress") String addresseeAddress,
+            @Field("addresseePhone") String addresseePhone,
+            @Field("pieceTime") String pieceTime,
+            @Field("receipTime") String receipTime,
+            @Field("lat") String lat,
+            @Field("lng") String lng,
+            @Field("checkStatus") String checkStatus,
+            //@Part List<MultipartBody.Part> file
+            //@Field("url") List<String> file
+            @Field("urls") String files,
+            @Field("customerName") String customerName,
+            @Field("goodsName") String goodsName,
+            @Field("goodsNumber") int goodsNumber,
+            @Field("customerType") int  customerType
+    );
+
 
     @FormUrlEncoded
     @POST("api/v1/warn/saveWarnLog")

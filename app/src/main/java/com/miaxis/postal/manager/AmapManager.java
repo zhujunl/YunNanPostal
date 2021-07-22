@@ -1,6 +1,7 @@
 package com.miaxis.postal.manager;
 
 import android.app.Application;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.amap.api.location.AMapLocation;
@@ -8,6 +9,7 @@ import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
 import com.miaxis.postal.app.App;
+import com.miaxis.postal.data.entity.Config;
 import com.miaxis.postal.data.exception.MyException;
 import com.miaxis.postal.data.exception.NetResultFailedException;
 import com.miaxis.postal.data.repository.DeviceRepository;
@@ -131,10 +133,12 @@ public class AmapManager implements AMapLocationListener {
 
     private void heatBeat(AMapLocation aMapLocation) {
         App.getInstance().getThreadExecutor().execute(() -> {
-            String deviceIMEI = ConfigManager.getInstance().getConfig().getDeviceIMEI();
+            Config config = ConfigManager.getInstance().getConfig();
             try {
-                DeviceRepository.getInstance().deviceHeartBeat(deviceIMEI, aMapLocation.getLatitude(), aMapLocation.getLongitude());
-            } catch (IOException | MyException | NetResultFailedException e) {
+                if (config!=null&& !TextUtils.isEmpty(config.getDeviceIMEI())) {
+                    DeviceRepository.getInstance().deviceHeartBeat(config.getDeviceIMEI(), aMapLocation.getLatitude(), aMapLocation.getLongitude());
+                }
+            } catch (IOException | MyException | NetResultFailedException e ) {
                 e.printStackTrace();
             }
         });

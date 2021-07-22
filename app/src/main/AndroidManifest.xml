@@ -44,7 +44,7 @@
 
         <meta-data
             android:name="com.amap.api.v2.apikey"
-            android:value="0bb2fe9a6689e215a4074e731b948ba6" />
+            android:value="4fdf93a2fea5199ad93a40ec22f29a6b" />
 
         <service
             android:name="com.amap.api.location.APSService"/>

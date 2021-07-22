@@ -9,6 +9,7 @@ import android.widget.MultiAutoCompleteTextView;
 import com.amap.api.location.AMapLocation;
 import com.miaxis.postal.app.App;
 import com.miaxis.postal.bridge.SingleLiveEvent;
+import com.miaxis.postal.data.dao.AppDatabase;
 import com.miaxis.postal.data.entity.Courier;
 import com.miaxis.postal.data.entity.Express;
 import com.miaxis.postal.data.entity.IDCardRecord;
@@ -331,10 +332,7 @@ public class ExpressViewModel extends BaseViewModel {
 
     public void getLocation() {
         AmapManager.getInstance().getOneLocation(addressStr -> {
-            addressCount--;
-            if (TextUtils.isEmpty(addressStr) || (addressCount < 3 && addressCount > 0)) {
-                getLocation();
-            } else {
+            if (!TextUtils.isEmpty(addressStr)) {
                 address.set(addressStr);
             }
         });
@@ -402,8 +400,11 @@ public class ExpressViewModel extends BaseViewModel {
                     ExpressRepository.getInstance().deleteWebPicture(path);
                 }
             }
+            if (idCardRecord!=null){
+                AppDatabase.getInstance().warnLogDao().delete(idCardRecord.getVerifyId());
+                IDCardRecordRepository.getInstance().deleteIDCardRecord(idCardRecord);
+            }
 
-            IDCardRecordRepository.getInstance().deleteIDCardRecord(idCardRecord);
 
             emitter.onNext(Boolean.TRUE);
         })

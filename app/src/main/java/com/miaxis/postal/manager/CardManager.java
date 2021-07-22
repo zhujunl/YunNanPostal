@@ -50,34 +50,34 @@ public class CardManager {
     private IDCardInterfaceService cardManager;
 
     private Context context;
-    private Handler handler;
-    private IDCardListener listener;
+    private static IDCardListener listener;
 
-    private volatile AtomicBoolean running = new AtomicBoolean(false);
-    IIdCardPower mPowerManager = null;
-
-
-    public void init(@NonNull Context context, @NonNull IDCardListener listener) {
-        this.context = context;
-        this.listener = listener;
-        Log.e("asd", "MANUFACTURER：" + Build.MANUFACTURER);
-        if (Objects.equals(Build.MANUFACTURER, "QUALCOMM")) {
-            mPowerManager = new BP990_IdCardPower();
-        } else {
-            mPowerManager = new BP990s_IdCardPower();
-        }
-
-        handler = new Handler(Looper.getMainLooper()) {
-            @Override
-            public void handleMessage(@NonNull Message msg) {
-                super.handleMessage(msg);
+    static  Handler handler = new Handler(Looper.getMainLooper()) {
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            super.handleMessage(msg);
+            if (listener!=null) {
                 if (msg.what == 0) {
                     listener.onIDCardReceive((IDCardRecord) msg.obj, "读卡成功");
                 } else if (msg.what == 1) {
                     listener.onIDCardReceive(null, (String) msg.obj);
                 }
             }
-        };
+        }
+    };
+    private volatile AtomicBoolean running = new AtomicBoolean(false);
+    IIdCardPower mPowerManager = null;
+
+
+    public void init(@NonNull Context context,  IDCardListener listener) {
+        this.context = context;
+        CardManager.listener = listener;
+        Log.e("asd", "MANUFACTURER：" + Build.MANUFACTURER);
+        if (Objects.equals(Build.MANUFACTURER, "QUALCOMM")) {
+            mPowerManager = new BP990_IdCardPower();
+        } else {
+            mPowerManager = new BP990s_IdCardPower();
+        }
         initDevice();
     }
 
@@ -87,11 +87,7 @@ public class CardManager {
             try {
                 mPowerManager.powerOn();
                 cardManager = new IDCardDeviceImpl();
-                if (isDeviceOpen()) {
-                    listener.onIDCardInitResult(true);
-                } else {
-                    listener.onIDCardInitResult(false);
-                }
+                listener.onIDCardInitResult(isDeviceOpen());
                 startReadCard();
             } catch (Exception e) {
                 e.printStackTrace();
@@ -151,7 +147,7 @@ public class CardManager {
                                     transform = transformGAT(cardManager);
                                 }
                                 transformFingerprint(cardManager, transform);
-                                if (listener != null) {
+                                if (listener != null&&handler!=null) {
                                     stopReadCard();
                                     handler.sendMessage(handler.obtainMessage(0, transform));
                                     break;

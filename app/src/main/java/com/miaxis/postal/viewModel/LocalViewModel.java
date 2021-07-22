@@ -7,13 +7,16 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.miaxis.postal.app.App;
 import com.miaxis.postal.bridge.SingleLiveEvent;
+import com.miaxis.postal.data.dao.AppDatabase;
 import com.miaxis.postal.data.entity.Express;
 import com.miaxis.postal.data.entity.IDCardRecord;
 import com.miaxis.postal.data.entity.Local;
+import com.miaxis.postal.data.entity.WarnLog;
 import com.miaxis.postal.data.exception.MyException;
 import com.miaxis.postal.data.exception.NetResultFailedException;
 import com.miaxis.postal.data.repository.ExpressRepository;
 import com.miaxis.postal.data.repository.IDCardRecordRepository;
+import com.miaxis.postal.data.repository.WarnLogRepository;
 import com.miaxis.postal.manager.PostalManager;
 import com.miaxis.postal.manager.ToastManager;
 
@@ -126,6 +129,9 @@ public class LocalViewModel extends BaseViewModel {
                     }
                 }
                 IDCardRecordRepository.getInstance().deleteIDCardRecord(idCardRecord);
+            }
+            if (idCardRecord!=null){
+                AppDatabase.getInstance().warnLogDao().delete(idCardRecord.getVerifyId());
             }
             List<Local> value = localList.getValue();
             List<Local> locals = new ArrayList<>();

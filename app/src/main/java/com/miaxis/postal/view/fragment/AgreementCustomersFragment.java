@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.InputFilter;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -15,6 +16,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.bumptech.glide.Glide;
 import com.miaxis.postal.R;
 import com.miaxis.postal.data.entity.Express;
 import com.miaxis.postal.data.entity.IDCardRecord;
@@ -22,6 +24,7 @@ import com.miaxis.postal.data.event.ExpressEditEvent;
 import com.miaxis.postal.databinding.FragmentAgreementCustomersBinding;
 import com.miaxis.postal.manager.ScanManager;
 import com.miaxis.postal.manager.ToastManager;
+import com.miaxis.postal.util.EmojiExcludeFilter;
 import com.miaxis.postal.view.adapter.ExpressAdapter;
 import com.miaxis.postal.view.auxiliary.OnLimitClickHelper;
 import com.miaxis.postal.view.base.BaseViewModelFragment;
@@ -122,12 +125,28 @@ public class AgreementCustomersFragment extends BaseViewModelFragment<FragmentAg
         });
         handler = new Handler(Looper.getMainLooper());
         EventBus.getDefault().register(this);
+
+        binding.btnInspection.setOnClickListener(v -> {
+            if (!setChecked()) {
+                return;
+            }
+            mListener.replaceFragment(InspectFragment.newInstance(viewModel.newExpress.getValue(),
+                    viewModel.clientName.get(),
+                    viewModel.clientPhone.get()));
+        });
+        viewModel.showPicture.observe(this, s -> Glide.with(AgreementCustomersFragment.this).load(s).into(binding.imgInspectionImage));
+        binding.editClientSName.setFilters(new InputFilter[]{new EmojiExcludeFilter()});
+        binding.editItemName.setFilters(new InputFilter[]{new EmojiExcludeFilter()});
+        binding.etAddress.setFilters(new InputFilter[]{new EmojiExcludeFilter()});
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void onExpressEditEvent(ExpressEditEvent event) {
         if (event.getMode() == ExpressEditEvent.MODE_MODIFY) {
             viewModel.modifyExpress(event.getExpress());
+            if (event.getExpress() != null && event.getExpress().getPhotoList() != null && !event.getExpress().getPhotoList().isEmpty()) {
+                viewModel.showPicture.postValue(event.getExpress().getPhotoList().get(0));
+            }
         } else if (event.getMode() == ExpressEditEvent.MODE_DELETE) {
             viewModel.deleteExpress(event.getExpress());
         } else if (event.getMode() == ExpressEditEvent.MODE_ALARM) {
@@ -184,7 +203,6 @@ public class AgreementCustomersFragment extends BaseViewModelFragment<FragmentAg
     private void initRecycleView() {
         expressAdapter = new ExpressAdapter(getContext());
         expressAdapter.setHeaderListener(headerListener);
-        expressAdapter.setBodyListener(bodyListener);
     }
 
     private void initReceiver() {
@@ -228,9 +246,6 @@ public class AgreementCustomersFragment extends BaseViewModelFragment<FragmentAg
         viewModel.startScan();
     };
 
-    private ExpressAdapter.OnBodyClickListener bodyListener = (view, position) -> {
-        mListener.replaceFragment(InspectFragment.newInstance(expressAdapter.getData(position - 1)));
-    };
 
     private Observer<List<Express>> expressListObserver = expressList -> {
         expressAdapter.setDataList(expressList);
@@ -249,7 +264,7 @@ public class AgreementCustomersFragment extends BaseViewModelFragment<FragmentAg
     };
 
     private Observer<Express> newExpressObserver = express -> {
-        mListener.replaceFragment(InspectFragment.newInstance(express));
+
     };
 
     private Observer<String> repeatExpressObserver = code -> {
@@ -257,25 +272,19 @@ public class AgreementCustomersFragment extends BaseViewModelFragment<FragmentAg
             ToastManager.toast("该条码编号已重复", ToastManager.INFO);
         } else {
             Express expressByCode = viewModel.getExpressByCode(code);
-            if (expressByCode != null) {
-                mListener.replaceFragment(InspectFragment.newInstance(expressByCode));
-            } else {
+            if (expressByCode == null) {
                 ToastManager.toast("该条码编号已重复", ToastManager.INFO);
             }
         }
     };
+
 
     private Observer<Boolean> saveFlagObserver = flag -> mListener.backToStack(HomeFragment.class);
 
     private Observer<Boolean> deleteFlagObserver = flag -> mListener.backToStack(null);
 
     private View.OnClickListener submitClickListener = new OnLimitClickHelper(view -> {
-        if (!viewModel.checkInput()) {
-            ToastManager.toast("请输入寄件人手机号码和寄件地址", ToastManager.INFO);
-            return;
-        }
-        if (viewModel.getExpressList().isEmpty()) {
-            ToastManager.toast("请至少完成一个订单", ToastManager.INFO);
+        if (!setChecked()) {
             return;
         }
         if (!viewModel.isAllComplete()) {
@@ -323,5 +332,29 @@ public class AgreementCustomersFragment extends BaseViewModelFragment<FragmentAg
 
     public void setExpressList(List<Express> expressList) {
         this.expressList = expressList;
+    }
+
+    private boolean setChecked() {
+        if (viewModel.rqCode == null || TextUtils.isEmpty(viewModel.rqCode.get())||TextUtils.isEmpty(viewModel.rqCode.get().trim())) {
+            ToastManager.toast("请扫描订单号！", ToastManager.INFO);
+            return false;
+        }
+        if (viewModel.clientName == null || TextUtils.isEmpty(viewModel.clientName.get())||TextUtils.isEmpty(viewModel.clientName.get().trim())) {
+            ToastManager.toast("请输入客户名称", ToastManager.INFO);
+            return false;
+        }
+        if (viewModel.clientPhone == null || TextUtils.isEmpty(viewModel.clientPhone.get())||TextUtils.isEmpty(viewModel.clientPhone.get().trim())) {
+            ToastManager.toast("请输入客户手机号", ToastManager.INFO);
+            return false;
+        }
+        if (viewModel.itemName == null || TextUtils.isEmpty(viewModel.itemName.get())||TextUtils.isEmpty(viewModel.itemName.get().trim())) {
+            ToastManager.toast("请输入货物名称", ToastManager.INFO);
+            return false;
+        }
+        if (viewModel.theQuantityOfGoods == null || TextUtils.isEmpty(viewModel.theQuantityOfGoods.get())||TextUtils.isEmpty(viewModel.theQuantityOfGoods.get().trim())) {
+            ToastManager.toast("请输入货物数量", ToastManager.INFO);
+            return false;
+        }
+        return true;
     }
 }

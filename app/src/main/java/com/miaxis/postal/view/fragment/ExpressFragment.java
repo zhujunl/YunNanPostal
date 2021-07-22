@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.InputFilter;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -24,6 +25,7 @@ import com.miaxis.postal.data.event.ExpressEditEvent;
 import com.miaxis.postal.databinding.FragmentExpressBinding;
 import com.miaxis.postal.manager.ScanManager;
 import com.miaxis.postal.manager.ToastManager;
+import com.miaxis.postal.util.EmojiExcludeFilter;
 import com.miaxis.postal.view.adapter.ExpressAdapter;
 import com.miaxis.postal.view.adapter.SpacesItemDecoration;
 import com.miaxis.postal.view.auxiliary.OnLimitClickHelper;
@@ -123,6 +125,7 @@ public class ExpressFragment extends BaseViewModelFragment<FragmentExpressBindin
         viewModel.deleteFlag.observe(this, deleteFlagObserver);
         handler = new Handler(Looper.getMainLooper());
         EventBus.getDefault().register(this);
+        binding.etAddress.setFilters(new InputFilter[]{new EmojiExcludeFilter()});
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
@@ -276,10 +279,10 @@ public class ExpressFragment extends BaseViewModelFragment<FragmentExpressBindin
     private Observer<Boolean> deleteFlagObserver = flag -> mListener.backToStack(null);
 
     private View.OnClickListener submitClickListener = new OnLimitClickHelper(view -> {
-        if (!viewModel.checkInput()) {
-            ToastManager.toast("请输入寄件人手机号码和寄件地址", ToastManager.INFO);
-            return;
-        }
+//        if (!viewModel.checkInput()) {
+//            ToastManager.toast("请输入寄件人手机号码和寄件地址", ToastManager.INFO);
+//            return;
+//        }
         if (viewModel.getExpressList().isEmpty()) {
             ToastManager.toast("请至少完成一个订单", ToastManager.INFO);
             return;

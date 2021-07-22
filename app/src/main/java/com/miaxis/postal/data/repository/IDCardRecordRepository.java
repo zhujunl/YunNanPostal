@@ -46,6 +46,7 @@ public class IDCardRecordRepository {
 //        File cardFile = !TextUtils.isEmpty(idCardRecord.getCardPicture()) ? new File(idCardRecord.getCardPicture()) : null;
 //        File faceFile = !TextUtils.isEmpty(idCardRecord.getFacePicture()) ? new File(idCardRecord.getFacePicture()) : null;
         //拆分成两个接口
+
         String webCardPath=null;
         String webFacePath=null;
         if (TextUtils.isEmpty(idCardRecord.getWebCardPath())||TextUtils.isEmpty(idCardRecord.getWebFacePath())){

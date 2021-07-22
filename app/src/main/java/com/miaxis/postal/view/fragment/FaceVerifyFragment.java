@@ -108,7 +108,7 @@ public class FaceVerifyFragment extends BaseViewModelFragment<FragmentFaceVerify
         initDialog();
         binding.ivBack.setOnClickListener(v -> onBackPressed());
         binding.tvSwitch.setOnClickListener(new OnLimitClickHelper(view -> {
-            mListener.replaceFragment(FingerVerifyFragment.newInstance(idCardRecord));
+            mListener.replaceFragment(FingerVerifyFragment.newInstance(idCardRecord,isAgreementCustomer));
         }));
         binding.tvManual.setOnClickListener(new OnLimitClickHelper(view -> {
             if (!manualDialog.isShowing()) {

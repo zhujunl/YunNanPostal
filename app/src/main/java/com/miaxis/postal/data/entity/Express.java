@@ -2,12 +2,12 @@ package com.miaxis.postal.data.entity;
 
 import android.graphics.Bitmap;
 
-import java.util.Date;
-import java.util.List;
-
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
+
+import java.util.Date;
+import java.util.List;
 
 @Entity
 public class Express {
@@ -32,6 +32,11 @@ public class Express {
     private boolean draft;
     private boolean complete;
     private String phone;
+
+    private String customerName;
+    private String goodsName;
+    private String goodsNumber;
+    private String customerType = "1";
 
     @Ignore
     private List<Bitmap> photoList;
@@ -60,6 +65,10 @@ public class Express {
         setPhotoList(builder.photoList);
         setComplete(builder.complete);
         setPhone(builder.phone);
+        setCustomerName(builder.customerName);
+        setGoodsName(builder.goodsName);
+        setGoodsNumber(builder.goodsNumber);
+        setCustomerType(builder.customerType);
     }
 
     public String getPhone() {
@@ -222,6 +231,38 @@ public class Express {
         this.complete = complete;
     }
 
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
+    }
+
+    public String getGoodsName() {
+        return goodsName;
+    }
+
+    public void setGoodsName(String goodsName) {
+        this.goodsName = goodsName;
+    }
+
+    public String getGoodsNumber() {
+        return goodsNumber;
+    }
+
+    public void setGoodsNumber(String goodsNumber) {
+        this.goodsNumber = goodsNumber;
+    }
+
+    public String getCustomerType() {
+        return customerType;
+    }
+
+    public void setCustomerType(String customerType) {
+        this.customerType = customerType;
+    }
+
     @Override
     public String toString() {
         return "Express{" +
@@ -269,6 +310,10 @@ public class Express {
         private List<Bitmap> photoList;
         private boolean complete;
         private String phone;
+        private String customerName;
+        private String goodsName;
+        private String goodsNumber;
+        private String customerType = "1";
 
         public Builder() {
         }
@@ -277,6 +322,7 @@ public class Express {
             phone = val;
             return this;
         }
+
         public Builder uploadError(String val) {
             uploadError = val;
             return this;
@@ -369,6 +415,26 @@ public class Express {
 
         public Builder complete(boolean val) {
             complete = val;
+            return this;
+        }
+
+        public Builder setCustomerName(String customerName) {
+            this.customerName = customerName;
+            return this;
+        }
+
+        public Builder setGoodsName(String goodsName) {
+            this.goodsName = goodsName;
+            return this;
+        }
+
+        public Builder setGoodsNumber(String goodsNumber) {
+            this.goodsNumber = goodsNumber;
+            return this;
+        }
+
+        public Builder setCustomerType(String customerType) {
+            this.customerType = customerType;
             return this;
         }
 

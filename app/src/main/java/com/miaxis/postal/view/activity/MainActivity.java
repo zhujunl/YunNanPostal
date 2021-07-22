@@ -43,6 +43,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
         initDialog();
         updatePresenter = new UpdatePresenter(this);
         replaceFragment(PreludeFragment.newInstance());
+
     }
 
     @Override

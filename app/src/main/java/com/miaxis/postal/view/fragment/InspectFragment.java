@@ -32,15 +32,28 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.ArrayList;
 import java.util.List;
+
 //开箱验视
 public class InspectFragment extends BaseViewModelFragment<FragmentInspectBinding, InspectViewModel> {
 
     private Express express;
     private InspectAdapter inspectAdapter;
 
+    private String name;
+    private String phone;
+
+
     public static InspectFragment newInstance(Express express) {
         InspectFragment inspectFragment = new InspectFragment();
+        inspectFragment.setExpress(express);
+        return inspectFragment;
+    }
+
+    public static InspectFragment newInstance(Express express, String name, String phone) {
+        InspectFragment inspectFragment = new InspectFragment();
+        inspectFragment.setExpressOthers(name, phone);
         inspectFragment.setExpress(express);
         return inspectFragment;
     }
@@ -73,9 +86,17 @@ public class InspectFragment extends BaseViewModelFragment<FragmentInspectBindin
     protected void initView() {
         initRecycleView();
         viewModel.photographList.observe(this, photographObserver);
-        if (viewModel.express.get() == null) {
+        if (viewModel.express.get() == null && express != null) {
             viewModel.express.set(express);
             viewModel.initExpress(express);
+        }
+        if (!TextUtils.isEmpty(phone) && !TextUtils.isEmpty(name)) {
+            binding.tvClientSNameLabel.setVisibility(View.VISIBLE);
+            binding.editClientSName.setVisibility(View.VISIBLE);
+            binding.tvClientSPhoneLabel.setVisibility(View.VISIBLE);
+            binding.editClientSPhone.setVisibility(View.VISIBLE);
+            binding.editClientSName.setText(name);
+            binding.editClientSPhone.setText(phone);
         }
         viewModel.showBarcodeImage(express.getBarCode());
         binding.ivBack.setOnClickListener(v -> onBackPressed());
@@ -219,6 +240,11 @@ public class InspectFragment extends BaseViewModelFragment<FragmentInspectBindin
 
     public void setExpress(Express express) {
         this.express = express;
+    }
+
+    public void setExpressOthers(String name, String phone) {
+        this.name = name;
+        this.phone = phone;
     }
 
     private View.OnLongClickListener alarmListener = v -> {
