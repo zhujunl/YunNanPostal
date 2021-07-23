@@ -34,6 +34,7 @@ public class Express {
     private String phone;
 
     private String customerName;
+    private String customerPhone;
     private String goodsName;
     private String goodsNumber;
     private String customerType = "1";
@@ -69,6 +70,7 @@ public class Express {
         setGoodsName(builder.goodsName);
         setGoodsNumber(builder.goodsNumber);
         setCustomerType(builder.customerType);
+        setCustomerPhone(builder.customerPhone);
     }
 
     public String getPhone() {
@@ -251,6 +253,14 @@ public class Express {
         return goodsNumber;
     }
 
+    public String getCustomerPhone() {
+        return customerPhone;
+    }
+
+    public void setCustomerPhone(String customerPhone) {
+        this.customerPhone = customerPhone;
+    }
+
     public void setGoodsNumber(String goodsNumber) {
         this.goodsNumber = goodsNumber;
     }
@@ -314,6 +324,7 @@ public class Express {
         private String goodsName;
         private String goodsNumber;
         private String customerType = "1";
+        private String customerPhone;
 
         public Builder() {
         }
@@ -435,6 +446,11 @@ public class Express {
 
         public Builder setCustomerType(String customerType) {
             this.customerType = customerType;
+            return this;
+        }
+
+        public Builder setCustomerPhone(String customerPhone) {
+            this.customerPhone = customerPhone;
             return this;
         }
 

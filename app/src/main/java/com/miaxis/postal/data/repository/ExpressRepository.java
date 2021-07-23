@@ -145,7 +145,7 @@ public class ExpressRepository {
                     warnLog,
                     String.valueOf(courier.getCourierId()),
                     express.getSenderAddress(),
-                    express.getPhone(),
+                    express.getCustomerPhone(),
                     sendName,
                     express.getBarCode(),
                     express.getInfo(),

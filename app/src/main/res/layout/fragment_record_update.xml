@@ -346,7 +346,7 @@
                         android:hint="请输入物品名称及描述"
                         android:textColor="@color/darkgray"
                         android:textSize="14sp"
-                        android:text="@={viewModel.orderData.orderInfo}"
+                        android:text="@={viewModel.orderData.goodsName}"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintHorizontal_bias="0"

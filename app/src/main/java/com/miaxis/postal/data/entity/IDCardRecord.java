@@ -116,6 +116,10 @@ public class IDCardRecord {
 
     private  String webFacePath;
 
+    private int type=1;
+
+
+
     /**
      * 身份证照片Bitmap
      **/
@@ -188,6 +192,15 @@ public class IDCardRecord {
         setFingerprintPosition1(builder.fingerprintPosition1);
         setWebCardPath(builder.webCardPath);
         setWebFacePath(builder.webFacePath);
+        setType(builder.type);
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
     }
 
     public Long getId() {
@@ -524,6 +537,7 @@ public class IDCardRecord {
         private int chekStatus; // 核验状态 0：未核验 1：核验通过  2：核验未通过
         private String webCardPath;
         private String webFacePath;
+        private  int type;
 
         public Builder() {
         }
@@ -710,6 +724,11 @@ public class IDCardRecord {
 
         public Builder fingerprintPosition1(String val) {
             fingerprintPosition1 = val;
+            return this;
+        }
+
+        public Builder setType(int type) {
+            this.type = type;
             return this;
         }
 

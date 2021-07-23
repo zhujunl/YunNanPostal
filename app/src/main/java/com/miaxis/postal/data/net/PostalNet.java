@@ -199,7 +199,7 @@ public interface PostalNet {
             @Part("sendPhone") String sendPhone,
             @Part("sendName") String sendName,
             @Part("orderCode") String orderCode,
-            @Part("orderInfo") String orderInfo,
+            @Part("goodsName") String goodsName,
             @Part("weight") String weight,
             @Part("addresseeName") String addresseeName,
             @Part("addresseeAddress") String addresseeAddress,

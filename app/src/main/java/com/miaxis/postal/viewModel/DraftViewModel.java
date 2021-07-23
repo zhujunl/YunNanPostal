@@ -2,10 +2,12 @@ package com.miaxis.postal.viewModel;
 
 import android.graphics.Bitmap;
 
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.lifecycle.MutableLiveData;
 
 import com.miaxis.postal.app.App;
 import com.miaxis.postal.bridge.SingleLiveEvent;
+import com.miaxis.postal.data.dao.AppDatabase;
 import com.miaxis.postal.data.entity.Draft;
 import com.miaxis.postal.data.entity.DraftMessage;
 import com.miaxis.postal.data.entity.Express;
@@ -106,6 +108,7 @@ public class DraftViewModel extends BaseViewModel {
                 if (cardBitmap != null) {
                     idCardRecord.setFaceBitmap(faceBitmap);
                 }
+
                 List<Express> expressList = ExpressRepository.getInstance().loadExpressByVerifyId(idCardRecord.getVerifyId());
                 for (Express express : expressList) {
                     List<Bitmap> photoList = new ArrayList<>();

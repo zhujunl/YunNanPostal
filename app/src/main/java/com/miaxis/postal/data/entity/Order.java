@@ -24,6 +24,7 @@ public class Order {
     private List<String> imageList;
     private String receiptTime;
     private String createTime;
+    private String goodsName;
 
     public Order() {
     }
@@ -49,6 +50,7 @@ public class Order {
         setImageList(builder.imageList);
         setReceiptTime(builder.receiptTime);
         setCreateTime(builder.createTime);
+        setGoodsName(builder.goodsName);
     }
 
     public int getId() {
@@ -211,6 +213,14 @@ public class Order {
         this.createTime = createTime;
     }
 
+    public String getGoodsName() {
+        return goodsName;
+    }
+
+    public void setGoodsName(String goodsName) {
+        this.goodsName = goodsName;
+    }
+
     public static final class Builder {
         private int id;
         private int personId;
@@ -232,6 +242,7 @@ public class Order {
         private List<String> imageList;
         private String receiptTime;
         private String createTime;
+        private String goodsName;
 
         public Builder() {
         }
@@ -333,6 +344,11 @@ public class Order {
 
         public Builder createTime(String val) {
             createTime = val;
+            return this;
+        }
+
+        public Builder setGoodsName(String goodsName) {
+            this.goodsName = goodsName;
             return this;
         }
 

@@ -27,6 +27,8 @@ public class OrderDto implements Mapper<Order> {
     private List<String> images;
     private String receipTime;
     private String createTime;
+    private String goodsName;
+
 
     public OrderDto() {
     }
@@ -191,6 +193,14 @@ public class OrderDto implements Mapper<Order> {
         this.weight = weight;
     }
 
+    public String getGoodsName() {
+        return goodsName;
+    }
+
+    public void setGoodsName(String goodsName) {
+        this.goodsName = goodsName;
+    }
+
     @Override
     public Order transform() throws MyException {
         try {
@@ -215,6 +225,7 @@ public class OrderDto implements Mapper<Order> {
                     .imageList(images)
                     .receiptTime(receipTime)
                     .createTime(createTime)
+                    .setGoodsName(goodsName)
                     .build();
         } catch (Exception e) {
             e.printStackTrace();

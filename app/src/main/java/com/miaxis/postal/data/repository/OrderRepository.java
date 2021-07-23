@@ -106,7 +106,7 @@ public class OrderRepository extends BaseRepository {
                 order.getSenderPhone(),
                 order.getSenderName(),
                 order.getOrderCode(),
-                order.getOrderInfo(),
+                order.getGoodsName(),
                 order.getWeight(),
                 order.getAddresseeName(),
                 order.getAddresseeAddress(),
