@@ -1,23 +1,24 @@
 package com.miaxis.postal.view.activity;
 
-import android.os.Environment;
-import android.text.TextUtils;
-import android.util.Log;
+import androidx.fragment.app.Fragment;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
+import androidx.work.WorkRequest;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.miaxis.postal.R;
 import com.miaxis.postal.databinding.ActivityMainBinding;
 import com.miaxis.postal.manager.CardManager;
 import com.miaxis.postal.manager.PostalManager;
+import com.miaxis.postal.util.ClearRecordFileWorker;
 import com.miaxis.postal.view.base.BaseActivity;
 import com.miaxis.postal.view.base.BaseViewModelFragment;
 import com.miaxis.postal.view.base.OnFragmentInteractionListener;
 import com.miaxis.postal.view.fragment.PreludeFragment;
 import com.miaxis.postal.view.presenter.UpdatePresenter;
 
-import androidx.fragment.app.Fragment;
-
-import java.io.File;
+import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends BaseActivity<ActivityMainBinding> implements OnFragmentInteractionListener {
 
@@ -43,7 +44,16 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
         initDialog();
         updatePresenter = new UpdatePresenter(this);
         replaceFragment(PreludeFragment.newInstance());
-
+        performTask();
+    }
+    //开始任务 重复执行
+    private  void performTask(){
+        //重复性任务 12小时执行一次
+        PeriodicWorkRequest request = new PeriodicWorkRequest.Builder(ClearRecordFileWorker.class,
+                24, TimeUnit.DAYS).build();
+        //一次性任务
+//        WorkRequest request = new OneTimeWorkRequest.Builder(ClearRecordFileWorker.class).build();
+        WorkManager.getInstance(this).enqueue(request);
     }
 
     @Override
