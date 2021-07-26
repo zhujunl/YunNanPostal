@@ -48,9 +48,9 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
     }
     //开始任务 重复执行
     private  void performTask(){
-        //重复性任务 12小时执行一次
+        //重复性任务 24小时执行一次
         PeriodicWorkRequest request = new PeriodicWorkRequest.Builder(ClearRecordFileWorker.class,
-                24, TimeUnit.DAYS).build();
+                24, TimeUnit.HOURS).build();
         //一次性任务
 //        WorkRequest request = new OneTimeWorkRequest.Builder(ClearRecordFileWorker.class).build();
         WorkManager.getInstance(this).enqueue(request);

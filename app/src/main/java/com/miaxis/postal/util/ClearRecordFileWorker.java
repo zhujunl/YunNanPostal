@@ -1,6 +1,8 @@
 package com.miaxis.postal.util;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
 
@@ -29,9 +31,6 @@ public class ClearRecordFileWorker extends Worker {
     public Result doWork() {
 //       Result.success() Result.failure()  Result.retry()
         //判断sd卡
-        if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-            return Result.failure();
-        }
         Log.e("执行任务", "ing");
         //  /sdcard/CallRecord
         String basePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/CallRecord";
@@ -52,27 +51,26 @@ public class ClearRecordFileWorker extends Worker {
             if (!file.exists()) {
                 continue;
             }
-            long time = file.lastModified();
-            compareTimeToDeleteFiles(time, file, currentDate);
+            long oldTIme = file.lastModified();
+            compareTimeToDeleteFiles(oldTIme, f, currentDate);
         }
-        //更新扫描指定目录
-//        Intent scanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-//        scanIntent.setData(Uri.fromFile(file));
-//        getApplicationContext().sendBroadcast(scanIntent);
         return Result.success();
     }
 
 
-    private void compareTimeToDeleteFiles(long lodTime, File file, Date currentDate) {
+    private void compareTimeToDeleteFiles(long oldTime, File file, Date currentDate) {
         try {
-            Log.e("执行任务-时间", "当前时间" + currentDate.getTime() + "===创建时间");
             Calendar calc = Calendar.getInstance();
-            calc.setTime(new Date(lodTime));
+            calc.setTime(new Date(oldTime));
             calc.add(Calendar.DATE, +30);
             Date minDate = calc.getTime();
             //比较时间
             if (currentDate.after(minDate)) {
                 boolean delete = file.delete();
+                //更新扫描指定目录
+                Intent scanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+                scanIntent.setData(Uri.fromFile(file));
+                getApplicationContext().sendBroadcast(scanIntent);
             }
         } catch (Exception e) {
             e.printStackTrace();
