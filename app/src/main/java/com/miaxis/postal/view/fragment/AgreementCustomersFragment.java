@@ -11,13 +11,10 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 
-import androidx.annotation.NonNull;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.bumptech.glide.Glide;
 import com.miaxis.postal.R;
+import com.miaxis.postal.app.App;
 import com.miaxis.postal.data.entity.Express;
 import com.miaxis.postal.data.entity.IDCardRecord;
 import com.miaxis.postal.data.event.ExpressEditEvent;
@@ -37,6 +34,10 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 public class AgreementCustomersFragment extends BaseViewModelFragment<FragmentAgreementCustomersBinding, AgreementCustomersModel> {
 
@@ -243,7 +244,7 @@ public class AgreementCustomersFragment extends BaseViewModelFragment<FragmentAg
 
     private ExpressAdapter.OnHeaderClickListener headerListener = () -> {
         //如果不为空并且没有正在扫描
-        viewModel.startScan();
+        //viewModel.startScan();
     };
 
 
@@ -335,23 +336,24 @@ public class AgreementCustomersFragment extends BaseViewModelFragment<FragmentAg
     }
 
     private boolean setChecked() {
-        if (viewModel.rqCode == null || TextUtils.isEmpty(viewModel.rqCode.get())||TextUtils.isEmpty(viewModel.rqCode.get().trim())) {
-            ToastManager.toast("请扫描订单号！", ToastManager.INFO);
-            return false;
+        if (TextUtils.isEmpty(viewModel.rqCode.get())) {
+            String randomBarCode = App.getInstance().getRandomBarCode();
+            //viewModel.rqCode.set(randomBarCode);
+            viewModel.makeNewExpress(randomBarCode);
         }
-        if (viewModel.clientName == null || TextUtils.isEmpty(viewModel.clientName.get())||TextUtils.isEmpty(viewModel.clientName.get().trim())) {
+        if (viewModel.clientName == null || TextUtils.isEmpty(viewModel.clientName.get()) || TextUtils.isEmpty(viewModel.clientName.get().trim())) {
             ToastManager.toast("请输入客户名称", ToastManager.INFO);
             return false;
         }
-        if (viewModel.clientPhone == null || TextUtils.isEmpty(viewModel.clientPhone.get())||TextUtils.isEmpty(viewModel.clientPhone.get().trim())) {
+        if (viewModel.clientPhone == null || TextUtils.isEmpty(viewModel.clientPhone.get()) || TextUtils.isEmpty(viewModel.clientPhone.get().trim())) {
             ToastManager.toast("请输入客户手机号", ToastManager.INFO);
             return false;
         }
-        if (viewModel.itemName == null || TextUtils.isEmpty(viewModel.itemName.get())||TextUtils.isEmpty(viewModel.itemName.get().trim())) {
+        if (viewModel.itemName == null || TextUtils.isEmpty(viewModel.itemName.get()) || TextUtils.isEmpty(viewModel.itemName.get().trim())) {
             ToastManager.toast("请输入货物名称", ToastManager.INFO);
             return false;
         }
-        if (viewModel.theQuantityOfGoods == null || TextUtils.isEmpty(viewModel.theQuantityOfGoods.get())||TextUtils.isEmpty(viewModel.theQuantityOfGoods.get().trim())) {
+        if (viewModel.theQuantityOfGoods == null || TextUtils.isEmpty(viewModel.theQuantityOfGoods.get()) || TextUtils.isEmpty(viewModel.theQuantityOfGoods.get().trim())) {
             ToastManager.toast("请输入货物数量", ToastManager.INFO);
             return false;
         }

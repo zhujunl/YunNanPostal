@@ -1,23 +1,13 @@
 package com.miaxis.postal.view.fragment;
 
 import android.content.res.Configuration;
-import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.SimpleItemAnimator;
-
 import android.text.TextUtils;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.miaxis.postal.BR;
 import com.miaxis.postal.R;
+import com.miaxis.postal.app.App;
 import com.miaxis.postal.bridge.GlideApp;
 import com.miaxis.postal.data.entity.Express;
 import com.miaxis.postal.data.entity.IDCardRecord;
@@ -37,6 +27,11 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.List;
+
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.SimpleItemAnimator;
 
 public class RecordLocalUpdateFragment extends BaseViewModelFragment<FragmentRecordLocalUpdateBinding, RecordLocalUpdateViewModel> {
 
@@ -85,6 +80,9 @@ public class RecordLocalUpdateFragment extends BaseViewModelFragment<FragmentRec
         binding.btnUpdate.setOnClickListener(new OnLimitClickHelper(confirmClickListener));
         binding.etWeight.setRawInputType(Configuration.KEYBOARD_QWERTY);
         viewModel.showBarcodeImage(express.getBarCode());
+        if (!TextUtils.isEmpty(express.getBarCode()) && !express.getBarCode().startsWith(App.getInstance().BarHeader)) {
+            binding.tvBarcode.setText(express.getBarCode());
+        }
         viewModel.initData(idCardRecord, express);
         EventBus.getDefault().register(this);
     }

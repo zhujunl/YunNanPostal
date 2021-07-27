@@ -1,30 +1,20 @@
 package com.miaxis.postal.view.fragment;
 
-import android.content.res.Configuration;
 import android.text.TextUtils;
 import android.view.View;
 
-import androidx.annotation.NonNull;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.SimpleItemAnimator;
-
-import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.miaxis.postal.R;
+import com.miaxis.postal.app.App;
 import com.miaxis.postal.bridge.GlideApp;
 import com.miaxis.postal.data.entity.Express;
 import com.miaxis.postal.data.entity.Photograph;
-import com.miaxis.postal.data.event.ExpressEditEvent;
 import com.miaxis.postal.data.event.TakePhotoEvent;
 import com.miaxis.postal.databinding.FragmentInspectBinding;
 import com.miaxis.postal.manager.ToastManager;
 import com.miaxis.postal.view.adapter.InspectAdapter;
 import com.miaxis.postal.view.auxiliary.OnLimitClickHelper;
-import com.miaxis.postal.view.auxiliary.OnLimitClickListener;
 import com.miaxis.postal.view.base.BaseViewModelFragment;
 import com.miaxis.postal.viewModel.InspectViewModel;
 
@@ -32,8 +22,12 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.SimpleItemAnimator;
 
 //开箱验视
 public class InspectFragment extends BaseViewModelFragment<FragmentInspectBinding, InspectViewModel> {
@@ -98,7 +92,16 @@ public class InspectFragment extends BaseViewModelFragment<FragmentInspectBindin
             binding.editClientSName.setText(name);
             binding.editClientSPhone.setText(phone);
         }
-        viewModel.showBarcodeImage(express.getBarCode());
+        String barCode = express.getBarCode();
+        viewModel.showBarcodeImage(barCode);
+        if (!TextUtils.isEmpty(barCode) && !barCode.startsWith(App.getInstance().BarHeader)) {
+            binding.tvBarcode.setVisibility(View.VISIBLE);
+            binding.ivBarcode.setVisibility(View.VISIBLE);
+            binding.tvBarcode.setText(barCode);
+        }else {
+            binding.tvBarcode.setVisibility(View.GONE);
+            binding.ivBarcode.setVisibility(View.GONE);
+        }
         binding.ivBack.setOnClickListener(v -> onBackPressed());
         binding.ivDelete.setOnClickListener(new OnLimitClickHelper(view -> {
             new MaterialDialog.Builder(getContext())
@@ -254,10 +257,10 @@ public class InspectFragment extends BaseViewModelFragment<FragmentInspectBindin
     };
 
     private boolean checkInput() {
-//       if (viewModel.getSelectList().size() <= 0) {
-//            ToastManager.toast("请至少选择一张实物照片", ToastManager.INFO);
-//            return false;
-//        }
+        //       if (viewModel.getSelectList().size() <= 0) {
+        //            ToastManager.toast("请至少选择一张实物照片", ToastManager.INFO);
+        //            return false;
+        //        }
         return true;
     }
 

@@ -1,12 +1,8 @@
 package com.miaxis.postal.view.fragment;
 
-import android.view.View;
-
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.miaxis.postal.R;
 import com.miaxis.postal.app.App;
-import com.miaxis.postal.data.dao.AppDatabase;
-import com.miaxis.postal.data.entity.Courier;
 import com.miaxis.postal.databinding.FragmentHomeBinding;
 import com.miaxis.postal.manager.AmapManager;
 import com.miaxis.postal.manager.PostalManager;
@@ -16,16 +12,10 @@ import com.miaxis.postal.view.dialog.CardModeSelectDialogFragment;
 import com.miaxis.postal.view.dialog.EditPasswordDialogFragment;
 import com.miaxis.postal.viewModel.HomeViewModel;
 
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
-
 import java.util.List;
 
-import io.reactivex.Observable;
-import io.reactivex.ObservableOnSubscribe;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 public class HomeFragment extends BaseViewModelFragment<FragmentHomeBinding, HomeViewModel> {
 
@@ -59,7 +49,7 @@ public class HomeFragment extends BaseViewModelFragment<FragmentHomeBinding, Hom
     @Override
     protected void initView() {
         binding.ivConfig.setOnClickListener(new OnLimitClickHelper(view -> mListener.replaceFragment(ConfigFragment.newInstance())));
-//        binding.clExpress.setOnClickListener(new OnLimitClickHelper(view -> mListener.replaceFragment(CardFragment.newInstance())));
+        //        binding.clExpress.setOnClickListener(new OnLimitClickHelper(view -> mListener.replaceFragment(CardFragment.newInstance())));
         binding.clExpress.setOnClickListener(new OnLimitClickHelper(view -> {
             CardModeSelectDialogFragment.newInstance(false).show(getChildFragmentManager(), "CardModeSelectDialogFragment");
         }));
@@ -67,8 +57,12 @@ public class HomeFragment extends BaseViewModelFragment<FragmentHomeBinding, Hom
         binding.tvEditPassword.setOnClickListener(new OnLimitClickHelper(view -> {
             EditPasswordDialogFragment.newInstance().show(getChildFragmentManager(), "EditPasswordDialogFragment");
         }));
-        binding.clProtocol.setOnClickListener(v ->
-                CardModeSelectDialogFragment.newInstance(true).show(getChildFragmentManager(), "CardModeSelectDialogFragment"));
+        binding.clProtocol.setOnClickListener(v -> {
+                    CardModeSelectDialogFragment.newInstance(true).show(getChildFragmentManager(), "CardModeSelectDialogFragment");
+                });
+
+        binding.clMine.setOnClickListener(v -> mListener.replaceFragment(BranchFragment.newInstance()));
+
         AmapManager.getInstance().startLocation(getActivity().getApplication());//GPS初始化，登录后初始化
         App.getInstance().uploadEnable = true;
     }
@@ -76,9 +70,8 @@ public class HomeFragment extends BaseViewModelFragment<FragmentHomeBinding, Hom
     @Override
     public void onResume() {
         super.onResume();
-//        PostalManager.getInstance().startPostal();
+        //        PostalManager.getInstance().startPostal();
     }
-
 
     @Override
     public void onBackPressed() {

@@ -2,11 +2,13 @@ package com.miaxis.postal.view.adapter;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.miaxis.postal.R;
+import com.miaxis.postal.app.App;
 import com.miaxis.postal.data.entity.Express;
 import com.miaxis.postal.databinding.ItemExpressBodyBinding;
 import com.miaxis.postal.databinding.ItemExpressHeaderBinding;
@@ -78,6 +80,11 @@ public class ExpressAdapter extends BaseAdapter<Express, RecyclerView.ViewHolder
                 bodyListener.onBodyClick(holder.itemView, holder.getLayoutPosition());
             }
         }));
+        if (!TextUtils.isEmpty(express.getBarCode())&&!express.getBarCode().startsWith(App.getInstance().BarHeader)){
+            holder.getBinding().tvBarCode.setText(express.getBarCode());
+        }else {
+            holder.getBinding().tvBarCode.setText("");
+        }
     }
 
     @Override

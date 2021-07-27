@@ -1,14 +1,8 @@
 package com.miaxis.postal.viewModel;
 
 import android.graphics.Bitmap;
+import android.text.TextUtils;
 
-import androidx.databinding.ObservableField;
-import androidx.lifecycle.MutableLiveData;
-
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.MultiFormatWriter;
-import com.google.zxing.WriterException;
-import com.google.zxing.common.BitMatrix;
 import com.miaxis.postal.app.App;
 import com.miaxis.postal.bridge.SingleLiveEvent;
 import com.miaxis.postal.data.entity.Express;
@@ -20,6 +14,9 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.databinding.ObservableField;
+import androidx.lifecycle.MutableLiveData;
 
 public class InspectViewModel extends BaseViewModel {
 
@@ -62,7 +59,8 @@ public class InspectViewModel extends BaseViewModel {
             int surplus = InspectViewModel.MAX_COUNT - selectSize;
             if (surplus > 0) {
                 for (int i = 0; i < surplus; i++) {
-                    if (i + 1 > cacheList.size()) break;
+                    if (i + 1 > cacheList.size())
+                        break;
                     cacheList.get(i).setSelect(true);
                 }
             }
@@ -134,7 +132,8 @@ public class InspectViewModel extends BaseViewModel {
 
     public boolean checkEmptyExpress() {
         Express value = this.express.get();
-        if (value == null) return true;
+        if (value == null)
+            return true;
         return value.getPhotoList() == null || value.getPhotoList().isEmpty();
     }
 
@@ -144,8 +143,12 @@ public class InspectViewModel extends BaseViewModel {
 
     public void showBarcodeImage(String barcode) {
         App.getInstance().getThreadExecutor().execute(() -> {
-            barcodeBitmapCache = BarcodeUtil.createBarcodeBitmap(barcode);
-            if (barcodeBitmapCache != null) {
+            if (!TextUtils.isEmpty(barcode) && !barcode.startsWith(App.getInstance().BarHeader)) {
+                barcodeBitmapCache = BarcodeUtil.createBarcodeBitmap(barcode);
+                if (barcodeBitmapCache != null) {
+                    barcodeImageUpdate.postValue(Boolean.TRUE);
+                }
+            } else {
                 barcodeImageUpdate.postValue(Boolean.TRUE);
             }
         });

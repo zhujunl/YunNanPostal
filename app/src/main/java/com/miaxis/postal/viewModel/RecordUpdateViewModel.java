@@ -47,8 +47,12 @@ public class RecordUpdateViewModel extends BaseViewModel {
 
     public void showBarcodeImage(String barcode) {
         App.getInstance().getThreadExecutor().execute(() -> {
-            orderCodeBitmapCache = BarcodeUtil.createBarcodeBitmap(barcode);
-            if (orderCodeBitmapCache != null) {
+            if (!TextUtils.isEmpty(barcode) && !barcode.startsWith(App.getInstance().BarHeader)) {
+                orderCodeBitmapCache = BarcodeUtil.createBarcodeBitmap(barcode);
+                if (orderCodeBitmapCache != null) {
+                    orderCodeImageUpdate.postValue(Boolean.TRUE);
+                }
+            } else {
                 orderCodeImageUpdate.postValue(Boolean.TRUE);
             }
         });
@@ -79,7 +83,8 @@ public class RecordUpdateViewModel extends BaseViewModel {
     }
 
     private Bitmap downloadPicture(String url) throws ExecutionException, InterruptedException {
-        if (TextUtils.isEmpty(url)) return null;
+        if (TextUtils.isEmpty(url))
+            return null;
         FutureTarget<Bitmap> futureTarget = GlideApp.with(App.getInstance().getApplicationContext())
                 .asBitmap()
                 .load(url + "?" + System.currentTimeMillis())
@@ -97,7 +102,8 @@ public class RecordUpdateViewModel extends BaseViewModel {
             int surplus = MAX_COUNT - selectSize;
             if (surplus > 0) {
                 for (int i = 0; i < surplus; i++) {
-                    if (i + 1 > cacheList.size()) break;
+                    if (i + 1 > cacheList.size())
+                        break;
                     cacheList.get(i).setSelect(true);
                 }
             }
@@ -117,7 +123,8 @@ public class RecordUpdateViewModel extends BaseViewModel {
             int surplus = InspectViewModel.MAX_COUNT - selectSize;
             if (surplus > 0) {
                 for (int i = 0; i < surplus; i++) {
-                    if (i + 1 > cacheList.size()) break;
+                    if (i + 1 > cacheList.size())
+                        break;
                     cacheList.get(i).setSelect(true);
                 }
             }
@@ -158,7 +165,8 @@ public class RecordUpdateViewModel extends BaseViewModel {
 
     public void updateOrder() {
         Order value = orderData.getValue();
-        if (value == null) return;
+        if (value == null)
+            return;
         waitMessage.setValue("上传中，请稍后...");
         Observable.create((ObservableOnSubscribe<Boolean>) emitter -> {
             List<Bitmap> bitmapList;

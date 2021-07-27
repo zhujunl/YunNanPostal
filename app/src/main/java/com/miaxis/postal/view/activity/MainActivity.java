@@ -1,8 +1,5 @@
 package com.miaxis.postal.view.activity;
 
-import android.os.Environment;
-import android.text.TextUtils;
-import android.util.Log;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.miaxis.postal.R;
@@ -16,8 +13,6 @@ import com.miaxis.postal.view.fragment.PreludeFragment;
 import com.miaxis.postal.view.presenter.UpdatePresenter;
 
 import androidx.fragment.app.Fragment;
-
-import java.io.File;
 
 public class MainActivity extends BaseActivity<ActivityMainBinding> implements OnFragmentInteractionListener {
 

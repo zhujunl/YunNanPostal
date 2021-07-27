@@ -21,202 +21,257 @@
             android:id="@+id/iv_background"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:src="@drawable/homepage_background_1"
             android:adjustViewBounds="true"
             android:scaleType="centerCrop"
-            app:layout_constraintStart_toStartOf="parent"
+            android:src="@drawable/homepage_background_1"
+            app:layout_constraintBottom_toTopOf="@id/guideline_middle"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/guideline_middle"/>
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-<!--        <TextView-->
-<!--            android:layout_width="0dp"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:text="云南数字邮管\n人证核识别验系统"-->
-<!--            android:textColor="@color/white"-->
-<!--            android:textSize="32sp"-->
-<!--            android:textStyle="bold"-->
-<!--            android:gravity="center"-->
-<!--            app:layout_constraintStart_toStartOf="parent"-->
-<!--            app:layout_constraintEnd_toEndOf="parent"-->
-<!--            app:layout_constraintTop_toTopOf="parent"-->
-<!--            app:layout_constraintBottom_toTopOf="@id/guideline_middle"/>-->
+        <!--        <TextView-->
+        <!--            android:layout_width="0dp"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:text="云南数字邮管\n人证核识别验系统"-->
+        <!--            android:textColor="@color/white"-->
+        <!--            android:textSize="32sp"-->
+        <!--            android:textStyle="bold"-->
+        <!--            android:gravity="center"-->
+        <!--            app:layout_constraintStart_toStartOf="parent"-->
+        <!--            app:layout_constraintEnd_toEndOf="parent"-->
+        <!--            app:layout_constraintTop_toTopOf="parent"-->
+        <!--            app:layout_constraintBottom_toTopOf="@id/guideline_middle"/>-->
 
         <TextView
             android:id="@+id/tv_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@{viewModel.courier.name}"
-            android:textSize="30sp"
             android:textColor="@color/white"
+            android:textSize="30sp"
             android:textStyle="bold"
-            app:layout_constraintVertical_bias="0.1"
+            app:layout_constraintBottom_toTopOf="@id/guideline_middle"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.1"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/guideline_middle"/>
+            app:layout_constraintVertical_bias="0.1"
+            tools:text="@string/app_name" />
 
         <TextView
             android:id="@+id/tv_phone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@{viewModel.courier.phone}"
-            android:textSize="14sp"
             android:textColor="@color/white"
+            android:textSize="14sp"
             app:layout_constraintStart_toStartOf="@id/tv_name"
-            app:layout_constraintTop_toBottomOf="@id/tv_name"/>
+            app:layout_constraintTop_toBottomOf="@id/tv_name" />
 
         <TextView
             android:id="@+id/tv_edit_password"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingTop="10dp"
+            android:paddingEnd="10dp"
+            android:paddingBottom="10dp"
             android:text="@string/edit_password"
             android:textColor="@color/white"
             android:textSize="14sp"
-            android:gravity="center"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
-            android:paddingEnd="10dp"
             app:layout_constraintStart_toStartOf="@id/tv_name"
-            app:layout_constraintTop_toBottomOf="@id/tv_phone"/>
+            app:layout_constraintTop_toBottomOf="@id/tv_phone" />
 
         <ImageView
             android:id="@+id/iv_config"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_settings_white"
-            android:scaleType="fitCenter"
             android:adjustViewBounds="true"
             android:padding="12dp"
-            app:layout_constraintWidth_percent="0.15"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_settings_white"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent="0.15" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline_middle"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="0dp"
             android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.6"/>
+            app:layout_constraintGuide_percent="0.6" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="0dp"
             android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="@id/guideline_middle"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHeight_percent="0.3"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/guideline_middle"
-            app:layout_constraintBottom_toBottomOf="@id/guideline_middle">
+            app:layout_constraintTop_toTopOf="@id/guideline_middle">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/cl_express"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:background="@drawable/corner_rect_white"
-                app:layout_constraintWidth_percent="0.3"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintDimensionRatio="1:1"
-                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/cl_protocol"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent">
+                app:layout_constraintWidth_percent="0.2">
 
                 <ImageView
                     android:id="@+id/iv_express_image"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
-                    android:src="@drawable/ic_fullscreen_blue"
                     android:adjustViewBounds="true"
+                    android:padding="7dp"
                     android:scaleType="fitCenter"
-                    android:padding="4dp"
-                    app:layout_constraintVertical_bias="0"
+                    android:src="@drawable/ic_fullscreen_blue"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHeight_percent="0.7"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"/>
+                    app:layout_constraintVertical_bias="0" />
 
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="0dp"
-                    android:text="两项核验"
                     android:gravity="center|top"
-                    android:textSize="16sp"
+                    android:text="两项核验"
                     android:textColor="@color/main_color"
-                    app:layout_constraintStart_toStartOf="parent"
+                    android:textSize="13sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/iv_express_image"
-                    app:layout_constraintBottom_toBottomOf="parent"/>
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/iv_express_image" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
-
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/cl_protocol"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                app:layout_constraintWidth_percent="0.3"
+                android:background="@drawable/corner_rect_white"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintDimensionRatio="1:1"
                 app:layout_constraintLeft_toRightOf="@id/cl_express"
-                app:layout_constraintRight_toLeftOf="@id/cl_record"
+                app:layout_constraintRight_toLeftOf="@id/cl_mine"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent">
+                app:layout_constraintWidth_percent="0.2">
 
                 <ImageView
                     android:id="@+id/iv_protocol_image"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:src="@drawable/icon_check_order"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
                     android:adjustViewBounds="true"
+                    android:padding="10dp"
                     android:scaleType="fitCenter"
-                    app:layout_constraintStart_toStartOf="parent"
+                    android:src="@drawable/icon_protocol_image"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHeight_percent="0.7"
+                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"/>
+                    app:layout_constraintVertical_bias="0" />
 
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:gravity="center|top"
+                    android:text="协议客户"
+                    android:textColor="@color/main_color"
+                    android:textSize="13sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/iv_protocol_image" />
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cl_mine"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:background="@drawable/corner_rect_white"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintEnd_toStartOf="@+id/cl_record"
+                app:layout_constraintStart_toEndOf="@id/cl_protocol"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintWidth_percent="0.2">
+
+                <ImageView
+                    android:id="@+id/iv_mine_image"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:adjustViewBounds="true"
+                    android:padding="10dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_baseline_home"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHeight_percent="0.7"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:gravity="center|top"
+                    android:text="我的网点"
+                    android:textColor="@color/main_color"
+                    android:textSize="13sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/iv_mine_image" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/cl_record"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:background="@drawable/corner_rect_white"
-                app:layout_constraintWidth_percent="0.3"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintDimensionRatio="1:1"
-                app:layout_constraintStart_toEndOf="@id/cl_protocol"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/cl_mine"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent">
+                app:layout_constraintWidth_percent="0.2">
 
                 <ImageView
                     android:id="@+id/iv_record_image"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
-                    android:src="@drawable/ic_view_list_blue"
                     android:adjustViewBounds="true"
+                    android:padding="9dp"
                     android:scaleType="fitCenter"
-                    android:padding="8dp"
-                    app:layout_constraintVertical_bias="0"
+                    android:src="@drawable/ic_view_list_blue"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHeight_percent="0.7"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"/>
+                    app:layout_constraintVertical_bias="0" />
 
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="0dp"
-                    android:text="日志"
                     android:gravity="center|top"
-                    android:textSize="16sp"
+                    android:text="日志"
                     android:textColor="@color/main_color"
-                    app:layout_constraintStart_toStartOf="parent"
+                    android:textSize="13sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/iv_record_image"
-                    app:layout_constraintBottom_toBottomOf="parent"/>
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/iv_record_image" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

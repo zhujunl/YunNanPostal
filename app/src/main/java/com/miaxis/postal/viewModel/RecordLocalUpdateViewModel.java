@@ -1,8 +1,7 @@
 package com.miaxis.postal.viewModel;
 
 import android.graphics.Bitmap;
-
-import androidx.lifecycle.MutableLiveData;
+import android.text.TextUtils;
 
 import com.miaxis.postal.app.App;
 import com.miaxis.postal.bridge.SingleLiveEvent;
@@ -14,7 +13,8 @@ import com.miaxis.postal.util.FileUtil;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
+
+import androidx.lifecycle.MutableLiveData;
 
 public class RecordLocalUpdateViewModel extends BaseViewModel {
 
@@ -42,8 +42,12 @@ public class RecordLocalUpdateViewModel extends BaseViewModel {
 
     public void showBarcodeImage(String barcode) {
         App.getInstance().getThreadExecutor().execute(() -> {
-            orderCodeBitmapCache = BarcodeUtil.createBarcodeBitmap(barcode);
-            if (orderCodeBitmapCache != null) {
+            if (!TextUtils.isEmpty(barcode) && !barcode.startsWith(App.getInstance().BarHeader)) {
+                orderCodeBitmapCache = BarcodeUtil.createBarcodeBitmap(barcode);
+                if (orderCodeBitmapCache != null) {
+                    orderCodeImageUpdate.postValue(Boolean.TRUE);
+                }
+            } else {
                 orderCodeImageUpdate.postValue(Boolean.TRUE);
             }
         });
@@ -79,7 +83,8 @@ public class RecordLocalUpdateViewModel extends BaseViewModel {
             int surplus = MAX_COUNT - selectSize;
             if (surplus > 0) {
                 for (int i = 0; i < surplus; i++) {
-                    if (i + 1 > cacheList.size()) break;
+                    if (i + 1 > cacheList.size())
+                        break;
                     cacheList.get(i).setSelect(true);
                 }
             }
@@ -99,7 +104,8 @@ public class RecordLocalUpdateViewModel extends BaseViewModel {
             int surplus = InspectViewModel.MAX_COUNT - selectSize;
             if (surplus > 0) {
                 for (int i = 0; i < surplus; i++) {
-                    if (i + 1 > cacheList.size()) break;
+                    if (i + 1 > cacheList.size())
+                        break;
                     cacheList.get(i).setSelect(true);
                 }
             }

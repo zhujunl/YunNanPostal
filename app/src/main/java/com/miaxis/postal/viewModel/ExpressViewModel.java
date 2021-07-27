@@ -2,9 +2,6 @@ package com.miaxis.postal.viewModel;
 
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.TextureView;
-import android.widget.EditText;
-import android.widget.MultiAutoCompleteTextView;
 
 import com.amap.api.location.AMapLocation;
 import com.miaxis.postal.app.App;
@@ -22,10 +19,8 @@ import com.miaxis.postal.data.repository.WarnLogRepository;
 import com.miaxis.postal.manager.AmapManager;
 import com.miaxis.postal.manager.DataCacheManager;
 import com.miaxis.postal.manager.PostalManager;
-import com.miaxis.postal.manager.ScanManager;
 import com.miaxis.postal.util.ValueUtil;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -35,11 +30,9 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import androidx.databinding.ObservableField;
 import androidx.lifecycle.MutableLiveData;
-
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 public class ExpressViewModel extends BaseViewModel {
@@ -53,19 +46,19 @@ public class ExpressViewModel extends BaseViewModel {
     public MutableLiveData<Express> newExpress = new SingleLiveEvent<>();
     public MutableLiveData<String> repeatExpress = new SingleLiveEvent<>();
     public MutableLiveData<Boolean> saveFlag = new SingleLiveEvent<>();
-    public MutableLiveData<Boolean> scanFlag = new SingleLiveEvent<>();
+    //public MutableLiveData<Boolean> scanFlag = new SingleLiveEvent<>();
     public MutableLiveData<Boolean> deleteFlag = new SingleLiveEvent<>();
 
     private volatile AtomicLong timeFilter = new AtomicLong(0L);
 
     public ExpressViewModel() {
-        ScanManager.getInstance().initDevice(App.getInstance(), listener);
+        //ScanManager.getInstance().initDevice(App.getInstance(), listener);
     }
 
     @Override
     protected void onCleared() {
         super.onCleared();
-        ScanManager.getInstance().closeDevice();
+        //ScanManager.getInstance().closeDevice();
         Log.d("ExpressViewModel", "onCleared");
         if (address != null && address.get() != null) {
             address.set("");
@@ -83,67 +76,67 @@ public class ExpressViewModel extends BaseViewModel {
         }
     }
 
-    public void startScan() {
-        scanFlag.setValue(Boolean.TRUE);
-        ScanManager.getInstance().startScan();
-    }
+//    public void startScan() {
+//        scanFlag.setValue(Boolean.TRUE);
+//        ScanManager.getInstance().startScan();
+//    }
+//
+//    public void stopScan() {
+//        try {
+//            ScanManager.getInstance().stopScan();
+//            scanFlag.setValue(Boolean.FALSE);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
 
-    public void stopScan() {
-        try {
-            ScanManager.getInstance().stopScan();
-            scanFlag.setValue(Boolean.FALSE);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+//    private ScanManager.OnScanListener listener = this::handlerScanCode;
+//
+//    public void handlerScanCode(String code) {
+//        if (System.currentTimeMillis() - timeFilter.get() < 2000) {
+//            resultMessage.setValue("操作太频繁");
+//            return;
+//        }
+//        timeFilter.set(System.currentTimeMillis());
+//        stopScan();
+//        waitMessage.setValue("扫描成功，开始校验");
+//        Disposable disposable = Observable.just(code)
+//                .subscribeOn(Schedulers.from(App.getInstance().getThreadExecutor()))
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .doOnNext(mCode -> {
+//                    if (checkCodeLocalRepeat(mCode)) {
+//                        waitMessage.setValue("");
+//                        repeatExpress.setValue(mCode);
+//                        throw new MyException("本地校验重复，导向已有单号");
+//                    } else {
+//                        waitMessage.setValue("正在校验单号是否重复...");
+//                    }
+//                }).observeOn(Schedulers.from(App.getInstance().getThreadExecutor()))
+//                .doOnNext(mCode -> {
+//                    if (checkCodeDataBaseRepeat(mCode)) {
+//                        waitMessage.postValue("");
+//                        repeatExpress.postValue("");
+//                        throw new MyException("本地已有该单号，请勿重复添加");
+//                    } else if (!checkCodeNetRepeat(mCode)) {
+//                        waitMessage.postValue("");
+//                        repeatExpress.postValue("");
+//                        throw new MyException("联网校验重复");
+//                    } else {
+//                        waitMessage.postValue("联网校验通过，正在生成快递订单...");
+//                    }
+//                }).observeOn(AndroidSchedulers.mainThread())
+//                .subscribe(mCode -> {
+//                    waitMessage.setValue("");
+//                    removeRepeatEdit(mCode);
+//                    makeNewExpress(mCode);
+//                }, throwable -> {
+//                    waitMessage.postValue("");
+//                    throwable.printStackTrace();
+//                    removeRepeatEdit(code);
+//                });
+//    }
 
-    private ScanManager.OnScanListener listener = this::handlerScanCode;
-
-    public void handlerScanCode(String code) {
-        if (System.currentTimeMillis() - timeFilter.get() < 2000) {
-            resultMessage.setValue("操作太频繁");
-            return;
-        }
-        timeFilter.set(System.currentTimeMillis());
-        stopScan();
-        waitMessage.setValue("扫描成功，开始校验");
-        Disposable disposable = Observable.just(code)
-                .subscribeOn(Schedulers.from(App.getInstance().getThreadExecutor()))
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnNext(mCode -> {
-                    if (checkCodeLocalRepeat(mCode)) {
-                        waitMessage.setValue("");
-                        repeatExpress.setValue(mCode);
-                        throw new MyException("本地校验重复，导向已有单号");
-                    } else {
-                        waitMessage.setValue("正在校验单号是否重复...");
-                    }
-                }).observeOn(Schedulers.from(App.getInstance().getThreadExecutor()))
-                .doOnNext(mCode -> {
-                    if (checkCodeDataBaseRepeat(mCode)) {
-                        waitMessage.postValue("");
-                        repeatExpress.postValue("");
-                        throw new MyException("本地已有该单号，请勿重复添加");
-                    } else if (!checkCodeNetRepeat(mCode)) {
-                        waitMessage.postValue("");
-                        repeatExpress.postValue("");
-                        throw new MyException("联网校验重复");
-                    } else {
-                        waitMessage.postValue("联网校验通过，正在生成快递订单...");
-                    }
-                }).observeOn(AndroidSchedulers.mainThread())
-                .subscribe(mCode -> {
-                    waitMessage.setValue("");
-                    removeRepeatEdit(mCode);
-                    makeNewExpress(mCode);
-                }, throwable -> {
-                    waitMessage.postValue("");
-                    throwable.printStackTrace();
-                    removeRepeatEdit(code);
-                });
-    }
-
-    private void removeRepeatEdit(String code) {
+    public void removeRepeatEdit(String code) {
         String addressStr = address.get();
         if (!TextUtils.isEmpty(addressStr)) {
             if (addressStr.contains(code)) {
@@ -165,7 +158,7 @@ public class ExpressViewModel extends BaseViewModel {
         }
     }
 
-    private void makeNewExpress(String code) {
+    public void makeNewExpress(String code) {
         Express express = new Express();
         express.setBarCode(code);
         newExpress.setValue(express);

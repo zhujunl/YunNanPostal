@@ -4,10 +4,6 @@ import android.graphics.Bitmap;
 import android.text.TextUtils;
 import android.util.Log;
 
-import androidx.databinding.ObservableField;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
-
 import com.amap.api.location.AMapLocation;
 import com.miaxis.postal.app.App;
 import com.miaxis.postal.bridge.SingleLiveEvent;
@@ -34,6 +30,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
+import androidx.databinding.ObservableField;
+import androidx.lifecycle.MutableLiveData;
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -86,7 +84,9 @@ public class AgreementCustomersModel extends BaseViewModel {
         if (mExpressList != null && !mExpressList.isEmpty()) {
             Express express = mExpressList.get(0);
             address.set(express.getSenderAddress());
-            rqCode.set(express.getBarCode());
+            if (!TextUtils.isEmpty(express.getBarCode())&&!express.getBarCode().startsWith(App.getInstance().BarHeader)){
+                rqCode.set(express.getBarCode());
+            }
             clientName.set(express.getCustomerName());
             clientPhone.set(express.getCustomerPhone());
             itemName.set(express.getGoodsName());
@@ -100,6 +100,7 @@ public class AgreementCustomersModel extends BaseViewModel {
 
     public void startScan() {
         scanFlag.setValue(Boolean.TRUE);
+        Log.e("startScan","startScan");
         ScanManager.getInstance().startScan();
     }
 
@@ -181,7 +182,7 @@ public class AgreementCustomersModel extends BaseViewModel {
         }
     }
 
-    private void makeNewExpress(String code) {
+    public void makeNewExpress(String code) {
         Express express = new Express();
         express.setBarCode(code);
         newExpress.setValue(express);

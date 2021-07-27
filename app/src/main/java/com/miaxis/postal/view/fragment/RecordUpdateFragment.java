@@ -4,17 +4,11 @@ import android.content.res.Configuration;
 import android.text.TextUtils;
 import android.view.View;
 
-import androidx.annotation.NonNull;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.SimpleItemAnimator;
-
-import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.miaxis.postal.BR;
 import com.miaxis.postal.R;
+import com.miaxis.postal.app.App;
 import com.miaxis.postal.bridge.GlideApp;
 import com.miaxis.postal.data.entity.Order;
 import com.miaxis.postal.data.entity.Photograph;
@@ -33,6 +27,11 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.List;
+
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.SimpleItemAnimator;
 
 public class RecordUpdateFragment extends BaseViewModelFragment<FragmentRecordUpdateBinding, RecordUpdateViewModel> {
 
@@ -79,6 +78,14 @@ public class RecordUpdateFragment extends BaseViewModelFragment<FragmentRecordUp
         binding.btnUpdate.setOnClickListener(new OnLimitClickHelper(confirmClickListener));
         binding.etWeight.setRawInputType(Configuration.KEYBOARD_QWERTY);
         viewModel.showBarcodeImage(order.getOrderCode());
+        if (!TextUtils.isEmpty(order.getOrderCode()) && !order.getOrderCode().startsWith(App.getInstance().BarHeader)) {
+            binding.tvBarcode.setVisibility(View.VISIBLE);
+            binding.ivBarcode.setVisibility(View.VISIBLE);
+            binding.tvBarcode.setText(order.getOrderCode());
+        }else {
+            binding.tvBarcode.setVisibility(View.GONE);
+            binding.ivBarcode.setVisibility(View.GONE);
+        }
         viewModel.initOrder(order);
         EventBus.getDefault().register(this);
     }

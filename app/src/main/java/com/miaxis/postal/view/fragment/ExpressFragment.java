@@ -1,24 +1,14 @@
 package com.miaxis.postal.view.fragment;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.os.Handler;
-import android.os.Looper;
 import android.text.InputFilter;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 
-import androidx.annotation.NonNull;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.SimpleItemAnimator;
-
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.miaxis.postal.R;
+import com.miaxis.postal.app.App;
 import com.miaxis.postal.data.entity.Express;
 import com.miaxis.postal.data.entity.IDCardRecord;
 import com.miaxis.postal.data.event.ExpressEditEvent;
@@ -30,7 +20,6 @@ import com.miaxis.postal.view.adapter.ExpressAdapter;
 import com.miaxis.postal.view.adapter.SpacesItemDecoration;
 import com.miaxis.postal.view.auxiliary.OnLimitClickHelper;
 import com.miaxis.postal.view.base.BaseViewModelFragment;
-import com.miaxis.postal.view.component.ScanCodeReceiver;
 import com.miaxis.postal.viewModel.ExpressViewModel;
 
 import org.greenrobot.eventbus.EventBus;
@@ -40,16 +29,22 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.SimpleItemAnimator;
+
 public class ExpressFragment extends BaseViewModelFragment<FragmentExpressBinding, ExpressViewModel> {
 
     private IDCardRecord idCardRecord;
     private List<Express> expressList;
 
     private ExpressAdapter expressAdapter;
-    private MaterialDialog scanDialog;
+    //    private MaterialDialog scanDialog;
 
-    private Handler handler;
-    private int delay = 5;
+    //    private Handler handler;
+    //    private int delay = 5;
 
     private boolean draft = false;
 
@@ -98,9 +93,9 @@ public class ExpressFragment extends BaseViewModelFragment<FragmentExpressBindin
 
     @Override
     protected void initView() {
-        initDialog();
+        //initDialog();
         initRecycleView();
-        initReceiver();
+        //initReceiver();
         binding.ivBack.setOnClickListener(v -> onBackPressed());
         binding.ivAddress.setOnClickListener(new OnLimitClickHelper(view -> viewModel.getLocation()));
         if (expressList != null && !expressList.isEmpty()) {
@@ -120,10 +115,10 @@ public class ExpressFragment extends BaseViewModelFragment<FragmentExpressBindin
         viewModel.expressList.observe(this, expressListObserver);
         viewModel.newExpress.observe(this, newExpressObserver);
         viewModel.repeatExpress.observe(this, repeatExpressObserver);
-        viewModel.scanFlag.observe(this, scanFlagObserver);
+        //        viewModel.scanFlag.observe(this, scanFlagObserver);
         viewModel.saveFlag.observe(this, saveFlagObserver);
         viewModel.deleteFlag.observe(this, deleteFlagObserver);
-        handler = new Handler(Looper.getMainLooper());
+        //handler = new Handler(Looper.getMainLooper());
         EventBus.getDefault().register(this);
         binding.etAddress.setFilters(new InputFilter[]{new EmojiExcludeFilter()});
     }
@@ -172,18 +167,18 @@ public class ExpressFragment extends BaseViewModelFragment<FragmentExpressBindin
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        getActivity().unregisterReceiver(receiver);
+        //        getActivity().unregisterReceiver(receiver);
         viewModel.expressList.removeObserver(expressListObserver);
         EventBus.getDefault().unregister(this);
     }
 
-    private void initDialog() {
-        scanDialog = new MaterialDialog.Builder(getContext())
-                .title("新建订单")
-                .progress(true, 100)
-                .content("请将扫描口对准条码进行扫描")
-                .build();
-    }
+    //    private void initDialog() {
+    //        scanDialog = new MaterialDialog.Builder(getContext())
+    //                .title("新建订单")
+    //                .progress(true, 100)
+    //                .content("请将扫描口对准条码进行扫描")
+    //                .build();
+    //    }
 
     private void initRecycleView() {
         expressAdapter = new ExpressAdapter(getContext());
@@ -196,45 +191,49 @@ public class ExpressFragment extends BaseViewModelFragment<FragmentExpressBindin
         expressAdapter.setBodyListener(bodyListener);
     }
 
-    private void initReceiver() {
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(ScanCodeReceiver.RECE_DATA_ACTION);
-        getActivity().registerReceiver(receiver, intentFilter);
-    }
+    //    private void initReceiver() {
+    //        IntentFilter intentFilter = new IntentFilter();
+    //        intentFilter.addAction(ScanCodeReceiver.RECE_DATA_ACTION);
+    //        getActivity().registerReceiver(receiver, intentFilter);
+    //    }
 
-    private Runnable scanDialogCountDownRunnable = new Runnable() {
-        @Override
-        public void run() {
-            try {
-                if (scanDialog.isShowing()) {
-                    String text = "请将扫描口对准条码进行扫描(" + delay + "S)";
-                    scanDialog.getContentView().setText(text);
-                    delay--;
-                    if (delay < 0) {
-                        viewModel.stopScan();
-                    } else {
-                        handler.postDelayed(scanDialogCountDownRunnable, 1000);
-                    }
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    };
+    //    private Runnable scanDialogCountDownRunnable = new Runnable() {
+    //        @Override
+    //        public void run() {
+    //            try {
+    //                if (scanDialog.isShowing()) {
+    //                    String text = "请将扫描口对准条码进行扫描(" + delay + "S)";
+    //                    scanDialog.getContentView().setText(text);
+    //                    delay--;
+    //                    if (delay < 0) {
+    //                        viewModel.stopScan();
+    //                    } else {
+    //                        handler.postDelayed(scanDialogCountDownRunnable, 1000);
+    //                    }
+    //                }
+    //            } catch (Exception e) {
+    //                e.printStackTrace();
+    //            }
+    //        }
+    //    };
 
-    private BroadcastReceiver receiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (TextUtils.equals(intent.getAction(), ExpressViewModel.RECE_DATA_ACTION)) {
-                String data = intent.getStringExtra("se4500");
-                viewModel.handlerScanCode(data);
-            }
-        }
-    };
+    //    private BroadcastReceiver receiver = new BroadcastReceiver() {
+    //        @Override
+    //        public void onReceive(Context context, Intent intent) {
+    //            if (TextUtils.equals(intent.getAction(), ExpressViewModel.RECE_DATA_ACTION)) {
+    //                String data = intent.getStringExtra("se4500");
+    //                viewModel.handlerScanCode(data);
+    //            }
+    //        }
+    //    };
 
     private ExpressAdapter.OnHeaderClickListener headerListener = () -> {
         //如果不为空并且没有正在扫描
-        viewModel.startScan();
+        //viewModel.startScan();
+        viewModel.waitMessage.setValue("");
+        String randomBarCode = App.getInstance().getRandomBarCode();
+        viewModel.removeRepeatEdit(randomBarCode);
+        viewModel.makeNewExpress(randomBarCode);
     };
 
     private ExpressAdapter.OnBodyClickListener bodyListener = (view, position) -> {
@@ -246,16 +245,16 @@ public class ExpressFragment extends BaseViewModelFragment<FragmentExpressBindin
         expressAdapter.notifyDataSetChanged();
     };
 
-    private Observer<Boolean> scanFlagObserver = flag -> {
-        handler.removeCallbacks(scanDialogCountDownRunnable);
-        if (flag) {
-            delay = 5;
-            handler.post(scanDialogCountDownRunnable);
-            scanDialog.show();
-        } else {
-            scanDialog.dismiss();
-        }
-    };
+    //    private Observer<Boolean> scanFlagObserver = flag -> {
+    //        handler.removeCallbacks(scanDialogCountDownRunnable);
+    //        if (flag) {
+    //            delay = 5;
+    //            handler.post(scanDialogCountDownRunnable);
+    //            scanDialog.show();
+    //        } else {
+    //            scanDialog.dismiss();
+    //        }
+    //    };
 
     private Observer<Express> newExpressObserver = express -> {
         mListener.replaceFragment(InspectFragment.newInstance(express));
@@ -279,10 +278,10 @@ public class ExpressFragment extends BaseViewModelFragment<FragmentExpressBindin
     private Observer<Boolean> deleteFlagObserver = flag -> mListener.backToStack(null);
 
     private View.OnClickListener submitClickListener = new OnLimitClickHelper(view -> {
-//        if (!viewModel.checkInput()) {
-//            ToastManager.toast("请输入寄件人手机号码和寄件地址", ToastManager.INFO);
-//            return;
-//        }
+        //        if (!viewModel.checkInput()) {
+        //            ToastManager.toast("请输入寄件人手机号码和寄件地址", ToastManager.INFO);
+        //            return;
+        //        }
         if (viewModel.getExpressList().isEmpty()) {
             ToastManager.toast("请至少完成一个订单", ToastManager.INFO);
             return;
