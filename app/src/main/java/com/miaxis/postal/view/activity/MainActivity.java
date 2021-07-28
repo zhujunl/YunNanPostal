@@ -1,23 +1,22 @@
 package com.miaxis.postal.view.activity;
 
-import android.os.Environment;
-import android.text.TextUtils;
-import android.util.Log;
-
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.miaxis.postal.R;
 import com.miaxis.postal.databinding.ActivityMainBinding;
 import com.miaxis.postal.manager.CardManager;
 import com.miaxis.postal.manager.PostalManager;
+import com.miaxis.postal.util.ClearRecordFileWorker;
 import com.miaxis.postal.view.base.BaseActivity;
 import com.miaxis.postal.view.base.BaseViewModelFragment;
 import com.miaxis.postal.view.base.OnFragmentInteractionListener;
 import com.miaxis.postal.view.fragment.PreludeFragment;
 import com.miaxis.postal.view.presenter.UpdatePresenter;
 
-import androidx.fragment.app.Fragment;
+import java.util.concurrent.TimeUnit;
 
-import java.io.File;
+import androidx.fragment.app.Fragment;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
 
 public class MainActivity extends BaseActivity<ActivityMainBinding> implements OnFragmentInteractionListener {
 
