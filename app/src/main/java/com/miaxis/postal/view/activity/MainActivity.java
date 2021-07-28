@@ -1,5 +1,8 @@
 package com.miaxis.postal.view.activity;
 
+import android.os.Environment;
+import android.text.TextUtils;
+import android.util.Log;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.miaxis.postal.R;
@@ -13,6 +16,8 @@ import com.miaxis.postal.view.fragment.PreludeFragment;
 import com.miaxis.postal.view.presenter.UpdatePresenter;
 
 import androidx.fragment.app.Fragment;
+
+import java.io.File;
 
 public class MainActivity extends BaseActivity<ActivityMainBinding> implements OnFragmentInteractionListener {
 
@@ -38,15 +43,24 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
         initDialog();
         updatePresenter = new UpdatePresenter(this);
         replaceFragment(PreludeFragment.newInstance());
-
+        performTask();
+    }
+    //开始任务 重复执行
+    private  void performTask(){
+        //重复性任务 24小时执行一次
+        PeriodicWorkRequest request = new PeriodicWorkRequest.Builder(ClearRecordFileWorker.class,
+                24, TimeUnit.HOURS).build();
+        //一次性任务
+//        WorkRequest request = new OneTimeWorkRequest.Builder(ClearRecordFileWorker.class).build();
+        WorkManager.getInstance(this).enqueue(request);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        //        if (!TextUtils.isEmpty(root)) {
-        //            PostalManager.getInstance().startPostal();
-        //        }
+//        if (!TextUtils.isEmpty(root)) {
+//            PostalManager.getInstance().startPostal();
+//        }
     }
 
     @Override
