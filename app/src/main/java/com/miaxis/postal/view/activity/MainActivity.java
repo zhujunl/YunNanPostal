@@ -44,9 +44,9 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
     @Override
     protected void onResume() {
         super.onResume();
-//        if (!TextUtils.isEmpty(root)) {
-//            PostalManager.getInstance().startPostal();
-//        }
+        //        if (!TextUtils.isEmpty(root)) {
+        //            PostalManager.getInstance().startPostal();
+        //        }
     }
 
     @Override
@@ -83,11 +83,16 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 
     @Override
     public void replaceFragment(Fragment fragment) {
-        hideInputMethod();
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.cl_container, fragment)
-                .addToBackStack(fragment.getClass().getName())
-                .commit();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                hideInputMethod();
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.cl_container, fragment)
+                        .addToBackStack(fragment.getClass().getName())
+                        .commit();
+            }
+        });
     }
 
     @Override
@@ -107,28 +112,48 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
 
     @Override
     public void showWaitDialog(String message) {
-        waitDialog.getContentView().setText(message);
-        waitDialog.show();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                waitDialog.getContentView().setText(message);
+                waitDialog.show();
+            }
+        });
     }
 
     @Override
     public void dismissWaitDialog() {
-        if (waitDialog.isShowing()) {
-            waitDialog.dismiss();
-        }
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (waitDialog.isShowing()) {
+                    waitDialog.dismiss();
+                }
+            }
+        });
     }
 
     @Override
     public void showResultDialog(String message) {
-        resultDialog.getContentView().setText(message);
-        resultDialog.show();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                resultDialog.getContentView().setText(message);
+                resultDialog.show();
+            }
+        });
     }
 
     @Override
     public void dismissResultDialog() {
-        if (resultDialog.isShowing()) {
-            resultDialog.dismiss();
-        }
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (resultDialog.isShowing()) {
+                    resultDialog.dismiss();
+                }
+            }
+        });
     }
 
     @Override

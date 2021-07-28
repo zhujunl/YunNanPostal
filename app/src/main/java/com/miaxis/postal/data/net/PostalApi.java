@@ -8,6 +8,7 @@ import com.miaxis.postal.data.dto.OrderDto;
 import com.miaxis.postal.data.dto.SimpleOrderDto;
 import com.miaxis.postal.data.dto.TempIdDto;
 import com.miaxis.postal.data.dto.UpdateDto;
+import com.miaxis.postal.data.entity.Branch;
 import com.miaxis.postal.util.EncryptUtil;
 import com.miaxis.postal.util.FileUtil;
 
@@ -19,8 +20,6 @@ import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.Call;
-import retrofit2.http.Field;
-import retrofit2.http.Part;
 
 public class PostalApi extends BaseAPI {
 
@@ -42,6 +41,18 @@ public class PostalApi extends BaseAPI {
                 param,
                 pageNum,
                 pageSize);
+    }
+
+    public static Call<ResponseEntity<List<Branch>>> getBranchListSync(String phone) {
+        return getPostalNetSync().getBranchListSync(phone);
+    }
+
+    public static Call<ResponseEntity> bindingNodeSync(String phone, String comcode) {
+        return getPostalNetSync().bindingNodeSync(phone, comcode);
+    }
+
+    public static Call<ResponseEntity> unBindingNodeSync(String phone, String orgNode) {
+        return getPostalNetSync().unBindingNodeSync(phone, orgNode + ",");
     }
 
     public static Call<ResponseEntity<OrderDto>> getOrderByIdSync(long id) {
@@ -97,16 +108,16 @@ public class PostalApi extends BaseAPI {
             String type,
             String cardPhoto,
             String checkPhoto) {
-//        MultipartBody.Part checkFileBody = null;
-//        if (checkFile != null) {
-//            RequestBody checkRequestFile = RequestBody.create(MediaType.parse("multipart/form-data"), checkFile);
-//            checkFileBody = MultipartBody.Part.createFormData("checkFile", checkFile.getName(), checkRequestFile);
-//        }
-//        MultipartBody.Part cardFileBody = null;
-//        if (cardFile != null) {
-//            RequestBody cardRequestFile = RequestBody.create(MediaType.parse("multipart/form-data"), cardFile);
-//            cardFileBody = MultipartBody.Part.createFormData("cardFile", cardFile.getName(), cardRequestFile);
-//        }
+        //        MultipartBody.Part checkFileBody = null;
+        //        if (checkFile != null) {
+        //            RequestBody checkRequestFile = RequestBody.create(MediaType.parse("multipart/form-data"), checkFile);
+        //            checkFileBody = MultipartBody.Part.createFormData("checkFile", checkFile.getName(), checkRequestFile);
+        //        }
+        //        MultipartBody.Part cardFileBody = null;
+        //        if (cardFile != null) {
+        //            RequestBody cardRequestFile = RequestBody.create(MediaType.parse("multipart/form-data"), cardFile);
+        //            cardFileBody = MultipartBody.Part.createFormData("cardFile", cardFile.getName(), cardRequestFile);
+        //        }
         return getPostalNetSync().savePersonFromAppSync(
                 orgCode,
                 orgNode,

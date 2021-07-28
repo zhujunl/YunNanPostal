@@ -2,7 +2,6 @@ package com.miaxis.postal.data.repository;
 
 import android.text.TextUtils;
 
-import com.google.android.material.internal.ViewUtils;
 import com.miaxis.postal.data.dto.UpdateDto;
 import com.miaxis.postal.data.entity.Config;
 import com.miaxis.postal.data.entity.Update;

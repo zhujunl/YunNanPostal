@@ -102,6 +102,7 @@
             app:layout_constraintGuide_percent="0.6" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_content"
             android:layout_width="0dp"
             android:layout_height="0dp"
             app:layout_constraintBottom_toBottomOf="@id/guideline_middle"
@@ -276,6 +277,15 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_branches"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="30dp"
+            android:paddingEnd="30dp"
+            app:layout_constraintBottom_toTopOf="@+id/cl_content"
+            app:layout_constraintTop_toBottomOf="@+id/tv_edit_password" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

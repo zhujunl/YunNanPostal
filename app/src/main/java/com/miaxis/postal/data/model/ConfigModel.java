@@ -12,7 +12,8 @@ public class ConfigModel {
     }
 
     public static Config loadConfig() {
-        return AppDatabase.getInstance().configDao().loadConfig();
+        Config config = AppDatabase.getInstance().configDao().loadConfig();
+        return config;
     }
 
 }

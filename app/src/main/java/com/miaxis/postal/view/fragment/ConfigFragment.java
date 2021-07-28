@@ -1,42 +1,18 @@
 package com.miaxis.postal.view.fragment;
 
-import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
-
-import android.text.TextUtils;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
-import com.miaxis.postal.BR;
 import com.miaxis.postal.R;
-import com.miaxis.postal.app.App;
 import com.miaxis.postal.data.entity.Config;
-import com.miaxis.postal.data.entity.Courier;
-import com.miaxis.postal.data.model.CourierModel;
-import com.miaxis.postal.data.repository.LoginRepository;
 import com.miaxis.postal.databinding.FragmentConfigBinding;
 import com.miaxis.postal.manager.ConfigManager;
 import com.miaxis.postal.manager.PostalManager;
-import com.miaxis.postal.manager.ToastManager;
-import com.miaxis.postal.manager.fingerPower.IFingerPower;
 import com.miaxis.postal.util.ValueUtil;
 import com.miaxis.postal.view.auxiliary.OnLimitClickHelper;
-import com.miaxis.postal.view.auxiliary.OnLimitClickListener;
 import com.miaxis.postal.view.base.BaseViewModelFragment;
-import com.miaxis.postal.view.presenter.UpdatePresenter;
 import com.miaxis.postal.viewModel.ConfigViewModel;
 
-import io.reactivex.Observable;
-import io.reactivex.ObservableOnSubscribe;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
+import androidx.lifecycle.ViewModelProvider;
 
 public class ConfigFragment extends BaseViewModelFragment<FragmentConfigBinding, ConfigViewModel> {
 
@@ -100,6 +76,8 @@ public class ConfigFragment extends BaseViewModelFragment<FragmentConfigBinding,
                 binding.etBaseUrl.setText(config.getHost());
             }
         });
+        Config config = ConfigManager.getInstance().getConfig();
+        viewModel.config.setValue(config);
         viewModel.isExist.observe(this, aBoolean -> {
             if (aBoolean) {
                 PostalManager.getInstance().clearAll();

@@ -8,16 +8,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 
+import com.miaxis.postal.app.App;
+import com.miaxis.postal.manager.ToastManager;
+import com.miaxis.postal.view.activity.MainActivity;
+import com.miaxis.postal.viewModel.BaseViewModel;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.databinding.ViewDataBinding;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.ViewModelProvider;
-
-import com.miaxis.postal.app.App;
-import com.miaxis.postal.manager.ToastManager;
-import com.miaxis.postal.viewModel.BaseViewModel;
 
 public abstract class BaseViewModelFragment<V extends ViewDataBinding, VM extends BaseViewModel> extends Fragment {
 
@@ -93,6 +95,34 @@ public abstract class BaseViewModelFragment<V extends ViewDataBinding, VM extend
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    public void showWaitDialog(String message) {
+        FragmentActivity activity = getActivity();
+        if (activity instanceof MainActivity){
+            ((MainActivity)activity).showWaitDialog(message);
+        }
+    }
+
+    public void showResultDialog(String message) {
+        FragmentActivity activity = getActivity();
+        if (activity instanceof MainActivity){
+            ((MainActivity)activity).showResultDialog(message);
+        }
+    }
+
+    public void dismissWaitDialog() {
+        FragmentActivity activity = getActivity();
+        if (activity instanceof MainActivity){
+            ((MainActivity)activity).dismissWaitDialog();
+        }
+    }
+
+    public void dismissResultDialog() {
+        FragmentActivity activity = getActivity();
+        if (activity instanceof MainActivity){
+            ((MainActivity)activity).dismissResultDialog();
+        }
     }
 
     protected ViewModelProvider.AndroidViewModelFactory getViewModelProviderFactory() {

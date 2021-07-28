@@ -5,6 +5,7 @@ import com.miaxis.postal.data.dto.OrderDto;
 import com.miaxis.postal.data.dto.SimpleOrderDto;
 import com.miaxis.postal.data.dto.TempIdDto;
 import com.miaxis.postal.data.dto.UpdateDto;
+import com.miaxis.postal.data.entity.Branch;
 
 import java.util.List;
 
@@ -36,6 +37,29 @@ public interface PostalNet {
             @Field("param") String param,
             @Field("pageNum") int pageNum,
             @Field("pageSize") int pageSize
+    );
+
+    //通过手机号获取快递员所绑定的快递公司
+    @FormUrlEncoded
+    @POST("api/v1/expressman/list")
+    Call<ResponseEntity<List<Branch>>> getBranchListSync(
+            @Field("phone") String phone
+    );
+
+    //绑定网点
+    @FormUrlEncoded
+    @POST("api/v1/expressman/bindingNode")
+    Call<ResponseEntity> bindingNodeSync(
+            @Field("phone") String phone,
+            @Field("comcode") String comcode
+    );
+
+    //解除绑定网点
+    @FormUrlEncoded
+    @POST("api/v1/expressman/unboundNode")
+    Call<ResponseEntity> unBindingNodeSync(
+            @Field("phone") String phone,
+            @Field("orgNode") String orgNode
     );
 
     //根据订单编号查询订单详细信息

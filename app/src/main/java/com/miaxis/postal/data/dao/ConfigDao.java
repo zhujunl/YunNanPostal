@@ -1,11 +1,11 @@
 package com.miaxis.postal.data.dao;
 
+import com.miaxis.postal.data.entity.Config;
+
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
-
-import com.miaxis.postal.data.entity.Config;
 
 @Dao
 public interface ConfigDao {

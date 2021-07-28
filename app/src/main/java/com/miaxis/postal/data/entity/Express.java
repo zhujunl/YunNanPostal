@@ -2,12 +2,12 @@ package com.miaxis.postal.data.entity;
 
 import android.graphics.Bitmap;
 
+import java.util.Date;
+import java.util.List;
+
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
-
-import java.util.Date;
-import java.util.List;
 
 @Entity
 public class Express {
@@ -32,7 +32,7 @@ public class Express {
     private boolean draft;
     private boolean complete;
     private String phone;
-
+    private String orgCode;//机构号
     private String customerName;
     private String customerPhone;
     private String goodsName;
@@ -66,11 +66,20 @@ public class Express {
         setPhotoList(builder.photoList);
         setComplete(builder.complete);
         setPhone(builder.phone);
+        setOrgCode(builder.orgCode);
         setCustomerName(builder.customerName);
         setGoodsName(builder.goodsName);
         setGoodsNumber(builder.goodsNumber);
         setCustomerType(builder.customerType);
         setCustomerPhone(builder.customerPhone);
+    }
+
+    public String getOrgCode() {
+        return orgCode;
+    }
+
+    public void setOrgCode(String orgCode) {
+        this.orgCode = orgCode;
     }
 
     public String getPhone() {
@@ -320,6 +329,7 @@ public class Express {
         private List<Bitmap> photoList;
         private boolean complete;
         private String phone;
+        private String orgCode;//机构号
         private String customerName;
         private String goodsName;
         private String goodsNumber;
@@ -327,6 +337,11 @@ public class Express {
         private String customerPhone;
 
         public Builder() {
+        }
+
+        public Builder orgCode(String val) {
+            orgCode = val;
+            return this;
         }
 
         public Builder phone(String val) {

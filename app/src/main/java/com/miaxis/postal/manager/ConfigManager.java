@@ -1,9 +1,6 @@
 package com.miaxis.postal.manager;
 
-import android.app.Application;
 import android.text.TextUtils;
-
-import androidx.annotation.NonNull;
 
 import com.miaxis.postal.app.App;
 import com.miaxis.postal.data.entity.Config;
@@ -11,10 +8,10 @@ import com.miaxis.postal.data.model.ConfigModel;
 import com.miaxis.postal.util.DeviceUtil;
 import com.miaxis.postal.util.ValueUtil;
 
+import androidx.annotation.NonNull;
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
 public class ConfigManager {
@@ -30,7 +27,9 @@ public class ConfigManager {
         private static final ConfigManager instance = new ConfigManager();
     }
 
-    /** ================================ 静态内部类单例写法 ================================ **/
+    /**
+     * ================================ 静态内部类单例写法 ================================
+     **/
 
     private Config config;
 
@@ -76,10 +75,9 @@ public class ConfigManager {
             ConfigModel.saveConfig(config);
             this.config = config;
             emitter.onNext(Boolean.TRUE);
-        })
-                .subscribeOn(Schedulers.from(App.getInstance().getThreadExecutor()))
+        }).subscribeOn(Schedulers.from(App.getInstance().getThreadExecutor()))
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(aBoolean -> listener.onConfigSave(true, "保存成功")
+                .subscribe(aBoolean -> listener.onConfigSave(true, "配置保存成功")
                         , throwable -> listener.onConfigSave(false, "保存失败，" + throwable.getMessage()));
     }
 

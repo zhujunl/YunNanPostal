@@ -1,11 +1,22 @@
 package com.miaxis.postal.view.fragment;
 
+import android.os.Handler;
+import android.text.TextUtils;
+import android.view.View;
+
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.miaxis.postal.R;
 import com.miaxis.postal.app.App;
+import com.miaxis.postal.data.entity.Branch;
+import com.miaxis.postal.data.repository.LoginRepository;
 import com.miaxis.postal.databinding.FragmentHomeBinding;
 import com.miaxis.postal.manager.AmapManager;
 import com.miaxis.postal.manager.PostalManager;
+import com.miaxis.postal.util.SPUtils;
+import com.miaxis.postal.util.StringUtils;
+import com.miaxis.postal.util.ValueUtil;
+import com.miaxis.postal.view.adapter.BranchAdapter;
+import com.miaxis.postal.view.adapter.HSpacesItemDecoration;
 import com.miaxis.postal.view.auxiliary.OnLimitClickHelper;
 import com.miaxis.postal.view.base.BaseViewModelFragment;
 import com.miaxis.postal.view.dialog.CardModeSelectDialogFragment;
@@ -16,8 +27,13 @@ import java.util.List;
 
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.SimpleItemAnimator;
 
-public class HomeFragment extends BaseViewModelFragment<FragmentHomeBinding, HomeViewModel> {
+public class HomeFragment extends BaseViewModelFragment<FragmentHomeBinding, HomeViewModel> implements BranchAdapter.OnBodyClickListener {
+
+    private BranchAdapter branchAdapter;
+    private final Handler mHandler = new Handler();
 
     public static HomeFragment newInstance() {
         return new HomeFragment();
@@ -48,29 +64,89 @@ public class HomeFragment extends BaseViewModelFragment<FragmentHomeBinding, Hom
 
     @Override
     protected void initView() {
-        binding.ivConfig.setOnClickListener(new OnLimitClickHelper(view -> mListener.replaceFragment(ConfigFragment.newInstance())));
-        //        binding.clExpress.setOnClickListener(new OnLimitClickHelper(view -> mListener.replaceFragment(CardFragment.newInstance())));
-        binding.clExpress.setOnClickListener(new OnLimitClickHelper(view -> {
-            CardModeSelectDialogFragment.newInstance(false).show(getChildFragmentManager(), "CardModeSelectDialogFragment");
+        binding.ivConfig.setOnClickListener(new OnLimitClickHelper(view -> {
+
+            mListener.replaceFragment(ConfigFragment.newInstance());
         }));
-        binding.clRecord.setOnClickListener(new OnLimitClickHelper(view -> mListener.replaceFragment(RecordTabFragment.newInstance())));
+        //binding.clExpress.setOnClickListener(new OnLimitClickHelper(view -> mListener.replaceFragment(CardFragment.newInstance())));
+        binding.clExpress.setOnClickListener(new OnLimitClickHelper(view -> {
+            if (checkBranch()) {
+                CardModeSelectDialogFragment.newInstance(false).show(getChildFragmentManager(), "CardModeSelectDialogFragment");
+            }
+        }));
+        binding.clRecord.setOnClickListener(new OnLimitClickHelper(view -> {
+            if (checkBranch()) {
+                mListener.replaceFragment(RecordTabFragment.newInstance());
+            }
+        }));
         binding.tvEditPassword.setOnClickListener(new OnLimitClickHelper(view -> {
             EditPasswordDialogFragment.newInstance().show(getChildFragmentManager(), "EditPasswordDialogFragment");
         }));
         binding.clProtocol.setOnClickListener(v -> {
-                    CardModeSelectDialogFragment.newInstance(true).show(getChildFragmentManager(), "CardModeSelectDialogFragment");
-                });
+            if (checkBranch()) {
+                CardModeSelectDialogFragment.newInstance(true).show(getChildFragmentManager(), "CardModeSelectDialogFragment");
+            }
+        });
 
-        binding.clMine.setOnClickListener(v -> mListener.replaceFragment(BranchFragment.newInstance()));
+        binding.clMine.setOnClickListener(v -> {
+            if (checkBranch()) {
+                mListener.replaceFragment(MineBranchFragment.newInstance());
+            }
+        });
+
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+        binding.rvBranches.setLayoutManager(linearLayoutManager);
+        branchAdapter = new BranchAdapter(getContext());
+        branchAdapter.setBodyListener(this);
+        binding.rvBranches.setAdapter(branchAdapter);
+        binding.rvBranches.addItemDecoration(new HSpacesItemDecoration(10));
+        ((SimpleItemAnimator) binding.rvBranches.getItemAnimator()).setSupportsChangeAnimations(false);
+
+        getBranchList();
 
         AmapManager.getInstance().startLocation(getActivity().getApplication());//GPS初始化，登录后初始化
         App.getInstance().uploadEnable = true;
     }
 
+    private void getBranchList() {
+        showWaitDialog("正在请求数据中，请稍候。。。");
+        App.getInstance().getThreadExecutor().execute(() -> {
+            try {
+                List<Branch> branchListSync = LoginRepository.getInstance().getBranchListSync(ValueUtil.GlobalPhone);
+                dismissWaitDialog();
+                String lastBranchId = SPUtils.getInstance().read(ValueUtil.GlobalPhone, "");
+                int position = -1;
+                for (int i = 0; i < branchListSync.size(); i++) {
+                    Branch branch = branchListSync.get(i);
+                    branch.isSelected = StringUtils.isEquals(lastBranchId, branch.comcode);
+                    if (branch.isSelected) {
+                        position = i;
+                    }
+                }
+                if (position < 0 && !branchListSync.isEmpty()) {
+                    branchListSync.get(0).isSelected = true;
+                }
+                int finalPosition = position;
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        branchAdapter.setDataList(branchListSync);
+                        branchAdapter.notifyDataSetChanged();
+                        binding.rvBranches.scrollToPosition(finalPosition);
+                    }
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+                dismissWaitDialog();
+                showResultDialog("错误：" + e.getMessage());
+            }
+        });
+    }
+
     @Override
     public void onResume() {
         super.onResume();
-        //        PostalManager.getInstance().startPostal();
+        //PostalManager.getInstance().startPostal();
     }
 
     @Override
@@ -102,5 +178,40 @@ public class HomeFragment extends BaseViewModelFragment<FragmentHomeBinding, Hom
                 .show();
     }
 
+    @Override
+    public void onBodyClick(View view, Branch branch, int position) {
+        new MaterialDialog.Builder(getContext())
+                .title("确认切换至【" + branch.orgName + "】？网点编号【" + branch.comcode + "】")
+                .positiveText("确认")
+                .onPositive((dialog, which) -> {
+                    List<Branch> dataList = branchAdapter.getDataList();
+                    for (Branch bran : dataList) {
+                        bran.isSelected = false;
+                    }
+                    SPUtils.getInstance().write(ValueUtil.GlobalPhone, branch.comcode);
+                    branch.isSelected = true;
+                    branchAdapter.notifyDataSetChanged();
+                })
+                .negativeText("取消")
+                .show();
+    }
 
+    private boolean checkBranch() {
+        if (branchAdapter == null || branchAdapter.getDataList() == null || branchAdapter.getDataList().isEmpty()) {
+            new MaterialDialog.Builder(getContext())
+                    .title("请先查询网点机构。")
+                    .positiveText("去查询")
+                    .onPositive((dialog, which) -> getBranchList())
+                    .show();
+            return false;
+        }
+        if (TextUtils.isEmpty(SPUtils.getInstance().read(ValueUtil.GlobalPhone, ""))){
+            new MaterialDialog.Builder(getContext())
+                    .title("您当前未选择机构，无法使用此功能。")
+                    .positiveText("确认")
+                    .show();
+            return false;
+        }
+        return true;
+    }
 }

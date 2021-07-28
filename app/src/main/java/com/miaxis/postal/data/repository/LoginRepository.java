@@ -2,23 +2,25 @@ package com.miaxis.postal.data.repository;
 
 import android.graphics.Bitmap;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.miaxis.postal.app.App;
 import com.miaxis.postal.data.dao.AppDatabase;
 import com.miaxis.postal.data.dto.CourierDto;
+import com.miaxis.postal.data.entity.Branch;
 import com.miaxis.postal.data.entity.Courier;
 import com.miaxis.postal.data.exception.MyException;
 import com.miaxis.postal.data.exception.NetResultFailedException;
 import com.miaxis.postal.data.model.CourierModel;
 import com.miaxis.postal.data.net.PostalApi;
 import com.miaxis.postal.data.net.ResponseEntity;
-import com.miaxis.postal.manager.ConfigManager;
 import com.miaxis.postal.manager.DataCacheManager;
 import com.miaxis.postal.util.FileUtil;
 import com.miaxis.postal.util.ValueUtil;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
@@ -58,6 +60,68 @@ public class LoginRepository extends BaseRepository {
             throw e;
         } catch (Exception e) {
             e.printStackTrace();
+            throw new MyException(e.getMessage());
+        }
+        throw new MyException("服务端返回数据解析失败，或为空");
+    }
+
+    public List<Branch> getBranchListSync(String phone) throws IOException, MyException, NetResultFailedException {
+        Response<ResponseEntity<List<Branch>>> execute = PostalApi.getBranchListSync(phone).execute();
+        try {
+            ResponseEntity<List<Branch>> body = execute.body();
+            Log.e("Repository","getBranchListSync:"+body);
+            if (body != null) {
+                if (TextUtils.equals(body.getCode(), ValueUtil.SUCCESS) && body.getData() != null) {
+                    return body.getData();
+                } else {
+                    throw new NetResultFailedException("服务端返回，" + body.getMessage());
+                }
+            }
+        } catch (NetResultFailedException e) {
+            throw e;
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e("Repository","getBranchListSync   Exception:"+e);
+            throw new MyException(e.getMessage());
+        }
+        throw new MyException("服务端返回数据解析失败，或为空");
+    }
+
+    public String bindingNodeSync(String phone, String comcode) throws IOException, MyException {
+        Response<ResponseEntity> execute = PostalApi.bindingNodeSync(phone, comcode).execute();
+        try {
+            ResponseEntity body = execute.body();
+            Log.e("Repository","bindingNodeSync:"+body);
+            if (body != null) {
+                if (TextUtils.equals(body.getCode(), ValueUtil.SUCCESS)) {
+                    return null;
+                } else {
+                    return body.getMessage() + "";
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e("Repository","bindingNodeSync   Exception:"+e);
+            throw new MyException(e.getMessage());
+        }
+        throw new MyException("服务端返回数据解析失败，或为空");
+    }
+
+    public String unBindingNodeSync(String phone, String orgNode) throws IOException, MyException {
+        Response<ResponseEntity> execute = PostalApi.unBindingNodeSync(phone, orgNode).execute();
+        try {
+            ResponseEntity body = execute.body();
+            Log.e("Repository","unBindingNodeSync:"+body);
+            if (body != null) {
+                if (TextUtils.equals(body.getCode(), ValueUtil.SUCCESS)) {
+                    return null;
+                } else {
+                    return body.getMessage() + "";
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e("Repository","unBindingNodeSync   Exception:"+e);
             throw new MyException(e.getMessage());
         }
         throw new MyException("服务端返回数据解析失败，或为空");
@@ -137,6 +201,5 @@ public class LoginRepository extends BaseRepository {
 
                 });
     }
-
 
 }

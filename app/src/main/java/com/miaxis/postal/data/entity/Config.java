@@ -114,6 +114,22 @@ public class Config {
         this.heartBeatInterval = heartBeatInterval;
     }
 
+    @Override
+    public String toString() {
+        return "Config{" +
+                "id=" + id +
+                ", host='" + host + '\'' +
+                ", deviceIMEI='" + deviceIMEI + '\'' +
+                ", qualityScore=" + qualityScore +
+                ", registerQualityScore=" + registerQualityScore +
+                ", verifyScore=" + verifyScore +
+                ", verifyMaskScore=" + verifyMaskScore +
+                ", maskScore=" + maskScore +
+                ", deviceStatus='" + deviceStatus + '\'' +
+                ", heartBeatInterval=" + heartBeatInterval +
+                '}';
+    }
+
     public static final class Builder {
         private Long id;
         private String host;

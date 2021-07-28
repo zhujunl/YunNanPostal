@@ -10,7 +10,7 @@
 
         <variable
             name="viewModel"
-            type="com.miaxis.postal.viewModel.BranchViewModel" />
+            type="com.miaxis.postal.viewModel.MineBranchViewModel" />
 
     </data>
 

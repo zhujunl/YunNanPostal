@@ -3,7 +3,6 @@ package com.miaxis.postal.app;
 import android.app.Application;
 
 import com.liulishuo.filedownloader.FileDownloader;
-import com.miaxis.postal.BuildConfig;
 import com.miaxis.postal.MyEventBusIndex;
 import com.miaxis.postal.data.dao.AppDatabase;
 import com.miaxis.postal.data.net.PostalApi;
@@ -12,6 +11,7 @@ import com.miaxis.postal.manager.CrashExceptionManager;
 import com.miaxis.postal.manager.FaceManager;
 import com.miaxis.postal.manager.TTSManager;
 import com.miaxis.postal.util.FileUtil;
+import com.miaxis.postal.util.SPUtils;
 import com.miaxis.postal.util.carch.CrashHandler;
 
 import org.greenrobot.eventbus.EventBus;
@@ -34,16 +34,17 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
         instance = this;
-        if (!BuildConfig.DEBUG) {
+        //if (!BuildConfig.DEBUG) {
             CrashHandler crashHandler = CrashHandler.getInstance();
             crashHandler.init(this);
-        }
+        //}
         EventBus.builder().addIndex(new MyEventBusIndex()).installDefaultEventBus();
     }
 
     public String getRandomBarCode() {
-        String temp = ConfigManager.getInstance().getConfig().getDeviceIMEI() + "" + System.currentTimeMillis() + "" + App.getInstance().GlobalRandom.nextLong();
-        return this.BarHeader + Math.abs(temp.hashCode());
+        long timeMillis = System.currentTimeMillis();
+        String temp = ConfigManager.getInstance().getConfig().getDeviceIMEI() + "" + timeMillis + "" + App.getInstance().GlobalRandom.nextLong();
+        return this.BarHeader + Math.abs(temp.hashCode() + GlobalRandom.nextLong());
     }
 
     public static App getInstance() {
@@ -54,10 +55,11 @@ public class App extends Application {
         try {
             FileUtil.initDirectory();
             AppDatabase.initDB(this);
+            SPUtils.getInstance().init(this);
             ConfigManager.getInstance().checkConfig();
-            if (!BuildConfig.DEBUG) {
+            //if (!BuildConfig.DEBUG) {
                 CrashExceptionManager.getInstance().init(this);
-            }
+            //}
             PostalApi.rebuildRetrofit();
             FileDownloader.setup(this);
             TTSManager.getInstance().init(getApplicationContext());

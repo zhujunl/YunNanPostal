@@ -1,9 +1,11 @@
 package com.miaxis.postal.viewModel;
 
-public class BranchViewModel extends BaseViewModel {
+import com.miaxis.postal.data.entity.Branch;
+
+public class MineBranchViewModel extends BaseViewModel {
 
 
-    public BranchViewModel() {
+    public MineBranchViewModel() {
         //ScanManager.getInstance().initDevice(App.getInstance(), listener);
     }
 
@@ -13,5 +15,10 @@ public class BranchViewModel extends BaseViewModel {
 
     }
 
+    public void deleteBranch(Branch branch) {
+
+
+
+    }
 
 }

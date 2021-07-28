@@ -20,7 +20,7 @@ import androidx.room.TypeConverters;
 import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
-@Database(entities = {Config.class, Courier.class, IDCardRecord.class, Express.class, WarnLog.class, IDCard.class}, version = 18)
+@Database(entities = {Config.class, Courier.class, IDCardRecord.class, Express.class, WarnLog.class, IDCard.class}, version = 19)
 @TypeConverters({StringListConverter.class, OrderImageListConverter.class, DateConverter.class})
 public abstract class AppDatabase extends RoomDatabase {
 
@@ -51,6 +51,7 @@ public abstract class AppDatabase extends RoomDatabase {
                     }
                 })
                 .addMigrations(MIGRATION_9_10)
+                .addMigrations(MIGRATION_18_19)
                 .fallbackToDestructiveMigration()
                 .build();
     }
@@ -59,6 +60,13 @@ public abstract class AppDatabase extends RoomDatabase {
         @Override
         public void migrate(SupportSQLiteDatabase database) {
             database.execSQL("ALTER TABLE Express ADD COLUMN phone TEXT");
+        }
+    };
+
+    static final Migration MIGRATION_18_19 = new Migration(18, 19) {
+        @Override
+        public void migrate(SupportSQLiteDatabase database) {
+            database.execSQL("ALTER TABLE Express ADD COLUMN orgCode TEXT");
         }
     };
 

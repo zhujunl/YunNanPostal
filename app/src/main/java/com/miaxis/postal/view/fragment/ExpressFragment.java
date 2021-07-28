@@ -154,7 +154,8 @@ public class ExpressFragment extends BaseViewModelFragment<FragmentExpressBindin
     public void onAttach(Context context) {
         super.onAttach(context);
         Log.i(TAG, "onAttach: ");
-        ScanManager.getInstance().powerOn();
+        //ScanManager.getInstance().powerOn();
+        ScanManager.getInstance().powerOff();
     }
 
     @Override

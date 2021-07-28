@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 
 import com.miaxis.postal.R;
 import com.miaxis.postal.data.entity.Branch;
-import com.miaxis.postal.databinding.ItemBranchBinding;
+import com.miaxis.postal.databinding.ItemSelectBranchBinding;
 import com.miaxis.postal.view.base.BaseAdapter;
 import com.miaxis.postal.view.base.BaseViewHolder;
 
@@ -15,17 +15,17 @@ import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class BranchAdapter extends BaseAdapter<Branch, RecyclerView.ViewHolder> {
+public class BranchSelectAdapter extends BaseAdapter<Branch, RecyclerView.ViewHolder> {
 
     private OnBodyClickListener bodyListener;
 
-    public BranchAdapter(Context context) {
+    public BranchSelectAdapter(Context context) {
         super(context);
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        ItemBranchBinding bodyBinding = DataBindingUtil.inflate(LayoutInflater.from(parent.getContext()), R.layout.item_branch, parent, false);
+        ItemSelectBranchBinding bodyBinding = DataBindingUtil.inflate(LayoutInflater.from(parent.getContext()), R.layout.item_select_branch, parent, false);
         BodyViewHolder baseViewHolder = new BodyViewHolder(bodyBinding.getRoot());
         baseViewHolder.setBinding(bodyBinding);
         return baseViewHolder;
@@ -48,7 +48,7 @@ public class BranchAdapter extends BaseAdapter<Branch, RecyclerView.ViewHolder> 
         return dataList.size();
     }
 
-    static class BodyViewHolder extends BaseViewHolder<ItemBranchBinding> implements View.OnClickListener {
+    static class BodyViewHolder extends BaseViewHolder<ItemSelectBranchBinding> implements View.OnClickListener {
 
         BodyViewHolder(View itemView) {
             super(itemView);
@@ -60,17 +60,12 @@ public class BranchAdapter extends BaseAdapter<Branch, RecyclerView.ViewHolder> 
             getBinding().setItem(branch);
             this.mOnBodyClickListener = onBodyClickListener;
             this.itemView.setOnClickListener(this);
-            this.itemView.setBackgroundResource(branch.isSelected ? R.drawable.bg_branch : R.drawable.bg_white_shape);
         }
 
         @Override
         public void onClick(View v) {
             if (this.mOnBodyClickListener != null) {
-                Branch item = getBinding().getItem();
-                if (item != null && item.isSelected) {
-                    return;
-                }
-                this.mOnBodyClickListener.onBodyClick(getBinding().getRoot(), item, getLayoutPosition());
+                this.mOnBodyClickListener.onBodyClick(getBinding().getRoot(), getBinding().getItem(), getLayoutPosition());
             }
         }
     }

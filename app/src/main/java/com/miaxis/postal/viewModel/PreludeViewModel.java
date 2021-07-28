@@ -3,27 +3,24 @@ package com.miaxis.postal.viewModel;
 import android.Manifest;
 import android.text.TextUtils;
 
-import androidx.databinding.ObservableBoolean;
-import androidx.databinding.ObservableField;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-
 import com.miaxis.postal.app.App;
 import com.miaxis.postal.bridge.SingleLiveEvent;
-import com.miaxis.postal.data.dao.AppDatabase;
 import com.miaxis.postal.data.entity.Config;
 import com.miaxis.postal.data.entity.Courier;
 import com.miaxis.postal.data.exception.NetResultFailedException;
 import com.miaxis.postal.data.model.CourierModel;
 import com.miaxis.postal.data.repository.DeviceRepository;
-import com.miaxis.postal.data.repository.LoginRepository;
 import com.miaxis.postal.manager.ConfigManager;
 import com.miaxis.postal.manager.DataCacheManager;
 import com.miaxis.postal.manager.ToastManager;
 import com.miaxis.postal.util.ValueUtil;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 
+import androidx.databinding.ObservableBoolean;
+import androidx.databinding.ObservableField;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -37,7 +34,7 @@ public class PreludeViewModel extends BaseViewModel {
 
     private SingleLiveEvent<Boolean> initSuccess = new SingleLiveEvent<>();
 
-    public MutableLiveData<Boolean> isLoginState=new MutableLiveData<>();
+    public MutableLiveData<Boolean> isLoginState = new MutableLiveData<>();
 
     public PreludeViewModel() {
     }
@@ -74,7 +71,6 @@ public class PreludeViewModel extends BaseViewModel {
 
     private App.OnAppInitListener onAppInitListener = (result, message) -> {
         if (result) {
-            Config config = ConfigManager.getInstance().getConfig();
             hint.set("初始化成功，正在查询设备状态");
             getDeviceStatus();
         } else {
@@ -87,8 +83,7 @@ public class PreludeViewModel extends BaseViewModel {
         Disposable subscribe = Observable.create((ObservableOnSubscribe<String>) emitter -> {
             String deviceStatus = DeviceRepository.getInstance().getDeviceStatus();
             emitter.onNext(deviceStatus);
-        })
-                .subscribeOn(Schedulers.from(App.getInstance().getThreadExecutor()))
+        }).subscribeOn(Schedulers.from(App.getInstance().getThreadExecutor()))
                 .observeOn(Schedulers.from(App.getInstance().getThreadExecutor()))
                 .doOnNext(s -> {
                     Config config = ConfigManager.getInstance().getConfig();
@@ -122,14 +117,14 @@ public class PreludeViewModel extends BaseViewModel {
         hint.set(message + "\n" + "设备IMEI：" + config.getDeviceIMEI());
     }
 
-    public   void  isLogin(){
+    public void isLogin() {
         Disposable subscribe = Observable.create((ObservableOnSubscribe<Boolean>) emitter -> {
-            Courier courier =   AppDatabase.getInstance().courierDao().loadCourier();
-            if (courier!=null&&courier.getLogin()){
-                ValueUtil.GlobalPhone=courier.getPhone();
+            Courier courier = CourierModel.loadCourier();
+            if (courier != null && courier.getLogin()) {
+                ValueUtil.GlobalPhone = courier.getPhone();
                 DataCacheManager.getInstance().setCourier(courier);
                 emitter.onNext(Boolean.TRUE);
-            }else{
+            } else {
                 emitter.onNext(Boolean.FALSE);
             }
         }).subscribeOn(Schedulers.from(App.getInstance().getThreadExecutor()))
