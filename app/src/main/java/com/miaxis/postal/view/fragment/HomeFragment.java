@@ -65,7 +65,6 @@ public class HomeFragment extends BaseViewModelFragment<FragmentHomeBinding, Hom
     @Override
     protected void initView() {
         binding.ivConfig.setOnClickListener(new OnLimitClickHelper(view -> {
-
             mListener.replaceFragment(ConfigFragment.newInstance());
         }));
         //binding.clExpress.setOnClickListener(new OnLimitClickHelper(view -> mListener.replaceFragment(CardFragment.newInstance())));
@@ -87,13 +86,9 @@ public class HomeFragment extends BaseViewModelFragment<FragmentHomeBinding, Hom
                 CardModeSelectDialogFragment.newInstance(true).show(getChildFragmentManager(), "CardModeSelectDialogFragment");
             }
         });
-
         binding.clMine.setOnClickListener(v -> {
-            if (checkBranch()) {
-                mListener.replaceFragment(MineBranchFragment.newInstance());
-            }
+            mListener.replaceFragment(MineBranchFragment.newInstance());
         });
-
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         binding.rvBranches.setLayoutManager(linearLayoutManager);
         branchAdapter = new BranchAdapter(getContext());
@@ -118,13 +113,15 @@ public class HomeFragment extends BaseViewModelFragment<FragmentHomeBinding, Hom
                 int position = -1;
                 for (int i = 0; i < branchListSync.size(); i++) {
                     Branch branch = branchListSync.get(i);
-                    branch.isSelected = StringUtils.isEquals(lastBranchId, branch.comcode);
+                    branch.isSelected = StringUtils.isEquals(lastBranchId, branch.orgCode);
                     if (branch.isSelected) {
                         position = i;
                     }
                 }
                 if (position < 0 && !branchListSync.isEmpty()) {
                     branchListSync.get(0).isSelected = true;
+                    SPUtils.getInstance().write(ValueUtil.GlobalPhone, branchListSync.get(0).orgCode);
+                    SPUtils.getInstance().write(ValueUtil.GlobalPhone + "node", branchListSync.get(0).orgNode);
                 }
                 int finalPosition = position;
                 mHandler.post(new Runnable() {
@@ -146,7 +143,7 @@ public class HomeFragment extends BaseViewModelFragment<FragmentHomeBinding, Hom
     @Override
     public void onResume() {
         super.onResume();
-        //PostalManager.getInstance().startPostal();
+//        PostalManager.getInstance().startPostal();
     }
 
     @Override
@@ -188,7 +185,8 @@ public class HomeFragment extends BaseViewModelFragment<FragmentHomeBinding, Hom
                     for (Branch bran : dataList) {
                         bran.isSelected = false;
                     }
-                    SPUtils.getInstance().write(ValueUtil.GlobalPhone, branch.comcode);
+                    SPUtils.getInstance().write(ValueUtil.GlobalPhone, branch.orgCode);
+                    SPUtils.getInstance().write(ValueUtil.GlobalPhone + "node", branch.orgNode);
                     branch.isSelected = true;
                     branchAdapter.notifyDataSetChanged();
                 })
@@ -205,7 +203,7 @@ public class HomeFragment extends BaseViewModelFragment<FragmentHomeBinding, Hom
                     .show();
             return false;
         }
-        if (TextUtils.isEmpty(SPUtils.getInstance().read(ValueUtil.GlobalPhone, ""))){
+        if (TextUtils.isEmpty(SPUtils.getInstance().read(ValueUtil.GlobalPhone, ""))) {
             new MaterialDialog.Builder(getContext())
                     .title("您当前未选择机构，无法使用此功能。")
                     .positiveText("确认")

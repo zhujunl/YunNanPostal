@@ -10,8 +10,6 @@ import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
-
 import com.miaxis.postal.app.App;
 import com.miaxis.postal.data.dao.AppDatabase;
 import com.miaxis.postal.data.entity.Courier;
@@ -21,28 +19,21 @@ import com.miaxis.postal.data.entity.TempId;
 import com.miaxis.postal.data.entity.WarnLog;
 import com.miaxis.postal.data.exception.MyException;
 import com.miaxis.postal.data.exception.NetResultFailedException;
-import com.miaxis.postal.data.net.PostalApi;
-import com.miaxis.postal.data.net.ResponseEntity;
 import com.miaxis.postal.data.repository.ExpressRepository;
 import com.miaxis.postal.data.repository.IDCardRecordRepository;
 import com.miaxis.postal.data.repository.IDCardRepository;
 import com.miaxis.postal.data.repository.WarnLogRepository;
 import com.miaxis.postal.util.FileUtil;
-import com.miaxis.postal.util.StringUtils;
-import com.miaxis.postal.util.ValueUtil;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import androidx.annotation.NonNull;
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
-import retrofit2.Call;
-import retrofit2.Response;
 
 public class PostalManager {
 
@@ -89,9 +80,9 @@ public class PostalManager {
 
     //去掉MainActivity HomeFragment 在onResume中的刷新 减少刷新频率
     public void startPostal() {
-//        if (uploading.get()) {
-//            return;
-//        }
+        //        if (uploading.get()) {
+        //            return;
+        //        }
         handler.removeMessages(0);
         handler.sendMessage(handler.obtainMessage(0));
     }
@@ -123,7 +114,7 @@ public class PostalManager {
             }
         } catch (Exception e) {
             Log.e("asd", "Postal Exception:" + e.getMessage());
-//            handler.sendMessageDelayed(handler.obtainMessage(0), 30 * 60 * 1000);
+            //            handler.sendMessageDelayed(handler.obtainMessage(0), 30 * 60 * 1000);
             uploading.set(false);
         }
     }

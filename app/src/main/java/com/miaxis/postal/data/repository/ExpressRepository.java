@@ -115,8 +115,8 @@ public class ExpressRepository {
         String warnLog= warnLogId != null ? String.valueOf(warnLogId) : "";
         if (type) {
             execute = PostalApi.saveOrderFromAppSync(
-                    courier.getOrgCode(),
-                    courier.getOrgNode(),
+                    express.getOrgCode(),
+                    express.getOrgNode(),
                     tempId.getPersonId(),
                     tempId.getCheckId(),
                    warnLog,
@@ -138,8 +138,8 @@ public class ExpressRepository {
                     photos).execute();
         } else {
             execute = PostalApi.saveOrderFromAppSync(
-                    courier.getOrgCode(),
-                    courier.getOrgNode(),
+                    express.getOrgCode(),
+                    express.getOrgNode(),
                     tempId.getPersonId(),
                     tempId.getCheckId(),
                     warnLog,

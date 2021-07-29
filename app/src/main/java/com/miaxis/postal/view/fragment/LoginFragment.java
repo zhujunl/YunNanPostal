@@ -94,7 +94,23 @@ public class LoginFragment extends BaseViewModelFragment<FragmentLoginBinding, L
                     try {
                         List<Branch> branchListSync = LoginRepository.getInstance().getBranchListSync(userPhone);
                         dismissWaitDialog();
-                        BranchSelectDialogFragment.newInstance(userPhone, branchListSync).show(getChildFragmentManager(), "BranchSelectDialogFragment");
+                        if (branchListSync.isEmpty()) {
+                            ValueUtil.GlobalPhone = userPhone;
+                            //boolean write = SPUtils.getInstance().write(ValueUtil.GlobalPhone, "");
+                            SPUtils.getInstance().write(ValueUtil.GlobalPhone, "");
+                            SPUtils.getInstance().write(ValueUtil.GlobalPhone + "node", "");
+                            CourierModel.setLogin();
+                            mHandler.post(() -> mListener.replaceFragment(HomeFragment.newInstance()));
+                        } else if (branchListSync.size() == 1) {
+                            ValueUtil.GlobalPhone = userPhone;
+                            SPUtils.getInstance().write(ValueUtil.GlobalPhone, branchListSync.get(0).orgCode);
+                            SPUtils.getInstance().write(ValueUtil.GlobalPhone + "node", branchListSync.get(0).orgNode);
+                            CourierModel.setLogin();
+                            mHandler.post(() -> mListener.replaceFragment(HomeFragment.newInstance()));
+                        } else {
+                            mHandler.post(() -> BranchSelectDialogFragment.newInstance(userPhone, branchListSync)
+                                    .show(getChildFragmentManager(), "BranchSelectDialogFragment"));
+                        }
                     } catch (Exception e) {
                         e.printStackTrace();
                         dismissWaitDialog();

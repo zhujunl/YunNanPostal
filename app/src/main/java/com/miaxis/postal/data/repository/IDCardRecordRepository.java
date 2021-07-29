@@ -5,7 +5,6 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.miaxis.postal.data.dto.TempIdDto;
-import com.miaxis.postal.data.entity.Courier;
 import com.miaxis.postal.data.entity.IDCardRecord;
 import com.miaxis.postal.data.entity.TempId;
 import com.miaxis.postal.data.exception.MyException;
@@ -13,9 +12,9 @@ import com.miaxis.postal.data.exception.NetResultFailedException;
 import com.miaxis.postal.data.model.IDCardRecordModel;
 import com.miaxis.postal.data.net.PostalApi;
 import com.miaxis.postal.data.net.ResponseEntity;
-import com.miaxis.postal.manager.DataCacheManager;
 import com.miaxis.postal.util.DateUtil;
 import com.miaxis.postal.util.FileUtil;
+import com.miaxis.postal.util.SPUtils;
 import com.miaxis.postal.util.ValueUtil;
 
 import java.io.File;
@@ -64,11 +63,12 @@ public class IDCardRecordRepository {
             webCardPath=idCardRecord.getWebCardPath();
             webFacePath=idCardRecord.getWebFacePath();
         }
-
-        Courier courier = DataCacheManager.getInstance().getCourier();
+        //Courier courier = DataCacheManager.getInstance().getCourier();
+        String orgCode = SPUtils.getInstance().read(ValueUtil.GlobalPhone, "");
+        String orgNode = SPUtils.getInstance().read(ValueUtil.GlobalPhone+ "node", "");
         Response<ResponseEntity<TempIdDto>> execute = PostalApi.savePersonFromApp(
-                courier.getOrgCode(),
-                courier.getOrgNode(),
+                orgCode,
+                orgNode,
                 idCardRecord.getName(),
                 idCardRecord.getNation(),
                 idCardRecord.getBirthday(),

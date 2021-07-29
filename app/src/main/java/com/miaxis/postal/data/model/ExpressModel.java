@@ -11,13 +11,14 @@ public class ExpressModel {
 
     public static void saveExpress(Express express) {
         String orgCode = SPUtils.getInstance().read(ValueUtil.GlobalPhone, "");
+        String orgNode = SPUtils.getInstance().read(ValueUtil.GlobalPhone+ "node", "");
         express.setOrgCode(orgCode);
+        express.setOrgNode(orgNode);
         AppDatabase.getInstance().expressDao().insert(express);
     }
 
     public static List<Express> loadExpress(String verifyId) {
-        String orgCode = SPUtils.getInstance().read(ValueUtil.GlobalPhone, "");
-        return AppDatabase.getInstance().expressDao().loadExpress(ValueUtil.GlobalPhone, orgCode, verifyId);
+        return AppDatabase.getInstance().expressDao().loadExpress(ValueUtil.GlobalPhone, verifyId);
     }
 
     public static void deleteExpress(Express express) {
@@ -25,18 +26,15 @@ public class ExpressModel {
     }
 
     public static List<Express> loadAll() {
-        String orgCode = SPUtils.getInstance().read(ValueUtil.GlobalPhone, "");
-        return AppDatabase.getInstance().expressDao().loadAll(ValueUtil.GlobalPhone, orgCode);
+        return AppDatabase.getInstance().expressDao().loadAll(ValueUtil.GlobalPhone);
     }
 
     public static List<Express> loadExpressByPage(int pageNum, int pageSize) {
-        String orgCode = SPUtils.getInstance().read(ValueUtil.GlobalPhone, "");
-        return AppDatabase.getInstance().expressDao().loadExpressByPage(ValueUtil.GlobalPhone, orgCode, pageNum, pageSize);
+        return AppDatabase.getInstance().expressDao().loadExpressByPage(ValueUtil.GlobalPhone, pageNum, pageSize);
     }
 
     public static int loadExpressCount() {
-        String orgCode = SPUtils.getInstance().read(ValueUtil.GlobalPhone, "");
-        return AppDatabase.getInstance().expressDao().loadExpressCount(ValueUtil.GlobalPhone, orgCode);
+        return AppDatabase.getInstance().expressDao().loadExpressCount(ValueUtil.GlobalPhone);
     }
 
     public static int loadExpressAllCount() {
@@ -44,8 +42,7 @@ public class ExpressModel {
     }
 
     public static Express loadExpressWithCode(String code) {
-        String orgCode = SPUtils.getInstance().read(ValueUtil.GlobalPhone, "");
-        return AppDatabase.getInstance().expressDao().loadExpressWithCode(ValueUtil.GlobalPhone, orgCode, code);
+        return AppDatabase.getInstance().expressDao().loadExpressWithCode(ValueUtil.GlobalPhone, code);
     }
 
 }

@@ -9,7 +9,7 @@ public class Branch {
 
 
     //    private Long id;
-    //    private String orgCode;
+    public String orgCode;
     public String orgNode;
     //    private String orgName;
     //    private String orgType;
@@ -41,6 +41,9 @@ public class Branch {
     //        this.isSelected = isSelected;
     //    }
 
+    public boolean isEmpty() {
+        return comcode == null || orgCode == null || orgNode == null || orgName == null;
+    }
 
     @Override
     public String toString() {

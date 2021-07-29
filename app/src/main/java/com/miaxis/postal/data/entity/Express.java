@@ -32,7 +32,8 @@ public class Express {
     private boolean draft;
     private boolean complete;
     private String phone;
-    private String orgCode;//机构号
+    private String orgCode;//机构号1
+    private String orgNode;//机构号2
     private String customerName;
     private String customerPhone;
     private String goodsName;
@@ -67,11 +68,20 @@ public class Express {
         setComplete(builder.complete);
         setPhone(builder.phone);
         setOrgCode(builder.orgCode);
+        setOrgNode(builder.orgNode);
         setCustomerName(builder.customerName);
         setGoodsName(builder.goodsName);
         setGoodsNumber(builder.goodsNumber);
         setCustomerType(builder.customerType);
         setCustomerPhone(builder.customerPhone);
+    }
+
+    public String getOrgNode() {
+        return orgNode;
+    }
+
+    public void setOrgNode(String orgNode) {
+        this.orgNode = orgNode;
     }
 
     public String getOrgCode() {
@@ -330,6 +340,7 @@ public class Express {
         private boolean complete;
         private String phone;
         private String orgCode;//机构号
+        private String orgNode;
         private String customerName;
         private String goodsName;
         private String goodsNumber;
@@ -337,6 +348,11 @@ public class Express {
         private String customerPhone;
 
         public Builder() {
+        }
+
+        public Builder orgNode(String val) {
+            orgNode = val;
+            return this;
         }
 
         public Builder orgCode(String val) {

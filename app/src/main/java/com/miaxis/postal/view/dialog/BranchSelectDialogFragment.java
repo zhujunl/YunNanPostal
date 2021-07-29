@@ -116,7 +116,8 @@ public class BranchSelectDialogFragment extends BaseViewModelDialogFragment<Frag
     @Override
     public void onBodyClick(View view, Branch branch, int position) {
         ValueUtil.GlobalPhone = this.userName;
-        boolean write = SPUtils.getInstance().write(ValueUtil.GlobalPhone, branch.comcode);
+        SPUtils.getInstance().write(ValueUtil.GlobalPhone, branch.orgCode);
+        SPUtils.getInstance().write(ValueUtil.GlobalPhone+"node", branch.orgNode);
         App.getInstance().getThreadExecutor().execute(() -> {
             CourierModel.setLogin();
             mHandler.post(() -> mListener.replaceFragment(HomeFragment.newInstance()));
