@@ -74,18 +74,15 @@ public class MineBranchFragment extends BaseViewModelFragment<FragmentMineBranch
     }
 
     private void initRecycleView() {
-        binding.btnBinding.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String branchNo = binding.etNo.getText().toString();
-                if (TextUtils.isEmpty(branchNo)) {
-                    new MaterialDialog.Builder(getContext())
-                            .title("请先输入网点编号。")
-                            .positiveText("确认")
-                            .show();
-                } else {
-                    bindBranch(branchNo);
-                }
+        binding.btnBinding.setOnClickListener(v -> {
+            String branchNo = binding.etNo.getText().toString();
+            if (TextUtils.isEmpty(branchNo)) {
+                new MaterialDialog.Builder(getContext())
+                        .title("请先输入网点编号。")
+                        .positiveText("确认")
+                        .show();
+            } else {
+                bindBranch(branchNo);
             }
         });
         mineBranchAdapter = new MineBranchAdapter(getContext());
@@ -105,12 +102,9 @@ public class MineBranchFragment extends BaseViewModelFragment<FragmentMineBranch
             try {
                 List<Branch> branchListSync = LoginRepository.getInstance().getBranchListSync(ValueUtil.GlobalPhone);
                 dismissWaitDialog();
-                mHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        mineBranchAdapter.setDataList(branchListSync);
-                        mineBranchAdapter.notifyDataSetChanged();
-                    }
+                mHandler.post(() -> {
+                    mineBranchAdapter.setDataList(branchListSync);
+                    mineBranchAdapter.notifyDataSetChanged();
                 });
             } catch (Exception e) {
                 e.printStackTrace();
@@ -126,12 +120,7 @@ public class MineBranchFragment extends BaseViewModelFragment<FragmentMineBranch
             try {
                 String bindingNodeSync = LoginRepository.getInstance().bindingNodeSync(ValueUtil.GlobalPhone, comcode);
                 dismissWaitDialog();
-                mHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        ToastManager.toast(bindingNodeSync == null ? "绑定成功" : ("绑定失败" + bindingNodeSync), bindingNodeSync == null ? ToastManager.SUCCESS : ToastManager.ERROR);
-                    }
-                });
+                mHandler.post(() -> ToastManager.toast(bindingNodeSync == null ? "绑定成功" : ("" + bindingNodeSync), bindingNodeSync == null ? ToastManager.SUCCESS : ToastManager.ERROR));
                 if (bindingNodeSync == null) {
                     getBranchList();
                 }
@@ -149,12 +138,7 @@ public class MineBranchFragment extends BaseViewModelFragment<FragmentMineBranch
             try {
                 String bindingNodeSync = LoginRepository.getInstance().unBindingNodeSync(ValueUtil.GlobalPhone, orgNode);
                 dismissWaitDialog();
-                mHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        ToastManager.toast(bindingNodeSync == null ? "解绑成功" : ("解绑失败" + bindingNodeSync), bindingNodeSync == null ? ToastManager.SUCCESS : ToastManager.ERROR);
-                    }
-                });
+                mHandler.post(() -> ToastManager.toast(bindingNodeSync == null ? "解绑成功" : ("" + bindingNodeSync), bindingNodeSync == null ? ToastManager.SUCCESS : ToastManager.ERROR));
                 if (bindingNodeSync == null) {
                     getBranchList();
                 }

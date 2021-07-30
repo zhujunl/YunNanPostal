@@ -2,7 +2,6 @@ package com.miaxis.postal.data.model;
 
 import com.miaxis.postal.data.dao.AppDatabase;
 import com.miaxis.postal.data.entity.Express;
-import com.miaxis.postal.util.SPUtils;
 import com.miaxis.postal.util.ValueUtil;
 
 import java.util.List;
@@ -10,8 +9,8 @@ import java.util.List;
 public class ExpressModel {
 
     public static void saveExpress(Express express) {
-        String orgCode = SPUtils.getInstance().read(ValueUtil.GlobalPhone, "");
-        String orgNode = SPUtils.getInstance().read(ValueUtil.GlobalPhone+ "node", "");
+        String orgCode = ValueUtil.readOrgCode();
+        String orgNode = ValueUtil.readOrgNode();
         express.setOrgCode(orgCode);
         express.setOrgNode(orgNode);
         AppDatabase.getInstance().expressDao().insert(express);

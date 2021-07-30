@@ -113,6 +113,7 @@ public class ExpressRepository {
     private Response<ResponseEntity> sendOrder(boolean type, Courier courier, TempId tempId, Integer warnLogId, String sendName, int chekStatus, Express express, String photos) throws IOException, MyException, NetResultFailedException {
         Response<ResponseEntity> execute;
         String warnLog= warnLogId != null ? String.valueOf(warnLogId) : "";
+        Log.e("Express","sendOrder:"+express);
         if (type) {
             execute = PostalApi.saveOrderFromAppSync(
                     express.getOrgCode(),

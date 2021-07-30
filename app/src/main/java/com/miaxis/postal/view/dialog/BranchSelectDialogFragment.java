@@ -17,7 +17,6 @@ import com.miaxis.postal.app.App;
 import com.miaxis.postal.data.entity.Branch;
 import com.miaxis.postal.data.model.CourierModel;
 import com.miaxis.postal.databinding.FragmentBranchSelectDialogBinding;
-import com.miaxis.postal.util.SPUtils;
 import com.miaxis.postal.util.ValueUtil;
 import com.miaxis.postal.view.adapter.BranchSelectAdapter;
 import com.miaxis.postal.view.adapter.SpacesItemDecoration;
@@ -116,8 +115,9 @@ public class BranchSelectDialogFragment extends BaseViewModelDialogFragment<Frag
     @Override
     public void onBodyClick(View view, Branch branch, int position) {
         ValueUtil.GlobalPhone = this.userName;
-        SPUtils.getInstance().write(ValueUtil.GlobalPhone, branch.orgCode);
-        SPUtils.getInstance().write(ValueUtil.GlobalPhone+"node", branch.orgNode);
+//        SPUtils.getInstance().write(ValueUtil.GlobalPhone, branch.orgCode);
+//        SPUtils.getInstance().write(ValueUtil.GlobalPhone+"node", branch.orgNode);
+        ValueUtil.write(branch.orgCode,branch.orgNode,branch.orgName);
         App.getInstance().getThreadExecutor().execute(() -> {
             CourierModel.setLogin();
             mHandler.post(() -> mListener.replaceFragment(HomeFragment.newInstance()));

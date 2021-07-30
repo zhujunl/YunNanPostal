@@ -296,7 +296,6 @@ public class Express {
     public String toString() {
         return "Express{" +
                 "id=" + id +
-                ", phone='" + phone + '\'' +
                 ", barCode='" + barCode + '\'' +
                 ", photoPathList=" + photoPathList +
                 ", senderPhone='" + senderPhone + '\'' +
@@ -314,6 +313,14 @@ public class Express {
                 ", addresseeAddress='" + addresseeAddress + '\'' +
                 ", draft=" + draft +
                 ", complete=" + complete +
+                ", phone='" + phone + '\'' +
+                ", orgCode='" + orgCode + '\'' +
+                ", orgNode='" + orgNode + '\'' +
+                ", customerName='" + customerName + '\'' +
+                ", customerPhone='" + customerPhone + '\'' +
+                ", goodsName='" + goodsName + '\'' +
+                ", goodsNumber='" + goodsNumber + '\'' +
+                ", customerType='" + customerType + '\'' +
                 ", photoList=" + photoList +
                 '}';
     }

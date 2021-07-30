@@ -48,6 +48,24 @@ public class ValueUtil {
         return false;
     }
 
+    public static void write(String orgCode, String orgNode,String orgName) {
+        SPUtils.getInstance().write(ValueUtil.GlobalPhone, orgCode);
+        SPUtils.getInstance().write(ValueUtil.GlobalPhone + "node", orgNode);
+        SPUtils.getInstance().write(ValueUtil.GlobalPhone + "name", orgName);
+    }
+
+    public static String readOrgCode() {
+        return SPUtils.getInstance().read(ValueUtil.GlobalPhone, "");
+    }
+
+    public static String readOrgNode() {
+        return SPUtils.getInstance().read(ValueUtil.GlobalPhone + "node", "");
+    }
+
+    public static String readOrgName() {
+        return SPUtils.getInstance().read(ValueUtil.GlobalPhone + "name", "");
+    }
+
     public static String getCurVersion(Context context) {
         try {
             PackageManager manager = context.getPackageManager();

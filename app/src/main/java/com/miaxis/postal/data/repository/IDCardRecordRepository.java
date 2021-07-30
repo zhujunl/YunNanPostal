@@ -14,7 +14,6 @@ import com.miaxis.postal.data.net.PostalApi;
 import com.miaxis.postal.data.net.ResponseEntity;
 import com.miaxis.postal.util.DateUtil;
 import com.miaxis.postal.util.FileUtil;
-import com.miaxis.postal.util.SPUtils;
 import com.miaxis.postal.util.ValueUtil;
 
 import java.io.File;
@@ -64,8 +63,8 @@ public class IDCardRecordRepository {
             webFacePath=idCardRecord.getWebFacePath();
         }
         //Courier courier = DataCacheManager.getInstance().getCourier();
-        String orgCode = SPUtils.getInstance().read(ValueUtil.GlobalPhone, "");
-        String orgNode = SPUtils.getInstance().read(ValueUtil.GlobalPhone+ "node", "");
+        String orgCode = ValueUtil.readOrgCode();
+        String orgNode = ValueUtil.readOrgNode();
         Response<ResponseEntity<TempIdDto>> execute = PostalApi.savePersonFromApp(
                 orgCode,
                 orgNode,

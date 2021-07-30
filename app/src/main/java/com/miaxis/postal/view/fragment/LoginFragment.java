@@ -97,14 +97,16 @@ public class LoginFragment extends BaseViewModelFragment<FragmentLoginBinding, L
                         if (branchListSync.isEmpty()) {
                             ValueUtil.GlobalPhone = userPhone;
                             //boolean write = SPUtils.getInstance().write(ValueUtil.GlobalPhone, "");
-                            SPUtils.getInstance().write(ValueUtil.GlobalPhone, "");
-                            SPUtils.getInstance().write(ValueUtil.GlobalPhone + "node", "");
+                            //                            SPUtils.getInstance().write(ValueUtil.GlobalPhone, "");
+                            //                            SPUtils.getInstance().write(ValueUtil.GlobalPhone + "node", "");
+                            ValueUtil.write("", "","");
                             CourierModel.setLogin();
                             mHandler.post(() -> mListener.replaceFragment(HomeFragment.newInstance()));
                         } else if (branchListSync.size() == 1) {
                             ValueUtil.GlobalPhone = userPhone;
-                            SPUtils.getInstance().write(ValueUtil.GlobalPhone, branchListSync.get(0).orgCode);
-                            SPUtils.getInstance().write(ValueUtil.GlobalPhone + "node", branchListSync.get(0).orgNode);
+                            //                            SPUtils.getInstance().write(ValueUtil.GlobalPhone, branchListSync.get(0).orgCode);
+                            //                            SPUtils.getInstance().write(ValueUtil.GlobalPhone + "node", branchListSync.get(0).orgNode);
+                            ValueUtil.write(branchListSync.get(0).orgCode, branchListSync.get(0).orgNode, branchListSync.get(0).orgName);
                             CourierModel.setLogin();
                             mHandler.post(() -> mListener.replaceFragment(HomeFragment.newInstance()));
                         } else {

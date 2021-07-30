@@ -12,7 +12,6 @@ import com.miaxis.postal.data.net.PostalApi;
 import com.miaxis.postal.data.net.ResponseEntity;
 import com.miaxis.postal.manager.ConfigManager;
 import com.miaxis.postal.util.DateUtil;
-import com.miaxis.postal.util.SPUtils;
 import com.miaxis.postal.util.ValueUtil;
 
 import java.io.IOException;
@@ -40,8 +39,8 @@ public class WarnLogRepository extends BaseRepository {
     public Integer uploadWarnLog(WarnLog warnLog, TempId tempId) throws MyException, IOException, NetResultFailedException {
         Config config = ConfigManager.getInstance().getConfig();
         //Courier courier = DataCacheManager.getInstance().getCourier();
-        String orgCode = SPUtils.getInstance().read(ValueUtil.GlobalPhone, "");
-        String orgNode = SPUtils.getInstance().read(ValueUtil.GlobalPhone+ "node", "");
+        String orgCode = ValueUtil.readOrgCode();
+        String orgNode = ValueUtil.readOrgNode();
         Response<ResponseEntity<Integer>> execute = PostalApi.uploadWarnLog(
                 orgCode,
                 orgNode,
