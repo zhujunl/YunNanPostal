@@ -2,12 +2,8 @@ package com.miaxis.postal.viewModel;
 
 import android.graphics.Bitmap;
 
-import androidx.appcompat.widget.AppCompatButton;
-import androidx.lifecycle.MutableLiveData;
-
 import com.miaxis.postal.app.App;
 import com.miaxis.postal.bridge.SingleLiveEvent;
-import com.miaxis.postal.data.dao.AppDatabase;
 import com.miaxis.postal.data.entity.Draft;
 import com.miaxis.postal.data.entity.DraftMessage;
 import com.miaxis.postal.data.entity.Express;
@@ -22,16 +18,16 @@ import com.miaxis.postal.util.FileUtil;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.lifecycle.MutableLiveData;
 import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
 public class DraftViewModel extends BaseViewModel {
 
+    private final String TAG = "DraftViewModel";
     public MutableLiveData<List<Draft>> draftList = new MutableLiveData<>(new ArrayList<>());
 
     public MutableLiveData<Boolean> refreshing = new SingleLiveEvent<>();
@@ -67,7 +63,7 @@ public class DraftViewModel extends BaseViewModel {
                     refreshing.setValue(Boolean.FALSE);
                     if (pageNum == 1) {
                         if (mDraftList.isEmpty()) {
-//                            toast.setValue(ToastManager.getToastBody("本地暂无缓存日志", ToastManager.SUCCESS));
+                            //oast.setValue(ToastManager.getToastBody("本地暂无缓存日志", ToastManager.SUCCESS));
                         }
                         draftList.setValue(mDraftList);
                     } else {
@@ -108,12 +104,14 @@ public class DraftViewModel extends BaseViewModel {
                 if (cardBitmap != null) {
                     idCardRecord.setFaceBitmap(faceBitmap);
                 }
-
                 List<Express> expressList = ExpressRepository.getInstance().loadExpressByVerifyId(idCardRecord.getVerifyId());
                 for (Express express : expressList) {
                     List<Bitmap> photoList = new ArrayList<>();
-                    for (String path : express.getPhotoPathList()) {
-                        photoList.add(FileUtil.loadBitmap(path));
+                    List<String> photoPathList = express.getPhotoPathList();
+                    if (photoPathList != null) {
+                        for (String path : photoPathList) {
+                            photoList.add(FileUtil.loadBitmap(path));
+                        }
                     }
                     express.setPhotoList(photoList);
                 }
@@ -131,7 +129,7 @@ public class DraftViewModel extends BaseViewModel {
                 }, throwable -> {
                     throwable.printStackTrace();
                     waitMessage.postValue("");
-                    ToastManager.toast("查询时出现错误，请重试", ToastManager.ERROR);
+                    ToastManager.toast("查询时出现错误，请重试。" + throwable, ToastManager.ERROR);
                 });
     }
 

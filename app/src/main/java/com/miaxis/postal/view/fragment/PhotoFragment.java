@@ -1,22 +1,13 @@
 package com.miaxis.postal.view.fragment;
 
-import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
-
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.miaxis.postal.BR;
 import com.miaxis.postal.R;
 import com.miaxis.postal.bridge.GlideApp;
 import com.miaxis.postal.databinding.FragmentPhotoBinding;
 import com.miaxis.postal.view.base.BaseViewModelFragment;
 import com.miaxis.postal.viewModel.PhotoViewModel;
+
+import androidx.lifecycle.ViewModelProvider;
 
 public class PhotoFragment extends BaseViewModelFragment<FragmentPhotoBinding, PhotoViewModel> {
 

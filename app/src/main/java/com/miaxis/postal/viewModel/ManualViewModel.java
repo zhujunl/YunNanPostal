@@ -4,10 +4,6 @@ import android.graphics.Bitmap;
 import android.text.TextUtils;
 import android.util.Log;
 
-import androidx.databinding.ObservableField;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-
 import com.miaxis.postal.app.App;
 import com.miaxis.postal.bridge.SingleLiveEvent;
 import com.miaxis.postal.data.entity.Courier;
@@ -31,6 +27,9 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import androidx.databinding.ObservableField;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -139,9 +138,9 @@ public class ManualViewModel extends BaseViewModel {
                 Bitmap bitmap = selectList.get(0);
                 idCardRecord.setFaceBitmap(bitmap);
                 //移除 点击提交会保存
-//                String facePath = FileUtil.FACE_STOREHOUSE_PATH + File.separator + "face_" +idCardRecord.getCardNumber() + System.currentTimeMillis() + ".jpg";
-//                FileUtil.saveBitmap(idCardRecord.getFaceBitmap(), facePath);
-//                idCardRecord.setFacePicture(facePath);
+                String facePath = FileUtil.FACE_STOREHOUSE_PATH + File.separator + "face_" +idCardRecord.getCardNumber() + System.currentTimeMillis() + ".jpg";
+                FileUtil.saveBitmap(idCardRecord.getFaceBitmap(), facePath);
+                idCardRecord.setFacePicture(facePath);
                 idCardRecord.setVerifyTime(new Date());
                 idCardRecord.setVerifyType("1");
                 waitMessage.postValue("");

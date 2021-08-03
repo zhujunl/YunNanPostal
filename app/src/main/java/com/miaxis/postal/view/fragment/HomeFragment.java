@@ -211,8 +211,8 @@ public class HomeFragment extends BaseViewModelFragment<FragmentHomeBinding, Hom
                     for (Branch bran : dataList) {
                         bran.isSelected = false;
                     }
-                    //                    SPUtils.getInstance().write(ValueUtil.GlobalPhone, branch.orgCode);
-                    //                    SPUtils.getInstance().write(ValueUtil.GlobalPhone + "node", branch.orgNode);
+                    //SPUtils.getInstance().write(ValueUtil.GlobalPhone, branch.orgCode);
+                    //SPUtils.getInstance().write(ValueUtil.GlobalPhone + "node", branch.orgNode);
                     ValueUtil.write(branch.orgCode, branch.orgNode, branch.orgName);
                     branch.isSelected = true;
                     branchAdapter.notifyDataSetChanged();

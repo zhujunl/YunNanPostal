@@ -1,29 +1,23 @@
 package com.miaxis.postal.view.fragment;
 
-import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.SimpleItemAnimator;
-
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
 import com.miaxis.postal.BR;
 import com.miaxis.postal.R;
 import com.miaxis.postal.data.entity.Draft;
 import com.miaxis.postal.data.entity.DraftMessage;
+import com.miaxis.postal.data.entity.Express;
 import com.miaxis.postal.databinding.FragmentDraftBinding;
 import com.miaxis.postal.view.adapter.DraftAdapter;
 import com.miaxis.postal.view.base.BaseViewModelFragment;
 import com.miaxis.postal.viewModel.DraftViewModel;
 
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SimpleItemAnimator;
 
 public class DraftFragment extends BaseViewModelFragment<FragmentDraftBinding, DraftViewModel> {
 
@@ -68,7 +62,7 @@ public class DraftFragment extends BaseViewModelFragment<FragmentDraftBinding, D
     protected void initView() {
         initRecycleView();
         binding.srlDraft.setOnRefreshListener(this::refresh);
-        binding.srlDraft.setColorSchemeResources(R.color.main_color,R.color.main_color_dark);
+        binding.srlDraft.setColorSchemeResources(R.color.main_color, R.color.main_color_dark);
         refresh();
     }
 
@@ -98,11 +92,18 @@ public class DraftFragment extends BaseViewModelFragment<FragmentDraftBinding, D
     };
 
     private Observer<DraftMessage> draftMessageSearchObserver = draftMessage -> {
-         if ( draftMessage.getIdCardRecord().getType()!=2){
-             mListener.replaceFragment(ExpressFragment.newInstanceForDraft(draftMessage.getIdCardRecord(), draftMessage.getExpressList()));
-         }else{
-             mListener.replaceFragment(AgreementCustomersFragment.newInstanceForDraft(draftMessage.getIdCardRecord(), draftMessage.getExpressList()));
-         }
+        if (draftMessage.getIdCardRecord().getType() != 2) {
+            mListener.replaceFragment(ExpressFragment.newInstanceForDraft(draftMessage.getIdCardRecord(), draftMessage.getExpressList()));
+        } else {
+            Express express;
+            List<Express> expressList = draftMessage.getExpressList();
+            if (expressList.isEmpty()) {
+                express = new Express();
+            } else {
+                express = expressList.get(0);
+            }
+            mListener.replaceFragment(AgreementCustomersFragment.newInstanceForDraft(draftMessage.getIdCardRecord(), express));
+        }
     };
 
     private Observer<List<Draft>> draftListObserver = draftList -> {
@@ -127,6 +128,7 @@ public class DraftFragment extends BaseViewModelFragment<FragmentDraftBinding, D
 
     private RecyclerView.OnScrollListener onScrollListener = new RecyclerView.OnScrollListener() {
         private boolean loadingMore = true;
+
         @Override
         public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
             super.onScrollStateChanged(recyclerView, newState);

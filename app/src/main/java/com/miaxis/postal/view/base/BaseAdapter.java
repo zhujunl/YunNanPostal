@@ -1,17 +1,13 @@
 package com.miaxis.postal.view.base;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
-import androidx.annotation.NonNull;
-import androidx.databinding.DataBindingUtil;
-import androidx.databinding.ViewDataBinding;
-import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 public abstract class BaseAdapter<T, VH extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<VH> {
 
@@ -26,8 +22,10 @@ public abstract class BaseAdapter<T, VH extends RecyclerView.ViewHolder> extends
         return dataList.get(position);
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     public void setDataList(List<T> dataList) {
         this.dataList = dataList;
+        notifyDataSetChanged();
     }
 
     public List<T> getDataList() {

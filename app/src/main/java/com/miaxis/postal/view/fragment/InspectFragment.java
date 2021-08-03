@@ -1,5 +1,6 @@
 package com.miaxis.postal.view.fragment;
 
+import android.graphics.Bitmap;
 import android.text.TextUtils;
 import android.view.View;
 
@@ -98,7 +99,7 @@ public class InspectFragment extends BaseViewModelFragment<FragmentInspectBindin
             binding.tvBarcode.setVisibility(View.VISIBLE);
             binding.ivBarcode.setVisibility(View.VISIBLE);
             binding.tvBarcode.setText(barCode);
-        }else {
+        } else {
             binding.tvBarcode.setVisibility(View.GONE);
             binding.ivBarcode.setVisibility(View.GONE);
         }
@@ -257,16 +258,22 @@ public class InspectFragment extends BaseViewModelFragment<FragmentInspectBindin
     };
 
     private boolean checkInput() {
+        List<Bitmap> selectList = viewModel.getSelectList();
+        if (selectList == null || selectList.isEmpty()) {
+            ToastManager.toast("请至少选择一张实物照片", ToastManager.ERROR);
+            return false;
+        }
+        return true;
         //       if (viewModel.getSelectList().size() <= 0) {
         //            ToastManager.toast("请至少选择一张实物照片", ToastManager.INFO);
         //            return false;
         //        }
-        return true;
+        //return true;
     }
 
     private boolean checkDraftInput() {
         if (viewModel.getSelectList().size() <= 0) {
-            ToastManager.toast("请至少选择一张实物照片", ToastManager.INFO);
+            ToastManager.toast("请至少选择一张实物照片", ToastManager.ERROR);
             return false;
         }
         return true;

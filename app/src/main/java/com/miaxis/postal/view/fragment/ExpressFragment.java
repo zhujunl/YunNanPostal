@@ -1,6 +1,7 @@
 package com.miaxis.postal.view.fragment;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.text.InputFilter;
 import android.text.TextUtils;
 import android.util.Log;
@@ -283,12 +284,21 @@ public class ExpressFragment extends BaseViewModelFragment<FragmentExpressBindin
         //            ToastManager.toast("请输入寄件人手机号码和寄件地址", ToastManager.INFO);
         //            return;
         //        }
-        if (viewModel.getExpressList().isEmpty()) {
-            ToastManager.toast("请至少完成一个订单", ToastManager.INFO);
+        List<Express> expressList = viewModel.getExpressList();
+        if (expressList == null || expressList.isEmpty()) {
+            ToastManager.toast("请至少完成一个订单", ToastManager.ERROR);
             return;
         }
+        for (Express express : expressList) {
+            List<Bitmap> photoList = express.getPhotoList();
+            boolean empty = photoList == null || photoList.isEmpty();
+            if (empty) {
+                ToastManager.toast("您有未拍照的订单", ToastManager.ERROR);
+                return;
+            }
+        }
         if (!viewModel.isAllComplete()) {
-            ToastManager.toast("有订单处于未完成状态", ToastManager.INFO);
+            ToastManager.toast("有订单处于未完成状态", ToastManager.ERROR);
             return;
         }
         new MaterialDialog.Builder(getContext())

@@ -72,7 +72,7 @@ public class CardManager {
     public void init(@NonNull Context context,  IDCardListener listener) {
         this.context = context;
         CardManager.listener = listener;
-        Log.e("asd", "MANUFACTURER：" + Build.MANUFACTURER);
+        //Log.e("asd", "MANUFACTURER：" + Build.MANUFACTURER);
         if (Objects.equals(Build.MANUFACTURER, "QUALCOMM")) {
             mPowerManager = new BP990_IdCardPower();
         } else {
@@ -104,7 +104,7 @@ public class CardManager {
             Thread.sleep(100);
             samId = readSamId();
             count--;
-            Log.e("asd", "sadadsadsadsa" + count);
+            //Log.e("asd", "sadadsadsadsa" + count);
             if (!TextUtils.isEmpty(samId)) {
                 return true;
             }

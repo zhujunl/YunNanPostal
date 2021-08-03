@@ -19,7 +19,6 @@ import com.miaxis.postal.data.entity.Express;
 import com.miaxis.postal.data.entity.IDCardRecord;
 import com.miaxis.postal.data.event.ExpressEditEvent;
 import com.miaxis.postal.databinding.FragmentAgreementCustomersBinding;
-import com.miaxis.postal.manager.ScanManager;
 import com.miaxis.postal.manager.ToastManager;
 import com.miaxis.postal.util.EmojiExcludeFilter;
 import com.miaxis.postal.view.adapter.ExpressAdapter;
@@ -43,34 +42,32 @@ public class AgreementCustomersFragment extends BaseViewModelFragment<FragmentAg
 
 
     private IDCardRecord idCardRecord;
-    private List<Express> expressList;
-
     private ExpressAdapter expressAdapter;
     private MaterialDialog scanDialog;
-
+    private Express express = new Express();
     private Handler handler;
     private int delay = 5;
 
     private boolean draft = false;
 
     public static AgreementCustomersFragment newInstance(IDCardRecord idCardRecord) {
-        Log.e("ExpressFragment", "newInstance:" + idCardRecord);
         AgreementCustomersFragment fragment = new AgreementCustomersFragment();
         fragment.setIdCardRecord(idCardRecord);
         fragment.setDraft(false);
-        fragment.setExpressList(new ArrayList<>());
         return fragment;
     }
 
-    public static AgreementCustomersFragment newInstanceForDraft(IDCardRecord idCardRecord, @NonNull List<Express> expressList) {
-        Log.e("ExpressFragment", "newInstanceForDraft:" + idCardRecord);
+    public static AgreementCustomersFragment newInstanceForDraft(IDCardRecord idCardRecord, @NonNull Express express) {
         AgreementCustomersFragment fragment = new AgreementCustomersFragment();
         fragment.setIdCardRecord(idCardRecord);
         fragment.setDraft(true);
-        fragment.setExpressList(expressList);
+        fragment.setExpress(express);
         return fragment;
     }
 
+    public void setExpress(Express express) {
+        this.express = express;
+    }
 
     @Override
     protected int setContentView() {
@@ -92,7 +89,6 @@ public class AgreementCustomersFragment extends BaseViewModelFragment<FragmentAg
         viewModel.idCardRecord.set(idCardRecord);
     }
 
-
     @Override
     protected void initView() {
         initDialog();
@@ -100,9 +96,9 @@ public class AgreementCustomersFragment extends BaseViewModelFragment<FragmentAg
         initReceiver();
         binding.ivBack.setOnClickListener(v -> onBackPressed());
         binding.ivAddress.setOnClickListener(new OnLimitClickHelper(view -> viewModel.getLocation()));
-        if (expressList != null && !expressList.isEmpty()) {
-            viewModel.initExpressList(expressList);
-            expressAdapter.notifyDataSetChanged();
+        viewModel.initExpress(this.express);
+        if (TextUtils.isEmpty(this.express.getBarCode())) {
+            viewModel.startScan();
         }
         if (!TextUtils.isEmpty(idCardRecord.getSenderAddress())) {
             viewModel.address.set(idCardRecord.getSenderAddress());
@@ -114,9 +110,20 @@ public class AgreementCustomersFragment extends BaseViewModelFragment<FragmentAg
         binding.btnSubmit.setOnClickListener(submitClickListener);
         binding.btnDraft.setOnClickListener(draftClickListener);
         binding.fabAlarm.setOnLongClickListener(alarmListener);
-        viewModel.expressList.observe(this, expressListObserver);
-        viewModel.newExpress.observe(this, newExpressObserver);
-        viewModel.repeatExpress.observe(this, repeatExpressObserver);
+        viewModel.rqCode.observe(this, s -> {
+            Log.e("TAG",""+s);
+            if (TextUtils.isEmpty(s)){
+                binding.tvBarCode.setText("");
+            }else {
+                if (s.startsWith(App.getInstance().BarHeader)){
+                    binding.tvBarCode.setText("");
+                }else {
+                    binding.tvBarCode.setText(s);
+                }
+            }
+        });
+        viewModel.mExpress.observe(this, expressObserver);
+        viewModel.repeat.observe(this, repeatObserver);
         viewModel.scanFlag.observe(this, scanFlagObserver);
         viewModel.saveFlag.observe(this, saveFlagObserver);
         viewModel.deleteFlag.observe(this, deleteFlagObserver);
@@ -131,11 +138,29 @@ public class AgreementCustomersFragment extends BaseViewModelFragment<FragmentAg
             if (!setChecked()) {
                 return;
             }
-            mListener.replaceFragment(InspectFragment.newInstance(viewModel.newExpress.getValue(),
+            if (TextUtils.isEmpty(viewModel.rqCode.getValue())) {
+                String randomBarCode = App.getInstance().getRandomBarCode();
+                viewModel.rqCode.setValue(randomBarCode);
+            }
+            Express value = viewModel.mExpress.getValue();
+            Log.e(TAG, "value:" + value);
+            mListener.replaceFragment(InspectFragment.newInstance(value,
                     viewModel.clientName.get(),
                     viewModel.clientPhone.get()));
         });
-        viewModel.showPicture.observe(this, s -> Glide.with(AgreementCustomersFragment.this).load(s).into(binding.imgInspectionImage));
+        viewModel.showPicture.observe(this, path -> {
+            if (TextUtils.isEmpty(path)) {
+                Glide.with(AgreementCustomersFragment.this).clear(binding.imgInspectionImage);
+            } else {
+                Glide.with(AgreementCustomersFragment.this).load(path).centerCrop().into(binding.imgInspectionImage);
+            }
+            Express value = viewModel.mExpress.getValue();
+            if (value != null) {
+                List<String> objects = new ArrayList<>();
+                objects.add(path);
+                value.setPhotoPathList(objects);
+            }
+        });
         binding.editClientSName.setFilters(new InputFilter[]{new EmojiExcludeFilter()});
         binding.editItemName.setFilters(new InputFilter[]{new EmojiExcludeFilter()});
         binding.etAddress.setFilters(new InputFilter[]{new EmojiExcludeFilter()});
@@ -144,14 +169,12 @@ public class AgreementCustomersFragment extends BaseViewModelFragment<FragmentAg
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void onExpressEditEvent(ExpressEditEvent event) {
         if (event.getMode() == ExpressEditEvent.MODE_MODIFY) {
-            viewModel.modifyExpress(event.getExpress());
-            if (event.getExpress() != null && event.getExpress().getPhotoList() != null && !event.getExpress().getPhotoList().isEmpty()) {
-                viewModel.showPicture.postValue(event.getExpress().getPhotoList().get(0));
+            //viewModel.modifyExpress(event.getExpress());
+            if (event.getExpress() != null && event.getExpress().getPhotoPathList() != null && !event.getExpress().getPhotoPathList().isEmpty()) {
+                viewModel.showPicture.postValue(event.getExpress().getPhotoPathList().get(0));
             }
-        } else if (event.getMode() == ExpressEditEvent.MODE_DELETE) {
-            viewModel.deleteExpress(event.getExpress());
         } else if (event.getMode() == ExpressEditEvent.MODE_ALARM) {
-            viewModel.modifyExpress(event.getExpress());
+            //viewModel.modifyExpress(event.getExpress());
             binding.fabAlarm.performLongClick();
         }
         EventBus.getDefault().removeStickyEvent(event);
@@ -169,27 +192,13 @@ public class AgreementCustomersFragment extends BaseViewModelFragment<FragmentAg
                 .show();
     }
 
-    private static final String TAG = "Mx-ExpressFragment";
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        Log.i(TAG, "onAttach: ");
-        ScanManager.getInstance().powerOn();
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        Log.i(TAG, "onDetach: ");
-        ScanManager.getInstance().powerOff();
-    }
+    private static final String TAG = "AgreementCustomers";
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        getActivity().unregisterReceiver(receiver);
-        viewModel.expressList.removeObserver(expressListObserver);
+        getContext().unregisterReceiver(receiver);
+        viewModel.mExpress.removeObserver(expressObserver);
         EventBus.getDefault().unregister(this);
     }
 
@@ -203,13 +212,12 @@ public class AgreementCustomersFragment extends BaseViewModelFragment<FragmentAg
 
     private void initRecycleView() {
         expressAdapter = new ExpressAdapter(getContext());
-        expressAdapter.setHeaderListener(headerListener);
     }
 
     private void initReceiver() {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ScanCodeReceiver.RECE_DATA_ACTION);
-        getActivity().registerReceiver(receiver, intentFilter);
+        getContext().registerReceiver(receiver, intentFilter);
     }
 
     private Runnable scanDialogCountDownRunnable = new Runnable() {
@@ -242,15 +250,10 @@ public class AgreementCustomersFragment extends BaseViewModelFragment<FragmentAg
         }
     };
 
-    private ExpressAdapter.OnHeaderClickListener headerListener = () -> {
-        //如果不为空并且没有正在扫描
-        //viewModel.startScan();
-    };
-
-
-    private Observer<List<Express>> expressListObserver = expressList -> {
-        expressAdapter.setDataList(expressList);
-        expressAdapter.notifyDataSetChanged();
+    private Observer<Express> expressObserver = express -> {
+        List<Express> objects = new ArrayList<>();
+        objects.add(express);
+        expressAdapter.setDataList(objects);
     };
 
     private Observer<Boolean> scanFlagObserver = flag -> {
@@ -264,21 +267,7 @@ public class AgreementCustomersFragment extends BaseViewModelFragment<FragmentAg
         }
     };
 
-    private Observer<Express> newExpressObserver = express -> {
-
-    };
-
-    private Observer<String> repeatExpressObserver = code -> {
-        if (TextUtils.isEmpty(code)) {
-            ToastManager.toast("该条码编号已重复", ToastManager.INFO);
-        } else {
-            Express expressByCode = viewModel.getExpressByCode(code);
-            if (expressByCode == null) {
-                ToastManager.toast("该条码编号已重复", ToastManager.INFO);
-            }
-        }
-    };
-
+    private Observer<Boolean> repeatObserver = aBoolean -> ToastManager.toast("该条码编号已重复", ToastManager.ERROR);
 
     private Observer<Boolean> saveFlagObserver = flag -> mListener.backToStack(HomeFragment.class);
 
@@ -288,8 +277,14 @@ public class AgreementCustomersFragment extends BaseViewModelFragment<FragmentAg
         if (!setChecked()) {
             return;
         }
-        if (!viewModel.isAllComplete()) {
-            ToastManager.toast("有订单处于未完成状态", ToastManager.INFO);
+        //        if (!viewModel.isAllComplete()) {
+        //            ToastManager.toast("有订单处于未完成状态", ToastManager.INFO);
+        //            return;
+        //        }
+        if (viewModel.mExpress == null || viewModel.mExpress.getValue() == null ||
+                viewModel.mExpress.getValue().getPhotoPathList() == null ||
+                viewModel.mExpress.getValue().getPhotoPathList().isEmpty()) {
+            ToastManager.toast("请先开箱验视", ToastManager.ERROR);
             return;
         }
         new MaterialDialog.Builder(getContext())
@@ -331,16 +326,7 @@ public class AgreementCustomersFragment extends BaseViewModelFragment<FragmentAg
         this.draft = draft;
     }
 
-    public void setExpressList(List<Express> expressList) {
-        this.expressList = expressList;
-    }
-
     private boolean setChecked() {
-        if (TextUtils.isEmpty(viewModel.rqCode.get())) {
-            String randomBarCode = App.getInstance().getRandomBarCode();
-            //viewModel.rqCode.set(randomBarCode);
-            viewModel.makeNewExpress(randomBarCode);
-        }
         if (viewModel.clientName == null || TextUtils.isEmpty(viewModel.clientName.get()) || TextUtils.isEmpty(viewModel.clientName.get().trim())) {
             ToastManager.toast("请输入客户名称", ToastManager.INFO);
             return false;

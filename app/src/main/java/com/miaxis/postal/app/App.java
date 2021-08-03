@@ -3,6 +3,7 @@ package com.miaxis.postal.app;
 import android.app.Application;
 
 import com.liulishuo.filedownloader.FileDownloader;
+import com.miaxis.postal.BuildConfig;
 import com.miaxis.postal.MyEventBusIndex;
 import com.miaxis.postal.data.dao.AppDatabase;
 import com.miaxis.postal.data.net.PostalApi;
@@ -34,10 +35,10 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
         instance = this;
-        //if (!BuildConfig.DEBUG) {
+        if (!BuildConfig.IS_DEBUG) {
             CrashHandler crashHandler = CrashHandler.getInstance();
             crashHandler.init(this);
-        //}
+        }
         EventBus.builder().addIndex(new MyEventBusIndex()).installDefaultEventBus();
     }
 
@@ -57,9 +58,9 @@ public class App extends Application {
             AppDatabase.initDB(this);
             SPUtils.getInstance().init(this);
             ConfigManager.getInstance().checkConfig();
-            //if (!BuildConfig.DEBUG) {
+            if (!BuildConfig.IS_DEBUG) {
                 CrashExceptionManager.getInstance().init(this);
-            //}
+            }
             PostalApi.rebuildRetrofit();
             FileDownloader.setup(this);
             TTSManager.getInstance().init(getApplicationContext());

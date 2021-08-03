@@ -1,16 +1,10 @@
 package com.miaxis.postal.data.net;
 
-import android.text.TextUtils;
-
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
-import com.miaxis.postal.data.exception.MyException;
 import com.miaxis.postal.manager.ConfigManager;
-import com.miaxis.postal.util.ValueUtil;
 
 import java.util.concurrent.TimeUnit;
 
-import io.reactivex.Observable;
-import io.reactivex.schedulers.Schedulers;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;

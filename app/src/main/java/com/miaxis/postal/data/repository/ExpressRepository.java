@@ -1,6 +1,5 @@
 package com.miaxis.postal.data.repository;
 
-import android.graphics.Bitmap;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -73,6 +72,9 @@ public class ExpressRepository {
                 throw new MyException("订单异常，请删除后重试！");
             }
         }
+        //else {
+        //   throw new MyException("该订单未拍照，无法上传。");
+        //}
         StringBuilder stringBuilder = new StringBuilder();
         //添加图片
         for (String s : stringList) {
@@ -112,15 +114,15 @@ public class ExpressRepository {
     //提交订单筛选
     private Response<ResponseEntity> sendOrder(boolean type, Courier courier, TempId tempId, Integer warnLogId, String sendName, int chekStatus, Express express, String photos) throws IOException, MyException, NetResultFailedException {
         Response<ResponseEntity> execute;
-        String warnLog= warnLogId != null ? String.valueOf(warnLogId) : "";
-        Log.e("Express","sendOrder:"+express);
+        String warnLog = warnLogId != null ? String.valueOf(warnLogId) : "";
+        Log.e("Express", "sendOrder:" + express);
         if (type) {
             execute = PostalApi.saveOrderFromAppSync(
                     express.getOrgCode(),
                     express.getOrgNode(),
                     tempId.getPersonId(),
                     tempId.getCheckId(),
-                   warnLog,
+                    warnLog,
                     String.valueOf(courier.getCourierId()),
                     express.getSenderAddress(),
                     express.getSenderPhone(),
@@ -169,7 +171,7 @@ public class ExpressRepository {
         try {
             Call<ResponseEntity> responseEntityCall = PostalApi.deleteWebPicture(path);
             Response<ResponseEntity> execute = responseEntityCall.execute();
-//            ResponseEntity body = execute.body();
+            //            ResponseEntity body = execute.body();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -200,15 +202,15 @@ public class ExpressRepository {
     }
 
     public void saveExpress(Express express) {
-        List<Bitmap> photoList = express.getPhotoList();
-        List<String> pathList = new ArrayList<>();
-        for (int i = 0; i < photoList.size(); i++) {
-            Bitmap bitmap = photoList.get(i);
-            String path = FileUtil.ORDER_STOREHOUSE_PATH + File.separator + express.getBarCode() + "_" + System.currentTimeMillis() + "_" + i + ".jpg";
-            FileUtil.saveBitmap(bitmap, path);
-            pathList.add(path);
-        }
-        express.setPhotoPathList(pathList);
+        //        List<Bitmap> photoList = express.getPhotoList();
+        //        List<String> pathList = new ArrayList<>();
+        //        for (int i = 0; i < photoList.size(); i++) {
+        //            Bitmap bitmap = photoList.get(i);
+        //            String path = FileUtil.ORDER_STOREHOUSE_PATH + File.separator + express.getBarCode() + "_" + System.currentTimeMillis() + "_" + i + ".jpg";
+        //            FileUtil.saveBitmap(bitmap, path);
+        //            pathList.add(path);
+        //        }
+        //        express.setPhotoPathList(pathList);
         ExpressModel.saveExpress(express);
     }
 

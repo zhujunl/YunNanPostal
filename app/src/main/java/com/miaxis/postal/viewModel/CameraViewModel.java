@@ -26,6 +26,7 @@ import io.reactivex.schedulers.Schedulers;
 
 public class CameraViewModel extends BaseViewModel {
 
+    private final String TAG = "CameraViewModel";
     public MutableLiveData<Status> shootFlag = new MutableLiveData<>(Status.FAILED);
     public MutableLiveData<Bitmap> thumbnail = new MutableLiveData<>();
 
@@ -85,8 +86,7 @@ public class CameraViewModel extends BaseViewModel {
             matrix.postRotate(CameraManager.getInstance().getPictureOrientation());
             bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
             emitter.onNext(bitmap);
-        })
-                .subscribeOn(Schedulers.from(App.getInstance().getThreadExecutor()))
+        }).subscribeOn(Schedulers.from(App.getInstance().getThreadExecutor()))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(bitmap -> {
                     bitmapCache = bitmap;
@@ -95,7 +95,7 @@ public class CameraViewModel extends BaseViewModel {
                     camera.startPreview();
                     shootFlag.setValue(Status.FAILED);
                     throwable.printStackTrace();
-                    Log.e("asd", "" + throwable.getMessage());
+                    Log.e(TAG, "" + throwable.getMessage());
                 });
     }
 
