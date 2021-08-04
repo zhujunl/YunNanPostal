@@ -20,8 +20,9 @@
         tools:context=".view.fragment.AgreementCustomersFragment">
 
         <View
+            android:id="@+id/v_bg"
             android:layout_width="0dp"
-            android:layout_height="305dp"
+            android:layout_height="275dp"
             android:background="@color/main_color"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -66,8 +67,8 @@
             android:id="@+id/cl_input_info"
             android:layout_width="0dp"
             android:layout_height="200dp"
-            android:layout_marginStart="50dp"
-            android:layout_marginEnd="70dp"
+            android:layout_marginStart="40dp"
+            android:layout_marginEnd="40dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/iv_back">
@@ -98,12 +99,12 @@
             <TextView
                 android:id="@+id/tv_name"
                 android:layout_width="match_parent"
-                android:layout_marginStart="50dp"
                 android:layout_height="30dp"
+                android:layout_marginStart="50dp"
                 android:background="@drawable/bg_white_shape"
                 android:gravity="center|start"
                 android:paddingStart="10dp"
-                android:text="@{viewModel.idCardRecord.name}"
+                android:text="@{viewModel.idCardRecordLiveData.name}"
                 android:textColor="@color/black"
                 android:textSize="16sp"
                 app:layout_constraintBottom_toBottomOf="@id/iv_name_icon"
@@ -117,7 +118,7 @@
                 android:background="@drawable/bg_white_shape"
                 android:gravity="center|start"
                 android:paddingStart="10dp"
-                android:text="@{ValueUtil.cardNumberDesensitization(viewModel.idCardRecord.cardNumber)}"
+                android:text="@{ValueUtil.cardNumberDesensitization(viewModel.idCardRecordLiveData.cardNumber)}"
                 android:textColor="@color/black"
                 android:textSize="16sp"
                 app:layout_constraintBottom_toBottomOf="@id/iv_number_icon"
@@ -151,10 +152,10 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/bg_white_shape"
                     android:hint="请输入寄件地址"
+                    android:minHeight="30dp"
                     android:paddingStart="5dp"
                     android:paddingEnd="5dp"
                     android:singleLine="true"
-                    android:minHeight="30dp"
                     android:text="@={viewModel.address}"
                     android:textColor="@color/black"
                     android:textSize="16sp"
@@ -180,6 +181,7 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <ImageView
+                android:id="@+id/iv_bar_code_ic"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:padding="5dp"
@@ -190,9 +192,8 @@
 
             <TextView
                 android:id="@+id/tv_barCode"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="30dp"
-                android:layout_marginStart="50dp"
                 android:layout_marginTop="10dp"
                 android:background="@drawable/bg_white_shape"
                 android:gravity="center|start"
@@ -200,38 +201,41 @@
                 android:paddingEnd="10dp"
                 android:textColor="@color/black"
                 android:textSize="16sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/cl_address"
+                app:layout_constraintEnd_toStartOf="@+id/btn_qrCode"
+                app:layout_constraintHorizontal_weight="3"
+                app:layout_constraintStart_toEndOf="@id/iv_bar_code_ic"
                 app:layout_constraintTop_toBottomOf="@id/cl_address" />
 
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_qrCode"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginStart="10dp"
+                android:background="@drawable/bg_green_shape"
+                android:elevation="10dp"
+                android:text="扫描"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_barCode"
+                app:layout_constraintLeft_toRightOf="@+id/tv_barCode"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/tv_barCode"
+                app:layout_constraintWidth_percent="0.15" />
+
+
         </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btn_qrCode"
-            android:layout_width="200dp"
-            android:layout_height="40dp"
-            android:layout_marginTop="5dp"
-            android:background="@drawable/bg_green_shape"
-            android:elevation="10dp"
-            android:text="扫描"
-            android:textColor="@color/white"
-            android:textSize="18sp"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/cl_input_info" />
 
 
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginStart="20dp"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="10dp"
             android:layout_marginEnd="20dp"
             android:layout_marginBottom="20dp"
             android:background="@drawable/bg_box_white_shape"
             app:layout_constraintBottom_toTopOf="@id/btn_submit"
-            app:layout_constraintTop_toBottomOf="@id/btn_qrCode">
+            app:layout_constraintTop_toBottomOf="@id/v_bg">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -242,22 +246,22 @@
                     android:id="@+id/tv_clientSName_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="50dp"
+                    android:layout_marginStart="30dp"
                     android:layout_marginTop="20dp"
                     android:layout_marginEnd="30dp"
                     android:gravity="center|start"
                     android:text="客户名称"
                     android:textColor="@color/black"
-                    android:textSize="16sp"
+                    android:textSize="18sp"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <EditText
                     android:id="@+id/edit_clientSName"
                     android:layout_width="0dp"
-                    android:layout_height="30dp"
+                    android:layout_height="0dp"
                     android:layout_marginStart="20dp"
-                    android:layout_marginEnd="50dp"
+                    android:layout_marginEnd="30dp"
                     android:background="@drawable/bg_edit_gray_box"
                     android:gravity="center|start"
                     android:hint="请输入客户名称"
@@ -266,7 +270,7 @@
                     android:paddingEnd="10dp"
                     android:text="@={viewModel.clientName}"
                     android:textColor="@color/black"
-                    android:textSize="14sp"
+                    android:textSize="18sp"
                     app:layout_constraintBottom_toBottomOf="@id/tv_clientSName_label"
                     app:layout_constraintLeft_toRightOf="@id/tv_clientSName_label"
                     app:layout_constraintRight_toRightOf="parent"
@@ -277,31 +281,31 @@
                     android:id="@+id/tv_clientSPhone_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="50dp"
+                    android:layout_marginStart="30dp"
                     android:layout_marginTop="20dp"
                     android:gravity="center|start"
                     android:text="客户电话"
                     android:textColor="@color/black"
-                    android:textSize="16sp"
+                    android:textSize="18sp"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/tv_clientSName_label" />
 
                 <EditText
                     android:id="@+id/edit_clientSPhone"
                     android:layout_width="0dp"
-                    android:layout_height="30dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
-                    android:layout_marginEnd="50dp"
+                    android:layout_marginEnd="30dp"
                     android:background="@drawable/bg_edit_gray_box"
                     android:gravity="center|start"
                     android:hint="请输入客户电话"
-                    android:maxLength="50"
                     android:inputType="phone"
+                    android:maxLength="50"
                     android:paddingStart="10dp"
                     android:paddingEnd="10dp"
                     android:text="@={viewModel.clientPhone}"
                     android:textColor="@color/black"
-                    android:textSize="14sp"
+                    android:textSize="18sp"
                     app:layout_constraintBottom_toBottomOf="@id/tv_clientSPhone_label"
                     app:layout_constraintLeft_toRightOf="@id/tv_clientSPhone_label"
                     app:layout_constraintRight_toRightOf="parent"
@@ -312,21 +316,21 @@
                     android:id="@+id/tv_itemName_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="50dp"
+                    android:layout_marginStart="30dp"
                     android:layout_marginTop="20dp"
                     android:gravity="center|start"
                     android:text="货物名称"
                     android:textColor="@color/black"
-                    android:textSize="16sp"
+                    android:textSize="18sp"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/tv_clientSPhone_label" />
 
                 <EditText
                     android:id="@+id/edit_itemName"
                     android:layout_width="0dp"
-                    android:layout_height="30dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
-                    android:layout_marginEnd="50dp"
+                    android:layout_marginEnd="30dp"
                     android:background="@drawable/bg_edit_gray_box"
                     android:gravity="center|start"
                     android:hint="请输入货物名称"
@@ -335,7 +339,7 @@
                     android:paddingEnd="10dp"
                     android:text="@={viewModel.itemName}"
                     android:textColor="@color/black"
-                    android:textSize="14sp"
+                    android:textSize="18sp"
                     app:layout_constraintBottom_toBottomOf="@id/tv_itemName_label"
                     app:layout_constraintLeft_toRightOf="@id/tv_itemName_label"
                     app:layout_constraintRight_toRightOf="parent"
@@ -346,31 +350,31 @@
                     android:id="@+id/tv_itemNUm_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="50dp"
+                    android:layout_marginStart="30dp"
                     android:layout_marginTop="20dp"
                     android:gravity="center|start"
                     android:text="货物数量"
                     android:textColor="@color/black"
-                    android:textSize="16sp"
+                    android:textSize="18sp"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/tv_itemName_label" />
 
                 <EditText
                     android:id="@+id/edit_itemNUm"
                     android:layout_width="0dp"
-                    android:layout_height="30dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginStart="20dp"
-                    android:layout_marginEnd="50dp"
+                    android:layout_marginEnd="30dp"
                     android:background="@drawable/bg_edit_gray_box"
                     android:gravity="center|start"
                     android:hint="请输入货物数量"
                     android:inputType="number"
-                    android:paddingStart="10dp"
                     android:maxLength="8"
+                    android:paddingStart="10dp"
                     android:paddingEnd="10dp"
                     android:text="@={viewModel.theQuantityOfGoods}"
                     android:textColor="@color/black"
-                    android:textSize="14sp"
+                    android:textSize="18sp"
                     app:layout_constraintBottom_toBottomOf="@id/tv_itemNUm_label"
                     app:layout_constraintLeft_toRightOf="@id/tv_itemNUm_label"
                     app:layout_constraintRight_toRightOf="parent"
@@ -380,8 +384,8 @@
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/btn_inspection"
                     android:layout_width="100dp"
-                    android:layout_height="50dp"
-                    android:layout_marginStart="50dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="30dp"
                     android:layout_marginTop="20dp"
                     android:background="@drawable/bg_dark_green_shape"
                     android:elevation="10dp"
@@ -400,7 +404,10 @@
                     android:layout_marginEnd="100dp"
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/edit_itemNUm" />
+
+
             </androidx.constraintlayout.widget.ConstraintLayout>
+
         </androidx.core.widget.NestedScrollView>
 
 

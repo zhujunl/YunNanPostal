@@ -499,6 +499,50 @@ public class IDCardRecord {
         this.webFacePath = webFacePath;
     }
 
+    @Override
+    public String toString() {
+        return "IDCardRecord{" +
+                "id=" + id +
+                ", cardType='" + cardType + '\'' +
+                ", cardId='" + cardId + '\'' +
+                ", name='" + name + '\'' +
+                ", birthday='" + birthday + '\'' +
+                ", address='" + address + '\'' +
+                ", cardNumber='" + cardNumber + '\'' +
+                ", issuingAuthority='" + issuingAuthority + '\'' +
+                ", validateStart='" + validateStart + '\'' +
+                ", validateEnd='" + validateEnd + '\'' +
+                ", sex='" + sex + '\'' +
+                ", nation='" + nation + '\'' +
+                ", passNumber='" + passNumber + '\'' +
+                ", issueCount='" + issueCount + '\'' +
+                ", chineseName='" + chineseName + '\'' +
+                ", version='" + version + '\'' +
+                ", cardPicture='" + cardPicture + '\'' +
+                ", facePicture='" + facePicture + '\'' +
+                ", verifyId='" + verifyId + '\'' +
+                ", verifyTime=" + verifyTime +
+                ", upload=" + upload +
+                ", verifyType='" + verifyType + '\'' +
+                ", chekStatus=" + chekStatus +
+                ", personId='" + personId + '\'' +
+                ", checkId='" + checkId + '\'' +
+                ", manualType='" + manualType + '\'' +
+                ", draft=" + draft +
+                ", senderPhone='" + senderPhone + '\'' +
+                ", senderAddress='" + senderAddress + '\'' +
+                ", webCardPath='" + webCardPath + '\'' +
+                ", webFacePath='" + webFacePath + '\'' +
+                ", type=" + type +
+                ", cardBitmap=" + cardBitmap +
+                ", faceBitmap=" + faceBitmap +
+                ", fingerprint0='" + fingerprint0 + '\'' +
+                ", fingerprintPosition0='" + fingerprintPosition0 + '\'' +
+                ", fingerprint1='" + fingerprint1 + '\'' +
+                ", fingerprintPosition1='" + fingerprintPosition1 + '\'' +
+                '}';
+    }
+
     public static final class Builder {
         private Long id;
         private String cardType;
@@ -735,46 +779,5 @@ public class IDCardRecord {
         public IDCardRecord build() {
             return new IDCardRecord(this);
         }
-    }
-
-    @Override
-    public String toString() {
-        return "IDCardRecord{" +
-                "id=" + id +
-                ", cardType='" + cardType + '\'' +
-                ", cardId='" + cardId + '\'' +
-                ", name='" + name + '\'' +
-                ", birthday='" + birthday + '\'' +
-                ", address='" + address + '\'' +
-                ", cardNumber='" + cardNumber + '\'' +
-                ", issuingAuthority='" + issuingAuthority + '\'' +
-                ", validateStart='" + validateStart + '\'' +
-                ", validateEnd='" + validateEnd + '\'' +
-                ", sex='" + sex + '\'' +
-                ", nation='" + nation + '\'' +
-                ", passNumber='" + passNumber + '\'' +
-                ", issueCount='" + issueCount + '\'' +
-                ", chineseName='" + chineseName + '\'' +
-                ", version='" + version + '\'' +
-                ", cardPicture='" + cardPicture + '\'' +
-                ", facePicture='" + facePicture + '\'' +
-                ", verifyId='" + verifyId + '\'' +
-                ", verifyTime=" + verifyTime +
-                ", upload=" + upload +
-                ", verifyType='" + verifyType + '\'' +
-                ", chekStatus=" + chekStatus +
-                ", personId='" + personId + '\'' +
-                ", checkId='" + checkId + '\'' +
-                ", manualType='" + manualType + '\'' +
-                ", draft=" + draft +
-                ", senderPhone='" + senderPhone + '\'' +
-                ", senderAddress='" + senderAddress + '\'' +
-                ", cardBitmap=" + cardBitmap +
-                ", faceBitmap=" + faceBitmap +
-                ", fingerprint0='" + fingerprint0 + '\'' +
-                ", fingerprintPosition0='" + fingerprintPosition0 + '\'' +
-                ", fingerprint1='" + fingerprint1 + '\'' +
-                ", fingerprintPosition1='" + fingerprintPosition1 + '\'' +
-                '}';
     }
 }

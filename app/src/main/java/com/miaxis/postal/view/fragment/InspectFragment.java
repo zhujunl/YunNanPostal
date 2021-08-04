@@ -11,6 +11,7 @@ import com.miaxis.postal.app.App;
 import com.miaxis.postal.bridge.GlideApp;
 import com.miaxis.postal.data.entity.Express;
 import com.miaxis.postal.data.entity.Photograph;
+import com.miaxis.postal.data.event.ExpressEditEvent;
 import com.miaxis.postal.data.event.TakePhotoEvent;
 import com.miaxis.postal.databinding.FragmentInspectBinding;
 import com.miaxis.postal.manager.ToastManager;
@@ -36,9 +37,7 @@ public class InspectFragment extends BaseViewModelFragment<FragmentInspectBindin
     private Express express;
     private InspectAdapter inspectAdapter;
 
-    private String name;
-    private String phone;
-
+    private String name, phone, goodName, goodCounts, sendAddress;
 
     public static InspectFragment newInstance(Express express) {
         InspectFragment inspectFragment = new InspectFragment();
@@ -46,14 +45,22 @@ public class InspectFragment extends BaseViewModelFragment<FragmentInspectBindin
         return inspectFragment;
     }
 
-    public static InspectFragment newInstance(Express express, String name, String phone) {
+    public static InspectFragment newInstance(Express express, String name, String phone, String goodName, String goodCounts, String sendAddress) {
         InspectFragment inspectFragment = new InspectFragment();
-        inspectFragment.setExpressOthers(name, phone);
+        inspectFragment.setExpressOthers(name, phone, goodName, goodCounts,sendAddress);
         inspectFragment.setExpress(express);
         return inspectFragment;
     }
 
-    public InspectFragment() {
+    public void setExpressOthers(String name, String phone, String goodName, String goodCounts, String sendAddress) {
+        this.name = name;
+        this.phone = phone;
+        this.goodName = goodName;
+        this.goodCounts = goodCounts;
+        this.sendAddress = sendAddress;
+    }
+
+    private InspectFragment() {
         // Required empty public constructor
     }
 
@@ -81,10 +88,10 @@ public class InspectFragment extends BaseViewModelFragment<FragmentInspectBindin
     protected void initView() {
         initRecycleView();
         viewModel.photographList.observe(this, photographObserver);
-        if (viewModel.express.get() == null && express != null) {
-            viewModel.express.set(express);
+        if (express != null) {
             viewModel.initExpress(express);
         }
+        viewModel.setExpressOthers(name, phone, goodName, goodCounts,sendAddress);
         if (!TextUtils.isEmpty(phone) && !TextUtils.isEmpty(name)) {
             binding.tvClientSNameLabel.setVisibility(View.VISIBLE);
             binding.editClientSName.setVisibility(View.VISIBLE);
@@ -169,10 +176,14 @@ public class InspectFragment extends BaseViewModelFragment<FragmentInspectBindin
                     .title("确认退出？")
                     .content("未选择和未确认的实物照片将会被删除")
                     .positiveText("确认")
-                    .onPositive((dialog, which) -> mListener.backToStack(null))
+                    .onPositive((dialog, which) -> {
+                        EventBus.getDefault().postSticky(new ExpressEditEvent(ExpressEditEvent.MODE_MODIFY, viewModel.express.get(), name, phone, goodName, goodCounts,sendAddress));
+                        mListener.backToStack(null);
+                    })
                     .negativeText("取消")
                     .show();
         } else {
+            EventBus.getDefault().postSticky(new ExpressEditEvent(ExpressEditEvent.MODE_MODIFY, viewModel.express.get(), name, phone, goodName, goodCounts,sendAddress));
             mListener.backToStack(null);
         }
     }
@@ -246,10 +257,6 @@ public class InspectFragment extends BaseViewModelFragment<FragmentInspectBindin
         this.express = express;
     }
 
-    public void setExpressOthers(String name, String phone) {
-        this.name = name;
-        this.phone = phone;
-    }
 
     private View.OnLongClickListener alarmListener = v -> {
         viewModel.alarm();

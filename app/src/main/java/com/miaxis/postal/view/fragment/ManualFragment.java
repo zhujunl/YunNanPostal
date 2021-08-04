@@ -1,6 +1,7 @@
 package com.miaxis.postal.view.fragment;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.miaxis.postal.BR;
 import com.miaxis.postal.R;
@@ -104,6 +105,7 @@ public class ManualFragment extends BaseViewModelFragment<FragmentManualBinding,
             } else if (viewModel.getSelectSize() == 0) {
                 ToastManager.toast("请拍摄并选择被核验人现场留档照片", ToastManager.INFO);
             } else {
+                Log.e("confirm", "0" );
                 viewModel.confirm();
             }
         }));

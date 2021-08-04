@@ -29,7 +29,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
-import androidx.databinding.ObservableField;
 import androidx.lifecycle.MutableLiveData;
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
@@ -41,22 +40,23 @@ public class AgreementCustomersModel extends BaseViewModel {
     private final String TAG = "AgreementCustomersModel";
     public static final String RECE_DATA_ACTION = "com.se4500.onDecodeComplete";
 
-    public ObservableField<IDCardRecord> idCardRecord = new ObservableField<>();
-    public ObservableField<String> address = new ObservableField<>();
+    public MutableLiveData<IDCardRecord> idCardRecordLiveData = new MutableLiveData<>();
 
-    public MutableLiveData<Express> mExpress = new MutableLiveData<>(new Express());
+    public MutableLiveData<Express> expressLiveData = new MutableLiveData<>(new Express());
+
     public MutableLiveData<Boolean> repeat = new SingleLiveEvent<>();
     public MutableLiveData<Boolean> saveFlag = new SingleLiveEvent<>();
     public MutableLiveData<Boolean> scanFlag = new SingleLiveEvent<>();
     public MutableLiveData<Boolean> deleteFlag = new SingleLiveEvent<>();
 
+    public MutableLiveData<String> address = new MutableLiveData<>();
 
     public MutableLiveData<String> rqCode = new MutableLiveData<>();
 
-    public ObservableField<String> clientPhone = new ObservableField<>();
-    public ObservableField<String> clientName = new ObservableField<>();
-    public ObservableField<String> itemName = new ObservableField<>();
-    public ObservableField<String> theQuantityOfGoods = new ObservableField<>();
+    public MutableLiveData<String> clientPhone = new MutableLiveData<>();
+    public MutableLiveData<String> clientName = new MutableLiveData<>();
+    public MutableLiveData<String> itemName = new MutableLiveData<>();
+    public MutableLiveData<String> theQuantityOfGoods = new MutableLiveData<>();
 
     public MutableLiveData<String> showPicture = new MutableLiveData<>();
 
@@ -75,23 +75,33 @@ public class AgreementCustomersModel extends BaseViewModel {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        if (address != null && address.get() != null) {
-            address.set("");
-        }
+        //        if (address != null && address.get() != null) {
+        //            address.set("");
+        //        }
         mHandler.removeCallbacksAndMessages(null);
         ScanManager.getInstance().powerOff();
     }
 
     public void initExpress(Express express) {
         Log.e(TAG, "express:" + express);
-        address.set(express.getSenderAddress());
-        if (!TextUtils.isEmpty(express.getBarCode()) && !express.getBarCode().startsWith(App.getInstance().BarHeader)) {
+        if (TextUtils.isEmpty(rqCode.getValue())){
             rqCode.setValue(express.getBarCode());
         }
-        clientName.set(express.getCustomerName());
-        clientPhone.set(express.getCustomerPhone());
-        itemName.set(express.getGoodsName());
-        theQuantityOfGoods.set(express.getGoodsNumber());
+        if (TextUtils.isEmpty(address.getValue())) {
+            address.setValue(express.getSenderAddress());
+        }
+        if (TextUtils.isEmpty(clientName.getValue())) {
+            clientName.setValue(express.getCustomerName());
+        }
+        if (TextUtils.isEmpty(clientPhone.getValue())) {
+            clientPhone.setValue(express.getCustomerPhone());
+        }
+        if (TextUtils.isEmpty(itemName.getValue())) {
+            itemName.setValue(express.getGoodsName());
+        }
+        if (TextUtils.isEmpty(theQuantityOfGoods.getValue())) {
+            theQuantityOfGoods.setValue(express.getGoodsNumber());
+        }
         List<String> photoPathList = express.getPhotoPathList();
         if (photoPathList != null && !photoPathList.isEmpty()) {
             String path = photoPathList.get(0);
@@ -164,11 +174,11 @@ public class AgreementCustomersModel extends BaseViewModel {
     }
 
     private void removeRepeatEdit(String code) {
-        String addressStr = address.get();
+        String addressStr = address.getValue();
         if (!TextUtils.isEmpty(addressStr)) {
             if (addressStr.contains(code)) {
                 addressStr = addressStr.replace(code, "");
-                address.set(addressStr);
+                address.setValue(addressStr);
             }
         }
     }
@@ -186,21 +196,21 @@ public class AgreementCustomersModel extends BaseViewModel {
     }
 
     public void makeNewExpress(String code) {
-        Express value = mExpress.getValue();
+        Express value = expressLiveData.getValue();
         if (value != null) {
             value.setBarCode(code);
         }
-        mExpress.setValue(value);
+        expressLiveData.setValue(value);
     }
 
     public void saveDraft() {
-        IDCardRecord cardMessage = idCardRecord.get();
+        IDCardRecord cardMessage = idCardRecordLiveData.getValue();
         if (cardMessage == null) {
             resultMessage.setValue("未找到待上传数据");
             return;
         }
         cardMessage.setDraft(true);
-        Express value = mExpress.getValue();
+        Express value = expressLiveData.getValue();
         if (value == null) {
             resultMessage.setValue("数据为空");
             return;
@@ -210,8 +220,8 @@ public class AgreementCustomersModel extends BaseViewModel {
     }
 
     public void saveComplete() {
-        IDCardRecord cardMessage = idCardRecord.get();
-        Express value = mExpress.getValue();
+        IDCardRecord cardMessage = idCardRecordLiveData.getValue();
+        Express value = expressLiveData.getValue();
         if (cardMessage == null) {
             resultMessage.setValue("未找到待上传数据");
             return;
@@ -248,7 +258,7 @@ public class AgreementCustomersModel extends BaseViewModel {
 
     private void saveExpress(IDCardRecord cardMessage, boolean draft) {
         waitMessage.setValue("正在保存...");
-        Express express = mExpress.getValue();
+        Express express = this.expressLiveData.getValue();
         Observable.create((ObservableOnSubscribe<String>) emitter -> {
             //核验状态 0：未核验 1：核验通过  2：核验未通过
             if (cardMessage.getChekStatus() == 0 || cardMessage.getChekStatus() == 2) {
@@ -277,7 +287,8 @@ public class AgreementCustomersModel extends BaseViewModel {
                 .observeOn(Schedulers.from(App.getInstance().getThreadExecutor()))
                 .map(verifyId -> {
                     AMapLocation aMapLocation = AmapManager.getInstance().getaMapLocation();
-                    express.setBarCode(rqCode.getValue());
+                    String rqCode = this.rqCode.getValue();
+                    express.setBarCode(TextUtils.isEmpty(rqCode) ? App.getInstance().getRandomBarCode() : rqCode);
                     express.setSenderAddress(getAddress());
                     express.setVerifyId(verifyId);
                     express.setLatitude(aMapLocation != null ? String.valueOf(aMapLocation.getLatitude()) : "");
@@ -286,10 +297,10 @@ public class AgreementCustomersModel extends BaseViewModel {
                     express.setUpload(false);
                     express.setComplete(true);
                     express.setCustomerType("2");
-                    express.setCustomerName(getRepString(clientName.get()));
-                    express.setGoodsNumber(getRepString(theQuantityOfGoods.get()));
-                    express.setGoodsName(getRepString(itemName.get()));
-                    express.setCustomerPhone(getRepString(clientPhone.get()));
+                    express.setCustomerName(getRepString(clientName.getValue()));
+                    express.setGoodsNumber(getRepString(theQuantityOfGoods.getValue()));
+                    express.setGoodsName(getRepString(itemName.getValue()));
+                    express.setCustomerPhone(getRepString(clientPhone.getValue()));
                     express.setPhone(ValueUtil.GlobalPhone);
                     ExpressRepository.getInstance().saveExpress(express);
                     return true;
@@ -310,20 +321,20 @@ public class AgreementCustomersModel extends BaseViewModel {
     public void getLocation() {
         AmapManager.getInstance().getOneLocation(addressStr -> {
             if (!TextUtils.isEmpty(addressStr)) {
-                address.set(addressStr);
+                address.setValue(addressStr);
             }
         });
     }
 
     public boolean checkInput() {
-        return !TextUtils.isEmpty(address.get());
+        return !TextUtils.isEmpty(address.getValue());
     }
 
     private boolean checkCodeLocalRepeat(String code) {
         if (TextUtils.isEmpty(code)) {
             return false;
         }
-        Express value = mExpress.getValue();
+        Express value = expressLiveData.getValue();
         return value != null && code.equals(value.getBarCode());
     }
 
@@ -333,7 +344,7 @@ public class AgreementCustomersModel extends BaseViewModel {
     }
 
     private String getAddress() {
-        String addressStr = address.get();
+        String addressStr = address.getValue();
         if (TextUtils.isEmpty(addressStr)) {
             AMapLocation aMapLocation = AmapManager.getInstance().getaMapLocation();
             return aMapLocation != null ? aMapLocation.getAddress() : "";
@@ -342,7 +353,7 @@ public class AgreementCustomersModel extends BaseViewModel {
     }
 
     public boolean isAllComplete() {
-        Express value = mExpress.getValue();
+        Express value = expressLiveData.getValue();
         return value != null && value.isComplete();
     }
 
@@ -350,14 +361,14 @@ public class AgreementCustomersModel extends BaseViewModel {
         waitMessage.setValue("数据处理中，请稍后...");
         Observable.create((ObservableOnSubscribe<Boolean>) emitter -> {
             try {
-                Express value = mExpress.getValue();
+                Express value = expressLiveData.getValue();
                 if (value != null) {
                     ExpressRepository.getInstance().deleteExpress(value);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            IDCardRecord idCardRecord = this.idCardRecord.get();
+            IDCardRecord idCardRecord = this.idCardRecordLiveData.getValue();
             //删除网络图片
             if (idCardRecord != null && !TextUtils.isEmpty(idCardRecord.getWebCardPath()) && !TextUtils.isEmpty(idCardRecord.getWebFacePath())) {
                 List<String> webPath = new ArrayList<>();
@@ -387,9 +398,9 @@ public class AgreementCustomersModel extends BaseViewModel {
     }
 
     public void alarm() {
-        IDCardRecord cardMessage = idCardRecord.get();
+        IDCardRecord cardMessage = idCardRecordLiveData.getValue();
         String addressStr = getAddress();
-        Express value = mExpress.getValue();
+        Express value = expressLiveData.getValue();
         if (cardMessage == null || value == null) {
             resultMessage.setValue("未找到待上传数据");
             return;
@@ -421,7 +432,9 @@ public class AgreementCustomersModel extends BaseViewModel {
                 })
                 .map(verifyId -> {
                     AMapLocation aMapLocation = AmapManager.getInstance().getaMapLocation();
-                    Express express = mExpress.getValue();
+                    Express express = this.expressLiveData.getValue();
+                    String rqCode = this.rqCode.getValue();
+                    express.setBarCode(TextUtils.isEmpty(rqCode) ? App.getInstance().getRandomBarCode() : rqCode);
                     express.setSenderAddress(addressStr);
                     express.setVerifyId(verifyId);
                     express.setLatitude(aMapLocation != null ? String.valueOf(aMapLocation.getLatitude()) : "");
@@ -430,10 +443,10 @@ public class AgreementCustomersModel extends BaseViewModel {
                     express.setUpload(false);
                     express.setComplete(true);
                     express.setCustomerType("2");
-                    express.setCustomerName(getRepString(clientName.get()));
-                    express.setGoodsNumber(getRepString(theQuantityOfGoods.get()));
-                    express.setGoodsName(getRepString(itemName.get()));
-                    express.setCustomerPhone(getRepString(clientPhone.get()));
+                    express.setCustomerName(getRepString(clientName.getValue()));
+                    express.setGoodsNumber(getRepString(theQuantityOfGoods.getValue()));
+                    express.setGoodsName(getRepString(itemName.getValue()));
+                    express.setCustomerPhone(getRepString(clientPhone.getValue()));
                     express.setPhone(ValueUtil.GlobalPhone);
                     ExpressRepository.getInstance().saveExpress(express);
                     return true;

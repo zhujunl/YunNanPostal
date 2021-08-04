@@ -37,6 +37,8 @@ import io.reactivex.schedulers.Schedulers;
 
 public class PostalManager {
 
+    private final String TAG = "PostalManager";
+
     private PostalManager() {
     }
 
@@ -156,14 +158,15 @@ public class PostalManager {
                     try {
                         //是否是草稿 草稿不进行上传
                         if (!express.isDraft()) {
-                            Log.e("asd", "数据发送 true");
+                            Log.e(TAG, "数据发送 postalWarnRecord...");
                             expressRepository.uploadLocalExpress(express, tempId, warnId, idCardRecord.getName(), idCardRecord.getChekStatus());
+                            Log.e(TAG, "数据发送 postalWarnRecord:true");
                             expressRepository.deleteExpress(express);
                             draftCount++;
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
-                        Log.e("asd", "PostalWarnRecord Exception:" + e.getMessage());
+                        Log.e(TAG, "PostalWarnRecord Exception:" + e.getMessage());
                         processException(express, e);
                     }
                 }
@@ -207,8 +210,9 @@ public class PostalManager {
             }
             try {//是否草稿
                 if (!express.isDraft()) {
-                    Log.e("asd 1", "数据发送 true");
+                    Log.e(TAG, "数据发送 PostalNormalRecord...");
                     expressRepository.uploadLocalExpress(express, tempId, null, idCardRecord.getName(), idCardRecord.getChekStatus());
+                    Log.e(TAG, "数据发送 PostalNormalRecord:true");
                     expressRepository.deleteExpress(express);
                     draftCount++;
                 }

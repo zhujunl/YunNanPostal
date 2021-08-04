@@ -64,7 +64,8 @@ public class ManualViewModel extends BaseViewModel {
             int surplus = InspectViewModel.MAX_COUNT - selectSize;
             if (surplus > 0) {
                 for (int i = 0; i < surplus; i++) {
-                    if (i + 1 > cacheList.size()) break;
+                    if (i + 1 > cacheList.size())
+                        break;
                     cacheList.get(i).setSelect(true);
                 }
             }
@@ -138,15 +139,18 @@ public class ManualViewModel extends BaseViewModel {
                 Bitmap bitmap = selectList.get(0);
                 idCardRecord.setFaceBitmap(bitmap);
                 //移除 点击提交会保存
-                String facePath = FileUtil.FACE_STOREHOUSE_PATH + File.separator + "face_" +idCardRecord.getCardNumber() + System.currentTimeMillis() + ".jpg";
-                FileUtil.saveBitmap(idCardRecord.getFaceBitmap(), facePath);
+                String facePath = FileUtil.FACE_STOREHOUSE_PATH + File.separator + "face_" + idCardRecord.getCardNumber() + System.currentTimeMillis() + ".jpg";
+                File file = FileUtil.saveBitmap(idCardRecord.getFaceBitmap(), facePath);
+                Log.e("confirm", "" + file);
                 idCardRecord.setFacePicture(facePath);
                 idCardRecord.setVerifyTime(new Date());
                 idCardRecord.setVerifyType("1");
+
                 waitMessage.postValue("");
                 confirm.postValue(Boolean.TRUE);
             } catch (Exception e) {
                 e.printStackTrace();
+                Log.e("confirm", "Exception：" + e);
                 waitMessage.postValue("");
                 confirm.postValue(Boolean.FALSE);
             }

@@ -54,10 +54,16 @@ public class ExpressRepository {
                 if (body != null) {
                     if (StringUtils.isEquals(ValueUtil.SUCCESS, body.getCode())) {
                         stringList.add((String) body.getData());
+                        try {
+                            Log.e("ExpressRepository", "" + (String) body.getData());
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
             } catch (Exception e) {
                 e.printStackTrace();
+                Log.e("ExpressRepository", "Exception:" + e);
             }
         }
         if (express.getPhotoPathList().size() != 0) {
@@ -196,6 +202,7 @@ public class ExpressRepository {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
+                webPicturePath.add("");
             }
         }
         return webPicturePath;

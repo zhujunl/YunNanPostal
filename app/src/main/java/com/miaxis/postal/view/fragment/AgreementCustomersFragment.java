@@ -40,6 +40,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 public class AgreementCustomersFragment extends BaseViewModelFragment<FragmentAgreementCustomersBinding, AgreementCustomersModel> {
 
+    private static final String TAG = "AgreementCustomers";
 
     private IDCardRecord idCardRecord;
     private ExpressAdapter expressAdapter;
@@ -86,22 +87,24 @@ public class AgreementCustomersFragment extends BaseViewModelFragment<FragmentAg
 
     @Override
     protected void initData() {
-        viewModel.idCardRecord.set(idCardRecord);
+        viewModel.idCardRecordLiveData.setValue(idCardRecord);
     }
 
     @Override
     protected void initView() {
+        Log.e(TAG, "--------------------------------------------------------");
         initDialog();
         initRecycleView();
         initReceiver();
         binding.ivBack.setOnClickListener(v -> onBackPressed());
         binding.ivAddress.setOnClickListener(new OnLimitClickHelper(view -> viewModel.getLocation()));
+
         viewModel.initExpress(this.express);
-        if (TextUtils.isEmpty(this.express.getBarCode())) {
-            viewModel.startScan();
-        }
+        //        if (TextUtils.isEmpty(this.express.getBarCode())) {
+        //            viewModel.startScan();
+        //        }
         if (!TextUtils.isEmpty(idCardRecord.getSenderAddress())) {
-            viewModel.address.set(idCardRecord.getSenderAddress());
+            viewModel.address.setValue(idCardRecord.getSenderAddress());
         } else {
             viewModel.getLocation();
         }
@@ -111,18 +114,18 @@ public class AgreementCustomersFragment extends BaseViewModelFragment<FragmentAg
         binding.btnDraft.setOnClickListener(draftClickListener);
         binding.fabAlarm.setOnLongClickListener(alarmListener);
         viewModel.rqCode.observe(this, s -> {
-            Log.e("TAG",""+s);
-            if (TextUtils.isEmpty(s)){
+            Log.e(TAG, "rqCode：" + s);
+            if (TextUtils.isEmpty(s)) {
                 binding.tvBarCode.setText("");
-            }else {
-                if (s.startsWith(App.getInstance().BarHeader)){
+            } else {
+                if (s.startsWith(App.getInstance().BarHeader)) {
                     binding.tvBarCode.setText("");
-                }else {
+                } else {
                     binding.tvBarCode.setText(s);
                 }
             }
         });
-        viewModel.mExpress.observe(this, expressObserver);
+        viewModel.expressLiveData.observe(this, expressObserver);
         viewModel.repeat.observe(this, repeatObserver);
         viewModel.scanFlag.observe(this, scanFlagObserver);
         viewModel.saveFlag.observe(this, saveFlagObserver);
@@ -142,11 +145,17 @@ public class AgreementCustomersFragment extends BaseViewModelFragment<FragmentAg
                 String randomBarCode = App.getInstance().getRandomBarCode();
                 viewModel.rqCode.setValue(randomBarCode);
             }
-            Express value = viewModel.mExpress.getValue();
+            Express value = viewModel.expressLiveData.getValue();
             Log.e(TAG, "value:" + value);
-            mListener.replaceFragment(InspectFragment.newInstance(value,
-                    viewModel.clientName.get(),
-                    viewModel.clientPhone.get()));
+            mListener.replaceFragment(InspectFragment.newInstance(
+                    value,
+                    viewModel.clientName.getValue(),
+                    viewModel.clientPhone.getValue(),
+                    viewModel.itemName.getValue(),
+                    viewModel.theQuantityOfGoods.getValue(),
+                    viewModel.address.getValue()
+                    )
+            );
         });
         viewModel.showPicture.observe(this, path -> {
             if (TextUtils.isEmpty(path)) {
@@ -154,7 +163,7 @@ public class AgreementCustomersFragment extends BaseViewModelFragment<FragmentAg
             } else {
                 Glide.with(AgreementCustomersFragment.this).load(path).centerCrop().into(binding.imgInspectionImage);
             }
-            Express value = viewModel.mExpress.getValue();
+            Express value = viewModel.expressLiveData.getValue();
             if (value != null) {
                 List<String> objects = new ArrayList<>();
                 objects.add(path);
@@ -168,10 +177,16 @@ public class AgreementCustomersFragment extends BaseViewModelFragment<FragmentAg
 
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void onExpressEditEvent(ExpressEditEvent event) {
+        Log.e(TAG, "ExpressEditEvent:   event:" + event);
         if (event.getMode() == ExpressEditEvent.MODE_MODIFY) {
             //viewModel.modifyExpress(event.getExpress());
             if (event.getExpress() != null && event.getExpress().getPhotoPathList() != null && !event.getExpress().getPhotoPathList().isEmpty()) {
                 viewModel.showPicture.postValue(event.getExpress().getPhotoPathList().get(0));
+                viewModel.clientName.setValue(event.getName());
+                viewModel.clientPhone.setValue(event.getPhone());
+                viewModel.itemName.setValue(event.getGoodName());
+                viewModel.theQuantityOfGoods.setValue(event.getGoodCounts());
+                viewModel.address.setValue(event.getSendAddress());
             }
         } else if (event.getMode() == ExpressEditEvent.MODE_ALARM) {
             //viewModel.modifyExpress(event.getExpress());
@@ -192,13 +207,11 @@ public class AgreementCustomersFragment extends BaseViewModelFragment<FragmentAg
                 .show();
     }
 
-    private static final String TAG = "AgreementCustomers";
-
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         getContext().unregisterReceiver(receiver);
-        viewModel.mExpress.removeObserver(expressObserver);
+        viewModel.expressLiveData.removeObserver(expressObserver);
         EventBus.getDefault().unregister(this);
     }
 
@@ -281,9 +294,13 @@ public class AgreementCustomersFragment extends BaseViewModelFragment<FragmentAg
         //            ToastManager.toast("有订单处于未完成状态", ToastManager.INFO);
         //            return;
         //        }
-        if (viewModel.mExpress == null || viewModel.mExpress.getValue() == null ||
-                viewModel.mExpress.getValue().getPhotoPathList() == null ||
-                viewModel.mExpress.getValue().getPhotoPathList().isEmpty()) {
+        if (viewModel.address == null || TextUtils.isEmpty(viewModel.address.getValue()) || TextUtils.isEmpty(viewModel.address.getValue().trim())) {
+            ToastManager.toast("请输入寄件地址", ToastManager.INFO);
+            return;
+        }
+        if (viewModel.expressLiveData == null || viewModel.expressLiveData.getValue() == null ||
+                viewModel.expressLiveData.getValue().getPhotoPathList() == null ||
+                viewModel.expressLiveData.getValue().getPhotoPathList().isEmpty()) {
             ToastManager.toast("请先开箱验视", ToastManager.ERROR);
             return;
         }
@@ -327,19 +344,19 @@ public class AgreementCustomersFragment extends BaseViewModelFragment<FragmentAg
     }
 
     private boolean setChecked() {
-        if (viewModel.clientName == null || TextUtils.isEmpty(viewModel.clientName.get()) || TextUtils.isEmpty(viewModel.clientName.get().trim())) {
+        if (viewModel.clientName == null || TextUtils.isEmpty(viewModel.clientName.getValue()) || TextUtils.isEmpty(viewModel.clientName.getValue().trim())) {
             ToastManager.toast("请输入客户名称", ToastManager.INFO);
             return false;
         }
-        if (viewModel.clientPhone == null || TextUtils.isEmpty(viewModel.clientPhone.get()) || TextUtils.isEmpty(viewModel.clientPhone.get().trim())) {
+        if (viewModel.clientPhone == null || TextUtils.isEmpty(viewModel.clientPhone.getValue()) || TextUtils.isEmpty(viewModel.clientPhone.getValue().trim())) {
             ToastManager.toast("请输入客户手机号", ToastManager.INFO);
             return false;
         }
-        if (viewModel.itemName == null || TextUtils.isEmpty(viewModel.itemName.get()) || TextUtils.isEmpty(viewModel.itemName.get().trim())) {
+        if (viewModel.itemName == null || TextUtils.isEmpty(viewModel.itemName.getValue()) || TextUtils.isEmpty(viewModel.itemName.getValue().trim())) {
             ToastManager.toast("请输入货物名称", ToastManager.INFO);
             return false;
         }
-        if (viewModel.theQuantityOfGoods == null || TextUtils.isEmpty(viewModel.theQuantityOfGoods.get()) || TextUtils.isEmpty(viewModel.theQuantityOfGoods.get().trim())) {
+        if (viewModel.theQuantityOfGoods == null || TextUtils.isEmpty(viewModel.theQuantityOfGoods.getValue()) || TextUtils.isEmpty(viewModel.theQuantityOfGoods.getValue().trim())) {
             ToastManager.toast("请输入货物数量", ToastManager.INFO);
             return false;
         }

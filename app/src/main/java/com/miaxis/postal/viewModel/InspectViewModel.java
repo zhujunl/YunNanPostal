@@ -31,6 +31,7 @@ public class InspectViewModel extends BaseViewModel {
     public MutableLiveData<List<Photograph>> photographList = new MutableLiveData<>(new ArrayList<>());
 
     public MutableLiveData<Boolean> barcodeImageUpdate = new SingleLiveEvent<>();
+    private String name, phone, goodName, goodCounts,sendAddress;
 
     private boolean modified = false;
 
@@ -42,6 +43,14 @@ public class InspectViewModel extends BaseViewModel {
     @Override
     protected void onCleared() {
         super.onCleared();
+    }
+
+    public void setExpressOthers(String name, String phone, String goodName, String goodCounts,String sendAddress) {
+        this.name = name;
+        this.phone = phone;
+        this.goodName = goodName;
+        this.goodCounts = goodCounts;
+        this.sendAddress = sendAddress;
     }
 
     public void initExpress(Express express) {
@@ -62,6 +71,7 @@ public class InspectViewModel extends BaseViewModel {
             }
             photographList.setValue(expressPhotoList);
         }
+        this.express.set(express);
     }
 
     public void addPhotograph(List<Bitmap> bitmapList) {
@@ -95,7 +105,7 @@ public class InspectViewModel extends BaseViewModel {
             List<Bitmap> selectList = getSelectList();
             local.setPhotoList(selectList);
             local.setPhotoPathList(bitmapToPaths(selectList));
-            EventBus.getDefault().postSticky(new ExpressEditEvent(ExpressEditEvent.MODE_MODIFY, local));
+            EventBus.getDefault().postSticky(new ExpressEditEvent(ExpressEditEvent.MODE_MODIFY, local, name, phone, goodName, goodCounts,sendAddress));
         }
     }
 
@@ -120,7 +130,7 @@ public class InspectViewModel extends BaseViewModel {
             List<Bitmap> selectList = getSelectList();
             local.setPhotoList(selectList);
             local.setPhotoPathList(bitmapToPaths(selectList));
-            EventBus.getDefault().postSticky(new ExpressEditEvent(ExpressEditEvent.MODE_MODIFY, local));
+            EventBus.getDefault().postSticky(new ExpressEditEvent(ExpressEditEvent.MODE_MODIFY, local, name, phone, goodName, goodCounts,sendAddress));
         }
     }
 
@@ -130,7 +140,7 @@ public class InspectViewModel extends BaseViewModel {
             List<Bitmap> selectList = getSelectList();
             local.setPhotoList(selectList);
             local.setPhotoPathList(bitmapToPaths(selectList));
-            EventBus.getDefault().postSticky(new ExpressEditEvent(ExpressEditEvent.MODE_DELETE, local));
+            EventBus.getDefault().postSticky(new ExpressEditEvent(ExpressEditEvent.MODE_DELETE, local, name, phone, goodName, goodCounts,sendAddress));
         }
     }
 

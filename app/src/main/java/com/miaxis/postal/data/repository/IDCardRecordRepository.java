@@ -44,15 +44,17 @@ public class IDCardRecordRepository {
 //        File cardFile = !TextUtils.isEmpty(idCardRecord.getCardPicture()) ? new File(idCardRecord.getCardPicture()) : null;
 //        File faceFile = !TextUtils.isEmpty(idCardRecord.getFacePicture()) ? new File(idCardRecord.getFacePicture()) : null;
         //拆分成两个接口
-
+        Log.e("uploadIDCardRecord","idCardRecord:"+idCardRecord);
         String webCardPath=null;
         String webFacePath=null;
         if (TextUtils.isEmpty(idCardRecord.getWebCardPath())||TextUtils.isEmpty(idCardRecord.getWebFacePath())){
-            if(!TextUtils.isEmpty(idCardRecord.getCardPicture())&&!TextUtils.isEmpty(idCardRecord.getFacePicture())){
+            if(!TextUtils.isEmpty(idCardRecord.getCardPicture())||!TextUtils.isEmpty(idCardRecord.getFacePicture())){
                 List<String> paths=new ArrayList<>();
                 paths.add(idCardRecord.getCardPicture());
                 paths.add(idCardRecord.getFacePicture());
+                Log.e("uploadIDCardRecord","paths:"+paths);
                 List<String> stringList = ExpressRepository.getInstance().saveImage(paths);
+                Log.e("uploadIDCardRecord","stringList:"+stringList);
                 if (stringList!=null&&!stringList.isEmpty()&&stringList.size()>=2){
                     webCardPath=stringList.get(0);
                     webFacePath=stringList.get(1);
@@ -62,6 +64,8 @@ public class IDCardRecordRepository {
             webCardPath=idCardRecord.getWebCardPath();
             webFacePath=idCardRecord.getWebFacePath();
         }
+        Log.e("uploadIDCardRecord","webCardPath:"+webCardPath);
+        Log.e("uploadIDCardRecord","webFacePath:"+webFacePath);
         //Courier courier = DataCacheManager.getInstance().getCourier();
         String orgCode = ValueUtil.readOrgCode();
         String orgNode = ValueUtil.readOrgNode();
@@ -85,6 +89,11 @@ public class IDCardRecordRepository {
             ResponseEntity<TempIdDto> body = execute.body();
             if (body != null) {
                 if (TextUtils.equals(body.getCode(), ValueUtil.SUCCESS) && body.getData() != null) {
+                    try {
+                        Log.e("uploadIDCardRecord","webCardPath:"+body.getData().transform());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                     return body.getData().transform();
                 } else {
                     throw new NetResultFailedException("服务端返回，" + body.getMessage());
