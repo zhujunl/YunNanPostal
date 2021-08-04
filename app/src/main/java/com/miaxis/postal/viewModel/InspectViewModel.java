@@ -1,7 +1,6 @@
 package com.miaxis.postal.viewModel;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -31,7 +30,7 @@ public class InspectViewModel extends BaseViewModel {
     public MutableLiveData<List<Photograph>> photographList = new MutableLiveData<>(new ArrayList<>());
 
     public MutableLiveData<Boolean> barcodeImageUpdate = new SingleLiveEvent<>();
-    private String name, phone, goodName, goodCounts,sendAddress;
+    private String name, phone, goodName, goodCounts, sendAddress;
 
     private boolean modified = false;
 
@@ -45,7 +44,7 @@ public class InspectViewModel extends BaseViewModel {
         super.onCleared();
     }
 
-    public void setExpressOthers(String name, String phone, String goodName, String goodCounts,String sendAddress) {
+    public void setExpressOthers(String name, String phone, String goodName, String goodCounts, String sendAddress) {
         this.name = name;
         this.phone = phone;
         this.goodName = goodName;
@@ -54,48 +53,79 @@ public class InspectViewModel extends BaseViewModel {
     }
 
     public void initExpress(Express express) {
-        Log.e(TAG, "express:" + express);
+        Log.e(TAG, "Express:" + express);
         //        if (express.getPhotoList() != null) {
         //            List<Photograph> expressPhotoList = getPhotographList();
         //            for (Bitmap bitmap : express.getPhotoList()) {
         //                expressPhotoList.add(new Photograph(bitmap, true));
         //            }
         //            photographList.setValue(expressPhotoList);
+        //            Log.e(TAG, "photographList:" + photographList.getValue());
         //        }
-        List<String> photoPathList = express.getPhotoPathList();
-        if (photoPathList != null && !photoPathList.isEmpty()) {
-            List<Photograph> expressPhotoList = getPhotographList();
-            for (String path : photoPathList) {
-                Bitmap bitmap = BitmapFactory.decodeFile(path);
-                expressPhotoList.add(new Photograph(bitmap, true));
+        //        List<String> photoPathList = express.getPhotoPathList();
+        //        if (photoPathList != null && !photoPathList.isEmpty()) {
+        //            List<Photograph> expressPhotoList = getPhotographList();
+        //            for (String path : photoPathList) {
+        //                try {
+        //                    Bitmap bitmap = BitmapFactory.decodeFile(path);
+        //                    expressPhotoList.add(new Photograph(bitmap, true));
+        //                } catch (Exception e) {
+        //                    e.printStackTrace();
+        //                }
+        //            }
+        //            photographList.setValue(expressPhotoList);
+        //        }
+
+        List<Photograph> photographList = getPhotographList();
+        if (photographList != null && photographList.isEmpty()) {
+            List<Bitmap> photoList = express.getPhotoList();
+            if (photoList != null) {
+                for (Bitmap bitmap : photoList) {
+                    photographList.add(new Photograph(bitmap, true));
+                }
             }
-            photographList.setValue(expressPhotoList);
+            this.photographList.setValue(photographList);
         }
+        Log.e(TAG, "photographList:" + this.photographList.getValue());
         this.express.set(express);
     }
 
-    public void addPhotograph(List<Bitmap> bitmapList) {
-        List<Photograph> cacheList = new ArrayList<>();
-        for (Bitmap bitmap : bitmapList) {
-            cacheList.add(new Photograph(bitmap, false));
-        }
-        int selectSize = getSelectSize();
-        if (selectSize < InspectViewModel.MAX_COUNT && cacheList.size() > 0) {
-            int surplus = InspectViewModel.MAX_COUNT - selectSize;
-            if (surplus > 0) {
-                for (int i = 0; i < surplus; i++) {
-                    if (i + 1 > cacheList.size())
-                        break;
-                    cacheList.get(i).setSelect(true);
+    public void addPhotograph(Bitmap bitmap) {
+        //        List<Photograph> cacheList = new ArrayList<>();
+        //        for (Bitmap bitmap : bitmapList) {
+        //            cacheList.add(new Photograph(bitmap, false));
+        //        }
+        //        int selectSize = getSelectSize();
+        //        if (selectSize < InspectViewModel.MAX_COUNT && cacheList.size() > 0) {
+        //            int surplus = InspectViewModel.MAX_COUNT - selectSize;
+        //            if (surplus > 0) {
+        //                for (int i = 0; i < surplus; i++) {
+        //                    if (i + 1 > cacheList.size())
+        //                        break;
+        //                    cacheList.get(i).setSelect(true);
+        //                }
+        //            }
+        //        }
+        if (bitmap != null) {
+            Log.e(TAG, "start:" + photographList.getValue());
+            Photograph photograph = new Photograph(bitmap, false);
+            List<Photograph> photographList = getPhotographList();
+            photographList.add(0, photograph);
+            if (photographList.size() == 1) {
+                photograph.setSelect(true);
+            }
+            Log.e(TAG, "addPhotograph:" + photographList);
+            modified = true;
+            this.photographList.setValue(photographList);
+            Express express = this.express.get();
+            if (express != null && express.getPhotoList() != null) {
+                List<Bitmap> photoList = express.getPhotoList();
+                if (!photoList.contains(bitmap)) {
+                    photoList.add(0, bitmap);
                 }
+                this.express.set(express);
             }
         }
-        List<Photograph> photoList = getPhotographList();
-        photoList.addAll(cacheList);
-        if (!cacheList.isEmpty()) {
-            modified = true;
-        }
-        this.photographList.setValue(photoList);
     }
 
     public void makeModifyResult() {
@@ -105,7 +135,7 @@ public class InspectViewModel extends BaseViewModel {
             List<Bitmap> selectList = getSelectList();
             local.setPhotoList(selectList);
             local.setPhotoPathList(bitmapToPaths(selectList));
-            EventBus.getDefault().postSticky(new ExpressEditEvent(ExpressEditEvent.MODE_MODIFY, local, name, phone, goodName, goodCounts,sendAddress));
+            EventBus.getDefault().postSticky(new ExpressEditEvent(ExpressEditEvent.MODE_MODIFY, local, name, phone, goodName, goodCounts, sendAddress));
         }
     }
 
@@ -130,7 +160,7 @@ public class InspectViewModel extends BaseViewModel {
             List<Bitmap> selectList = getSelectList();
             local.setPhotoList(selectList);
             local.setPhotoPathList(bitmapToPaths(selectList));
-            EventBus.getDefault().postSticky(new ExpressEditEvent(ExpressEditEvent.MODE_MODIFY, local, name, phone, goodName, goodCounts,sendAddress));
+            EventBus.getDefault().postSticky(new ExpressEditEvent(ExpressEditEvent.MODE_MODIFY, local, name, phone, goodName, goodCounts, sendAddress));
         }
     }
 
@@ -140,7 +170,7 @@ public class InspectViewModel extends BaseViewModel {
             List<Bitmap> selectList = getSelectList();
             local.setPhotoList(selectList);
             local.setPhotoPathList(bitmapToPaths(selectList));
-            EventBus.getDefault().postSticky(new ExpressEditEvent(ExpressEditEvent.MODE_DELETE, local, name, phone, goodName, goodCounts,sendAddress));
+            EventBus.getDefault().postSticky(new ExpressEditEvent(ExpressEditEvent.MODE_DELETE, local, name, phone, goodName, goodCounts, sendAddress));
         }
     }
 
@@ -149,8 +179,10 @@ public class InspectViewModel extends BaseViewModel {
         if (value == null) {
             List<Photograph> newArrayList = new ArrayList<>();
             photographList.setValue(newArrayList);
+            Log.e(TAG, "getPhotographList: " + newArrayList);
             return newArrayList;
         } else {
+            Log.e(TAG, "getPhotographList: " + value);
             return value;
         }
     }
@@ -172,6 +204,7 @@ public class InspectViewModel extends BaseViewModel {
                 selectList.add(photograph.getBitmap());
             }
         }
+
         return selectList;
     }
 

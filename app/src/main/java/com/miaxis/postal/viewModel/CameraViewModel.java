@@ -58,7 +58,7 @@ public class CameraViewModel extends BaseViewModel {
         }
         if (bitmapCache != null) {
             thumbnail.setValue(bitmapCache);
-            photoList.add(bitmapCache);
+            photoList.add(0, bitmapCache);
         }
         confirmFlag.setValue(Boolean.TRUE);
     }
@@ -75,7 +75,9 @@ public class CameraViewModel extends BaseViewModel {
 
     public void summary() {
         if (photoList.size() > 0) {
-            EventBus.getDefault().postSticky(new TakePhotoEvent(photoList));
+            List<Bitmap> objects = new ArrayList<>();
+            objects.add(photoList.get(0));
+            EventBus.getDefault().postSticky(new TakePhotoEvent(objects));
         }
     }
 

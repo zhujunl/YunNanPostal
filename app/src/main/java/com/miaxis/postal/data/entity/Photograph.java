@@ -45,4 +45,13 @@ public class Photograph {
     public void setLocal(boolean local) {
         this.local = local;
     }
+
+    @Override
+    public String toString() {
+        return "Photograph{" +
+                "bitmap=" + bitmap +
+                ", select=" + select +
+                ", local=" + local +
+                '}';
+    }
 }

@@ -2,6 +2,7 @@ package com.miaxis.postal.view.fragment;
 
 import android.graphics.Bitmap;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -34,6 +35,7 @@ import androidx.recyclerview.widget.SimpleItemAnimator;
 //开箱验视
 public class InspectFragment extends BaseViewModelFragment<FragmentInspectBinding, InspectViewModel> {
 
+    private final String TAG = "InspectFragment";
     private Express express;
     private InspectAdapter inspectAdapter;
 
@@ -47,7 +49,7 @@ public class InspectFragment extends BaseViewModelFragment<FragmentInspectBindin
 
     public static InspectFragment newInstance(Express express, String name, String phone, String goodName, String goodCounts, String sendAddress) {
         InspectFragment inspectFragment = new InspectFragment();
-        inspectFragment.setExpressOthers(name, phone, goodName, goodCounts,sendAddress);
+        inspectFragment.setExpressOthers(name, phone, goodName, goodCounts, sendAddress);
         inspectFragment.setExpress(express);
         return inspectFragment;
     }
@@ -87,11 +89,12 @@ public class InspectFragment extends BaseViewModelFragment<FragmentInspectBindin
     @Override
     protected void initView() {
         initRecycleView();
+        Log.e(TAG, "express:" + express);
         viewModel.photographList.observe(this, photographObserver);
         if (express != null) {
             viewModel.initExpress(express);
         }
-        viewModel.setExpressOthers(name, phone, goodName, goodCounts,sendAddress);
+        viewModel.setExpressOthers(name, phone, goodName, goodCounts, sendAddress);
         if (!TextUtils.isEmpty(phone) && !TextUtils.isEmpty(name)) {
             binding.tvClientSNameLabel.setVisibility(View.VISIBLE);
             binding.editClientSName.setVisibility(View.VISIBLE);
@@ -165,7 +168,11 @@ public class InspectFragment extends BaseViewModelFragment<FragmentInspectBindin
 
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void onTakePhotoEvent(TakePhotoEvent event) {
-        viewModel.addPhotograph(event.getPhotoList());
+        Log.e(TAG, "onTakePhotoEvent:" + event);
+        List<Bitmap> photoList = event.getPhotoList();
+        if (photoList != null && !photoList.isEmpty()) {
+            viewModel.addPhotograph(photoList.get(0));
+        }
         EventBus.getDefault().removeStickyEvent(event);
     }
 
@@ -177,13 +184,13 @@ public class InspectFragment extends BaseViewModelFragment<FragmentInspectBindin
                     .content("未选择和未确认的实物照片将会被删除")
                     .positiveText("确认")
                     .onPositive((dialog, which) -> {
-                        EventBus.getDefault().postSticky(new ExpressEditEvent(ExpressEditEvent.MODE_MODIFY, viewModel.express.get(), name, phone, goodName, goodCounts,sendAddress));
+                        EventBus.getDefault().postSticky(new ExpressEditEvent(ExpressEditEvent.MODE_MODIFY, viewModel.express.get(), name, phone, goodName, goodCounts, sendAddress));
                         mListener.backToStack(null);
                     })
                     .negativeText("取消")
                     .show();
         } else {
-            EventBus.getDefault().postSticky(new ExpressEditEvent(ExpressEditEvent.MODE_MODIFY, viewModel.express.get(), name, phone, goodName, goodCounts,sendAddress));
+            EventBus.getDefault().postSticky(new ExpressEditEvent(ExpressEditEvent.MODE_MODIFY, viewModel.express.get(), name, phone, goodName, goodCounts, sendAddress));
             mListener.backToStack(null);
         }
     }

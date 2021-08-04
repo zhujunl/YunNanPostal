@@ -19,4 +19,11 @@ public class TakePhotoEvent {
     public void setPhotoList(List<Bitmap> photoList) {
         this.photoList = photoList;
     }
+
+    @Override
+    public String toString() {
+        return "TakePhotoEvent{" +
+                "photoList=" + photoList +
+                '}';
+    }
 }

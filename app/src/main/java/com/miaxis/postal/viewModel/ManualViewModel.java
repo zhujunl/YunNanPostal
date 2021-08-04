@@ -54,25 +54,37 @@ public class ManualViewModel extends BaseViewModel {
     public ManualViewModel() {
     }
 
-    public void addPhotograph(List<Bitmap> bitmapList) {
-        List<Photograph> cacheList = new ArrayList<>();
-        for (Bitmap bitmap : bitmapList) {
-            cacheList.add(new Photograph(bitmap, false));
-        }
-        int selectSize = getSelectSize();
-        if (selectSize < InspectViewModel.MAX_COUNT && cacheList.size() > 0) {
-            int surplus = InspectViewModel.MAX_COUNT - selectSize;
-            if (surplus > 0) {
-                for (int i = 0; i < surplus; i++) {
-                    if (i + 1 > cacheList.size())
-                        break;
-                    cacheList.get(i).setSelect(true);
-                }
+//    public void addPhotograph(List<Bitmap> bitmapList) {
+//        List<Photograph> cacheList = new ArrayList<>();
+//        for (Bitmap bitmap : bitmapList) {
+//            cacheList.add(new Photograph(bitmap, false));
+//        }
+//        int selectSize = getSelectSize();
+//        if (selectSize < InspectViewModel.MAX_COUNT && cacheList.size() > 0) {
+//            int surplus = InspectViewModel.MAX_COUNT - selectSize;
+//            if (surplus > 0) {
+//                for (int i = 0; i < surplus; i++) {
+//                    if (i + 1 > cacheList.size())
+//                        break;
+//                    cacheList.get(i).setSelect(true);
+//                }
+//            }
+//        }
+//        List<Photograph> photoList = getPhotographList();
+//        photoList.addAll(cacheList);
+//        this.photographList.setValue(photoList);
+//    }
+
+    public void addPhotograph(Bitmap bitmap) {
+        if (bitmap != null) {
+            Photograph photograph = new Photograph(bitmap, false);
+            List<Photograph> photoList = getPhotographList();
+            photoList.add(0, photograph);
+            if (photoList.size() == 1) {
+                photograph.setSelect(true);
             }
+            this.photographList.setValue(photoList);
         }
-        List<Photograph> photoList = getPhotographList();
-        photoList.addAll(cacheList);
-        this.photographList.setValue(photoList);
     }
 
     public List<Photograph> getPhotographList() {

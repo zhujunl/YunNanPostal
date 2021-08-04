@@ -24,7 +24,10 @@ public abstract class BaseAdapter<T, VH extends RecyclerView.ViewHolder> extends
 
     @SuppressLint("NotifyDataSetChanged")
     public void setDataList(List<T> dataList) {
-        this.dataList = dataList;
+        this.dataList.clear();
+        if (dataList!=null&&!dataList.isEmpty()){
+            this.dataList.addAll(dataList);
+        }
         notifyDataSetChanged();
     }
 

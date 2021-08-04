@@ -31,7 +31,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 
 public class ManualFragment extends BaseViewModelFragment<FragmentManualBinding, ManualViewModel> {
-
+    private final String TAG = "ManualFragment";
     private InspectAdapter inspectAdapter;
     private IDCardFilterAdapter idCardFilterAdapter;
 
@@ -105,7 +105,7 @@ public class ManualFragment extends BaseViewModelFragment<FragmentManualBinding,
             } else if (viewModel.getSelectSize() == 0) {
                 ToastManager.toast("请拍摄并选择被核验人现场留档照片", ToastManager.INFO);
             } else {
-                Log.e("confirm", "0" );
+                Log.e("confirm", "0");
                 viewModel.confirm();
             }
         }));
@@ -130,7 +130,10 @@ public class ManualFragment extends BaseViewModelFragment<FragmentManualBinding,
 
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public void onTakePhotoEvent(TakePhotoEvent event) {
-        viewModel.addPhotograph(event.getPhotoList());
+        Log.e(TAG, "onTakePhotoEvent:" + event);
+        if (event != null && event.getPhotoList() != null && !event.getPhotoList().isEmpty()) {
+            viewModel.addPhotograph(event.getPhotoList().get(0));
+        }
         EventBus.getDefault().removeStickyEvent(event);
     }
 
@@ -158,7 +161,7 @@ public class ManualFragment extends BaseViewModelFragment<FragmentManualBinding,
             viewModel.searchLocalIDCard(idCard.getCardNumber());
         });
         viewModel.loadIDCardList();
-        if (viewModel.idCardListLiveData!=null) {
+        if (viewModel.idCardListLiveData != null) {
             viewModel.idCardListLiveData.observe(this, idCardList -> {
                 idCardFilterAdapter.setUnfilteredData((ArrayList<IDCard>) idCardList);
                 //            idCardFilterAdapter.notifyDataSetChanged();
