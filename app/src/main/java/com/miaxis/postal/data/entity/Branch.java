@@ -45,12 +45,18 @@ public class Branch {
         return comcode == null || orgCode == null || orgNode == null || orgName == null;
     }
 
+
+    public boolean isEmpty2() {
+        return  orgCode == null || orgNode == null || orgName == null;
+    }
+
     @Override
     public String toString() {
         return "Branch{" +
                 "comcode='" + comcode + '\'' +
                 ", orgName='" + orgName + '\'' +
                 ", isSelected=" + isSelected +
+                ", orgCode='" + orgCode + '\'' +
                 ", orgNode='" + orgNode + '\'' +
                 '}';
     }

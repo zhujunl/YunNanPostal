@@ -92,7 +92,8 @@ public class LoginFragment extends BaseViewModelFragment<FragmentLoginBinding, L
                 showWaitDialog("获取机构中，请稍候。。。");
                 App.getInstance().getThreadExecutor().execute(() -> {
                     try {
-                        List<Branch> branchListSync = LoginRepository.getInstance().getBranchListSync(userPhone);
+                        //List<Branch> branchListSync = LoginRepository.getInstance().getBranchListSync(userPhone);
+                        List<Branch> branchListSync = LoginRepository.getInstance().getAllBranchListSync();
                         dismissWaitDialog();
                         if (branchListSync.isEmpty()) {
                             ValueUtil.GlobalPhone = userPhone;

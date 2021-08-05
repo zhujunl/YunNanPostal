@@ -27,7 +27,7 @@
             android:gravity="center"
             android:maxLines="2"
             android:ellipsize="end"
-            android:text="@={item.comcode}" />
+            android:text="@={item.orgCode}" />
 
         <TextView
             android:id="@+id/tv_branch_name"

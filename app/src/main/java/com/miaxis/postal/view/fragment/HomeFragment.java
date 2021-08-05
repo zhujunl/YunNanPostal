@@ -130,7 +130,8 @@ public class HomeFragment extends BaseViewModelFragment<FragmentHomeBinding, Hom
         showWaitDialog("正在请求数据中，请稍候。。。");
         App.getInstance().getThreadExecutor().execute(() -> {
             try {
-                List<Branch> branchListSync = LoginRepository.getInstance().getBranchListSync(ValueUtil.GlobalPhone);
+                // List<Branch> branchListSync = LoginRepository.getInstance().getBranchListSync(ValueUtil.GlobalPhone);
+                List<Branch> branchListSync = LoginRepository.getInstance().getAllBranchListSync();
                 dismissWaitDialog();
                 if (branchListSync == null || branchListSync.isEmpty()) {
                     init();
@@ -204,7 +205,7 @@ public class HomeFragment extends BaseViewModelFragment<FragmentHomeBinding, Hom
     @Override
     public void onBodyClick(View view, Branch branch, int position) {
         new MaterialDialog.Builder(getContext())
-                .title("确认切换至【" + branch.orgName + "】？网点编号【" + branch.comcode + "】")
+                .title("确认切换至【" + branch.orgName + "】？")
                 .positiveText("确认")
                 .onPositive((dialog, which) -> {
                     List<Branch> dataList = branchAdapter.getDataList();

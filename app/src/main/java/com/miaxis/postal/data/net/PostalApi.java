@@ -47,6 +47,10 @@ public class PostalApi extends BaseAPI {
         return getPostalNetSync().getBranchListSync(phone);
     }
 
+    public static Call<ResponseEntity<List<Branch>>> getAllBranchListSync() {
+        return getPostalNetSync().getAllBranchListSync();
+    }
+
     public static Call<ResponseEntity> bindingNodeSync(String phone, String comcode) {
         return getPostalNetSync().bindingNodeSync(phone, comcode);
     }
