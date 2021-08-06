@@ -85,8 +85,12 @@ public class PostalManager {
         //        if (uploading.get()) {
         //            return;
         //        }
-        handler.removeMessages(0);
-        handler.sendMessage(handler.obtainMessage(0));
+        try {
+            handler.removeMessages(0);
+            handler.sendMessage(handler.obtainMessage(0));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public interface OnPostalInterruptListener {
@@ -230,7 +234,7 @@ public class PostalManager {
     }
 
     //抛出异常后就无法执行下面的请求了 所以去掉
-    private void processException(Express express, Exception e) {
+    private void processException(Express express, Exception e) throws MyException{
         express.setUploadError("" + e.getMessage());
         expressRepository.updateExpress(express);
     }

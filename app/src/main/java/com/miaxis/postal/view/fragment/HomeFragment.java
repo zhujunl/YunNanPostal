@@ -1,7 +1,6 @@
 package com.miaxis.postal.view.fragment;
 
 import android.os.Handler;
-import android.text.TextUtils;
 import android.view.View;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -12,7 +11,6 @@ import com.miaxis.postal.data.repository.LoginRepository;
 import com.miaxis.postal.databinding.FragmentHomeBinding;
 import com.miaxis.postal.manager.AmapManager;
 import com.miaxis.postal.manager.PostalManager;
-import com.miaxis.postal.util.StringUtils;
 import com.miaxis.postal.util.ValueUtil;
 import com.miaxis.postal.view.adapter.BranchAdapter;
 import com.miaxis.postal.view.adapter.HSpacesItemDecoration;
@@ -22,7 +20,6 @@ import com.miaxis.postal.view.dialog.CardModeSelectDialogFragment;
 import com.miaxis.postal.view.dialog.EditPasswordDialogFragment;
 import com.miaxis.postal.viewModel.HomeViewModel;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import androidx.fragment.app.Fragment;
@@ -97,72 +94,33 @@ public class HomeFragment extends BaseViewModelFragment<FragmentHomeBinding, Hom
         binding.rvBranches.addItemDecoration(new HSpacesItemDecoration(10));
         ((SimpleItemAnimator) binding.rvBranches.getItemAnimator()).setSupportsChangeAnimations(false);
 
-        init();
+        viewModel.branchList.observe(this, branches -> {
+            branchAdapter.setDataList(branches);
+            int selectedPosition = Branch.findSelectedPosition(branches);
+            if (selectedPosition >= 0) {
+                binding.rvBranches.scrollToPosition(selectedPosition);
+            }
+        });
+        viewModel.init();
+
         getBranchList();
 
         AmapManager.getInstance().startLocation(getActivity().getApplication());//GPS初始化，登录后初始化
         App.getInstance().uploadEnable = true;
     }
 
-    private void init() {
-        String orgCode = ValueUtil.readOrgCode();
-        String orgNode = ValueUtil.readOrgNode();
-        String orgName = ValueUtil.readOrgName();
-        if (!TextUtils.isEmpty(orgCode) && !TextUtils.isEmpty(orgNode) && !TextUtils.isEmpty(orgName)) {
-            List<Branch> branches = new ArrayList<>();
-            Branch branch = new Branch();
-            branch.isSelected = true;
-            branch.comcode = orgCode;
-            branch.orgNode = orgNode;
-            branch.orgName = orgName;
-            branches.add(branch);
-            mHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    branchAdapter.setDataList(branches);
-                    branchAdapter.notifyDataSetChanged();
-                }
-            });
-        }
-    }
-
     private void getBranchList() {
-        showWaitDialog("正在请求数据中，请稍候。。。");
+        //showWaitDialog("正在请求数据中，请稍候。。。");
         App.getInstance().getThreadExecutor().execute(() -> {
             try {
-                // List<Branch> branchListSync = LoginRepository.getInstance().getBranchListSync(ValueUtil.GlobalPhone);
+                //List<Branch> branchListSync = LoginRepository.getInstance().getBranchListSync(ValueUtil.GlobalPhone);
                 List<Branch> branchListSync = LoginRepository.getInstance().getAllBranchListSync();
                 dismissWaitDialog();
-                if (branchListSync == null || branchListSync.isEmpty()) {
-                    init();
-                    return;
-                }
-                String lastBranchId = ValueUtil.readOrgCode();
-                int position = -1;
-                for (int i = 0; i < branchListSync.size(); i++) {
-                    Branch branch = branchListSync.get(i);
-                    branch.isSelected = StringUtils.isEquals(lastBranchId, branch.orgCode);
-                    if (branch.isSelected) {
-                        position = i;
-                    }
-                }
-                if (position < 0 && !branchListSync.isEmpty()) {
-                    branchListSync.get(0).isSelected = true;
-                    //SPUtils.getInstance().write(ValueUtil.GlobalPhone, branchListSync.get(0).orgCode);
-                    //SPUtils.getInstance().write(ValueUtil.GlobalPhone + "node", branchListSync.get(0).orgNode);
-                    ValueUtil.write(branchListSync.get(0).orgCode, branchListSync.get(0).orgNode, branchListSync.get(0).orgName);
-                }
-                int finalPosition = position;
-                mHandler.post(() -> {
-                    branchAdapter.setDataList(branchListSync);
-                    branchAdapter.notifyDataSetChanged();
-                    binding.rvBranches.scrollToPosition(finalPosition);
-                });
+                viewModel.flush( branchListSync);
             } catch (Exception e) {
                 e.printStackTrace();
                 dismissWaitDialog();
                 showResultDialog("错误：" + e.getMessage());
-                init();
             }
         });
     }
@@ -208,15 +166,7 @@ public class HomeFragment extends BaseViewModelFragment<FragmentHomeBinding, Hom
                 .title("确认切换至【" + branch.orgName + "】？")
                 .positiveText("确认")
                 .onPositive((dialog, which) -> {
-                    List<Branch> dataList = branchAdapter.getDataList();
-                    for (Branch bran : dataList) {
-                        bran.isSelected = false;
-                    }
-                    //SPUtils.getInstance().write(ValueUtil.GlobalPhone, branch.orgCode);
-                    //SPUtils.getInstance().write(ValueUtil.GlobalPhone + "node", branch.orgNode);
-                    ValueUtil.write(branch.orgCode, branch.orgNode, branch.orgName);
-                    branch.isSelected = true;
-                    branchAdapter.notifyDataSetChanged();
+                    viewModel.onItemClick( branch);
                 })
                 .negativeText("取消")
                 .show();
@@ -231,7 +181,7 @@ public class HomeFragment extends BaseViewModelFragment<FragmentHomeBinding, Hom
                     .show();
             return false;
         }
-        if (TextUtils.isEmpty(ValueUtil.readOrgCode()) || TextUtils.isEmpty(ValueUtil.readOrgNode())) {
+        if (Branch.findSelected(branchAdapter.getDataList()) == null) {
             new MaterialDialog.Builder(getContext())
                     .title("您当前未选择机构，无法使用此功能。")
                     .positiveText("确认")

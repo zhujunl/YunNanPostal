@@ -197,6 +197,7 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/cl_mine"
                 android:layout_width="0dp"
+                android:visibility="gone"
                 android:layout_height="0dp"
                 android:background="@drawable/corner_rect_white"
                 app:layout_constraintBottom_toBottomOf="parent"

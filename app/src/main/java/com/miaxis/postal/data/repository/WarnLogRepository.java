@@ -2,11 +2,13 @@ package com.miaxis.postal.data.repository;
 
 import android.text.TextUtils;
 
+import com.miaxis.postal.data.entity.Branch;
 import com.miaxis.postal.data.entity.Config;
 import com.miaxis.postal.data.entity.TempId;
 import com.miaxis.postal.data.entity.WarnLog;
 import com.miaxis.postal.data.exception.MyException;
 import com.miaxis.postal.data.exception.NetResultFailedException;
+import com.miaxis.postal.data.model.BranchModel;
 import com.miaxis.postal.data.model.WarnLogModel;
 import com.miaxis.postal.data.net.PostalApi;
 import com.miaxis.postal.data.net.ResponseEntity;
@@ -37,10 +39,15 @@ public class WarnLogRepository extends BaseRepository {
      **/
 
     public Integer uploadWarnLog(WarnLog warnLog, TempId tempId) throws MyException, IOException, NetResultFailedException {
+        Branch selected = BranchModel.findSelected();
+        if (selected == null) {
+            throw new MyException("未选择品牌");
+        }
+        String orgCode = selected.orgCode;
+        String orgNode = selected.orgNode;
         Config config = ConfigManager.getInstance().getConfig();
         //Courier courier = DataCacheManager.getInstance().getCourier();
-        String orgCode = ValueUtil.readOrgCode();
-        String orgNode = ValueUtil.readOrgNode();
+
         Response<ResponseEntity<Integer>> execute = PostalApi.uploadWarnLog(
                 orgCode,
                 orgNode,

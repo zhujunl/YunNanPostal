@@ -1,27 +1,19 @@
 package com.miaxis.postal.view.adapter;
 
 import android.content.Context;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 
-import androidx.annotation.NonNull;
-import androidx.databinding.DataBindingUtil;
-import androidx.recyclerview.widget.RecyclerView;
-
+import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.miaxis.postal.R;
-import com.miaxis.postal.bridge.GlideApp;
-import com.miaxis.postal.data.entity.Photograph;
-import com.miaxis.postal.databinding.ItemInspectBodyBinding;
-import com.miaxis.postal.databinding.ItemInspectHeaderBinding;
 import com.miaxis.postal.databinding.ItemOrderImageBinding;
 import com.miaxis.postal.view.auxiliary.OnLimitClickHelper;
-import com.miaxis.postal.view.base.BaseAdapter;
 import com.miaxis.postal.view.base.BaseViewHolder;
 import com.miaxis.postal.view.base.BaseViewModelAdapter;
+
+import androidx.annotation.NonNull;
 
 public class OrderImageAdapter extends BaseViewModelAdapter<String, ItemOrderImageBinding, OrderImageAdapter.MyViewHolder> {
 
@@ -48,7 +40,7 @@ public class OrderImageAdapter extends BaseViewModelAdapter<String, ItemOrderIma
         String item = dataList.get(position);
         holder.getBinding().setItem(item);
         RequestOptions options = RequestOptions.bitmapTransform(new RoundedCorners(30));
-        GlideApp.with(context)
+        Glide.with(context)
                 .load(item)
                 .apply(options)
                 .skipMemoryCache(true)

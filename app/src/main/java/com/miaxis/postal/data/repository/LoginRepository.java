@@ -98,30 +98,26 @@ public class LoginRepository extends BaseRepository {
         throw new MyException("服务端返回数据解析失败，或为空");
     }
 
-    public List<Branch> getAllBranchListSync() throws IOException, MyException, NetResultFailedException {
+    public List<Branch> getAllBranchListSync() throws IOException, MyException {
         Response<ResponseEntity<List<Branch>>> execute = PostalApi.getAllBranchListSync().execute();
         try {
             ResponseEntity<List<Branch>> body = execute.body();
             Log.e("Repository", "getAllBranchListSync:" + body);
             if (body != null) {
+                List<Branch> objects = new ArrayList<>();
                 if (TextUtils.equals(body.getCode(), ValueUtil.SUCCESS) && body.getData() != null) {
                     List<Branch> data = body.getData();
-                    List<Branch> objects = new ArrayList<>();
                     for (Branch branch : data) {
-                        if (branch != null && !branch.isEmpty2()) {
+                        if (branch != null && !branch.isEmpty()) {
                             objects.add(branch);
                         }
                     }
                     if (objects.isEmpty()) {
                         throw new MyException("没有可用的网点信息。");
                     }
-                    return objects;
-                } else {
-                    throw new NetResultFailedException("服务端返回，" + body.getMessage());
                 }
+                return objects;
             }
-        } catch (NetResultFailedException e) {
-            throw e;
         } catch (Exception e) {
             e.printStackTrace();
             Log.e("Repository", "getAllBranchListSync   Exception:" + e);

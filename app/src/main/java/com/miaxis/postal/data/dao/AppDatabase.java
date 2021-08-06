@@ -5,6 +5,7 @@ import android.app.Application;
 import com.miaxis.postal.data.converter.DateConverter;
 import com.miaxis.postal.data.converter.OrderImageListConverter;
 import com.miaxis.postal.data.converter.StringListConverter;
+import com.miaxis.postal.data.entity.Branch;
 import com.miaxis.postal.data.entity.Config;
 import com.miaxis.postal.data.entity.Courier;
 import com.miaxis.postal.data.entity.Express;
@@ -20,7 +21,7 @@ import androidx.room.TypeConverters;
 import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
-@Database(entities = {Config.class, Courier.class, IDCardRecord.class, Express.class, WarnLog.class, IDCard.class}, version = 20)
+@Database(entities = {Config.class, Courier.class, IDCardRecord.class, Express.class, WarnLog.class, IDCard.class, Branch.class}, version = 21)
 @TypeConverters({StringListConverter.class, OrderImageListConverter.class, DateConverter.class})
 public abstract class AppDatabase extends RoomDatabase {
 
@@ -88,5 +89,7 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract WarnLogDao warnLogDao();
 
     public abstract IDCardDao idCardDao();
+
+    public abstract BranchDao branchDao();
 
 }

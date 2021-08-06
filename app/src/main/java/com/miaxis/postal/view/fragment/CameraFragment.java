@@ -2,31 +2,22 @@ package com.miaxis.postal.view.fragment;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
-
-import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 
+import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.miaxis.postal.BR;
 import com.miaxis.postal.R;
-import com.miaxis.postal.bridge.GlideApp;
 import com.miaxis.postal.databinding.FragmentCameraBinding;
 import com.miaxis.postal.manager.CameraManager;
 import com.miaxis.postal.view.auxiliary.OnLimitClickHelper;
-import com.miaxis.postal.view.auxiliary.OnLimitClickListener;
 import com.miaxis.postal.view.base.BaseViewModelFragment;
-import com.miaxis.postal.view.custom.RoundBorderView;
 import com.miaxis.postal.view.custom.RoundFrameLayout;
 import com.miaxis.postal.viewModel.CameraViewModel;
+
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 public class CameraFragment extends BaseViewModelFragment<FragmentCameraBinding, CameraViewModel> {
 
@@ -84,9 +75,9 @@ public class CameraFragment extends BaseViewModelFragment<FragmentCameraBinding,
 
     private Observer<Bitmap> thumbnailObserver = bitmap -> {
         if (bitmap == null) {
-            GlideApp.with(CameraFragment.this).clear(binding.ivThumbnail);
+            Glide.with(CameraFragment.this).clear(binding.ivThumbnail);
         } else {
-            GlideApp.with(CameraFragment.this)
+            Glide.with(CameraFragment.this)
                     .load(bitmap)
                     .skipMemoryCache(true)
                     .diskCacheStrategy(DiskCacheStrategy.NONE)

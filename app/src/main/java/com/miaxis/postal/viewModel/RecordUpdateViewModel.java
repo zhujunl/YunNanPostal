@@ -3,10 +3,10 @@ package com.miaxis.postal.viewModel;
 import android.graphics.Bitmap;
 import android.text.TextUtils;
 
+import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.FutureTarget;
 import com.miaxis.postal.app.App;
-import com.miaxis.postal.bridge.GlideApp;
 import com.miaxis.postal.bridge.SingleLiveEvent;
 import com.miaxis.postal.data.entity.Order;
 import com.miaxis.postal.data.entity.Photograph;
@@ -85,7 +85,7 @@ public class RecordUpdateViewModel extends BaseViewModel {
     private Bitmap downloadPicture(String url) throws ExecutionException, InterruptedException {
         if (TextUtils.isEmpty(url))
             return null;
-        FutureTarget<Bitmap> futureTarget = GlideApp.with(App.getInstance().getApplicationContext())
+        FutureTarget<Bitmap> futureTarget = Glide.with(App.getInstance().getApplicationContext())
                 .asBitmap()
                 .load(url + "?" + System.currentTimeMillis())
                 .skipMemoryCache(true)

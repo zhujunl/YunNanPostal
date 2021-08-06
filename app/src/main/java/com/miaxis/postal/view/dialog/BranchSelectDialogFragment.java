@@ -13,15 +13,11 @@ import android.view.WindowManager;
 
 import com.miaxis.postal.BR;
 import com.miaxis.postal.R;
-import com.miaxis.postal.app.App;
 import com.miaxis.postal.data.entity.Branch;
-import com.miaxis.postal.data.model.CourierModel;
 import com.miaxis.postal.databinding.FragmentBranchSelectDialogBinding;
-import com.miaxis.postal.util.ValueUtil;
 import com.miaxis.postal.view.adapter.BranchSelectAdapter;
 import com.miaxis.postal.view.adapter.SpacesItemDecoration;
 import com.miaxis.postal.view.base.BaseViewModelDialogFragment;
-import com.miaxis.postal.view.fragment.HomeFragment;
 import com.miaxis.postal.viewModel.BranchSelectViewModel;
 
 import java.util.ArrayList;
@@ -114,13 +110,13 @@ public class BranchSelectDialogFragment extends BaseViewModelDialogFragment<Frag
 
     @Override
     public void onBodyClick(View view, Branch branch, int position) {
-        ValueUtil.GlobalPhone = this.userName;
-//        SPUtils.getInstance().write(ValueUtil.GlobalPhone, branch.orgCode);
-//        SPUtils.getInstance().write(ValueUtil.GlobalPhone+"node", branch.orgNode);
-        ValueUtil.write(branch.orgCode,branch.orgNode,branch.orgName);
-        App.getInstance().getThreadExecutor().execute(() -> {
-            CourierModel.setLogin();
-            mHandler.post(() -> mListener.replaceFragment(HomeFragment.newInstance()));
-        });
+//        ValueUtil.GlobalPhone = this.userName;
+////        SPUtils.getInstance().write(ValueUtil.GlobalPhone, branch.orgCode);
+////        SPUtils.getInstance().write(ValueUtil.GlobalPhone+"node", branch.orgNode);
+//        ValueUtil.write(branch.orgCode,branch.orgNode,branch.orgName);
+//        App.getInstance().getThreadExecutor().execute(() -> {
+//            CourierModel.setLogin();
+//            mHandler.post(() -> mListener.replaceFragment(HomeFragment.newInstance()));
+//        });
     }
 }

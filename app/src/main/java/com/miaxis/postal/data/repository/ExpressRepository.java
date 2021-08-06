@@ -208,7 +208,7 @@ public class ExpressRepository {
         return webPicturePath;
     }
 
-    public void saveExpress(Express express) {
+    public void saveExpress(Express express) throws MyException{
         //        List<Bitmap> photoList = express.getPhotoList();
         //        List<String> pathList = new ArrayList<>();
         //        for (int i = 0; i < photoList.size(); i++) {
@@ -221,7 +221,7 @@ public class ExpressRepository {
         ExpressModel.saveExpress(express);
     }
 
-    public void updateExpress(Express express) {
+    public void updateExpress(Express express) throws MyException{
         ExpressModel.saveExpress(express);
     }
 

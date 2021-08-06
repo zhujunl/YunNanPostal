@@ -78,4 +78,16 @@ public class UpdateDto implements Mapper<Update> {
             throw new MyException("应用更新信息解码失败，原因：" + e.getMessage());
         }
     }
+
+    @Override
+    public String toString() {
+        return "UpdateDto{" +
+                "id=" + id +
+                ", url='" + url + '\'' +
+                ", version='" + version + '\'' +
+                ", name='" + name + '\'' +
+                ", content='" + content + '\'' +
+                ", uploadTime='" + uploadTime + '\'' +
+                '}';
+    }
 }

@@ -3,10 +3,10 @@ package com.miaxis.postal.view.auxiliary;
 import android.view.View;
 import android.widget.ImageView;
 
-import androidx.databinding.BindingAdapter;
-
+import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.miaxis.postal.bridge.GlideApp;
+
+import androidx.databinding.BindingAdapter;
 
 public class ViewAdapter {
 
@@ -33,7 +33,7 @@ public class ViewAdapter {
     @BindingAdapter(value = {"imageSource"}, requireAll = false)
     public static void imageSource(ImageView view, Object o) {
         if (o == null) return;
-        GlideApp.with(view)
+        Glide.with(view)
                 .load(o)
                 .skipMemoryCache(true)
                 .diskCacheStrategy(DiskCacheStrategy.NONE)

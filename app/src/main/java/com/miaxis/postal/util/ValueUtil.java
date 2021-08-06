@@ -6,7 +6,6 @@ import android.content.pm.PackageManager;
 import android.text.TextUtils;
 
 import com.google.gson.Gson;
-import com.miaxis.postal.BuildConfig;
 
 import java.net.ConnectException;
 import java.net.SocketTimeoutException;
@@ -19,10 +18,8 @@ public class ValueUtil {
 
     //    public static final String DEFAULT_BASE_HOST = "http://192.168.5.125:8088/policebus/";
     //    public static final String DEFAULT_BASE_HOST = "http://192.168.5.94:8080/policebus/";
-    //    public static final String DEFAULT_BASE_HOST = "http://14.205.75.23:8089/policebus/";
-    public static final String DEFAULT_BASE_HOST = BuildConfig.IS_DEBUG ? "http://192.168.5.164:8080/policebus/" : "http://14.205.75.23:8089/policebus/";
-
-
+    public static final String DEFAULT_BASE_HOST = "http://14.205.75.23:8089/policebus/";
+    //    public static final String DEFAULT_BASE_HOST = BuildConfig.IS_DEBUG ? "http://192.168.5.94:8080/policebus/" : "http://14.205.75.23:8089/policebus/";
     //    public static final String DEFAULT_BASE_HOST = "http://bnrzhysj.postaldata.top:8800/policebus/";
     public static final float DEFAULT_VERIFY_SCORE = 0.76f;
     public static final float DEFAULT_MASK_VERIFY_SCORE = 0.73f;
@@ -39,7 +36,6 @@ public class ValueUtil {
     public static final String DEVICE_UNABLE = "00602";
     public static final int PAGE_SIZE = 8;
 
-
     public static String GlobalPhone = null;
 
     public static boolean isNetException(Throwable throwable) {
@@ -52,23 +48,53 @@ public class ValueUtil {
         return false;
     }
 
-    public static void write(String orgCode, String orgNode, String orgName) {
-        SPUtils.getInstance().write(ValueUtil.GlobalPhone, orgCode);
-        SPUtils.getInstance().write(ValueUtil.GlobalPhone + "node", orgNode);
-        SPUtils.getInstance().write(ValueUtil.GlobalPhone + "name", orgName);
-    }
+//    public synchronized static boolean saveBranchList(String phone, List<Branch> list) {
+//        if (TextUtils.isEmpty(phone)) {
+//            return false;
+//        }
+//        if (ListUtils.isNullOrEmpty(list)) {
+//            SPUtils.getInstance().remove(phone);
+//            return true;
+//        }
+//        Set<String> set = new HashSet<>();
+//        for (Branch branch : list) {
+//            set.add(GSON.toJson(branch));
+//        }
+//        return SPUtils.getInstance().write(phone, set);
+//    }
 
-    public static String readOrgCode() {
-        return SPUtils.getInstance().read(ValueUtil.GlobalPhone, "");
-    }
-
-    public static String readOrgNode() {
-        return SPUtils.getInstance().read(ValueUtil.GlobalPhone + "node", "");
-    }
-
-    public static String readOrgName() {
-        return SPUtils.getInstance().read(ValueUtil.GlobalPhone + "name", "");
-    }
+//    public synchronized static List<Branch> readBranchList(String phone) {
+//        List<Branch> list = new ArrayList<>();
+//        if (TextUtils.isEmpty(phone)) {
+//            return list;
+//        }
+//        Set<String> read = SPUtils.getInstance().read(phone, new HashSet<>());
+//        if (SetUtils.isNullOrEmpty(read)) {
+//            return list;
+//        }
+//        for (String json : read) {
+//            list.add(GSON.fromJson(json, Branch.class));
+//        }
+//        return list;
+//    }
+//
+//    public static void write(String orgCode, String orgNode, String orgName) {
+//        SPUtils.getInstance().write(ValueUtil.GlobalPhone, orgCode);
+//        SPUtils.getInstance().write(ValueUtil.GlobalPhone + "node", orgNode);
+//        SPUtils.getInstance().write(ValueUtil.GlobalPhone + "name", orgName);
+//    }
+//
+//    public static String readOrgCode() {
+//        return SPUtils.getInstance().read(ValueUtil.GlobalPhone, "");
+//    }
+//
+//    public static String readOrgNode() {
+//        return SPUtils.getInstance().read(ValueUtil.GlobalPhone + "node", "");
+//    }
+//
+//    public static String readOrgName() {
+//        return SPUtils.getInstance().read(ValueUtil.GlobalPhone + "name", "");
+//    }
 
     public static String getCurVersion(Context context) {
         try {

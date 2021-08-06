@@ -1,19 +1,17 @@
 package com.miaxis.postal.view.fragment;
 
-import androidx.annotation.NonNull;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.SimpleItemAnimator;
-
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.wifi.WifiManager;
 import android.view.View;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.miaxis.postal.BR;
 import com.miaxis.postal.R;
-import com.miaxis.postal.data.entity.Express;
 import com.miaxis.postal.data.entity.Local;
 import com.miaxis.postal.databinding.FragmentLocalBinding;
 import com.miaxis.postal.manager.PostalManager;
@@ -23,11 +21,17 @@ import com.miaxis.postal.viewModel.LocalViewModel;
 
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SimpleItemAnimator;
+
 public class LocalFragment extends BaseViewModelFragment<FragmentLocalBinding, LocalViewModel> {
 
     private LocalAdapter localAdapter;
     private LinearLayoutManager layoutManager;
-
     private String filter = "";
     private int page = 1;
     private int localCount = 0;
@@ -86,6 +90,7 @@ public class LocalFragment extends BaseViewModelFragment<FragmentLocalBinding, L
     public void onDestroyView() {
         super.onDestroyView();
         viewModel.localList.removeObserver(localListObserver);
+
     }
 
     private void initRecycleView() {
@@ -149,7 +154,6 @@ public class LocalFragment extends BaseViewModelFragment<FragmentLocalBinding, L
     private Observer<List<Local>> localListObserver = localList -> {
         if (page == 1) {
             localAdapter.setDataList(localList);
-            localAdapter.notifyDataSetChanged();
             if (localCount == 0) {
                 binding.rvLocal.scrollToPosition(0);
             }
@@ -201,5 +205,8 @@ public class LocalFragment extends BaseViewModelFragment<FragmentLocalBinding, L
     private void loadMore() {
         viewModel.loadExpressByPage(++page);
     }
+
+
+
 
 }

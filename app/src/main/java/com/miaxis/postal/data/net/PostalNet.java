@@ -125,13 +125,44 @@ public interface PostalNet {
             @Part("type") String type,
             @Part("CardPhoto") String cardPhoto,
             @Part("CheckPhoto") String checkPhoto
-//            @Part MultipartBody.Part checkFile,
-//            @Part MultipartBody.Part cardFile
+            //            @Part MultipartBody.Part checkFile,
+            //            @Part MultipartBody.Part cardFile
     );
+
+    //    //拿到核验编号后，上传订单信息
+    //    @FormUrlEncoded
+    //    @POST("api/v1/order/saveOrderFromApp")
+    //    Call<ResponseEntity> saveOrderFromAppSync(
+    //            @Field("orgCode") String orgCode,
+    //            @Field("orgNode") String orgNode,
+    //            @Field("personId") String personId,
+    //            @Field("checkId") String checkId,
+    //            @Field("warnLogId") String warnLogId,
+    //            @Field("expressmanId") String expressmanId,
+    //            @Field("sendAddress") String sendAddress,
+    //            @Field("sendPhone") String sendPhone,
+    //            @Field("sendName") String sendName,
+    //            @Field("orderCode") String orderCode,
+    //            @Field("orderInfo") String orderInfo,
+    //            @Field("weight") String weight,
+    //            @Field("addresseeName") String addresseeName,
+    //            @Field("addresseeAddress") String addresseeAddress,
+    //            @Field("addresseePhone") String addresseePhone,
+    //            @Field("pieceTime") String pieceTime,
+    //            @Field("receipTime") String receipTime,
+    //            @Field("lat") String lat,
+    //            @Field("lng") String lng,
+    //            @Field("checkStatus") String checkStatus,
+    //            //@Part List<MultipartBody.Part> file
+    //            //@Field("url") List<String> file
+    //            @Field("urls") String files,
+    //            @Field("customerType") int customerType
+    //
+    //    );
 
     //拿到核验编号后，上传订单信息
     @FormUrlEncoded
-    @POST("api/v1/order/saveOrderFromApp")
+    @POST("api/v1/order/saveOrderFromApp1")
     Call<ResponseEntity> saveOrderFromAppSync(
             @Field("orgCode") String orgCode,
             @Field("orgNode") String orgNode,
@@ -157,11 +188,10 @@ public interface PostalNet {
             //@Field("url") List<String> file
             @Field("urls") String files,
             @Field("customerType") int customerType
-
     );
 
     @FormUrlEncoded
-    @POST("api/v1/order/saveOrderFromApp")
+    @POST("api/v1/order/saveOrderFromApp1")
     Call<ResponseEntity> saveOrderFromAppSync(
             @Field("orgCode") String orgCode,
             @Field("orgNode") String orgNode,
@@ -189,7 +219,7 @@ public interface PostalNet {
             @Field("customerName") String customerName,
             @Field("goodsName") String goodsName,
             @Field("goodsNumber") int goodsNumber,
-            @Field("customerType") int  customerType
+            @Field("customerType") int customerType
     );
 
 
@@ -255,10 +285,10 @@ public interface PostalNet {
     /**
      * 上传图片
      */
-//    @Multipart
-//    @POST("api/v1/order/saveOrderPhoto")
-//    Call<String> deletePicture(
-//            @Part MultipartBody.Part file
-//    );
+    //    @Multipart
+    //    @POST("api/v1/order/saveOrderPhoto")
+    //    Call<String> deletePicture(
+    //            @Part MultipartBody.Part file
+    //    );
 
 }

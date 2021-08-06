@@ -8,19 +8,13 @@ import android.widget.ImageButton;
 
 import com.miaxis.postal.R;
 import com.miaxis.postal.app.App;
-import com.miaxis.postal.data.entity.Branch;
 import com.miaxis.postal.data.model.CourierModel;
-import com.miaxis.postal.data.repository.LoginRepository;
 import com.miaxis.postal.databinding.FragmentLoginBinding;
 import com.miaxis.postal.manager.AmapManager;
 import com.miaxis.postal.manager.ToastManager;
-import com.miaxis.postal.util.SPUtils;
 import com.miaxis.postal.util.ValueUtil;
 import com.miaxis.postal.view.base.BaseViewModelFragment;
-import com.miaxis.postal.view.dialog.BranchSelectDialogFragment;
 import com.miaxis.postal.viewModel.LoginViewModel;
-
-import java.util.List;
 
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -87,46 +81,11 @@ public class LoginFragment extends BaseViewModelFragment<FragmentLoginBinding, L
 
     private Observer<Boolean> loginResultObserver = result -> {
         if (result) {
-            final String userPhone = viewModel.username.get();
-            if (TextUtils.isEmpty(SPUtils.getInstance().read(userPhone, ""))) {
-                showWaitDialog("获取机构中，请稍候。。。");
-                App.getInstance().getThreadExecutor().execute(() -> {
-                    try {
-                        //List<Branch> branchListSync = LoginRepository.getInstance().getBranchListSync(userPhone);
-                        List<Branch> branchListSync = LoginRepository.getInstance().getAllBranchListSync();
-                        dismissWaitDialog();
-                        if (branchListSync.isEmpty()) {
-                            ValueUtil.GlobalPhone = userPhone;
-                            //boolean write = SPUtils.getInstance().write(ValueUtil.GlobalPhone, "");
-                            //                            SPUtils.getInstance().write(ValueUtil.GlobalPhone, "");
-                            //                            SPUtils.getInstance().write(ValueUtil.GlobalPhone + "node", "");
-                            ValueUtil.write("", "","");
-                            CourierModel.setLogin();
-                            mHandler.post(() -> mListener.replaceFragment(HomeFragment.newInstance()));
-                        } else if (branchListSync.size() == 1) {
-                            ValueUtil.GlobalPhone = userPhone;
-                            //                            SPUtils.getInstance().write(ValueUtil.GlobalPhone, branchListSync.get(0).orgCode);
-                            //                            SPUtils.getInstance().write(ValueUtil.GlobalPhone + "node", branchListSync.get(0).orgNode);
-                            ValueUtil.write(branchListSync.get(0).orgCode, branchListSync.get(0).orgNode, branchListSync.get(0).orgName);
-                            CourierModel.setLogin();
-                            mHandler.post(() -> mListener.replaceFragment(HomeFragment.newInstance()));
-                        } else {
-                            mHandler.post(() -> BranchSelectDialogFragment.newInstance(userPhone, branchListSync)
-                                    .show(getChildFragmentManager(), "BranchSelectDialogFragment"));
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        dismissWaitDialog();
-                        showResultDialog("错误：" + e.getMessage());
-                    }
-                });
-            } else {
-                ValueUtil.GlobalPhone = userPhone;
-                App.getInstance().getThreadExecutor().execute(() -> {
-                    CourierModel.setLogin();
-                    mHandler.post(() -> mListener.replaceFragment(HomeFragment.newInstance()));
-                });
-            }
+            ValueUtil.GlobalPhone = viewModel.username.get();
+            App.getInstance().getThreadExecutor().execute(() -> {
+                CourierModel.setLogin();
+                mHandler.post(() -> mListener.replaceFragment(HomeFragment.newInstance()));
+            });
         } else {
             ToastManager.toast("手机号码或密码错误", ToastManager.INFO);
         }

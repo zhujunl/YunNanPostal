@@ -12,6 +12,7 @@ import com.miaxis.postal.manager.GpioManager;
  * Created on 2021/3/21.
  */
 public class BP990_FingerPower implements IFingerPower {
+
     @Override
     public void powerOn() {
         openDevice();

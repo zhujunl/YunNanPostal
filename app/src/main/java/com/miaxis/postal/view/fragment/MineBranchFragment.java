@@ -153,7 +153,7 @@ public class MineBranchFragment extends BaseViewModelFragment<FragmentMineBranch
     @Override
     public void onBodyClick(View view, Branch branch, int position) {
         new MaterialDialog.Builder(getContext())
-                .title("确认删除【" + branch.orgName + "】？网点编号【" + branch.comcode + "】")
+                .title("确认删除【" + branch.orgName + "】？")
                 .positiveText("确认")
                 .onPositive((dialog, which) -> {
                     unBindBranch(branch.orgNode);

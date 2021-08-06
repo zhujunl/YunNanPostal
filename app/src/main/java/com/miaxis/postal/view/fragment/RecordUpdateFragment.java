@@ -5,11 +5,11 @@ import android.text.TextUtils;
 import android.view.View;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.miaxis.postal.BR;
 import com.miaxis.postal.R;
 import com.miaxis.postal.app.App;
-import com.miaxis.postal.bridge.GlideApp;
 import com.miaxis.postal.data.entity.Order;
 import com.miaxis.postal.data.entity.Photograph;
 import com.miaxis.postal.data.event.TakePhotoEvent;
@@ -122,7 +122,7 @@ public class RecordUpdateFragment extends BaseViewModelFragment<FragmentRecordUp
 
     private Observer<Boolean> orderCodeImageUpdateObserver = flag -> {
         if (flag) {
-            GlideApp.with(this)
+            Glide.with(this)
                     .load(viewModel.orderCodeBitmapCache)
                     .diskCacheStrategy(DiskCacheStrategy.NONE)
                     .skipMemoryCache(true)

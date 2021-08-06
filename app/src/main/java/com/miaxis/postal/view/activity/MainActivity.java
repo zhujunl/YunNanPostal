@@ -1,5 +1,13 @@
 package com.miaxis.postal.view.activity;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.wifi.WifiManager;
+
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.miaxis.postal.R;
 import com.miaxis.postal.databinding.ActivityMainBinding;
@@ -23,6 +31,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
     private MaterialDialog waitDialog;
     private MaterialDialog resultDialog;
     private MaterialDialog quitDialog;
+    private BroadcastReceiver netReceiver;
 
     private String root;
     private UpdatePresenter updatePresenter;
@@ -66,6 +75,9 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
     protected void onDestroy() {
         super.onDestroy();
         CardManager.getInstance().stopReadCard();
+        if (netReceiver!=null){
+            unregisterReceiver(netReceiver);
+        }
     }
 
     @Override
@@ -87,6 +99,38 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
         replaceFragment(fragment);
         PostalManager.getInstance().init();
         updatePresenter.checkUpdate();
+        netReceiver =new BroadcastReceiver(){
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String action = intent.getAction();
+                if (action.equals(ConnectivityManager.CONNECTIVITY_ACTION)) {
+                    ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+                    NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+                    if (networkInfo != null && networkInfo.isAvailable()) {
+                        int type2 = networkInfo.getType();
+                        switch (type2) {
+                            case 0://移动 网络    2G 3G 4G 都是一样的 实测 mix2s 联通卡
+                                break;
+                            case 1: //wifi网络
+                                break;
+
+                            case 9:  //网线连接
+                                break;
+                        }
+                        PostalManager.getInstance().startPostal();
+                    } else {// 无网络
+                    }
+                }
+            }
+        };
+        IntentFilter timeFilter = new IntentFilter();
+        timeFilter.addAction("android.net.ethernet.ETHERNET_STATE_CHANGED");
+        timeFilter.addAction("android.net.ethernet.STATE_CHANGE");
+        timeFilter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
+        timeFilter.addAction("android.net.wifi.WIFI_STATE_CHANGED");
+        timeFilter.addAction("android.net.wifi.STATE_CHANGE");
+        timeFilter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
+        registerReceiver(netReceiver, timeFilter);
     }
 
     @Override
