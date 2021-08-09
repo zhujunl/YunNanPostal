@@ -11,8 +11,10 @@ import com.miaxis.postal.data.entity.Photograph;
 import com.miaxis.postal.data.event.TakePhotoEvent;
 import com.miaxis.postal.databinding.FragmentManualBinding;
 import com.miaxis.postal.manager.ToastManager;
+import com.miaxis.postal.util.IDCardUtils;
+import com.miaxis.postal.util.StringUtils;
 import com.miaxis.postal.view.adapter.IDCardFilterAdapter;
-import com.miaxis.postal.view.adapter.InspectAdapter;
+import com.miaxis.postal.view.adapter.InterventionAdapter;
 import com.miaxis.postal.view.auxiliary.OnLimitClickHelper;
 import com.miaxis.postal.view.base.BaseViewModelFragment;
 import com.miaxis.postal.viewModel.InspectViewModel;
@@ -32,7 +34,7 @@ import androidx.recyclerview.widget.SimpleItemAnimator;
 
 public class ManualFragment extends BaseViewModelFragment<FragmentManualBinding, ManualViewModel> {
     private final String TAG = "ManualFragment";
-    private InspectAdapter inspectAdapter;
+    private InterventionAdapter inspectAdapter;
     private IDCardFilterAdapter idCardFilterAdapter;
 
     private IDCardRecord idCardRecord;
@@ -96,16 +98,18 @@ public class ManualFragment extends BaseViewModelFragment<FragmentManualBinding,
         initAutoComplete();
         viewModel.photographList.observe(this, photographObserver);
         binding.btnConfirm.setOnClickListener(new OnLimitClickHelper(view -> {
+            String cardValidate;
             if (TextUtils.isEmpty(binding.etName.getText().toString().replace((char) 12288, ' ').trim())) {
-                ToastManager.toast("请输入被核验人姓名", ToastManager.INFO);
+                ToastManager.toast("请输入寄件人姓名", ToastManager.ERROR);
+            } else if (!StringUtils.isChineseWord(binding.etName.getText().toString().trim())) {
+                ToastManager.toast("寄件人姓名只支持中文", ToastManager.ERROR);
             } else if (TextUtils.isEmpty(binding.etCardNumber.getText().toString().trim())) {
-                ToastManager.toast("请输入被核验人证件号码", ToastManager.INFO);
-            } else if (binding.etCardNumber.getText().toString().trim().length() != 18) {
-                ToastManager.toast("证件号码错误", ToastManager.ERROR);
+                ToastManager.toast("请输入寄件人证件号码", ToastManager.ERROR);
+            } else if (!IDCardUtils.VALIDITY.equals(cardValidate = IDCardUtils.IDCardValidate(binding.etCardNumber.getText().toString().trim()))) {
+                ToastManager.toast("" + cardValidate, ToastManager.ERROR);
             } else if (viewModel.getSelectSize() == 0) {
-                ToastManager.toast("请拍摄并选择被核验人现场留档照片", ToastManager.INFO);
+                ToastManager.toast("请拍摄并选择寄件人现场留档照片", ToastManager.ERROR);
             } else {
-                Log.e("confirm", "0");
                 viewModel.confirm();
             }
         }));
@@ -138,7 +142,7 @@ public class ManualFragment extends BaseViewModelFragment<FragmentManualBinding,
     }
 
     private void initRecycleView() {
-        inspectAdapter = new InspectAdapter(getContext());
+        inspectAdapter = new InterventionAdapter(getContext());
         inspectAdapter.setHeaderListener(headerListener);
         inspectAdapter.setBodyListener(bodyListener);
         inspectAdapter.setCheckBoxListener(checkBoxListener);
@@ -164,20 +168,20 @@ public class ManualFragment extends BaseViewModelFragment<FragmentManualBinding,
         if (viewModel.idCardListLiveData != null) {
             viewModel.idCardListLiveData.observe(this, idCardList -> {
                 idCardFilterAdapter.setUnfilteredData((ArrayList<IDCard>) idCardList);
-                //            idCardFilterAdapter.notifyDataSetChanged();
+                //idCardFilterAdapter.notifyDataSetChanged();
             });
         }
     }
 
-    private InspectAdapter.OnHeaderClickListener headerListener = () -> {
+    private InterventionAdapter.OnHeaderClickListener headerListener = () -> {
         mListener.replaceFragment(CameraFragment.newInstance());
     };
 
-    private InspectAdapter.OnBodyClickListener bodyListener = (view, position) -> {
+    private InterventionAdapter.OnBodyClickListener bodyListener = (view, position) -> {
         mListener.replaceFragment(PhotoFragment.newInstance(inspectAdapter.getData(position - 1).getBitmap()));
     };
 
-    private InspectAdapter.OnBodyCheckBoxClickListener checkBoxListener = (view, position) -> {
+    private InterventionAdapter.OnBodyCheckBoxClickListener checkBoxListener = (view, position) -> {
         Photograph select = inspectAdapter.getDataList().get(position - 1);
         if (!select.isSelect()) {
             if (viewModel.getSelectSize() < InspectViewModel.MAX_COUNT) {

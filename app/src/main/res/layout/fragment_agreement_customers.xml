@@ -438,7 +438,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:background="@drawable/button_blue_background_right_angle"
-            android:text="提交"
+            android:text="保存订单"
             android:textColor="@color/white"
             android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"

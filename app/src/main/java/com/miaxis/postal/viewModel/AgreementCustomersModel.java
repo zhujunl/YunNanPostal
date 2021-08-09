@@ -84,7 +84,7 @@ public class AgreementCustomersModel extends BaseViewModel {
 
     public void initExpress(Express express) {
         Log.e(TAG, "express:" + express);
-        if (TextUtils.isEmpty(rqCode.getValue())){
+        if (TextUtils.isEmpty(rqCode.getValue())) {
             rqCode.setValue(express.getBarCode());
         }
         if (TextUtils.isEmpty(address.getValue())) {
@@ -319,9 +319,19 @@ public class AgreementCustomersModel extends BaseViewModel {
     }
 
     public void getLocation() {
-        AmapManager.getInstance().getOneLocation(addressStr -> {
-            if (!TextUtils.isEmpty(addressStr)) {
-                address.setValue(addressStr);
+        AmapManager.getInstance().getOneLocation(new AmapManager.OnOneLocationListener() {
+            @Override
+            public void onOneLocation(String addressStr) {
+                if (!TextUtils.isEmpty(addressStr)) {
+                    address.setValue(addressStr);
+                }else {
+                    address.setValue("");
+                }
+            }
+
+            @Override
+            public void onError(String error) {
+                resultMessage.setValue("获取位置失败:" + error);
             }
         });
     }

@@ -247,7 +247,7 @@
             android:id="@+id/btn_submit"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="提交"
+            android:text="保存订单"
             android:textSize="18sp"
             android:textColor="@color/white"
             android:background="@drawable/button_blue_background_right_angle"

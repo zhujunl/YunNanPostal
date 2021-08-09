@@ -86,7 +86,7 @@
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:background="@null"
-                android:hint="请输入被核验人姓名"
+                android:hint="请输入寄件人姓名"
                 android:text="@={viewModel.name}"
                 android:textColor="@color/darkgray"
                 android:textSize="14sp"
@@ -155,7 +155,7 @@
                     android:background="@null"
                     android:completionThreshold="2"
                     android:digits="0123456789X"
-                    android:hint="请输入被核验人证件号码"
+                    android:hint="请输入寄件人证件号码"
                     android:inputType="text"
                     android:maxLength="18"
                     android:popupBackground="@color/transparent"
@@ -189,10 +189,26 @@
             android:id="@+id/rv_inspect"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            app:layout_constraintBottom_toTopOf="@id/tv_select"
+            app:layout_constraintBottom_toTopOf="@id/tv_inspect"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/v_line" />
+
+        <TextView
+            android:id="@+id/tv_inspect"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_box_white_shape"
+            android:gravity="center_vertical"
+            android:padding="15dp"
+            android:text="操作提示:\n\n       拍照时，请将镜头朝向寄件人。"
+            android:textColor="@color/darkgray"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/tv_select"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/rv_inspect"
+            app:layout_constraintWidth_percent="0.85" />
 
         <TextView
             android:id="@+id/tv_select"
@@ -203,7 +219,7 @@
             app:layout_constraintBottom_toTopOf="@id/btn_confirm"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/rv_inspect" />
+            app:layout_constraintTop_toBottomOf="@id/tv_inspect" />
 
         <Button
             android:id="@+id/btn_confirm"
