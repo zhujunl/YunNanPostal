@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.miaxis.postal.BR;
 import com.miaxis.postal.R;
+import com.miaxis.postal.data.entity.Customer;
 import com.miaxis.postal.data.entity.IDCard;
 import com.miaxis.postal.data.entity.IDCardRecord;
 import com.miaxis.postal.data.entity.Photograph;
@@ -36,7 +37,7 @@ public class ManualFragment extends BaseViewModelFragment<FragmentManualBinding,
     private final String TAG = "ManualFragment";
     private InterventionAdapter inspectAdapter;
     private IDCardFilterAdapter idCardFilterAdapter;
-
+    private Customer customer;
     private IDCardRecord idCardRecord;
 
     //是否协议客户
@@ -45,13 +46,19 @@ public class ManualFragment extends BaseViewModelFragment<FragmentManualBinding,
     public static ManualFragment newInstance(IDCardRecord idCardRecord) {
         ManualFragment fragment = new ManualFragment();
         fragment.setIdCardRecord(idCardRecord);
-
         return fragment;
     }
 
-    public static ManualFragment newInstance(IDCardRecord idCardRecord, boolean isAgreementCustomer) {
+    //    public static ManualFragment newInstance(IDCardRecord idCardRecord, boolean isAgreementCustomer) {
+    //        ManualFragment fragment = new ManualFragment();
+    //        fragment.setIdCardRecord(idCardRecord, isAgreementCustomer);
+    //        return fragment;
+    //    }
+
+    public static ManualFragment newInstance(IDCardRecord idCardRecord, boolean isAgreementCustomer, Customer customer) {
         ManualFragment fragment = new ManualFragment();
         fragment.setIdCardRecord(idCardRecord, isAgreementCustomer);
+        fragment.setCustomer(customer);
         return fragment;
     }
 
@@ -203,7 +210,7 @@ public class ManualFragment extends BaseViewModelFragment<FragmentManualBinding,
     private Observer<Boolean> confirmObserver = flag -> {
         if (flag) {
             if (isAgreementCustomer) {
-                mListener.replaceFragment(AgreementCustomersFragment.newInstance(viewModel.idCardRecord));
+                mListener.replaceFragment(AgreementCustomersFragment.newInstance(viewModel.idCardRecord,customer));
             } else {
                 mListener.replaceFragment(ExpressFragment.newInstance(viewModel.idCardRecord));
             }
@@ -214,7 +221,7 @@ public class ManualFragment extends BaseViewModelFragment<FragmentManualBinding,
 
     private Observer<Boolean> idCardObserver = flag -> {
         if (flag && viewModel.idCardRecordCache != null) {
-            mListener.replaceFragment(FaceVerifyFragment.newInstance(viewModel.idCardRecordCache, isAgreementCustomer));
+            mListener.replaceFragment(FaceVerifyFragment.newInstance(viewModel.idCardRecordCache, isAgreementCustomer,customer));
         }
     };
 
@@ -238,4 +245,9 @@ public class ManualFragment extends BaseViewModelFragment<FragmentManualBinding,
         this.idCardRecord = idCardRecord;
         this.isAgreementCustomer = isAgreementCustomer;
     }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
+
 }

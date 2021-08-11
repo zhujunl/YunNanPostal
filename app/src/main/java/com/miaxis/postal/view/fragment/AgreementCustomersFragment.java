@@ -15,6 +15,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.bumptech.glide.Glide;
 import com.miaxis.postal.R;
 import com.miaxis.postal.app.App;
+import com.miaxis.postal.data.entity.Customer;
 import com.miaxis.postal.data.entity.Express;
 import com.miaxis.postal.data.entity.IDCardRecord;
 import com.miaxis.postal.data.event.ExpressEditEvent;
@@ -47,14 +48,16 @@ public class AgreementCustomersFragment extends BaseViewModelFragment<FragmentAg
     private MaterialDialog scanDialog;
     private Express express = new Express();
     private Handler handler;
-    private int delay = 5;
+    private int delay = 3;
 
     private boolean draft = false;
+    private Customer customer;
 
-    public static AgreementCustomersFragment newInstance(IDCardRecord idCardRecord) {
+    public static AgreementCustomersFragment newInstance(IDCardRecord idCardRecord, Customer customer) {
         AgreementCustomersFragment fragment = new AgreementCustomersFragment();
         fragment.setIdCardRecord(idCardRecord);
         fragment.setDraft(false);
+        fragment.setCustomer(customer);
         return fragment;
     }
 
@@ -64,6 +67,10 @@ public class AgreementCustomersFragment extends BaseViewModelFragment<FragmentAg
         fragment.setDraft(true);
         fragment.setExpress(express);
         return fragment;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
     }
 
     public void setExpress(Express express) {
@@ -99,7 +106,7 @@ public class AgreementCustomersFragment extends BaseViewModelFragment<FragmentAg
         binding.ivBack.setOnClickListener(v -> onBackPressed());
         binding.ivAddress.setOnClickListener(new OnLimitClickHelper(view -> viewModel.getLocation()));
 
-        viewModel.initExpress(this.express);
+        viewModel.initExpressAndCustomer(this.express,this.customer);
         //        if (TextUtils.isEmpty(this.express.getBarCode())) {
         //            viewModel.startScan();
         //        }
@@ -272,7 +279,7 @@ public class AgreementCustomersFragment extends BaseViewModelFragment<FragmentAg
     private Observer<Boolean> scanFlagObserver = flag -> {
         handler.removeCallbacks(scanDialogCountDownRunnable);
         if (flag) {
-            delay = 5;
+            delay = 3;
             handler.post(scanDialogCountDownRunnable);
             scanDialog.show();
         } else {

@@ -239,17 +239,18 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
+                android:layout_height="wrap_content">
 
                 <TextView
                     android:id="@+id/tv_clientSName_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="30dp"
-                    android:layout_marginTop="20dp"
+                    android:layout_marginTop="10dp"
                     android:layout_marginEnd="30dp"
                     android:gravity="center|start"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp"
                     android:text="客户名称"
                     android:textColor="@color/black"
                     android:textSize="18sp"
@@ -282,8 +283,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="30dp"
-                    android:layout_marginTop="20dp"
+                    android:layout_marginTop="10dp"
                     android:gravity="center|start"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp"
                     android:text="客户电话"
                     android:textColor="@color/black"
                     android:textSize="18sp"
@@ -293,7 +296,7 @@
                 <EditText
                     android:id="@+id/edit_clientSPhone"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="0dp"
                     android:layout_marginStart="20dp"
                     android:layout_marginEnd="30dp"
                     android:background="@drawable/bg_edit_gray_box"
@@ -317,8 +320,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="30dp"
-                    android:layout_marginTop="20dp"
+                    android:layout_marginTop="10dp"
                     android:gravity="center|start"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp"
                     android:text="货物名称"
                     android:textColor="@color/black"
                     android:textSize="18sp"
@@ -328,7 +333,7 @@
                 <EditText
                     android:id="@+id/edit_itemName"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="0dp"
                     android:layout_marginStart="20dp"
                     android:layout_marginEnd="30dp"
                     android:background="@drawable/bg_edit_gray_box"
@@ -351,8 +356,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="30dp"
-                    android:layout_marginTop="20dp"
+                    android:layout_marginTop="10dp"
                     android:gravity="center|start"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp"
                     android:text="货物数量"
                     android:textColor="@color/black"
                     android:textSize="18sp"
@@ -362,7 +369,7 @@
                 <EditText
                     android:id="@+id/edit_itemNUm"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="0dp"
                     android:layout_marginStart="20dp"
                     android:layout_marginEnd="30dp"
                     android:background="@drawable/bg_edit_gray_box"

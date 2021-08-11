@@ -9,10 +9,12 @@ import com.miaxis.postal.app.App;
 import com.miaxis.postal.bridge.SingleLiveEvent;
 import com.miaxis.postal.data.dao.AppDatabase;
 import com.miaxis.postal.data.entity.Courier;
+import com.miaxis.postal.data.entity.Customer;
 import com.miaxis.postal.data.entity.Express;
 import com.miaxis.postal.data.entity.IDCardRecord;
 import com.miaxis.postal.data.entity.WarnLog;
 import com.miaxis.postal.data.exception.MyException;
+import com.miaxis.postal.data.model.CustomerModel;
 import com.miaxis.postal.data.repository.ExpressRepository;
 import com.miaxis.postal.data.repository.IDCardRecordRepository;
 import com.miaxis.postal.data.repository.PostalRepository;
@@ -53,8 +55,8 @@ public class AgreementCustomersModel extends BaseViewModel {
 
     public MutableLiveData<String> rqCode = new MutableLiveData<>();
 
-    public MutableLiveData<String> clientPhone = new MutableLiveData<>();
     public MutableLiveData<String> clientName = new MutableLiveData<>();
+    public MutableLiveData<String> clientPhone = new MutableLiveData<>();
     public MutableLiveData<String> itemName = new MutableLiveData<>();
     public MutableLiveData<String> theQuantityOfGoods = new MutableLiveData<>();
 
@@ -82,7 +84,11 @@ public class AgreementCustomersModel extends BaseViewModel {
         ScanManager.getInstance().powerOff();
     }
 
-    public void initExpress(Express express) {
+    public void initExpressAndCustomer(Express express,Customer customer) {
+        if (customer != null) {
+            clientName.setValue(customer.name);
+            clientPhone.setValue(customer.phone);
+        }
         Log.e(TAG, "express:" + express);
         if (TextUtils.isEmpty(rqCode.getValue())) {
             rqCode.setValue(express.getBarCode());
@@ -162,10 +168,12 @@ public class AgreementCustomersModel extends BaseViewModel {
                     }
                 }).observeOn(AndroidSchedulers.mainThread())
                 .subscribe(mCode -> {
+                    scanFlag.setValue(Boolean.FALSE);
                     waitMessage.setValue("");
                     removeRepeatEdit(mCode);
                     makeNewExpress(mCode);
                 }, throwable -> {
+                    scanFlag.setValue(Boolean.FALSE);
                     waitMessage.postValue("");
                     resultMessage.postValue("" + throwable.getMessage());
                     throwable.printStackTrace();
@@ -303,6 +311,9 @@ public class AgreementCustomersModel extends BaseViewModel {
                     express.setCustomerPhone(getRepString(clientPhone.getValue()));
                     express.setPhone(ValueUtil.GlobalPhone);
                     ExpressRepository.getInstance().saveExpress(express);
+
+                    Customer customer = new Customer(ValueUtil.GlobalPhone,clientName.getValue(),clientPhone.getValue());
+                    CustomerModel.save(customer);
                     return true;
                 })
                 .observeOn(AndroidSchedulers.mainThread())
@@ -324,7 +335,7 @@ public class AgreementCustomersModel extends BaseViewModel {
             public void onOneLocation(String addressStr) {
                 if (!TextUtils.isEmpty(addressStr)) {
                     address.setValue(addressStr);
-                }else {
+                } else {
                     address.setValue("");
                 }
             }
@@ -459,6 +470,8 @@ public class AgreementCustomersModel extends BaseViewModel {
                     express.setCustomerPhone(getRepString(clientPhone.getValue()));
                     express.setPhone(ValueUtil.GlobalPhone);
                     ExpressRepository.getInstance().saveExpress(express);
+                    Customer customer = new Customer(ValueUtil.GlobalPhone,clientName.getValue(),clientPhone.getValue());
+                    CustomerModel.save(customer);
                     return true;
                 })
                 .observeOn(AndroidSchedulers.mainThread())
