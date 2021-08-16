@@ -77,7 +77,9 @@ public abstract class BaseViewModelFragment<V extends ViewDataBinding, VM extend
 
     public abstract int initVariableId();
 
-    protected abstract void initData();
+    protected void initData() {
+
+    }
 
     protected abstract void initView();
 
@@ -99,29 +101,29 @@ public abstract class BaseViewModelFragment<V extends ViewDataBinding, VM extend
 
     public void showWaitDialog(String message) {
         FragmentActivity activity = getActivity();
-        if (activity instanceof MainActivity){
-            ((MainActivity)activity).showWaitDialog(message);
+        if (activity instanceof MainActivity) {
+            ((MainActivity) activity).showWaitDialog(message);
         }
     }
 
     public void showResultDialog(String message) {
         FragmentActivity activity = getActivity();
-        if (activity instanceof MainActivity){
-            ((MainActivity)activity).showResultDialog(message);
+        if (activity instanceof MainActivity) {
+            ((MainActivity) activity).showResultDialog(message);
         }
     }
 
     public void dismissWaitDialog() {
         FragmentActivity activity = getActivity();
-        if (activity instanceof MainActivity){
-            ((MainActivity)activity).dismissWaitDialog();
+        if (activity instanceof MainActivity) {
+            ((MainActivity) activity).dismissWaitDialog();
         }
     }
 
     public void dismissResultDialog() {
         FragmentActivity activity = getActivity();
-        if (activity instanceof MainActivity){
-            ((MainActivity)activity).dismissResultDialog();
+        if (activity instanceof MainActivity) {
+            ((MainActivity) activity).dismissResultDialog();
         }
     }
 
@@ -131,7 +133,7 @@ public abstract class BaseViewModelFragment<V extends ViewDataBinding, VM extend
 
     public void hideInputMethod() {
         try {
-            if (getActivity().getCurrentFocus() != null && getActivity().getCurrentFocus().getWindowToken() != null){
+            if (getActivity().getCurrentFocus() != null && getActivity().getCurrentFocus().getWindowToken() != null) {
                 InputMethodManager manager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                 manager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
             }

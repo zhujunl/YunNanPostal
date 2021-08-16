@@ -11,7 +11,6 @@ import com.miaxis.postal.data.repository.LoginRepository;
 import com.miaxis.postal.databinding.FragmentHomeBinding;
 import com.miaxis.postal.manager.AmapManager;
 import com.miaxis.postal.manager.PostalManager;
-import com.miaxis.postal.util.ValueUtil;
 import com.miaxis.postal.view.adapter.BranchAdapter;
 import com.miaxis.postal.view.adapter.HSpacesItemDecoration;
 import com.miaxis.postal.view.auxiliary.OnLimitClickHelper;
@@ -21,6 +20,7 @@ import com.miaxis.postal.view.dialog.EditPasswordDialogFragment;
 import com.miaxis.postal.viewModel.HomeViewModel;
 
 import java.util.List;
+import java.util.Objects;
 
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -95,7 +95,10 @@ public class HomeFragment extends BaseViewModelFragment<FragmentHomeBinding, Hom
         ((SimpleItemAnimator) binding.rvBranches.getItemAnimator()).setSupportsChangeAnimations(false);
 
         viewModel.branchList.observe(this, branches -> {
-            branchAdapter.setDataList(branches);
+            List<Branch> dataList = branchAdapter.getDataList();
+            if (!Objects.equals(dataList, branches)) {
+                branchAdapter.setDataList(branches);
+            }
             int selectedPosition = Branch.findSelectedPosition(branches);
             if (selectedPosition >= 0) {
                 binding.rvBranches.scrollToPosition(selectedPosition);
@@ -116,7 +119,7 @@ public class HomeFragment extends BaseViewModelFragment<FragmentHomeBinding, Hom
                 //List<Branch> branchListSync = LoginRepository.getInstance().getBranchListSync(ValueUtil.GlobalPhone);
                 List<Branch> branchListSync = LoginRepository.getInstance().getAllBranchListSync();
                 dismissWaitDialog();
-                viewModel.flush( branchListSync);
+                viewModel.flush(branchListSync);
             } catch (Exception e) {
                 e.printStackTrace();
                 dismissWaitDialog();
@@ -166,7 +169,7 @@ public class HomeFragment extends BaseViewModelFragment<FragmentHomeBinding, Hom
                 .title("确认切换至【" + branch.orgName + "】？")
                 .positiveText("确认")
                 .onPositive((dialog, which) -> {
-                    viewModel.onItemClick( branch);
+                    viewModel.onItemClick(branch);
                 })
                 .negativeText("取消")
                 .show();

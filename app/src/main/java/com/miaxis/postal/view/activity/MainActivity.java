@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -14,6 +13,7 @@ import com.miaxis.postal.databinding.ActivityMainBinding;
 import com.miaxis.postal.manager.CardManager;
 import com.miaxis.postal.manager.PostalManager;
 import com.miaxis.postal.util.ClearRecordFileWorker;
+import com.miaxis.postal.util.NetUtils;
 import com.miaxis.postal.view.base.BaseActivity;
 import com.miaxis.postal.view.base.BaseViewModelFragment;
 import com.miaxis.postal.view.base.OnFragmentInteractionListener;
@@ -53,29 +53,30 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
         replaceFragment(PreludeFragment.newInstance());
         performTask();
     }
+
     //开始任务 重复执行
-    private  void performTask(){
+    private void performTask() {
         //重复性任务 24小时执行一次
         PeriodicWorkRequest request = new PeriodicWorkRequest.Builder(ClearRecordFileWorker.class,
                 24, TimeUnit.HOURS).build();
         //一次性任务
-//        WorkRequest request = new OneTimeWorkRequest.Builder(ClearRecordFileWorker.class).build();
+        //        WorkRequest request = new OneTimeWorkRequest.Builder(ClearRecordFileWorker.class).build();
         WorkManager.getInstance(this).enqueue(request);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-//        if (!TextUtils.isEmpty(root)) {
-//            PostalManager.getInstance().startPostal();
-//        }
+        //        if (!TextUtils.isEmpty(root)) {
+        //            PostalManager.getInstance().startPostal();
+        //        }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         CardManager.getInstance().stopReadCard();
-        if (netReceiver!=null){
+        if (netReceiver != null) {
             unregisterReceiver(netReceiver);
         }
     }
@@ -99,26 +100,14 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
         replaceFragment(fragment);
         PostalManager.getInstance().init();
         updatePresenter.checkUpdate();
-        netReceiver =new BroadcastReceiver(){
+        netReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 String action = intent.getAction();
                 if (action.equals(ConnectivityManager.CONNECTIVITY_ACTION)) {
-                    ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-                    NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-                    if (networkInfo != null && networkInfo.isAvailable()) {
-                        int type2 = networkInfo.getType();
-                        switch (type2) {
-                            case 0://移动 网络    2G 3G 4G 都是一样的 实测 mix2s 联通卡
-                                break;
-                            case 1: //wifi网络
-                                break;
-
-                            case 9:  //网线连接
-                                break;
-                        }
+                    int netStatus = NetUtils.getNetStatus(context);
+                    if (netStatus >= 0) {
                         PostalManager.getInstance().startPostal();
-                    } else {// 无网络
                     }
                 }
             }

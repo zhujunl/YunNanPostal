@@ -4,6 +4,7 @@ package com.miaxis.postal.data.entity;
 import com.miaxis.postal.util.ListUtils;
 
 import java.util.List;
+import java.util.Objects;
 
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
@@ -61,4 +62,18 @@ public class Branch {
                 '}';
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (!(o instanceof Branch))
+            return false;
+        Branch branch = (Branch) o;
+        return id == branch.id && isSelected == branch.isSelected && Objects.equals(orgName, branch.orgName) && Objects.equals(orgCode, branch.orgCode) && Objects.equals(orgNode, branch.orgNode);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, orgName, orgCode, orgNode, isSelected);
+    }
 }

@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="item"
+            type="com.miaxis.postal.data.entity.AppItem" />
+    </data>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="20dp"
+        android:background="@drawable/bg_white_shape_appitem"
+        android:elevation="5dp">
+
+
+        <androidx.core.widget.ContentLoadingProgressBar
+            android:id="@+id/cpb_progress"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:max="100"
+            android:progress="@{item.isDownload()?100:0}"
+            android:progressDrawable="@drawable/progress_bar"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:progress="40" />
+
+        <TextView
+            android:id="@+id/tv_position"
+            android:layout_width="60dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="@{item.Position}"
+            android:textSize="18sp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@id/v_tip_1"
+            tools:text="1" />
+
+        <View
+            android:id="@+id/v_tip_1"
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:layout_marginTop="10dp"
+            android:background="#22222222"
+            android:layout_marginBottom="10dp"
+            app:layout_constraintLeft_toRightOf="@id/tv_position"
+            app:layout_constraintRight_toLeftOf="@id/tv_name" />
+
+        <TextView
+            android:id="@+id/tv_name"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="@={item.AppName}"
+            android:textSize="18sp"
+            app:layout_constraintHorizontal_weight="3"
+            app:layout_constraintLeft_toRightOf="@id/tv_position"
+            app:layout_constraintRight_toLeftOf="@+id/v_tip_2"
+            tools:text="@string/app_name" />
+
+        <View
+            android:id="@+id/v_tip_2"
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:layout_marginTop="10dp"
+            android:background="#22222222"
+            android:layout_marginBottom="10dp"
+            app:layout_constraintLeft_toRightOf="@id/tv_name"
+            app:layout_constraintRight_toLeftOf="@id/ll_operation" />
+
+        <LinearLayout
+            android:id="@+id/ll_operation"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            app:layout_constraintHorizontal_weight="2"
+            app:layout_constraintLeft_toRightOf="@id/v_tip_2"
+            app:layout_constraintRight_toRightOf="parent">
+
+            <TextView
+                android:id="@+id/tv_operation"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@{item.isDownload()?@string/string_install:@string/string_download}"
+                android:textSize="18sp"
+                tools:text="下载" />
+
+            <TextView
+                android:id="@+id/tv_delete"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="重新\n下载"
+                android:textColor="@color/firebrick"
+                android:textSize="15sp"
+                android:visibility="@{item.isDownload()?View.VISIBLE:View.GONE}"
+                tools:visibility="gone" />
+
+
+        </LinearLayout>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

@@ -11,12 +11,14 @@ import com.miaxis.postal.manager.ConfigManager;
 import com.miaxis.postal.manager.CrashExceptionManager;
 import com.miaxis.postal.manager.FaceManager;
 import com.miaxis.postal.manager.TTSManager;
+import com.miaxis.postal.util.DateUtil;
 import com.miaxis.postal.util.FileUtil;
 import com.miaxis.postal.util.SPUtils;
 import com.miaxis.postal.util.carch.CrashHandler;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.util.Date;
 import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -45,7 +47,8 @@ public class App extends Application {
     public String getRandomBarCode() {
         long timeMillis = System.currentTimeMillis();
         String temp = ConfigManager.getInstance().getConfig().getDeviceIMEI() + "" + timeMillis + "" + App.getInstance().GlobalRandom.nextLong();
-        return this.BarHeader + Math.abs(temp.hashCode() + GlobalRandom.nextLong());
+        String format = DateUtil.DATEFORMAT.format(new Date());
+        return this.BarHeader + format + Math.abs(temp.hashCode());
     }
 
     public static App getInstance() {

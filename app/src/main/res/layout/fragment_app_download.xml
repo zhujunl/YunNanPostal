@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:appItem="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="com.miaxis.postal.util.ValueUtil" />
+
+        <variable
+            name="viewModel"
+            type="com.miaxis.postal.viewModel.AppDownloadViewModel" />
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".view.fragment.AppDownloadFragment">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@color/white"
+            android:gravity="center"
+            android:text="邮政业APP安装"
+            android:textSize="20sp"
+            appItem:layout_constraintBottom_toBottomOf="@id/iv_back"
+            appItem:layout_constraintEnd_toEndOf="parent"
+            appItem:layout_constraintStart_toStartOf="parent"
+            appItem:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/iv_back"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/custom_toolbar_height"
+            android:adjustViewBounds="true"
+            android:padding="12dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_navigate_before_grey"
+            appItem:layout_constraintStart_toStartOf="parent"
+            appItem:layout_constraintTop_toTopOf="parent" />
+
+        <View
+            android:id="@+id/v_line"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:background="@color/main_color"
+            appItem:layout_constraintEnd_toEndOf="parent"
+            appItem:layout_constraintStart_toStartOf="parent"
+            appItem:layout_constraintTop_toBottomOf="@id/iv_back" />
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_apps"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            appItem:layout_constraintBottom_toBottomOf="parent"
+            appItem:layout_constraintTop_toBottomOf="@id/v_line" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

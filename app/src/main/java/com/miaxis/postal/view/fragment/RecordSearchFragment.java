@@ -57,7 +57,7 @@ public class RecordSearchFragment extends BaseViewModelFragment<FragmentRecordSe
             }
         }));
         //binding.etSearch.setRawInputType(Configuration.KEYBOARD_QWERTY);
-        //        binding.etSearch.setText("7302289336");
+        //binding.etSearch.setText("7302289336");
     }
 
     @Override

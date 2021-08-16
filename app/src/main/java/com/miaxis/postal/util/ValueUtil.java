@@ -48,54 +48,6 @@ public class ValueUtil {
         return false;
     }
 
-//    public synchronized static boolean saveBranchList(String phone, List<Branch> list) {
-//        if (TextUtils.isEmpty(phone)) {
-//            return false;
-//        }
-//        if (ListUtils.isNullOrEmpty(list)) {
-//            SPUtils.getInstance().remove(phone);
-//            return true;
-//        }
-//        Set<String> set = new HashSet<>();
-//        for (Branch branch : list) {
-//            set.add(GSON.toJson(branch));
-//        }
-//        return SPUtils.getInstance().write(phone, set);
-//    }
-
-//    public synchronized static List<Branch> readBranchList(String phone) {
-//        List<Branch> list = new ArrayList<>();
-//        if (TextUtils.isEmpty(phone)) {
-//            return list;
-//        }
-//        Set<String> read = SPUtils.getInstance().read(phone, new HashSet<>());
-//        if (SetUtils.isNullOrEmpty(read)) {
-//            return list;
-//        }
-//        for (String json : read) {
-//            list.add(GSON.fromJson(json, Branch.class));
-//        }
-//        return list;
-//    }
-//
-//    public static void write(String orgCode, String orgNode, String orgName) {
-//        SPUtils.getInstance().write(ValueUtil.GlobalPhone, orgCode);
-//        SPUtils.getInstance().write(ValueUtil.GlobalPhone + "node", orgNode);
-//        SPUtils.getInstance().write(ValueUtil.GlobalPhone + "name", orgName);
-//    }
-//
-//    public static String readOrgCode() {
-//        return SPUtils.getInstance().read(ValueUtil.GlobalPhone, "");
-//    }
-//
-//    public static String readOrgNode() {
-//        return SPUtils.getInstance().read(ValueUtil.GlobalPhone + "node", "");
-//    }
-//
-//    public static String readOrgName() {
-//        return SPUtils.getInstance().read(ValueUtil.GlobalPhone + "name", "");
-//    }
-
     public static String getCurVersion(Context context) {
         try {
             PackageManager manager = context.getPackageManager();

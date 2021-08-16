@@ -9,6 +9,7 @@ import java.util.Locale;
 
 public class DateUtil {
 
+    public static final DateFormat DATEFORMAT = new SimpleDateFormat("yyyyMMddHHmmss", Locale.CHINA);
     public static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CHINA);
     public static final DateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("yyyyMMdd_HHmmss_SSS", Locale.CHINA);
     public static final DateFormat DTO_DATE_FORMAT = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.CHINA);

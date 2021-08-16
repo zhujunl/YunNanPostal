@@ -52,15 +52,21 @@ public class HomeViewModel extends BaseViewModel {
                 BranchModel.deleteAll();
                 emitter.onNext(new ArrayList<>());
             } else {
+                //获取本地上次选择的品牌
                 Branch last = BranchModel.findSelected();
+                //保存接口返回的最新品牌列表
                 for (Branch branch : list) {
                     branch.isSelected = last != null && last.id == branch.id;
+                    //保存选中状态
                     BranchModel.save(branch);
                 }
+                //获取本地选择的品牌
                 Branch selected = Branch.findSelected(list);
                 if (selected == null) {
+                    //如果没有选择品牌  默认选择第一个
                     Branch branch = list.get(0);
                     branch.isSelected = true;
+                    //保存选择状态
                     BranchModel.save(branch);
                 }
                 emitter.onNext(list);
@@ -95,5 +101,20 @@ public class HomeViewModel extends BaseViewModel {
                     });
         }
     }
+
+//    public List<Branch> merge(List<Branch> list1, List<Branch> list2) {
+//        HashMap<Long, Branch> branches = new HashMap<>();
+//        if (!ListUtils.isNullOrEmpty(list1)) {
+//            for (Branch branch : list1) {
+//                branches.put(branch.id, branch);
+//            }
+//        }
+//        if (!ListUtils.isNullOrEmpty(list2)) {
+//            for (Branch branch : list2) {
+//                branches.put(branch.id, branch);
+//            }
+//        }
+//        return new ArrayList<>(branches.values());
+//    }
 
 }

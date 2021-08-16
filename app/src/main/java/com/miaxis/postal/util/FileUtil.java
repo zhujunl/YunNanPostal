@@ -32,6 +32,7 @@ public class FileUtil {
 
     public static final String PATH = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + "miaxis";
     public static final String MAIN_PATH = PATH + File.separator + "postal";
+    public static final String APP_PATH = MAIN_PATH + File.separator + "APP";
     public static final String LICENCE_PATH = PATH + File.separator + "FaceId_ST" + File.separator + "st_lic.txt";
     public static final String FACE_IMAGE_PATH = MAIN_PATH + File.separator + "recordImage";
     public static final String IMAGE_PATH = MAIN_PATH + File.separator + "Image";
