@@ -2,9 +2,11 @@ package com.miaxis.postal.data.repository;
 
 import android.graphics.Bitmap;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.miaxis.postal.data.dto.OrderDto;
 import com.miaxis.postal.data.dto.SimpleOrderDto;
+import com.miaxis.postal.data.entity.Courier;
 import com.miaxis.postal.data.entity.Order;
 import com.miaxis.postal.data.entity.SimpleOrder;
 import com.miaxis.postal.data.exception.MyException;
@@ -12,12 +14,14 @@ import com.miaxis.postal.data.exception.NetResultFailedException;
 import com.miaxis.postal.data.net.PostalApi;
 import com.miaxis.postal.data.net.ResponseEntity;
 import com.miaxis.postal.manager.DataCacheManager;
-import com.miaxis.postal.util.FileUtil;
+import com.miaxis.postal.util.DateUtil;
+import com.miaxis.postal.util.ListUtils;
 import com.miaxis.postal.util.ValueUtil;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import retrofit2.Response;
@@ -80,13 +84,56 @@ public class OrderRepository extends BaseRepository {
         throw new MyException("服务端返回数据解析失败，或为空");
     }
 
-    public Order getOrderByCode(String orderCode) throws IOException, MyException, NetResultFailedException {
-        Response<ResponseEntity<OrderDto>> execute = PostalApi.getOrderByCode(orderCode).execute();
+    //    public Order getOrderByCode(String orderCode) throws IOException, MyException, NetResultFailedException {
+    //        Response<ResponseEntity<OrderDto>> execute = PostalApi.getOrderByCode(orderCode).execute();
+    //        try {
+    //            ResponseEntity<OrderDto> body = execute.body();
+    //            if (body != null) {
+    //                if (TextUtils.equals(body.getCode(), ValueUtil.SUCCESS) && body.getData() != null) {
+    //                    return body.getData().transform();
+    //                } else {
+    //                    throw new NetResultFailedException("服务端返回，" + body.getMessage());
+    //                }
+    //            }
+    //        } catch (NetResultFailedException e) {
+    //            throw e;
+    //        } catch (Exception e) {
+    //            e.printStackTrace();
+    //            throw new MyException(e.getMessage());
+    //        }
+    //        throw new MyException("服务端返回数据解析失败，或为空");
+    //    }
+
+
+    public List<Order> getOrderByCode(String orderCode) throws IOException, MyException, NetResultFailedException {
+        Courier courier = DataCacheManager.getInstance().getCourier();
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(
+                calendar.get(Calendar.YEAR),
+                calendar.get(Calendar.MONTH),
+                calendar.get(Calendar.DAY_OF_MONTH),
+                0, 0, 0);
+        Date beginOfDate = calendar.getTime();
+        String startTime = DateUtil.DATE_FORMAT.format(beginOfDate);
+        Date endOfDate = new Date(beginOfDate.getTime() + 604799 * 1000);
+        String endTime = DateUtil.DATE_FORMAT.format(endOfDate);
+        Response<ResponseEntity<List<OrderDto>>> execute =
+                PostalApi.getOrderByCode1(
+                        "" + courier.getCourierId(), "" + 1, "" + 100000, orderCode, startTime, endTime).execute();
         try {
-            ResponseEntity<OrderDto> body = execute.body();
+            ResponseEntity<List<OrderDto>> body = execute.body();
+            Log.e("getOrderByCode", "" + body);
             if (body != null) {
                 if (TextUtils.equals(body.getCode(), ValueUtil.SUCCESS) && body.getData() != null) {
-                    return body.getData().transform();
+                    List<OrderDto> data = body.getData();
+                    if (!ListUtils.isNullOrEmpty(data)) {
+                        List<Order> objects = new ArrayList<>();
+                        for (OrderDto orderDto : data) {
+                            Order transform = orderDto.transform();
+                            objects.add(transform);
+                        }
+                        return objects;
+                    }
                 } else {
                     throw new NetResultFailedException("服务端返回，" + body.getMessage());
                 }

@@ -104,7 +104,6 @@ public class MineBranchFragment extends BaseViewModelFragment<FragmentMineBranch
                 dismissWaitDialog();
                 mHandler.post(() -> {
                     mineBranchAdapter.setDataList(branchListSync);
-                    mineBranchAdapter.notifyDataSetChanged();
                 });
             } catch (Exception e) {
                 e.printStackTrace();

@@ -18,7 +18,10 @@ public class ValueUtil {
 
     //    public static final String DEFAULT_BASE_HOST = "http://192.168.5.125:8088/policebus/";
     //    public static final String DEFAULT_BASE_HOST = "http://192.168.5.94:8080/policebus/";
-    public static final String DEFAULT_BASE_HOST = "http://14.205.75.23:8089/policebus/";
+    //    public static final String DEFAULT_BASE_HOST = "http://14.205.75.23:8089/policebus/";
+    //    public static final String DEFAULT_BASE_HOST = "http://192.168.11.185:8080/policebus/";
+    public static final String DEFAULT_BASE_HOST = "http://192.168.5.164:8080/policebus/";
+
     //    public static final String DEFAULT_BASE_HOST = BuildConfig.IS_DEBUG ? "http://192.168.5.94:8080/policebus/" : "http://14.205.75.23:8089/policebus/";
     //    public static final String DEFAULT_BASE_HOST = "http://bnrzhysj.postaldata.top:8800/policebus/";
     public static final float DEFAULT_VERIFY_SCORE = 0.76f;

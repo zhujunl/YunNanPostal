@@ -12,6 +12,7 @@ import com.miaxis.postal.data.entity.Order;
 import com.miaxis.postal.data.entity.Photograph;
 import com.miaxis.postal.data.repository.OrderRepository;
 import com.miaxis.postal.util.BarcodeUtil;
+import com.miaxis.postal.util.ListUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -71,12 +72,15 @@ public class RecordUpdateViewModel extends BaseViewModel {
 
     private void initOrderPhoto(Order order) {
         App.getInstance().getThreadExecutor().execute(() -> {
-            for (String url : order.getImageList()) {
-                try {
-                    Bitmap bitmap = downloadPicture(url);
-                    addPhotograph(bitmap);
-                } catch (ExecutionException | InterruptedException e) {
-                    e.printStackTrace();
+            List<String> imageList = order.getImageList();
+            if (!ListUtils.isNullOrEmpty(imageList)) {
+                for (String url : imageList) {
+                    try {
+                        Bitmap bitmap = downloadPicture(url);
+                        addPhotograph(bitmap);
+                    } catch (ExecutionException | InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         });

@@ -1,9 +1,9 @@
 package com.miaxis.postal.view.adapter;
 
+import com.miaxis.postal.util.ValueUtil;
+
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.miaxis.postal.util.ValueUtil;
 
 /**
  * Created by tang.yf on 2018/8/14.

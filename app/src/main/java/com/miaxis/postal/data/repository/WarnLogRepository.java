@@ -1,6 +1,7 @@
 package com.miaxis.postal.data.repository;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.miaxis.postal.data.entity.Branch;
 import com.miaxis.postal.data.entity.Config;
@@ -47,7 +48,7 @@ public class WarnLogRepository extends BaseRepository {
         String orgNode = selected.orgNode;
         Config config = ConfigManager.getInstance().getConfig();
         //Courier courier = DataCacheManager.getInstance().getCourier();
-
+        Log.e("报警","ExpressmanId:"+warnLog.getExpressmanId());
         Response<ResponseEntity<Integer>> execute = PostalApi.uploadWarnLog(
                 orgCode,
                 orgNode,
@@ -63,6 +64,7 @@ public class WarnLogRepository extends BaseRepository {
                 DateUtil.DATE_FORMAT.format(warnLog.getCreateTime())).execute();
         try {
             ResponseEntity<Integer> body = execute.body();
+            Log.e("报警",""+body);
             if (body != null) {
                 if (TextUtils.equals(body.getCode(), ValueUtil.SUCCESS) && body.getData() != null) {
                     return body.getData();

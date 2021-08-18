@@ -16,12 +16,13 @@ public class Customer {
 
     @PrimaryKey(autoGenerate = true)
     public long id;
-    public String belong="";
-    public String name="";
-    public String phone="";
+    public String expressmanId = "";
+    public String name = "";
+    public String phone = "";
+    public int orderNumber;
 
-    public Customer(String belong, String name, String phone) {
-        this.belong = belong;
+    public Customer(String expressmanId, String name, String phone) {
+        this.expressmanId = expressmanId;
         this.name = name;
         this.phone = phone;
     }
@@ -30,9 +31,10 @@ public class Customer {
     public String toString() {
         return "Customer{" +
                 "id=" + id +
-                ", belong='" + belong + '\'' +
+                ", belong='" + expressmanId + '\'' +
                 ", name='" + name + '\'' +
                 ", phone='" + phone + '\'' +
+                ", phone='" + orderNumber + '\'' +
                 '}';
     }
 }

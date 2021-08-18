@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.miaxis.postal.data.dto.TempIdDto;
 import com.miaxis.postal.data.entity.Branch;
+import com.miaxis.postal.data.entity.Courier;
 import com.miaxis.postal.data.entity.IDCardRecord;
 import com.miaxis.postal.data.entity.TempId;
 import com.miaxis.postal.data.exception.MyException;
@@ -14,6 +15,7 @@ import com.miaxis.postal.data.model.BranchModel;
 import com.miaxis.postal.data.model.IDCardRecordModel;
 import com.miaxis.postal.data.net.PostalApi;
 import com.miaxis.postal.data.net.ResponseEntity;
+import com.miaxis.postal.manager.DataCacheManager;
 import com.miaxis.postal.util.DateUtil;
 import com.miaxis.postal.util.FileUtil;
 import com.miaxis.postal.util.ValueUtil;
@@ -72,10 +74,10 @@ public class IDCardRecordRepository {
         }
         Log.e("uploadIDCardRecord", "webCardPath:" + webCardPath);
         Log.e("uploadIDCardRecord", "webFacePath:" + webFacePath);
-        //Courier courier = DataCacheManager.getInstance().getCourier();
+        Courier courier = DataCacheManager.getInstance().getCourier();
         String orgCode = selected.orgCode;
         String orgNode = selected.orgNode;
-        Response<ResponseEntity<TempIdDto>> execute = PostalApi.savePersonFromApp(
+        Response<ResponseEntity<TempIdDto>> execute = PostalApi.savePersonFromAppSync1(
                 orgCode,
                 orgNode,
                 idCardRecord.getName(),
@@ -90,7 +92,9 @@ public class IDCardRecordRepository {
                 DateUtil.DATE_FORMAT.format(idCardRecord.getVerifyTime()),
                 idCardRecord.getManualType(),
                 webCardPath,
-                webFacePath).execute();
+                webFacePath,
+                "" + courier.getCourierId()
+        ).execute();
         try {
             ResponseEntity<TempIdDto> body = execute.body();
             if (body != null) {

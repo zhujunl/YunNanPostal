@@ -11,18 +11,23 @@ import java.util.List;
 public class CustomerModel {
 
     public static void save(Customer customer) {
-        if (customer == null || TextUtils.isEmpty(customer.name)) {
+        if (customer == null || TextUtils.isEmpty(customer.phone)) {
             return;
         }
-        Customer byName = findByName(customer.belong, customer.name);
-        if (byName != null) {
-            customer.id = byName.id;
+        Customer byPhone = findByPhone(customer.expressmanId, customer.phone);
+        if (byPhone != null) {
+            customer.id = byPhone.id;
         }
+        customer.orderNumber++;
         AppDatabase.getInstance().customerDao().save(customer);
     }
 
     public static void delete(Customer customer) {
         AppDatabase.getInstance().customerDao().delete(customer);
+    }
+
+    public static void delete(String expressMan) {
+        AppDatabase.getInstance().customerDao().delete(expressMan);
     }
 
     public static List<Customer> find(String expressMan) {
@@ -32,15 +37,26 @@ public class CustomerModel {
         return AppDatabase.getInstance().customerDao().find(expressMan);
     }
 
-    public synchronized static Customer findByName(String expressMan, String name) {
-        if (TextUtils.isEmpty(expressMan) || TextUtils.isEmpty(name)) {
+    public synchronized static Customer findByPhone(String expressMan, String phone) {
+        if (TextUtils.isEmpty(expressMan) || TextUtils.isEmpty(phone)) {
             return null;
         }
-        List<Customer> byName = AppDatabase.getInstance().customerDao().findByName(expressMan, name);
+        List<Customer> byName = AppDatabase.getInstance().customerDao().findByPhone(expressMan, phone);
         if (ListUtils.isNullOrEmpty(byName)) {
             return null;
         }
         return byName.get(0);
     }
+
+    //    public synchronized static Customer findByName(String expressMan, String name) {
+    //        if (TextUtils.isEmpty(expressMan) || TextUtils.isEmpty(name)) {
+    //            return null;
+    //        }
+    //        List<Customer> byName = AppDatabase.getInstance().customerDao().findByName(expressMan, name);
+    //        if (ListUtils.isNullOrEmpty(byName)) {
+    //            return null;
+    //        }
+    //        return byName.get(0);
+    //    }
 
 }

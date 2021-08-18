@@ -60,6 +60,7 @@ public class CustomerAdapter extends BaseAdapter<Customer, RecyclerView.ViewHold
             getBinding().setItem(customer);
             this.mOnBodyClickListener = onBodyClickListener;
             this.itemView.setOnClickListener(this);
+            getBinding().tvName.setText(customer.name + "[" + customer.phone + "]");
         }
 
         @Override

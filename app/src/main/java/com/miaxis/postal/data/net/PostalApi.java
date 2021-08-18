@@ -9,6 +9,7 @@ import com.miaxis.postal.data.dto.SimpleOrderDto;
 import com.miaxis.postal.data.dto.TempIdDto;
 import com.miaxis.postal.data.dto.UpdateDto;
 import com.miaxis.postal.data.entity.Branch;
+import com.miaxis.postal.data.entity.Customer;
 import com.miaxis.postal.util.EncryptUtil;
 import com.miaxis.postal.util.FileUtil;
 
@@ -49,6 +50,10 @@ public class PostalApi extends BaseAPI {
 
     public static Call<ResponseEntity<List<Branch>>> getAllBranchListSync() {
         return getPostalNetSync().getAllBranchListSync();
+    }
+
+    public static Call<ResponseEntity<List<Customer>>> getContractPersonList(String expressmanId) {
+        return getPostalNetSync().getContractPersonList(expressmanId, "" + 1, "" + 100000);
     }
 
     public static Call<ResponseEntity> bindingNodeSync(String phone, String comcode) {
@@ -96,7 +101,7 @@ public class PostalApi extends BaseAPI {
         return getPostalNetSync().checkOrderByCodeSync(code);
     }
 
-    public static Call<ResponseEntity<TempIdDto>> savePersonFromApp(
+    public static Call<ResponseEntity<TempIdDto>> savePersonFromAppSync1(
             String orgCode,
             String orgNode,
             String name,
@@ -111,7 +116,9 @@ public class PostalApi extends BaseAPI {
             String checkTime,
             String type,
             String cardPhoto,
-            String checkPhoto) {
+            String checkPhoto,
+            String expressmanId
+            ) {
         //        MultipartBody.Part checkFileBody = null;
         //        if (checkFile != null) {
         //            RequestBody checkRequestFile = RequestBody.create(MediaType.parse("multipart/form-data"), checkFile);
@@ -122,7 +129,7 @@ public class PostalApi extends BaseAPI {
         //            RequestBody cardRequestFile = RequestBody.create(MediaType.parse("multipart/form-data"), cardFile);
         //            cardFileBody = MultipartBody.Part.createFormData("cardFile", cardFile.getName(), cardRequestFile);
         //        }
-        return getPostalNetSync().savePersonFromAppSync(
+        return getPostalNetSync().savePersonFromAppSync1(
                 orgCode,
                 orgNode,
                 name,
@@ -137,7 +144,7 @@ public class PostalApi extends BaseAPI {
                 checkTime,
                 type,
                 cardPhoto,
-                checkPhoto
+                checkPhoto,expressmanId
         );
     }
 
@@ -279,6 +286,15 @@ public class PostalApi extends BaseAPI {
 
     public static Call<ResponseEntity<OrderDto>> getOrderByCode(String orderCode) {
         return getPostalNetSync().getOrderByCode(orderCode);
+    }
+
+    public static Call<ResponseEntity<List<OrderDto>>> getOrderByCode1(String expressmanId,
+                                                                    String pageNum,
+                                                                    String pageSize,
+                                                                    String orderCode,
+                                                                    String startTime,
+                                                                    String endTime) {
+        return getPostalNetSync().getOrderByCode1( expressmanId, pageNum, pageSize, orderCode, startTime, endTime);
     }
 
     public static Call<ResponseEntity> deleteWebPicture(String path) {

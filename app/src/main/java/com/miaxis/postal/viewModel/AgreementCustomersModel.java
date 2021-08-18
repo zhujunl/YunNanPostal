@@ -17,12 +17,14 @@ import com.miaxis.postal.data.exception.MyException;
 import com.miaxis.postal.data.model.CustomerModel;
 import com.miaxis.postal.data.repository.ExpressRepository;
 import com.miaxis.postal.data.repository.IDCardRecordRepository;
+import com.miaxis.postal.data.repository.LoginRepository;
 import com.miaxis.postal.data.repository.PostalRepository;
 import com.miaxis.postal.data.repository.WarnLogRepository;
 import com.miaxis.postal.manager.AmapManager;
 import com.miaxis.postal.manager.DataCacheManager;
 import com.miaxis.postal.manager.PostalManager;
 import com.miaxis.postal.manager.ScanManager;
+import com.miaxis.postal.util.ListUtils;
 import com.miaxis.postal.util.ValueUtil;
 
 import java.io.IOException;
@@ -62,6 +64,8 @@ public class AgreementCustomersModel extends BaseViewModel {
 
     public MutableLiveData<String> showPicture = new MutableLiveData<>();
 
+    public MutableLiveData<List<Customer>> Customers = new MutableLiveData<>();
+
     private volatile AtomicLong timeFilter = new AtomicLong(0L);
     private Handler mHandler = new Handler();
 
@@ -84,7 +88,7 @@ public class AgreementCustomersModel extends BaseViewModel {
         ScanManager.getInstance().powerOff();
     }
 
-    public void initExpressAndCustomer(Express express,Customer customer) {
+    public void initExpressAndCustomer(Express express, Customer customer) {
         if (customer != null) {
             clientName.setValue(customer.name);
             clientPhone.setValue(customer.phone);
@@ -113,6 +117,42 @@ public class AgreementCustomersModel extends BaseViewModel {
             String path = photoPathList.get(0);
             showPicture.postValue(path);
         }
+        getCustomers();
+    }
+
+    public void getCustomers() {
+        if (!ListUtils.isNullOrEmpty(Customers.getValue())) {
+            return;
+        }
+        waitMessage.setValue("正在获取协议客户信息");
+        Observable.create((ObservableOnSubscribe<List<Customer>>) emitter -> {
+            List<Customer> customers = null;
+            try {
+                customers = LoginRepository.getInstance().getContractPersonList();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (ListUtils.isNull(customers)) {
+                customers = CustomerModel.find(ValueUtil.GlobalPhone);
+            } else {
+                if (customers.isEmpty()) {
+                    CustomerModel.delete(ValueUtil.GlobalPhone);
+                } else {
+                    for (Customer customer : customers) {
+                        CustomerModel.save(customer);
+                    }
+                }
+            }
+            emitter.onNext(customers);
+        }).subscribeOn(Schedulers.from(App.getInstance().getThreadExecutor()))
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(list -> {
+                    waitMessage.setValue("");
+                    Customers.postValue(list);
+                }, throwable -> {
+                    waitMessage.setValue("");
+                    Customers.postValue(null);
+                });
     }
 
     public void startScan() {
@@ -312,7 +352,7 @@ public class AgreementCustomersModel extends BaseViewModel {
                     express.setPhone(ValueUtil.GlobalPhone);
                     ExpressRepository.getInstance().saveExpress(express);
 
-                    Customer customer = new Customer(ValueUtil.GlobalPhone,clientName.getValue(),clientPhone.getValue());
+                    Customer customer = new Customer(ValueUtil.GlobalPhone, clientName.getValue(), clientPhone.getValue());
                     CustomerModel.save(customer);
                     return true;
                 })
@@ -470,7 +510,7 @@ public class AgreementCustomersModel extends BaseViewModel {
                     express.setCustomerPhone(getRepString(clientPhone.getValue()));
                     express.setPhone(ValueUtil.GlobalPhone);
                     ExpressRepository.getInstance().saveExpress(express);
-                    Customer customer = new Customer(ValueUtil.GlobalPhone,clientName.getValue(),clientPhone.getValue());
+                    Customer customer = new Customer(ValueUtil.GlobalPhone, clientName.getValue(), clientPhone.getValue());
                     CustomerModel.save(customer);
                     return true;
                 })

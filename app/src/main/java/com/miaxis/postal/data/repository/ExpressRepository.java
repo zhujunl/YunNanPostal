@@ -171,7 +171,8 @@ public class ExpressRepository {
                     express.getLatitude(),
                     express.getLongitude(),
                     chekStatus,
-                    photos, express.getCustomerName(), express.getGoodsName(), Integer.valueOf(express.getGoodsNumber())).execute();
+                    photos,
+                    express.getCustomerName(), express.getGoodsName(), Integer.parseInt(express.getGoodsNumber())).execute();
         }
         return execute;
     }

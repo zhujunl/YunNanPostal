@@ -164,6 +164,27 @@ public class Courier {
         isLogin = login;
     }
 
+    @Override
+    public String toString() {
+        return "Courier{" +
+                "id=" + id +
+                ", courierId=" + courierId +
+                ", name='" + name + '\'' +
+                ", cardNumber='" + cardNumber + '\'' +
+                ", phone='" + phone + '\'' +
+                ", photo='" + photo + '\'' +
+                ", faceFeature='" + faceFeature + '\'' +
+                ", maskFaceFeature='" + maskFaceFeature + '\'' +
+                ", fingerFeature1='" + fingerFeature1 + '\'' +
+                ", fingerFeature2='" + fingerFeature2 + '\'' +
+                ", createTime='" + createTime + '\'' +
+                ", password='" + password + '\'' +
+                ", orgCode='" + orgCode + '\'' +
+                ", orgNode='" + orgNode + '\'' +
+                ", isLogin=" + isLogin +
+                '}';
+    }
+
     public static final class Builder {
         private long id;
         private long courierId;

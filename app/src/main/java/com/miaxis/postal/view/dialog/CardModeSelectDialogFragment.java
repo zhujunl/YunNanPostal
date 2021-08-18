@@ -3,7 +3,6 @@ package com.miaxis.postal.view.dialog;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -11,25 +10,19 @@ import android.view.WindowManager;
 
 import com.miaxis.postal.BR;
 import com.miaxis.postal.R;
-import com.miaxis.postal.data.entity.Customer;
 import com.miaxis.postal.databinding.FragmentCardModeSelectDialogBinding;
-import com.miaxis.postal.util.ListUtils;
-import com.miaxis.postal.util.ValueUtil;
 import com.miaxis.postal.view.auxiliary.OnLimitClickHelper;
 import com.miaxis.postal.view.base.BaseViewModelDialogFragment;
 import com.miaxis.postal.view.fragment.CardFragment;
 import com.miaxis.postal.view.fragment.ManualFragment;
 import com.miaxis.postal.viewModel.CardModeSelectViewModel;
 
-import java.util.List;
-
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 public class CardModeSelectDialogFragment extends BaseViewModelDialogFragment<FragmentCardModeSelectDialogBinding, CardModeSelectViewModel> {
 
     private boolean isAgreementCustomer = false;
-    private boolean isNoCard = false;
+    //    private boolean isNoCard = false;
 
     public static CardModeSelectDialogFragment newInstance(boolean isAgreementCustomer) {
         CardModeSelectDialogFragment fragment = new CardModeSelectDialogFragment();
@@ -63,39 +56,43 @@ public class CardModeSelectDialogFragment extends BaseViewModelDialogFragment<Fr
 
     @Override
     protected void initView() {
-        viewModel.itemList.observe(this, new Observer<List<Customer>>() {
-            @Override
-            public void onChanged(List<Customer> customers) {
-                Log.e("CardModeSelectDialog", "" + customers);
-                if (ListUtils.isNullOrEmpty(customers)) {
-                    if (isNoCard) {
-                        mListener.replaceFragment(ManualFragment.newInstance(null, isAgreementCustomer, null));
-                    } else {
-                        mListener.replaceFragment(CardFragment.newInstance(isAgreementCustomer, null));
-                    }
-                } else {
-                    CustomersDialogFragment.newInstance(isAgreementCustomer, isNoCard, customers).show(getParentFragmentManager(), "CustomersDialogFragment");
-                }
-                dismiss();
-            }
-        });
+        //        viewModel.itemList.observe(this, new Observer<List<Customer>>() {
+        //            @Override
+        //            public void onChanged(List<Customer> customers) {
+        //                Log.e("CardModeSelectDialog", "" + customers);
+        //                if (ListUtils.isNullOrEmpty(customers)) {
+        //                    if (isNoCard) {
+        //                        mListener.replaceFragment(ManualFragment.newInstance(null, isAgreementCustomer, null));
+        //                    } else {
+        //                        mListener.replaceFragment(CardFragment.newInstance(isAgreementCustomer, null));
+        //                    }
+        //                } else {
+        //                    CustomersDialogFragment.newInstance(isAgreementCustomer, isNoCard, customers).show(getParentFragmentManager(), "CustomersDialogFragment");
+        //                }
+        //                dismiss();
+        //            }
+        //        });
         binding.tvHasCard.setOnClickListener(new OnLimitClickHelper(view -> {
-            if (isAgreementCustomer) {
-                isNoCard = false;
-                viewModel.show(ValueUtil.GlobalPhone);
-            } else {
-                mListener.replaceFragment(CardFragment.newInstance(false, null));
-                dismiss();
-            }
+            //            if (isAgreementCustomer) {
+            //                isNoCard = false;
+            //                viewModel.show(ValueUtil.GlobalPhone);
+            //            } else {
+            //                mListener.replaceFragment(CardFragment.newInstance(false, null));
+            //                dismiss();
+            //            }
+            mListener.replaceFragment(CardFragment.newInstance(isAgreementCustomer, null));
+            dismiss();
         }));
         binding.tvNoCard.setOnClickListener(new OnLimitClickHelper(view -> {
-            if (isAgreementCustomer) {
-                isNoCard = true;
-                viewModel.show(ValueUtil.GlobalPhone);
-            } else {
-                mListener.replaceFragment(ManualFragment.newInstance(null, false, null));
-                dismiss();
-            }
+            //            if (isAgreementCustomer) {
+            //                isNoCard = true;
+            //                viewModel.show(ValueUtil.GlobalPhone);
+            //            } else {
+            //                mListener.replaceFragment(ManualFragment.newInstance(null, false, null));
+            //                dismiss();
+            //            }
+            mListener.replaceFragment(ManualFragment.newInstance(null, isAgreementCustomer, null));
+            dismiss();
         }));
     }
 

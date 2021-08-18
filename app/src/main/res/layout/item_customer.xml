@@ -15,55 +15,56 @@
     <!--android:background="@={item.isSelected ? @drawable/bg_branch : @drawable/bg_white_shape}"-->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="80dp"
+        android:layout_height="wrap_content"
         android:layout_margin="2dp"
-        android:background="@drawable/bg_item_customer"
-        android:orientation="vertical"
+        android:orientation="horizontal"
         android:padding="10dp">
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
             android:layout_weight="1">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:gravity="start|center_vertical"
-                android:text="客户名称："
-                android:textStyle="bold" />
+            <!--            <TextView-->
+            <!--                android:layout_width="wrap_content"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:layout_gravity="center_vertical"-->
+            <!--                android:gravity="start|center_vertical"-->
+            <!--                android:text="客户："-->
+            <!--                android:textColor="#FFFFFF"-->
+            <!--                android:textStyle="bold" />-->
 
             <TextView
-                android:id="@+id/tv_branch_no"
+                android:id="@+id/tv_name"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="start|center_vertical"
-                android:text="@={item.name}" />
+                android:textColor="#888888" />
 
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1">
+        <!--        <LinearLayout-->
+        <!--            android:layout_width="0dp"-->
+        <!--            android:layout_height="match_parent"-->
+        <!--            android:layout_weight="1">-->
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:gravity="start|center_vertical"
-                android:text="客户电话："
-                android:textStyle="bold" />
+        <!--            <TextView-->
+        <!--                android:layout_width="wrap_content"-->
+        <!--                android:layout_height="wrap_content"-->
+        <!--                android:layout_gravity="center_vertical"-->
+        <!--                android:gravity="start|center_vertical"-->
+        <!--                android:text="电话："-->
+        <!--                android:textColor="#FFFFFF"-->
+        <!--                android:textStyle="bold" />-->
 
-            <TextView
-                android:id="@+id/tv_branch_name"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="start|center_vertical"
-                android:text="@={item.phone}" />
+        <!--            <TextView-->
+        <!--                android:layout_width="match_parent"-->
+        <!--                android:layout_height="match_parent"-->
+        <!--                android:textColor="#FFFFFF"-->
+        <!--                android:gravity="start|center_vertical"-->
+        <!--                android:text="@={item.phone}" />-->
 
-        </LinearLayout>
+        <!--        </LinearLayout>-->
 
     </LinearLayout>
 </layout>

@@ -1,20 +1,20 @@
 package com.miaxis.postal.view.fragment;
 
-import android.text.TextUtils;
-
 import com.miaxis.postal.BR;
 import com.miaxis.postal.R;
 import com.miaxis.postal.data.entity.Order;
 import com.miaxis.postal.databinding.FragmentRecordSearchBinding;
-import com.miaxis.postal.manager.ToastManager;
+import com.miaxis.postal.view.adapter.OrderListAdapter;
 import com.miaxis.postal.view.auxiliary.OnLimitClickHelper;
 import com.miaxis.postal.view.base.BaseViewModelFragment;
 import com.miaxis.postal.viewModel.RecordSearchViewModel;
 
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
-public class RecordSearchFragment extends BaseViewModelFragment<FragmentRecordSearchBinding, RecordSearchViewModel> {
+public class RecordSearchFragment extends BaseViewModelFragment<FragmentRecordSearchBinding, RecordSearchViewModel> implements OrderListAdapter.OnClickListener {
 
     public static RecordSearchFragment newInstance() {
         return new RecordSearchFragment();
@@ -41,23 +41,34 @@ public class RecordSearchFragment extends BaseViewModelFragment<FragmentRecordSe
 
     @Override
     protected void initData() {
-        viewModel.searchOrder.observe(this, orderObserver);
+        viewModel.SearchOrder.observe(this, orderObserver);
+        viewModel.OrderList.observe(this, orders -> {
+            RecyclerView.Adapter<?> adapter = binding.rvList.getAdapter();
+            if (adapter instanceof OrderListAdapter) {
+                ((OrderListAdapter) adapter).setDataList(orders);
+            }
+        });
     }
 
     @Override
     protected void initView() {
         binding.tvSearch.setOnClickListener(new OnLimitClickHelper(view -> {
             String orderCode = binding.etSearch.getText().toString();
-            if (TextUtils.isEmpty(orderCode)) {
-                ToastManager.toast("请输入查询内容", ToastManager.INFO);
-                return;
-            }
+            //            if (TextUtils.isEmpty(orderCode)) {
+            //                ToastManager.toast("请输入查询内容", ToastManager.INFO);
+            //                return;
+            //            }
             if (!binding.tvHint.getText().toString().contains("查询中")) {
                 viewModel.getOrderById(orderCode);
             }
         }));
         //binding.etSearch.setRawInputType(Configuration.KEYBOARD_QWERTY);
         //binding.etSearch.setText("7302289336");
+        OrderListAdapter orderListAdapter = new OrderListAdapter();
+        orderListAdapter.setOnClickListener(this);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+        binding.rvList.setLayoutManager(linearLayoutManager);
+        binding.rvList.setAdapter(orderListAdapter);
     }
 
     @Override
@@ -65,10 +76,14 @@ public class RecordSearchFragment extends BaseViewModelFragment<FragmentRecordSe
         mListener.backToStack(null);
     }
 
-    private Observer<Order> orderObserver = order -> {
+    private final Observer<Order> orderObserver = order -> {
         if (order != null) {
             mListener.replaceFragment(RecordUpdateFragment.newInstance(order));
         }
     };
 
+    @Override
+    public void onItemClick(OrderListAdapter.BodyViewHolder view, Order order, int position) {
+        viewModel.SearchOrder.setValue(order);
+    }
 }

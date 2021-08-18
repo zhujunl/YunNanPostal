@@ -22,6 +22,7 @@ import com.miaxis.postal.data.event.ExpressEditEvent;
 import com.miaxis.postal.databinding.FragmentAgreementCustomersBinding;
 import com.miaxis.postal.manager.ToastManager;
 import com.miaxis.postal.util.EmojiExcludeFilter;
+import com.miaxis.postal.view.adapter.CEditViewAdapter;
 import com.miaxis.postal.view.adapter.ExpressAdapter;
 import com.miaxis.postal.view.auxiliary.OnLimitClickHelper;
 import com.miaxis.postal.view.base.BaseViewModelFragment;
@@ -49,7 +50,7 @@ public class AgreementCustomersFragment extends BaseViewModelFragment<FragmentAg
     private Express express = new Express();
     private Handler handler;
     private int delay = 3;
-
+    private CEditViewAdapter cEditViewAdapter;
     private boolean draft = false;
     private Customer customer;
 
@@ -106,7 +107,7 @@ public class AgreementCustomersFragment extends BaseViewModelFragment<FragmentAg
         binding.ivBack.setOnClickListener(v -> onBackPressed());
         binding.ivAddress.setOnClickListener(new OnLimitClickHelper(view -> viewModel.getLocation()));
 
-        viewModel.initExpressAndCustomer(this.express,this.customer);
+        viewModel.initExpressAndCustomer(this.express, this.customer);
         //        if (TextUtils.isEmpty(this.express.getBarCode())) {
         //            viewModel.startScan();
         //        }
@@ -121,7 +122,6 @@ public class AgreementCustomersFragment extends BaseViewModelFragment<FragmentAg
         binding.btnDraft.setOnClickListener(draftClickListener);
         binding.fabAlarm.setOnLongClickListener(alarmListener);
         viewModel.rqCode.observe(this, s -> {
-            Log.e(TAG, "rqCode：" + s);
             if (TextUtils.isEmpty(s)) {
                 binding.tvBarCode.setText("");
             } else {
@@ -132,6 +132,15 @@ public class AgreementCustomersFragment extends BaseViewModelFragment<FragmentAg
                 }
             }
         });
+        cEditViewAdapter = new CEditViewAdapter(binding.llClientSName);
+        cEditViewAdapter.bind((popupWindow, customer) -> {
+            if (customer != null) {
+                viewModel.clientName.setValue(customer.name);
+                viewModel.clientPhone.setValue(customer.phone);
+            }
+        });
+        viewModel.Customers.observe(this, cEditViewAdapter::bind);
+
         viewModel.expressLiveData.observe(this, expressObserver);
         viewModel.repeat.observe(this, repeatObserver);
         viewModel.scanFlag.observe(this, scanFlagObserver);
@@ -177,7 +186,6 @@ public class AgreementCustomersFragment extends BaseViewModelFragment<FragmentAg
                 value.setPhotoPathList(objects);
             }
         });
-        binding.editClientSName.setFilters(new InputFilter[]{new EmojiExcludeFilter()});
         binding.editItemName.setFilters(new InputFilter[]{new EmojiExcludeFilter()});
         binding.etAddress.setFilters(new InputFilter[]{new EmojiExcludeFilter()});
     }
@@ -217,6 +225,9 @@ public class AgreementCustomersFragment extends BaseViewModelFragment<FragmentAg
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        if (cEditViewAdapter!=null){
+            cEditViewAdapter.clear();
+        }
         getContext().unregisterReceiver(receiver);
         viewModel.expressLiveData.removeObserver(expressObserver);
         EventBus.getDefault().unregister(this);

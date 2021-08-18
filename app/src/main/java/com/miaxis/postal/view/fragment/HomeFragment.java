@@ -11,6 +11,7 @@ import com.miaxis.postal.data.repository.LoginRepository;
 import com.miaxis.postal.databinding.FragmentHomeBinding;
 import com.miaxis.postal.manager.AmapManager;
 import com.miaxis.postal.manager.PostalManager;
+import com.miaxis.postal.util.ListUtils;
 import com.miaxis.postal.view.adapter.BranchAdapter;
 import com.miaxis.postal.view.adapter.HSpacesItemDecoration;
 import com.miaxis.postal.view.auxiliary.OnLimitClickHelper;
@@ -123,7 +124,9 @@ public class HomeFragment extends BaseViewModelFragment<FragmentHomeBinding, Hom
             } catch (Exception e) {
                 e.printStackTrace();
                 dismissWaitDialog();
-                showResultDialog("错误：" + e.getMessage());
+                if (viewModel == null || ListUtils.isNullOrEmpty(viewModel.branchList.getValue())) {
+                    showResultDialog("错误：" + e.getMessage());
+                }
             }
         });
     }

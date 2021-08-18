@@ -9,6 +9,7 @@ import com.miaxis.postal.data.dao.AppDatabase;
 import com.miaxis.postal.data.dto.CourierDto;
 import com.miaxis.postal.data.entity.Branch;
 import com.miaxis.postal.data.entity.Courier;
+import com.miaxis.postal.data.entity.Customer;
 import com.miaxis.postal.data.exception.MyException;
 import com.miaxis.postal.data.exception.NetResultFailedException;
 import com.miaxis.postal.data.model.CourierModel;
@@ -121,6 +122,28 @@ public class LoginRepository extends BaseRepository {
         } catch (Exception e) {
             e.printStackTrace();
             Log.e("Repository", "getAllBranchListSync   Exception:" + e);
+            throw new MyException(e.getMessage());
+        }
+        throw new MyException("服务端返回数据解析失败，或为空");
+    }
+
+
+    public List<Customer> getContractPersonList() throws IOException, MyException {
+        long courierId = DataCacheManager.getInstance().getCourier().getCourierId();
+        Response<ResponseEntity<List<Customer>>> execute = PostalApi.getContractPersonList("" + courierId).execute();
+        try {
+            ResponseEntity<List<Customer>> body = execute.body();
+            Log.e("Repository", "getContractPersonList:" + body);
+            if (body != null) {
+                if (TextUtils.equals(body.getCode(), ValueUtil.SUCCESS) && body.getData() != null) {
+                    return body.getData();
+                } else {
+                    return new ArrayList<>();
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e("Repository", "getContractPersonList   Exception:" + e);
             throw new MyException(e.getMessage());
         }
         throw new MyException("服务端返回数据解析失败，或为空");

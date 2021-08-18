@@ -221,6 +221,33 @@ public class Order {
         this.goodsName = goodsName;
     }
 
+    @Override
+    public String toString() {
+        return "Order{" +
+                "id=" + id +
+                ", personId=" + personId +
+                ", checkId=" + checkId +
+                ", senderAddress='" + senderAddress + '\'' +
+                ", senderPhone='" + senderPhone + '\'' +
+                ", senderName='" + senderName + '\'' +
+                ", orderCode='" + orderCode + '\'' +
+                ", orderInfo='" + orderInfo + '\'' +
+                ", latitude='" + latitude + '\'' +
+                ", longitude='" + longitude + '\'' +
+                ", addresseeName='" + addresseeName + '\'' +
+                ", addresseeAddress='" + addresseeAddress + '\'' +
+                ", addresseePhone='" + addresseePhone + '\'' +
+                ", weight='" + weight + '\'' +
+                ", pieceTime='" + pieceTime + '\'' +
+                ", checkImage='" + checkImage + '\'' +
+                ", cardImage='" + cardImage + '\'' +
+                ", imageList=" + imageList +
+                ", receiptTime='" + receiptTime + '\'' +
+                ", createTime='" + createTime + '\'' +
+                ", goodsName='" + goodsName + '\'' +
+                '}';
+    }
+
     public static final class Builder {
         private int id;
         private int personId;

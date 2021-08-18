@@ -15,7 +15,13 @@ public class AppItem {
     public String AppUrl;
     public String AppLocalPath;
 
-    public AppItem() {
+    private AppItem() {
+    }
+
+    public AppItem(String appName, String appVersion, String appUrl) {
+        AppName = appName;
+        AppVersion = appVersion;
+        AppUrl = appUrl;
     }
 
     public boolean isDownload() {

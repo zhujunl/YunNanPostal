@@ -47,6 +47,8 @@ public class AppDownloadFragment extends BaseViewModelFragment<FragmentAppDownlo
         return com.miaxis.postal.BR.viewModel;
     }
 
+    private final String BaseDownloadUrl = "http://14.205.75.23:8888/";
+
     @Override
     protected void initView() {
         binding.ivBack.setOnClickListener(v -> onBackPressed());
@@ -57,14 +59,20 @@ public class AppDownloadFragment extends BaseViewModelFragment<FragmentAppDownlo
         binding.rvApps.setAdapter(appListAdapter);
 
         List<AppItem> objects = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            AppItem appItem = new AppItem();
-            appItem.AppName = "APP" + i;
-            appItem.AppVersion = "1.0." + i;
-            appItem.AppUrl = "http://192.168.5.104:8088/downloadfile/FaceMatchDemo.apk?path=/FaceMatchDemo.apk";
-            appItem.AppLocalPath = DownloadPresenter.AppPath(appItem);
-            objects.add(appItem);
-        }
+        objects.add(new AppItem("掌中通", "6.5.1", BaseDownloadUrl + "group1/M00/00/7B/wKgBEmEc-eqAEu4NBaOjPbbQ6Zs2.1.apk"));
+        objects.add(new AppItem("韵镖侠", "7.0.2.1", BaseDownloadUrl + "group1/M00/00/7B/wKgBEmEc-RGAbAmXCp_MH1M1OuY9.1.apk"));
+        objects.add(new AppItem("邦小哥", "0.1.4.07", BaseDownloadUrl + "group1/M00/00/7B/wKgBEmEc-SKABFxTBnVWmU_1-q4519.apk"));
+        objects.add(new AppItem("如来神掌", "6.14.1", BaseDownloadUrl + "group1/M00/00/7B/wKgBEmEc-S6AF6tNBF5pGjogRhE293.apk"));
+        objects.add(new AppItem("菜鸟包裹侠", "6.57.0", BaseDownloadUrl + "group1/M00/00/7B/wKgBEmEc-UeAAF_gB_bA9bn2wWU029.apk"));
+        objects.add(new AppItem("快宝快递员", "8.5.0", BaseDownloadUrl + "group1/M00/00/7B/wKgBEmEc-VaAXHTnBUN8o8meoZ41.0.apk"));
+        objects.add(new AppItem("外场pro", "1.0.89", BaseDownloadUrl + "group1/M00/00/7B/wKgBEmEc-WSASuBVAi-UuiFCtsc154.apk"));
+        objects.add(new AppItem("顺丰丰源", "1.6.5", BaseDownloadUrl + "group1/M00/00/7B/wKgBEmEc-XKAByG5B-jvyfNDrT87.5.apk"));
+        objects.add(new AppItem("中邮处理", "9.9.6", BaseDownloadUrl + "group1/M00/00/7B/wKgBEmEc-gmATx10AKiOtJn5v8c7.6.apk"));
+        objects.add(new AppItem("小哥工作台", "21.10.58", BaseDownloadUrl + "group1/M00/00/7B/wKgBEmEc-YSAar3zAyUnVH2UCiU.58.apk"));
+        objects.add(new AppItem("优速宝", "1.0.7", BaseDownloadUrl + "group1/M00/00/7B/wKgBEmEc80WAXjmKACP6VpMpFSI8.7.apk"));
+        objects.add(new AppItem("安易递收寄版", "1.4.4", BaseDownloadUrl + "group1/M00/00/7B/wKgBEmEc-I-ACCUQAjedgMOrVws784.apk"));
+        objects.add(new AppItem("菜鸟点我达", "7.3.19.4", BaseDownloadUrl + "group1/M00/00/7B/wKgBEmEc-LeAKJhcBZrCrVB_D709.4.apk"));
+
         appListAdapter.setDataList(objects);
     }
 
@@ -102,7 +110,7 @@ public class AppDownloadFragment extends BaseViewModelFragment<FragmentAppDownlo
         if (appItem != null) {
             new MaterialDialog.Builder(getContext())
                     .title("APP重新下载")
-                    .content("确认重新下载【" + appItem.AppName + "】 ？"+ (NetUtils.getNetStatus(getContext()) == 0 ? ("\n下载类型：【手机流量】") : ""))
+                    .content("确认重新下载【" + appItem.AppName + "】 ？" + (NetUtils.getNetStatus(getContext()) == 0 ? ("\n下载类型：【手机流量】") : ""))
                     .positiveText("确认")
                     .onPositive((dialog, which) -> {
                         dialog.dismiss();
