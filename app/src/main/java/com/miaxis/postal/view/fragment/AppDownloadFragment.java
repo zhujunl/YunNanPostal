@@ -8,14 +8,12 @@ import com.miaxis.postal.R;
 import com.miaxis.postal.data.entity.AppItem;
 import com.miaxis.postal.databinding.FragmentAppDownloadBinding;
 import com.miaxis.postal.manager.ToastManager;
-import com.miaxis.postal.util.NetUtils;
 import com.miaxis.postal.view.adapter.AppListAdapter;
 import com.miaxis.postal.view.base.BaseViewModelFragment;
 import com.miaxis.postal.view.presenter.DownloadPresenter;
 import com.miaxis.postal.view.presenter.download.DownloadManager;
 import com.miaxis.postal.viewModel.AppDownloadViewModel;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -105,32 +103,32 @@ public class AppDownloadFragment extends BaseViewModelFragment<FragmentAppDownlo
                 .show();
     }
 
-    @Override
-    public void onDeleteClick(AppListAdapter.BodyViewHolder view, AppItem appItem, int position) {
-        if (appItem != null) {
-            new MaterialDialog.Builder(getContext())
-                    .title("APP重新下载")
-                    .content("确认重新下载【" + appItem.AppName + "】 ？" + (NetUtils.getNetStatus(getContext()) == 0 ? ("\n下载类型：【手机流量】") : ""))
-                    .positiveText("确认")
-                    .onPositive((dialog, which) -> {
-                        dialog.dismiss();
-                        try {
-                            boolean delete = new File(appItem.AppLocalPath).delete();
-                            view.getBinding().setItem(appItem);
-                            DownloadPresenter download = download(view, appItem, position);
-                            download.downloadUrl(appItem);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            showResultDialog("操作失败，" + e);
-                        }
-                    })
-                    .negativeText("取消")
-                    .onNegative((dialog, which) -> {
-                        dialog.dismiss();
-                    })
-                    .show();
-        }
-    }
+    //    @Override
+    //    public void onDeleteClick(AppListAdapter.BodyViewHolder view, AppItem appItem, int position) {
+    //        if (appItem != null) {
+    //            new MaterialDialog.Builder(getContext())
+    //                    .title("APP重新下载")
+    //                    .content("确认重新下载【" + appItem.AppName + "】 ？" + (NetUtils.getNetStatus(getContext()) == 0 ? ("\n下载类型：【手机流量】") : ""))
+    //                    .positiveText("确认")
+    //                    .onPositive((dialog, which) -> {
+    //                        dialog.dismiss();
+    //                        try {
+    //                            boolean delete = new File(appItem.AppLocalPath).delete();
+    //                            view.getBinding().setItem(appItem);
+    //                            DownloadPresenter download = download(view, appItem, position);
+    //                            download.downloadUrl(appItem);
+    //                        } catch (Exception e) {
+    //                            e.printStackTrace();
+    //                            showResultDialog("操作失败，" + e);
+    //                        }
+    //                    })
+    //                    .negativeText("取消")
+    //                    .onNegative((dialog, which) -> {
+    //                        dialog.dismiss();
+    //                    })
+    //                    .show();
+    //        }
+    //    }
 
     private DownloadPresenter download(AppListAdapter.BodyViewHolder view, AppItem appItem, int position) {
         return new DownloadPresenter(getContext(), new DownloadPresenter.OnDownloadListener() {
@@ -141,14 +139,13 @@ public class AppDownloadFragment extends BaseViewModelFragment<FragmentAppDownlo
 
             @Override
             public void onDownloadResult(boolean result, String message) {
-                view.getBinding().cpbProgress.setProgress(result ? 100 : 0);
                 if (result) {
                     appItem.AppLocalPath = DownloadPresenter.AppPath(appItem);
-                    view.getBinding().setItem(appItem);
                     onInstallClick(view, appItem, position);
                 } else {
                     showResultDialog(message);
                 }
+                view.getBinding().setItem(appItem);
             }
         });
     }

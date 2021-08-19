@@ -1,7 +1,7 @@
 package com.miaxis.postal.data.entity;
 
 
-import android.text.TextUtils;
+import com.miaxis.postal.view.presenter.DownloadPresenter;
 
 import java.io.File;
 
@@ -19,13 +19,14 @@ public class AppItem {
     }
 
     public AppItem(String appName, String appVersion, String appUrl) {
-        AppName = appName;
-        AppVersion = appVersion;
-        AppUrl = appUrl;
+        this.AppName = appName;
+        this.AppVersion = appVersion;
+        this.AppUrl = appUrl;
+        this.AppLocalPath = DownloadPresenter.AppPath(this);
     }
 
     public boolean isDownload() {
-        return !TextUtils.isEmpty(this.AppLocalPath) && new File(this.AppLocalPath).exists();
+        return new File(this.AppLocalPath).exists();
     }
 
     @Override

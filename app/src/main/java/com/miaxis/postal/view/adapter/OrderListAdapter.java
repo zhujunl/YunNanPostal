@@ -71,13 +71,9 @@ public class OrderListAdapter extends BaseAdapter<Order, RecyclerView.ViewHolder
             if (order == null) {
                 return;
             }
-            List<String> imageList = order.getImageList();
-            if (ListUtils.isNullOrEmpty(imageList)) {
-                return;
-            }
             this.mOnClickListener = onClickListener;
-
-            Glide.with(getBinding().ivPhoto).load(imageList.get(0)).error(R.drawable.ic_logo_postal_playstore).into(getBinding().ivPhoto);
+            List<String> imageList = order.getImageList();
+            Glide.with(getBinding().ivPhoto).load(ListUtils.isNullOrEmpty(imageList) ? null : imageList.get(0)).error(R.drawable.ic_logo_postal_playstore).into(getBinding().ivPhoto);
         }
 
         @Override

@@ -181,7 +181,7 @@ public class DownloadThread extends Thread {
     public void interrupt() {
         super.interrupt();
         if (this.mDownloadCallback != null) {
-            this.mDownloadCallback.downloadStop(this.mDownloadCallback.getTemp(), -1, "Interrupt operation");
+            this.mDownloadCallback.downloadStop(this.mDownloadCallback.getTemp(), -1, "取消下载。");
         }
     }
 

@@ -53,13 +53,6 @@ public class CEditViewAdapter implements CustomerAdapter.OnBodyClickListener, Po
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                //                if (!last.contentEquals(s) || !s.toString().contains(last)) {
-                //                    last = s.toString();
-                //                    if (s.toString().isEmpty()) {
-                //                        return;
-                //                    }
-                //                    show();
-                //                }
                 if (last.contentEquals(s)) {
                     return;
                 }
@@ -71,7 +64,7 @@ public class CEditViewAdapter implements CustomerAdapter.OnBodyClickListener, Po
                         if (System.currentTimeMillis() - lastDismissTime < 500) {
                             return;
                         }
-                        show();
+                        search();
                     }
                 }
             }
@@ -83,7 +76,7 @@ public class CEditViewAdapter implements CustomerAdapter.OnBodyClickListener, Po
         });
         View iv_list = this.parent.findViewById(R.id.iv_list);
         iv_list.setOnClickListener(v -> getList());
-        new Handler().post(() -> init());
+        new Handler().post(this::init);
     }
 
     public void init() {
@@ -105,16 +98,16 @@ public class CEditViewAdapter implements CustomerAdapter.OnBodyClickListener, Po
             ToastManager.toast("暂未查询到协议客户信息", ToastManager.INFO);
             return;
         }
-        //        if (System.currentTimeMillis() - this.lastDismissTime < 500) {
-        //            return;
-        //        }
+        if (System.currentTimeMillis() - lastDismissTime < 500) {
+            return;
+        }
         show();
     }
 
     private void initWindow() {
         this.popupWindow = new PopupWindow();
-        this.popupWindow.setWidth((int) (this.parent.getWidth() * 0.7F));
-        this.popupWindow.setHeight((int) (this.parent.getWidth() * 0.6F));
+        this.popupWindow.setWidth((int) (this.parent.getWidth() * 0.8F));
+        this.popupWindow.setHeight((int) (this.parent.getWidth() * 0.7F));
         View inflate = LayoutInflater.from(this.parent.getContext()).inflate(R.layout.view_customer_list, null);
         RecyclerView rv_list = inflate.findViewById(R.id.rv_list);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this.parent.getContext(), LinearLayoutManager.VERTICAL, false);
@@ -126,6 +119,13 @@ public class CEditViewAdapter implements CustomerAdapter.OnBodyClickListener, Po
         this.popupWindow.setOutsideTouchable(true);
         this.popupWindow.setBackgroundDrawable(this.parent.getContext().getResources().getDrawable(android.R.color.transparent));
         this.popupWindow.setOnDismissListener(this);
+        inflate.findViewById(R.id.iv_load_more).setOnClickListener(v -> {
+            if (popupWindow != null) {
+                RecyclerView rv_list1 = popupWindow.getContentView().findViewById(R.id.rv_list);
+                int childCount = rv_list1.getChildCount();
+                rv_list1.smoothScrollToPosition(childCount);
+            }
+        });
     }
 
     private boolean contain(String name) {
@@ -144,7 +144,7 @@ public class CEditViewAdapter implements CustomerAdapter.OnBodyClickListener, Po
         return false;
     }
 
-    private void show() {
+    private void search() {
         if (this.popupWindow == null) {
             return;
         }
@@ -168,6 +168,31 @@ public class CEditViewAdapter implements CustomerAdapter.OnBodyClickListener, Po
         } else {
             this.popupWindow.showAsDropDown(this.parent, this.parent.getWidth() - this.popupWindow.getWidth(), 1);
         }
+    }
+
+    private void show() {
+        if (this.popupWindow == null) {
+            return;
+        }
+        EditText edit_clientSName = this.parent.findViewById(R.id.edit_clientSName);
+        String trim = edit_clientSName.getText().toString().trim();
+        List<Customer> objects = new ArrayList<>();
+        if (trim.isEmpty()) {
+            objects.addAll(this.customers);
+        } else {
+            for (Customer customer : this.customers) {
+                if (customer.name != null && customer.name.contains(trim)) {
+                    objects.add(customer);
+                }
+            }
+        }
+        if (ListUtils.isNullOrEmpty(objects)) {
+            objects.addAll(this.customers);
+        }
+        if (customerAdapter != null) {
+            customerAdapter.setDataList(objects);
+        }
+        this.popupWindow.showAsDropDown(this.parent, this.parent.getWidth() - this.popupWindow.getWidth(), 1);
     }
 
     private void dismiss() {

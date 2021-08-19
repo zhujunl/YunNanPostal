@@ -65,7 +65,7 @@ public class AppListAdapter extends BaseAdapter<AppItem, RecyclerView.ViewHolder
         public void bind(AppItem appItem, OnDownloadClickListener onDownloadClickListener) {
             getBinding().setItem(appItem);
             getBinding().tvOperation.setOnClickListener(this);
-            getBinding().tvDelete.setOnClickListener(this);
+            //            getBinding().tvDelete.setOnClickListener(this);
             this.mOnDownloadClickListener = onDownloadClickListener;
         }
 
@@ -78,7 +78,7 @@ public class AppListAdapter extends BaseAdapter<AppItem, RecyclerView.ViewHolder
                         if (v.getId() == R.id.tv_operation) {
                             this.mOnDownloadClickListener.onInstallClick(this, item, getLayoutPosition());
                         } else {
-                            this.mOnDownloadClickListener.onDeleteClick(this, item, getLayoutPosition());
+                            //                            this.mOnDownloadClickListener.onDeleteClick(this, item, getLayoutPosition());
                         }
                     } else {
                         this.mOnDownloadClickListener.onDownloadClick(this, item, getLayoutPosition());
@@ -94,7 +94,7 @@ public class AppListAdapter extends BaseAdapter<AppItem, RecyclerView.ViewHolder
 
         void onInstallClick(BodyViewHolder view, AppItem appItem, int position);
 
-        void onDeleteClick(BodyViewHolder view, AppItem appItem, int position);
+        //        void onDeleteClick(BodyViewHolder view, AppItem appItem, int position);
 
     }
 
