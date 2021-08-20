@@ -232,4 +232,31 @@ public class OrderDto implements Mapper<Order> {
             throw new MyException("解析订单详细信息失败，原因：" + e.getMessage());
         }
     }
+
+    @Override
+    public String toString() {
+        return "OrderDto{" +
+                "id=" + id +
+                ", personId=" + personId +
+                ", checkId=" + checkId +
+                ", sendAddress='" + sendAddress + '\'' +
+                ", sendPhone='" + sendPhone + '\'' +
+                ", sendName='" + sendName + '\'' +
+                ", orderCode='" + orderCode + '\'' +
+                ", orderInfo='" + orderInfo + '\'' +
+                ", weight='" + weight + '\'' +
+                ", lat='" + lat + '\'' +
+                ", lng='" + lng + '\'' +
+                ", addresseeName='" + addresseeName + '\'' +
+                ", addresseeAddress='" + addresseeAddress + '\'' +
+                ", addresseePhone='" + addresseePhone + '\'' +
+                ", pieceTime='" + pieceTime + '\'' +
+                ", checkImage='" + checkImage + '\'' +
+                ", cardImage='" + cardImage + '\'' +
+                ", images=" + images +
+                ", receipTime='" + receipTime + '\'' +
+                ", createTime='" + createTime + '\'' +
+                ", goodsName='" + goodsName + '\'' +
+                '}';
+    }
 }

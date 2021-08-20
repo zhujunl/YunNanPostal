@@ -14,6 +14,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.miaxis.postal.BR;
 import com.miaxis.postal.R;
 import com.miaxis.postal.data.exception.MyException;
 import com.miaxis.postal.databinding.FragmentEditPasswordDialogBinding;
@@ -24,7 +25,6 @@ import com.miaxis.postal.view.auxiliary.OnLimitClickHelper;
 import com.miaxis.postal.view.base.BaseViewModelDialogFragment;
 import com.miaxis.postal.viewModel.EditPasswordViewModel;
 
-import androidx.databinding.library.baseAdapters.BR;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 

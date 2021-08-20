@@ -9,6 +9,7 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.miaxis.postal.R;
 import com.miaxis.postal.bridge.Status;
+import com.miaxis.postal.data.entity.Customer;
 import com.miaxis.postal.data.entity.IDCardRecord;
 import com.miaxis.postal.databinding.FragmentFingerVerifyBinding;
 import com.miaxis.postal.manager.TTSManager;
@@ -29,7 +30,7 @@ public class FingerVerifyFragment extends BaseViewModelFragment<FragmentFingerVe
     private volatile IDCardRecord idCardRecord;
 
     private MaterialDialog manualDialog;
-
+    private Customer mCustomer;
     private Handler handler;
     private int delay = 21;
 
@@ -37,15 +38,20 @@ public class FingerVerifyFragment extends BaseViewModelFragment<FragmentFingerVe
 
     private boolean isAgreementCustomer = false;
 
-    public static FingerVerifyFragment newInstance(IDCardRecord idCardRecord,boolean isAgreementCustomer) {
+    public static FingerVerifyFragment newInstance(IDCardRecord idCardRecord, boolean isAgreementCustomer, Customer customer) {
         FingerVerifyFragment fragment = new FingerVerifyFragment();
         fragment.setIdCardRecord(idCardRecord);
         fragment.setAgreementCustomer(isAgreementCustomer);
+        fragment.setCustomer(customer);
         return fragment;
     }
 
     public FingerVerifyFragment() {
         // Required empty public constructor
+    }
+
+    public void setCustomer(Customer customer) {
+        mCustomer = customer;
     }
 
     @Override
@@ -189,9 +195,9 @@ public class FingerVerifyFragment extends BaseViewModelFragment<FragmentFingerVe
             handler.postDelayed(() -> {
                 try {
                     idCardRecord.setChekStatus(1);
-                    if (isAgreementCustomer){
-                        mListener.replaceFragment(AgreementCustomersFragment.newInstance(idCardRecord));
-                    }else {
+                    if (isAgreementCustomer) {
+                        mListener.replaceFragment(AgreementCustomersFragment.newInstance(idCardRecord,mCustomer));
+                    } else {
                         mListener.replaceFragment(ExpressFragment.newInstance(idCardRecord));
                     }
                 } catch (Exception e) {
@@ -208,9 +214,9 @@ public class FingerVerifyFragment extends BaseViewModelFragment<FragmentFingerVe
                     handler.post(() -> {
                         try {
                             idCardRecord.setChekStatus(2);
-                            if(isAgreementCustomer){
-                                mListener.replaceFragment(AgreementCustomersFragment.newInstance(idCardRecord));
-                            }else {
+                            if (isAgreementCustomer) {
+                                mListener.replaceFragment(AgreementCustomersFragment.newInstance(idCardRecord,mCustomer));
+                            } else {
                                 mListener.replaceFragment(ExpressFragment.newInstance(idCardRecord));
                             }
                         } catch (Exception e) {
@@ -267,7 +273,7 @@ public class FingerVerifyFragment extends BaseViewModelFragment<FragmentFingerVe
         this.idCardRecord = idCardRecord;
     }
 
-    public  void  setAgreementCustomer(boolean isAgreementCustomer){
-        this.isAgreementCustomer=isAgreementCustomer;
+    public void setAgreementCustomer(boolean isAgreementCustomer) {
+        this.isAgreementCustomer = isAgreementCustomer;
     }
 }

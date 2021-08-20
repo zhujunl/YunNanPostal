@@ -14,6 +14,7 @@ import com.miaxis.postal.data.net.ResponseEntity;
 import com.miaxis.postal.manager.DataCacheManager;
 import com.miaxis.postal.util.DateUtil;
 import com.miaxis.postal.util.FileUtil;
+import com.miaxis.postal.util.ListUtils;
 import com.miaxis.postal.util.StringUtils;
 import com.miaxis.postal.util.ValueUtil;
 
@@ -46,38 +47,40 @@ public class ExpressRepository {
     public void uploadLocalExpress(Express express, TempId tempId, Integer warnLogId, String sendName, int chekStatus) throws IOException, MyException, NetResultFailedException {
         //上传订单图片 判断是否一致
         List<String> stringList = new ArrayList<>();
-        for (String path : express.getPhotoPathList()) {
-            try {
-                Call<ResponseEntity> responseEntityCall = PostalApi.saveOrderPhoto(new File(path));
-                Response<ResponseEntity> execute = responseEntityCall.execute();
-                ResponseEntity body = execute.body();
-                if (body != null) {
-                    if (StringUtils.isEquals(ValueUtil.SUCCESS, body.getCode())) {
-                        stringList.add((String) body.getData());
-                        try {
-                            Log.e("ExpressRepository", "" + (String) body.getData());
-                        } catch (Exception e) {
-                            e.printStackTrace();
+        if (!ListUtils.isNullOrEmpty(express.getPhotoPathList())) {
+            for (String path : express.getPhotoPathList()) {
+                try {
+                    Call<ResponseEntity> responseEntityCall = PostalApi.saveOrderPhoto(new File(path));
+                    Response<ResponseEntity> execute = responseEntityCall.execute();
+                    ResponseEntity body = execute.body();
+                    if (body != null) {
+                        if (StringUtils.isEquals(ValueUtil.SUCCESS, body.getCode())) {
+                            String data = (String) body.getData();
+                            stringList.add(data);
+                            Log.e("ExpressRepository", "" + data);
+                            continue;
                         }
                     }
+                    throw new NetResultFailedException("上传图片失败");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Log.e("ExpressRepository", "Exception:" + e);
+                    throw new NetResultFailedException("上传图片失败，" + e);
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
-                Log.e("ExpressRepository", "Exception:" + e);
             }
         }
-        if (express.getPhotoPathList().size() != 0) {
-            //如果长度不相等证明订单图片丢失 则不上传
-            if (stringList.size() != express.getPhotoPathList().size()) {
-                //删除图片操作 如果不通过图片记录需要删除
-                for (String path : stringList) {
-                    if (!TextUtils.isEmpty(path)) {
-                        deleteWebPicture(path);
-                    }
-                }
-                throw new MyException("订单异常，请删除后重试！");
-            }
-        }
+        //        if (express.getPhotoPathList().size() != 0) {
+        //            //如果长度不相等证明订单图片丢失 则不上传
+        //            if (stringList.size() != express.getPhotoPathList().size()) {
+        //                //删除图片操作 如果不通过图片记录需要删除
+        //                for (String path : stringList) {
+        //                    if (!TextUtils.isEmpty(path)) {
+        //                        deleteWebPicture(path);
+        //                    }
+        //                }
+        //                throw new MyException("订单异常，请删除后重试！");
+        //            }
+        //        }
         //else {
         //   throw new MyException("该订单未拍照，无法上传。");
         //}
@@ -167,7 +170,8 @@ public class ExpressRepository {
                     express.getLatitude(),
                     express.getLongitude(),
                     chekStatus,
-                    photos, express.getCustomerName(), express.getGoodsName(), Integer.valueOf(express.getGoodsNumber())).execute();
+                    photos,
+                    express.getCustomerName(), express.getGoodsName(), Integer.parseInt(express.getGoodsNumber())).execute();
         }
         return execute;
     }
@@ -208,7 +212,7 @@ public class ExpressRepository {
         return webPicturePath;
     }
 
-    public void saveExpress(Express express) {
+    public void saveExpress(Express express) throws MyException {
         //        List<Bitmap> photoList = express.getPhotoList();
         //        List<String> pathList = new ArrayList<>();
         //        for (int i = 0; i < photoList.size(); i++) {
@@ -221,7 +225,7 @@ public class ExpressRepository {
         ExpressModel.saveExpress(express);
     }
 
-    public void updateExpress(Express express) {
+    public void updateExpress(Express express) throws MyException {
         ExpressModel.saveExpress(express);
     }
 

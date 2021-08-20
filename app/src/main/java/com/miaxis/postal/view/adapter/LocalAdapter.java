@@ -4,11 +4,11 @@ import android.content.Context;
 import android.text.TextUtils;
 import android.view.View;
 
+import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.miaxis.postal.R;
-import com.miaxis.postal.bridge.GlideApp;
 import com.miaxis.postal.data.entity.Local;
 import com.miaxis.postal.databinding.ItemLocalBinding;
 import com.miaxis.postal.manager.PostalManager;
@@ -62,7 +62,7 @@ public class LocalAdapter extends BaseViewModelAdapter<Local, ItemLocalBinding, 
                     : context.getResources().getColor(R.color.darkred));
             if (item.getExpress() != null && item.getExpress().getPhotoPathList() != null && !item.getExpress().getPhotoPathList().isEmpty()) {
                 RequestOptions options = RequestOptions.bitmapTransform(new RoundedCorners(30));
-                GlideApp.with(holder.getBinding().ivImage)
+                Glide.with(holder.getBinding().ivImage)
                         .load(item.getExpress().getPhotoPathList().get(0))
                         .apply(options)
                         .skipMemoryCache(true)

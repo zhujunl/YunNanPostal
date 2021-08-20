@@ -1,8 +1,8 @@
 package com.miaxis.postal.view.fragment;
 
+import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.miaxis.postal.R;
-import com.miaxis.postal.bridge.GlideApp;
 import com.miaxis.postal.databinding.FragmentPhotoBinding;
 import com.miaxis.postal.view.base.BaseViewModelFragment;
 import com.miaxis.postal.viewModel.PhotoViewModel;
@@ -44,7 +44,7 @@ public class PhotoFragment extends BaseViewModelFragment<FragmentPhotoBinding, P
 
     @Override
     protected void initView() {
-        GlideApp.with(this)
+        Glide.with(this)
                 .load(image)
                 .skipMemoryCache(true)
                 .diskCacheStrategy(DiskCacheStrategy.NONE)

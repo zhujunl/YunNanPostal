@@ -9,18 +9,22 @@ import com.miaxis.postal.app.App;
 import com.miaxis.postal.bridge.SingleLiveEvent;
 import com.miaxis.postal.data.dao.AppDatabase;
 import com.miaxis.postal.data.entity.Courier;
+import com.miaxis.postal.data.entity.Customer;
 import com.miaxis.postal.data.entity.Express;
 import com.miaxis.postal.data.entity.IDCardRecord;
 import com.miaxis.postal.data.entity.WarnLog;
 import com.miaxis.postal.data.exception.MyException;
+import com.miaxis.postal.data.model.CustomerModel;
 import com.miaxis.postal.data.repository.ExpressRepository;
 import com.miaxis.postal.data.repository.IDCardRecordRepository;
+import com.miaxis.postal.data.repository.LoginRepository;
 import com.miaxis.postal.data.repository.PostalRepository;
 import com.miaxis.postal.data.repository.WarnLogRepository;
 import com.miaxis.postal.manager.AmapManager;
 import com.miaxis.postal.manager.DataCacheManager;
 import com.miaxis.postal.manager.PostalManager;
 import com.miaxis.postal.manager.ScanManager;
+import com.miaxis.postal.util.ListUtils;
 import com.miaxis.postal.util.ValueUtil;
 
 import java.io.IOException;
@@ -53,12 +57,14 @@ public class AgreementCustomersModel extends BaseViewModel {
 
     public MutableLiveData<String> rqCode = new MutableLiveData<>();
 
-    public MutableLiveData<String> clientPhone = new MutableLiveData<>();
     public MutableLiveData<String> clientName = new MutableLiveData<>();
+    public MutableLiveData<String> clientPhone = new MutableLiveData<>();
     public MutableLiveData<String> itemName = new MutableLiveData<>();
     public MutableLiveData<String> theQuantityOfGoods = new MutableLiveData<>();
 
     public MutableLiveData<String> showPicture = new MutableLiveData<>();
+
+    public MutableLiveData<List<Customer>> Customers = new MutableLiveData<>();
 
     private volatile AtomicLong timeFilter = new AtomicLong(0L);
     private Handler mHandler = new Handler();
@@ -82,9 +88,13 @@ public class AgreementCustomersModel extends BaseViewModel {
         ScanManager.getInstance().powerOff();
     }
 
-    public void initExpress(Express express) {
+    public void initExpressAndCustomer(Express express, Customer customer) {
+        if (customer != null) {
+            clientName.setValue(customer.name);
+            clientPhone.setValue(customer.phone);
+        }
         Log.e(TAG, "express:" + express);
-        if (TextUtils.isEmpty(rqCode.getValue())){
+        if (TextUtils.isEmpty(rqCode.getValue())) {
             rqCode.setValue(express.getBarCode());
         }
         if (TextUtils.isEmpty(address.getValue())) {
@@ -107,6 +117,42 @@ public class AgreementCustomersModel extends BaseViewModel {
             String path = photoPathList.get(0);
             showPicture.postValue(path);
         }
+        getCustomers();
+    }
+
+    public void getCustomers() {
+        if (!ListUtils.isNullOrEmpty(Customers.getValue())) {
+            return;
+        }
+        waitMessage.setValue("正在获取协议客户信息");
+        Observable.create((ObservableOnSubscribe<List<Customer>>) emitter -> {
+            List<Customer> customers = null;
+            try {
+                customers = LoginRepository.getInstance().getContractPersonList();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (ListUtils.isNull(customers)) {
+                customers = CustomerModel.find(ValueUtil.GlobalPhone);
+            } else {
+                if (customers.isEmpty()) {
+                    CustomerModel.delete(ValueUtil.GlobalPhone);
+                } else {
+                    for (Customer customer : customers) {
+                        CustomerModel.save(customer);
+                    }
+                }
+            }
+            emitter.onNext(customers);
+        }).subscribeOn(Schedulers.from(App.getInstance().getThreadExecutor()))
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(list -> {
+                    waitMessage.setValue("");
+                    Customers.postValue(list);
+                }, throwable -> {
+                    waitMessage.setValue("");
+                    Customers.postValue(null);
+                });
     }
 
     public void startScan() {
@@ -162,10 +208,12 @@ public class AgreementCustomersModel extends BaseViewModel {
                     }
                 }).observeOn(AndroidSchedulers.mainThread())
                 .subscribe(mCode -> {
+                    scanFlag.setValue(Boolean.FALSE);
                     waitMessage.setValue("");
                     removeRepeatEdit(mCode);
                     makeNewExpress(mCode);
                 }, throwable -> {
+                    scanFlag.setValue(Boolean.FALSE);
                     waitMessage.postValue("");
                     resultMessage.postValue("" + throwable.getMessage());
                     throwable.printStackTrace();
@@ -303,6 +351,9 @@ public class AgreementCustomersModel extends BaseViewModel {
                     express.setCustomerPhone(getRepString(clientPhone.getValue()));
                     express.setPhone(ValueUtil.GlobalPhone);
                     ExpressRepository.getInstance().saveExpress(express);
+
+                    Customer customer = new Customer(ValueUtil.GlobalPhone, clientName.getValue(), clientPhone.getValue());
+                    CustomerModel.save(customer);
                     return true;
                 })
                 .observeOn(AndroidSchedulers.mainThread())
@@ -319,9 +370,20 @@ public class AgreementCustomersModel extends BaseViewModel {
     }
 
     public void getLocation() {
-        AmapManager.getInstance().getOneLocation(addressStr -> {
-            if (!TextUtils.isEmpty(addressStr)) {
-                address.setValue(addressStr);
+        AmapManager.getInstance().getOneLocation(new AmapManager.OnOneLocationListener() {
+            @Override
+            public void onOneLocation(String addressStr) {
+                if (!TextUtils.isEmpty(addressStr)) {
+                    address.setValue(addressStr);
+                } else {
+                    address.setValue("");
+                }
+            }
+
+            @Override
+            public void onError(String error) {
+                resultMessage.setValue("获取位置失败");
+                address.setValue("");
             }
         });
     }
@@ -449,6 +511,8 @@ public class AgreementCustomersModel extends BaseViewModel {
                     express.setCustomerPhone(getRepString(clientPhone.getValue()));
                     express.setPhone(ValueUtil.GlobalPhone);
                     ExpressRepository.getInstance().saveExpress(express);
+                    Customer customer = new Customer(ValueUtil.GlobalPhone, clientName.getValue(), clientPhone.getValue());
+                    CustomerModel.save(customer);
                     return true;
                 })
                 .observeOn(AndroidSchedulers.mainThread())

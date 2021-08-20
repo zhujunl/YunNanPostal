@@ -1,11 +1,19 @@
 package com.miaxis.postal.view.activity;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
+import android.net.wifi.WifiManager;
+
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.miaxis.postal.R;
 import com.miaxis.postal.databinding.ActivityMainBinding;
 import com.miaxis.postal.manager.CardManager;
 import com.miaxis.postal.manager.PostalManager;
 import com.miaxis.postal.util.ClearRecordFileWorker;
+import com.miaxis.postal.util.NetUtils;
 import com.miaxis.postal.view.base.BaseActivity;
 import com.miaxis.postal.view.base.BaseViewModelFragment;
 import com.miaxis.postal.view.base.OnFragmentInteractionListener;
@@ -23,6 +31,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
     private MaterialDialog waitDialog;
     private MaterialDialog resultDialog;
     private MaterialDialog quitDialog;
+    private BroadcastReceiver netReceiver;
 
     private String root;
     private UpdatePresenter updatePresenter;
@@ -44,28 +53,32 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
         replaceFragment(PreludeFragment.newInstance());
         performTask();
     }
+
     //开始任务 重复执行
-    private  void performTask(){
+    private void performTask() {
         //重复性任务 24小时执行一次
         PeriodicWorkRequest request = new PeriodicWorkRequest.Builder(ClearRecordFileWorker.class,
                 24, TimeUnit.HOURS).build();
         //一次性任务
-//        WorkRequest request = new OneTimeWorkRequest.Builder(ClearRecordFileWorker.class).build();
+        //        WorkRequest request = new OneTimeWorkRequest.Builder(ClearRecordFileWorker.class).build();
         WorkManager.getInstance(this).enqueue(request);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-//        if (!TextUtils.isEmpty(root)) {
-//            PostalManager.getInstance().startPostal();
-//        }
+        //        if (!TextUtils.isEmpty(root)) {
+        //            PostalManager.getInstance().startPostal();
+        //        }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         CardManager.getInstance().stopReadCard();
+        if (netReceiver != null) {
+            unregisterReceiver(netReceiver);
+        }
     }
 
     @Override
@@ -87,6 +100,26 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
         replaceFragment(fragment);
         PostalManager.getInstance().init();
         updatePresenter.checkUpdate();
+        netReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String action = intent.getAction();
+                if (action.equals(ConnectivityManager.CONNECTIVITY_ACTION)) {
+                    int netStatus = NetUtils.getNetStatus(context);
+                    if (netStatus >= 0) {
+                        PostalManager.getInstance().startPostal();
+                    }
+                }
+            }
+        };
+        IntentFilter timeFilter = new IntentFilter();
+        timeFilter.addAction("android.net.ethernet.ETHERNET_STATE_CHANGED");
+        timeFilter.addAction("android.net.ethernet.STATE_CHANGE");
+        timeFilter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
+        timeFilter.addAction("android.net.wifi.WIFI_STATE_CHANGED");
+        timeFilter.addAction("android.net.wifi.STATE_CHANGE");
+        timeFilter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
+        registerReceiver(netReceiver, timeFilter);
     }
 
     @Override

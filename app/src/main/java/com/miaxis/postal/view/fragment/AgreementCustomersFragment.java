@@ -15,12 +15,14 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.bumptech.glide.Glide;
 import com.miaxis.postal.R;
 import com.miaxis.postal.app.App;
+import com.miaxis.postal.data.entity.Customer;
 import com.miaxis.postal.data.entity.Express;
 import com.miaxis.postal.data.entity.IDCardRecord;
 import com.miaxis.postal.data.event.ExpressEditEvent;
 import com.miaxis.postal.databinding.FragmentAgreementCustomersBinding;
 import com.miaxis.postal.manager.ToastManager;
 import com.miaxis.postal.util.EmojiExcludeFilter;
+import com.miaxis.postal.view.adapter.CEditViewAdapter;
 import com.miaxis.postal.view.adapter.ExpressAdapter;
 import com.miaxis.postal.view.auxiliary.OnLimitClickHelper;
 import com.miaxis.postal.view.base.BaseViewModelFragment;
@@ -47,14 +49,16 @@ public class AgreementCustomersFragment extends BaseViewModelFragment<FragmentAg
     private MaterialDialog scanDialog;
     private Express express = new Express();
     private Handler handler;
-    private int delay = 5;
-
+    private int delay = 3;
+    private CEditViewAdapter cEditViewAdapter;
     private boolean draft = false;
+    private Customer customer;
 
-    public static AgreementCustomersFragment newInstance(IDCardRecord idCardRecord) {
+    public static AgreementCustomersFragment newInstance(IDCardRecord idCardRecord, Customer customer) {
         AgreementCustomersFragment fragment = new AgreementCustomersFragment();
         fragment.setIdCardRecord(idCardRecord);
         fragment.setDraft(false);
+        fragment.setCustomer(customer);
         return fragment;
     }
 
@@ -64,6 +68,10 @@ public class AgreementCustomersFragment extends BaseViewModelFragment<FragmentAg
         fragment.setDraft(true);
         fragment.setExpress(express);
         return fragment;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
     }
 
     public void setExpress(Express express) {
@@ -99,7 +107,7 @@ public class AgreementCustomersFragment extends BaseViewModelFragment<FragmentAg
         binding.ivBack.setOnClickListener(v -> onBackPressed());
         binding.ivAddress.setOnClickListener(new OnLimitClickHelper(view -> viewModel.getLocation()));
 
-        viewModel.initExpress(this.express);
+        viewModel.initExpressAndCustomer(this.express, this.customer);
         //        if (TextUtils.isEmpty(this.express.getBarCode())) {
         //            viewModel.startScan();
         //        }
@@ -114,7 +122,6 @@ public class AgreementCustomersFragment extends BaseViewModelFragment<FragmentAg
         binding.btnDraft.setOnClickListener(draftClickListener);
         binding.fabAlarm.setOnLongClickListener(alarmListener);
         viewModel.rqCode.observe(this, s -> {
-            Log.e(TAG, "rqCode：" + s);
             if (TextUtils.isEmpty(s)) {
                 binding.tvBarCode.setText("");
             } else {
@@ -125,6 +132,15 @@ public class AgreementCustomersFragment extends BaseViewModelFragment<FragmentAg
                 }
             }
         });
+        cEditViewAdapter = new CEditViewAdapter(binding.llClientSName);
+        cEditViewAdapter.bind((popupWindow, customer) -> {
+            if (customer != null) {
+                viewModel.clientName.setValue(customer.name);
+                viewModel.clientPhone.setValue(customer.phone);
+            }
+        });
+        viewModel.Customers.observe(this, cEditViewAdapter::bind);
+
         viewModel.expressLiveData.observe(this, expressObserver);
         viewModel.repeat.observe(this, repeatObserver);
         viewModel.scanFlag.observe(this, scanFlagObserver);
@@ -170,8 +186,10 @@ public class AgreementCustomersFragment extends BaseViewModelFragment<FragmentAg
                 value.setPhotoPathList(objects);
             }
         });
-        binding.editClientSName.setFilters(new InputFilter[]{new EmojiExcludeFilter()});
-        binding.editItemName.setFilters(new InputFilter[]{new EmojiExcludeFilter()});
+
+        binding.editClientSName.setFilters(new InputFilter[]{new EmojiExcludeFilter(), new InputFilter.LengthFilter(15)});
+        binding.editClientSPhone.setFilters(new InputFilter[]{new EmojiExcludeFilter(), new InputFilter.LengthFilter(15)});
+        binding.editItemName.setFilters(new InputFilter[]{new EmojiExcludeFilter(), new InputFilter.LengthFilter(15)});
         binding.etAddress.setFilters(new InputFilter[]{new EmojiExcludeFilter()});
     }
 
@@ -210,6 +228,9 @@ public class AgreementCustomersFragment extends BaseViewModelFragment<FragmentAg
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        if (cEditViewAdapter != null) {
+            cEditViewAdapter.clear();
+        }
         getContext().unregisterReceiver(receiver);
         viewModel.expressLiveData.removeObserver(expressObserver);
         EventBus.getDefault().unregister(this);
@@ -272,7 +293,7 @@ public class AgreementCustomersFragment extends BaseViewModelFragment<FragmentAg
     private Observer<Boolean> scanFlagObserver = flag -> {
         handler.removeCallbacks(scanDialogCountDownRunnable);
         if (flag) {
-            delay = 5;
+            delay = 3;
             handler.post(scanDialogCountDownRunnable);
             scanDialog.show();
         } else {

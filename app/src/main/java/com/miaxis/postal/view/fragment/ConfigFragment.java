@@ -56,23 +56,25 @@ public class ConfigFragment extends BaseViewModelFragment<FragmentConfigBinding,
                 }
             });
         }));
+        binding.flDownload.setOnClickListener(v -> mListener.replaceFragment(AppDownloadFragment.newInstance()));
+
         binding.ivBack.setOnClickListener(v -> onBackPressed());
         binding.ivSave.setOnClickListener(v -> {
             Config config = viewModel.config.getValue();
             if (config != null) {
-                Log.i("TAG===",config.getHost());
-                String host1=config.getHost();
+                Log.i("TAG===", config.getHost());
+                String host1 = config.getHost();
                 String host = binding.etBaseUrl.getText().toString().trim();
-                Log.i("TAG===2",host);
-                if (!host.equals(host1)){
-                    Log.i("TAG===3","");
+                Log.i("TAG===2", host);
+                if (!host.equals(host1)) {
+                    Log.i("TAG===3", "");
                     config.setHost(host);
                     viewModel.saveConfig(config);
                 }
             }
         });
         viewModel.config.observe(this, config -> {
-            if (config!=null){
+            if (config != null) {
                 binding.etBaseUrl.setText(config.getHost());
             }
         });
@@ -82,10 +84,10 @@ public class ConfigFragment extends BaseViewModelFragment<FragmentConfigBinding,
             if (aBoolean) {
                 PostalManager.getInstance().clearAll();
                 PostalManager.getInstance().outLogin();
-                if (getActivity()!=null) {
+                if (getActivity() != null) {
                     getActivity().getSupportFragmentManager().popBackStack(LoginFragment.class.getName(), 0);
                 }
-//                mListener.backToStack(LoginFragment.class);
+                //                mListener.backToStack(LoginFragment.class);
             }
         });
     }

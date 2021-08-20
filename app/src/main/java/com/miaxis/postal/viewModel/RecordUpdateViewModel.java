@@ -3,15 +3,16 @@ package com.miaxis.postal.viewModel;
 import android.graphics.Bitmap;
 import android.text.TextUtils;
 
+import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.FutureTarget;
 import com.miaxis.postal.app.App;
-import com.miaxis.postal.bridge.GlideApp;
 import com.miaxis.postal.bridge.SingleLiveEvent;
 import com.miaxis.postal.data.entity.Order;
 import com.miaxis.postal.data.entity.Photograph;
 import com.miaxis.postal.data.repository.OrderRepository;
 import com.miaxis.postal.util.BarcodeUtil;
+import com.miaxis.postal.util.ListUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -71,12 +72,15 @@ public class RecordUpdateViewModel extends BaseViewModel {
 
     private void initOrderPhoto(Order order) {
         App.getInstance().getThreadExecutor().execute(() -> {
-            for (String url : order.getImageList()) {
-                try {
-                    Bitmap bitmap = downloadPicture(url);
-                    addPhotograph(bitmap);
-                } catch (ExecutionException | InterruptedException e) {
-                    e.printStackTrace();
+            List<String> imageList = order.getImageList();
+            if (!ListUtils.isNullOrEmpty(imageList)) {
+                for (String url : imageList) {
+                    try {
+                        Bitmap bitmap = downloadPicture(url);
+                        addPhotograph(bitmap);
+                    } catch (ExecutionException | InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         });
@@ -85,7 +89,7 @@ public class RecordUpdateViewModel extends BaseViewModel {
     private Bitmap downloadPicture(String url) throws ExecutionException, InterruptedException {
         if (TextUtils.isEmpty(url))
             return null;
-        FutureTarget<Bitmap> futureTarget = GlideApp.with(App.getInstance().getApplicationContext())
+        FutureTarget<Bitmap> futureTarget = Glide.with(App.getInstance().getApplicationContext())
                 .asBitmap()
                 .load(url + "?" + System.currentTimeMillis())
                 .skipMemoryCache(true)

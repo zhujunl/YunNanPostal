@@ -222,7 +222,6 @@
                 app:layout_constraintTop_toTopOf="@+id/tv_barCode"
                 app:layout_constraintWidth_percent="0.15" />
 
-
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 
@@ -239,51 +238,73 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
+                android:layout_height="wrap_content">
 
                 <TextView
                     android:id="@+id/tv_clientSName_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="30dp"
-                    android:layout_marginTop="20dp"
+                    android:layout_marginTop="10dp"
                     android:layout_marginEnd="30dp"
                     android:gravity="center|start"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp"
                     android:text="客户名称"
                     android:textColor="@color/black"
                     android:textSize="18sp"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <EditText
-                    android:id="@+id/edit_clientSName"
+
+                <LinearLayout
+                    android:id="@+id/ll_clientSName"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     android:layout_marginStart="20dp"
                     android:layout_marginEnd="30dp"
                     android:background="@drawable/bg_edit_gray_box"
-                    android:gravity="center|start"
-                    android:hint="请输入客户名称"
-                    android:maxLength="50"
-                    android:paddingStart="10dp"
-                    android:paddingEnd="10dp"
-                    android:text="@={viewModel.clientName}"
-                    android:textColor="@color/black"
-                    android:textSize="18sp"
                     app:layout_constraintBottom_toBottomOf="@id/tv_clientSName_label"
                     app:layout_constraintLeft_toRightOf="@id/tv_clientSName_label"
                     app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/tv_clientSName_label" />
+                    app:layout_constraintTop_toTopOf="@id/tv_clientSName_label">
 
+                    <androidx.appcompat.widget.AppCompatEditText
+                        android:id="@+id/edit_clientSName"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:background="@null"
+                        android:gravity="center_vertical|start"
+                        android:hint="请输入客户名称"
+                        android:inputType="text"
+                        android:paddingStart="10dp"
+                        android:maxEms="15"
+                        android:singleLine="true"
+                        android:paddingEnd="5dp"
+                        android:text="@={viewModel.clientName}"
+                        android:textColor="@color/black"
+                        android:textSize="18sp" />
+
+                    <ImageView
+                        android:id="@+id/iv_list"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:paddingStart="10dp"
+                        android:paddingEnd="10dp"
+                        android:src="@drawable/ic_baseline_expand_more_24" />
+
+                </LinearLayout>
 
                 <TextView
                     android:id="@+id/tv_clientSPhone_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="30dp"
-                    android:layout_marginTop="20dp"
+                    android:layout_marginTop="10dp"
                     android:gravity="center|start"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp"
                     android:text="客户电话"
                     android:textColor="@color/black"
                     android:textSize="18sp"
@@ -293,14 +314,13 @@
                 <EditText
                     android:id="@+id/edit_clientSPhone"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="0dp"
                     android:layout_marginStart="20dp"
                     android:layout_marginEnd="30dp"
                     android:background="@drawable/bg_edit_gray_box"
-                    android:gravity="center|start"
+                    android:gravity="center_vertical|start"
                     android:hint="请输入客户电话"
                     android:inputType="phone"
-                    android:maxLength="50"
                     android:paddingStart="10dp"
                     android:paddingEnd="10dp"
                     android:text="@={viewModel.clientPhone}"
@@ -317,8 +337,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="30dp"
-                    android:layout_marginTop="20dp"
+                    android:layout_marginTop="10dp"
                     android:gravity="center|start"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp"
                     android:text="货物名称"
                     android:textColor="@color/black"
                     android:textSize="18sp"
@@ -328,18 +350,20 @@
                 <EditText
                     android:id="@+id/edit_itemName"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="0dp"
                     android:layout_marginStart="20dp"
                     android:layout_marginEnd="30dp"
                     android:background="@drawable/bg_edit_gray_box"
-                    android:gravity="center|start"
+                    android:gravity="center_vertical|start"
                     android:hint="请输入货物名称"
-                    android:maxLength="50"
                     android:paddingStart="10dp"
                     android:paddingEnd="10dp"
+                    android:inputType="text"
                     android:text="@={viewModel.itemName}"
                     android:textColor="@color/black"
                     android:textSize="18sp"
+                    android:maxEms="15"
+                    android:singleLine="true"
                     app:layout_constraintBottom_toBottomOf="@id/tv_itemName_label"
                     app:layout_constraintLeft_toRightOf="@id/tv_itemName_label"
                     app:layout_constraintRight_toRightOf="parent"
@@ -351,8 +375,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="30dp"
-                    android:layout_marginTop="20dp"
+                    android:layout_marginTop="10dp"
                     android:gravity="center|start"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp"
                     android:text="货物数量"
                     android:textColor="@color/black"
                     android:textSize="18sp"
@@ -362,14 +388,15 @@
                 <EditText
                     android:id="@+id/edit_itemNUm"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="0dp"
                     android:layout_marginStart="20dp"
                     android:layout_marginEnd="30dp"
                     android:background="@drawable/bg_edit_gray_box"
-                    android:gravity="center|start"
+                    android:gravity="center_vertical|start"
                     android:hint="请输入货物数量"
                     android:inputType="number"
                     android:maxLength="8"
+                    android:maxEms="8"
                     android:paddingStart="10dp"
                     android:paddingEnd="10dp"
                     android:text="@={viewModel.theQuantityOfGoods}"
@@ -438,7 +465,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:background="@drawable/button_blue_background_right_angle"
-            android:text="提交"
+            android:text="保存订单"
             android:textColor="@color/white"
             android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"

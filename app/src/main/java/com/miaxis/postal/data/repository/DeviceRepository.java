@@ -1,6 +1,7 @@
 package com.miaxis.postal.data.repository;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.miaxis.postal.data.dto.UpdateDto;
 import com.miaxis.postal.data.entity.Config;
@@ -32,7 +33,7 @@ public class DeviceRepository extends BaseRepository {
     /**
      * ================================ 静态内部类单例写法 ================================
      **/
-    private static   boolean isSetHost=true;
+    private static boolean isSetHost = true;
 
     public String getDeviceStatus() throws IOException, MyException, NetResultFailedException {
         //每次进入显示默认地址
@@ -40,7 +41,7 @@ public class DeviceRepository extends BaseRepository {
             Config config = ConfigManager.getInstance().getConfig();
             config.setHost(ValueUtil.DEFAULT_BASE_HOST);
             ConfigManager.getInstance().saveConfigSync(config);
-            isSetHost=false;
+            isSetHost = false;
             PostalApi.rebuildRetrofit();
         }
         String deviceIMEI = ConfigManager.getInstance().getConfig().getDeviceIMEI();
@@ -54,9 +55,9 @@ public class DeviceRepository extends BaseRepository {
                     throw new NetResultFailedException("服务端返回，" + body.getMessage());
                 }
             }
-        }  catch (NetResultFailedException e) {
+        } catch (NetResultFailedException e) {
             throw e;
-        }  catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             throw new MyException(e.getMessage());
         }
@@ -74,9 +75,9 @@ public class DeviceRepository extends BaseRepository {
                     throw new NetResultFailedException("服务端返回，" + body.getMessage());
                 }
             }
-        }  catch (NetResultFailedException e) {
+        } catch (NetResultFailedException e) {
             throw e;
-        }  catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             throw new MyException(e.getMessage());
         }
@@ -87,6 +88,11 @@ public class DeviceRepository extends BaseRepository {
         Response<ResponseEntity<UpdateDto>> execute = PostalApi.updateApp(versionName).execute();
         try {
             ResponseEntity<UpdateDto> body = execute.body();
+            try {
+                Log.e("updateApp", "body:" + body);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             if (body != null) {
                 if (TextUtils.equals(body.getCode(), ValueUtil.SUCCESS) && body.getData() != null) {
                     return body.getData().transform();
@@ -94,9 +100,9 @@ public class DeviceRepository extends BaseRepository {
                     throw new NetResultFailedException("服务端返回，" + body.getMessage());
                 }
             }
-        }  catch (NetResultFailedException e) {
+        } catch (NetResultFailedException e) {
             throw e;
-        }  catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             throw new MyException(e.getMessage());
         }

@@ -7,6 +7,7 @@ import com.miaxis.postal.app.App;
 import com.miaxis.postal.bridge.SingleLiveEvent;
 import com.miaxis.postal.data.entity.Courier;
 import com.miaxis.postal.data.exception.MyException;
+import com.miaxis.postal.data.exception.NetResultFailedException;
 import com.miaxis.postal.data.model.CourierModel;
 import com.miaxis.postal.data.repository.LoginRepository;
 import com.miaxis.postal.manager.DataCacheManager;
@@ -65,12 +66,16 @@ public class LoginViewModel extends BaseViewModel {
                     startLogin(courier);
                 }, throwable -> {
                     waitMessage.setValue("");
-                    Courier courier = courierLiveData.getValue();
-                    if (courier != null && TextUtils.equals(courier.getPhone(), username.get())) {
-                        startLogin(courier);
-                        toast.setValue(ToastManager.getToastBody("离线登录", ToastManager.INFO));
+                    if (throwable instanceof NetResultFailedException) {
+                        toast.setValue(ToastManager.getToastBody(throwable.getMessage(), ToastManager.ERROR));
                     } else {
-                        toast.setValue(ToastManager.getToastBody(handleError(throwable), ToastManager.INFO));
+                        Courier courier = courierLiveData.getValue();
+                        if (courier != null && TextUtils.equals(courier.getPhone(), username.get())) {
+                            startLogin(courier);
+                            toast.setValue(ToastManager.getToastBody("离线登录", ToastManager.INFO));
+                        } else {
+                            toast.setValue(ToastManager.getToastBody(handleError(throwable), ToastManager.INFO));
+                        }
                     }
                 });
     }

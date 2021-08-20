@@ -1,12 +1,15 @@
 package com.miaxis.postal.data.repository;
 
 import android.text.TextUtils;
+import android.util.Log;
 
+import com.miaxis.postal.data.entity.Branch;
 import com.miaxis.postal.data.entity.Config;
 import com.miaxis.postal.data.entity.TempId;
 import com.miaxis.postal.data.entity.WarnLog;
 import com.miaxis.postal.data.exception.MyException;
 import com.miaxis.postal.data.exception.NetResultFailedException;
+import com.miaxis.postal.data.model.BranchModel;
 import com.miaxis.postal.data.model.WarnLogModel;
 import com.miaxis.postal.data.net.PostalApi;
 import com.miaxis.postal.data.net.ResponseEntity;
@@ -37,10 +40,15 @@ public class WarnLogRepository extends BaseRepository {
      **/
 
     public Integer uploadWarnLog(WarnLog warnLog, TempId tempId) throws MyException, IOException, NetResultFailedException {
+        Branch selected = BranchModel.findSelected();
+        if (selected == null) {
+            throw new MyException("未选择品牌");
+        }
+        String orgCode = selected.orgCode;
+        String orgNode = selected.orgNode;
         Config config = ConfigManager.getInstance().getConfig();
         //Courier courier = DataCacheManager.getInstance().getCourier();
-        String orgCode = ValueUtil.readOrgCode();
-        String orgNode = ValueUtil.readOrgNode();
+        Log.e("报警","ExpressmanId:"+warnLog.getExpressmanId());
         Response<ResponseEntity<Integer>> execute = PostalApi.uploadWarnLog(
                 orgCode,
                 orgNode,
@@ -56,6 +64,7 @@ public class WarnLogRepository extends BaseRepository {
                 DateUtil.DATE_FORMAT.format(warnLog.getCreateTime())).execute();
         try {
             ResponseEntity<Integer> body = execute.body();
+            Log.e("报警",""+body);
             if (body != null) {
                 if (TextUtils.equals(body.getCode(), ValueUtil.SUCCESS) && body.getData() != null) {
                     return body.getData();

@@ -127,6 +127,25 @@ public class CourierDto implements Mapper<Courier> {
     }
 
     @Override
+    public String toString() {
+        return "CourierDto{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", cardNo='" + cardNo + '\'' +
+                ", phone='" + phone + '\'' +
+                ", photo='" + photo + '\'' +
+                ", faceFeature='" + faceFeature + '\'' +
+                ", maskFaceFeature='" + maskFaceFeature + '\'' +
+                ", finger1Feature='" + finger1Feature + '\'' +
+                ", finger2Feature='" + finger2Feature + '\'' +
+                ", createTime='" + createTime + '\'' +
+                ", password='" + password + '\'' +
+                ", orgCode='" + orgCode + '\'' +
+                ", orgNode='" + orgNode + '\'' +
+                '}';
+    }
+
+    @Override
     public Courier transform() throws MyException {
         try {
             return new Courier.Builder()

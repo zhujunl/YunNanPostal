@@ -44,14 +44,21 @@ public class AmapManager implements AMapLocationListener {
         aMapLocationClient.setLocationListener(new AMapLocationListener() {
             @Override
             public void onLocationChanged(AMapLocation location) {
+                Log.e("Location", "" + location);
                 if (location.getErrorCode() == 0) {
                     String address = location.getAddress();
                     aMapLocationClient.stopLocation();
                     listener.onOneLocation(address);
                     // aMapLocation = location;
                     //heatBeat(location);
+                } else {
+                    listener.onError(location.getErrorInfo());
+                }
+                try {
                     aMapLocationClient.stopLocation();
                     aMapLocationClient.unRegisterLocationListener(this);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         });
@@ -66,6 +73,8 @@ public class AmapManager implements AMapLocationListener {
 
     public interface OnOneLocationListener {
         void onOneLocation(String address);
+
+        void onError(String error);
     }
 
     private long getPositionTime = 1000 * (60 * 5 - 20);
@@ -135,10 +144,10 @@ public class AmapManager implements AMapLocationListener {
         App.getInstance().getThreadExecutor().execute(() -> {
             Config config = ConfigManager.getInstance().getConfig();
             try {
-                if (config!=null&& !TextUtils.isEmpty(config.getDeviceIMEI())) {
+                if (config != null && !TextUtils.isEmpty(config.getDeviceIMEI())) {
                     DeviceRepository.getInstance().deviceHeartBeat(config.getDeviceIMEI(), aMapLocation.getLatitude(), aMapLocation.getLongitude());
                 }
-            } catch (IOException | MyException | NetResultFailedException e ) {
+            } catch (IOException | MyException | NetResultFailedException e) {
                 e.printStackTrace();
             }
         });

@@ -1,25 +1,16 @@
 package com.miaxis.postal.view.adapter;
 
 import android.content.Context;
-import android.text.TextUtils;
 import android.view.View;
+
+import com.miaxis.postal.R;
+import com.miaxis.postal.data.entity.SimpleOrder;
+import com.miaxis.postal.databinding.ItemOrderBinding;
+import com.miaxis.postal.view.base.BaseViewHolder;
+import com.miaxis.postal.view.base.BaseViewModelAdapter;
 
 import androidx.annotation.NonNull;
 
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
-import com.bumptech.glide.request.RequestOptions;
-import com.miaxis.postal.R;
-import com.miaxis.postal.bridge.GlideApp;
-import com.miaxis.postal.data.entity.SimpleOrder;
-import com.miaxis.postal.databinding.ItemOrderBinding;
-import com.miaxis.postal.view.auxiliary.OnLimitClickHelper;
-import com.miaxis.postal.view.auxiliary.OnLimitClickListener;
-import com.miaxis.postal.view.base.BaseAdapter;
-import com.miaxis.postal.view.base.BaseViewHolder;
-import com.miaxis.postal.view.base.BaseViewModelAdapter;
-import com.miaxis.postal.viewModel.LogisticsViewModel;
-import com.miaxis.postal.viewModel.OrderViewModel;
 
 public class OrderAdapter extends BaseViewModelAdapter<SimpleOrder, ItemOrderBinding, OrderAdapter.MyViewHolder> {
 

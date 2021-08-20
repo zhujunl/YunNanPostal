@@ -21,4 +21,9 @@ public class MxAspectJ {
 //        Log.e(TAG, "before method:" + methodSignature.getName());
 //    }
 
+
+
+    private void test(){
+        //Binder
+    }
 }

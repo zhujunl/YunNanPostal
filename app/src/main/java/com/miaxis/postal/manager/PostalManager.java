@@ -85,8 +85,12 @@ public class PostalManager {
         //        if (uploading.get()) {
         //            return;
         //        }
-        handler.removeMessages(0);
-        handler.sendMessage(handler.obtainMessage(0));
+        try {
+            handler.removeMessages(0);
+            handler.sendMessage(handler.obtainMessage(0));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public interface OnPostalInterruptListener {
@@ -101,16 +105,14 @@ public class PostalManager {
         }
     }
 
-    public void postal() {
+    public synchronized void postal() {
         try {
             uploading.set(true);
             handler.removeMessages(0);
             if (warnLogRepository.loadWarnLogCount() > 0) {
-                Log.d("asd", "loadWarnLogCount() > 0");
                 postalWarnRecord();
                 Log.d("asd", "postalWarnRecord 成功");
             } else {
-                Log.d("asd", "loadWarnLogCount() <= 0");
                 postalNormalRecord();
                 Log.d("asd", "postalNormalRecord 成功");
             }
@@ -121,7 +123,7 @@ public class PostalManager {
         }
     }
 
-    private void postalWarnRecord() throws IOException, MyException, NetResultFailedException {
+    private synchronized void postalWarnRecord() throws IOException, MyException, NetResultFailedException {
         WarnLog warnLog = warnLogRepository.findOldestWarnLog();
         if (warnLog != null) {
             IDCardRecord idCardRecord = null;
@@ -158,7 +160,6 @@ public class PostalManager {
                     try {
                         //是否是草稿 草稿不进行上传
                         if (!express.isDraft()) {
-                            Log.e(TAG, "数据发送 postalWarnRecord...");
                             expressRepository.uploadLocalExpress(express, tempId, warnId, idCardRecord.getName(), idCardRecord.getChekStatus());
                             Log.e(TAG, "数据发送 postalWarnRecord:true");
                             expressRepository.deleteExpress(express);
@@ -180,7 +181,7 @@ public class PostalManager {
         }
     }
 
-    private void postalNormalRecord() throws MyException, IOException, NetResultFailedException {
+    private synchronized void postalNormalRecord() throws MyException {
         IDCardRecord idCardRecord = idCardRecordRepository.findOldestIDCardRecord();
         if (idCardRecord == null) {
             throw new MyException("未找到待上传日志");
@@ -210,7 +211,6 @@ public class PostalManager {
             }
             try {//是否草稿
                 if (!express.isDraft()) {
-                    Log.e(TAG, "数据发送 PostalNormalRecord...");
                     expressRepository.uploadLocalExpress(express, tempId, null, idCardRecord.getName(), idCardRecord.getChekStatus());
                     Log.e(TAG, "数据发送 PostalNormalRecord:true");
                     expressRepository.deleteExpress(express);
@@ -230,7 +230,7 @@ public class PostalManager {
     }
 
     //抛出异常后就无法执行下面的请求了 所以去掉
-    private void processException(Express express, Exception e) {
+    private void processException(Express express, Exception e) throws MyException {
         express.setUploadError("" + e.getMessage());
         expressRepository.updateExpress(express);
     }

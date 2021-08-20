@@ -1,24 +1,20 @@
 package com.miaxis.postal.view.fragment;
 
-import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.viewpager2.adapter.FragmentStateAdapter;
-
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
-import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.miaxis.postal.BR;
 import com.miaxis.postal.R;
 import com.miaxis.postal.databinding.FragmentRecordTabBinding;
 import com.miaxis.postal.view.base.BaseViewModelFragment;
 import com.miaxis.postal.viewModel.RecordTabViewModel;
+
+import java.lang.reflect.Field;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager2.adapter.FragmentStateAdapter;
+import androidx.viewpager2.widget.ViewPager2;
 
 public class RecordTabFragment extends BaseViewModelFragment<FragmentRecordTabBinding, RecordTabViewModel> {
 
@@ -81,6 +77,18 @@ public class RecordTabFragment extends BaseViewModelFragment<FragmentRecordTabBi
             }
         }).attach();
         binding.vpPager.setOffscreenPageLimit(1);
+
+        try {
+            final Field recyclerViewField = ViewPager2.class.getDeclaredField("mRecyclerView");
+            recyclerViewField.setAccessible(true);
+            final RecyclerView recyclerView = (RecyclerView) recyclerViewField.get(binding.vpPager);//vb.viewpagerHome为要改变滑动距离的viewpager2控件
+            final Field touchSlopField = RecyclerView.class.getDeclaredField("mTouchSlop");
+            touchSlopField.setAccessible(true);
+            // final int touchSlop = (int) touchSlopField.get(recyclerView);
+            // touchSlopField.set(recyclerView, touchSlop*4);//通过获取原有的最小滑动距离 *n来增加此值
+            touchSlopField.set(recyclerView, 150);//自己写一个值
+        } catch (Exception ignore) {
+        }
     }
 
     @Override

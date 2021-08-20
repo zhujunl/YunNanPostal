@@ -14,8 +14,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/stroke_shape"
         android:layout_margin="1dp"
+        android:background="@drawable/stroke_shape"
         tools:context=".view.dialog.CardModeSelectDialogFragment">
 
         <TextView
@@ -24,7 +24,7 @@
             android:layout_height="@dimen/custom_toolbar_height"
             android:gravity="center|start"
             android:paddingStart="20dp"
-            android:text="模式选择"
+            android:text="认证模式选择"
             android:textColor="@color/main_color"
             android:textSize="20sp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -65,8 +65,8 @@
             android:id="@+id/cl_no_card"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/v_middle">
 
             <TextView
@@ -79,7 +79,7 @@
                 android:textSize="14sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"/>
+                app:layout_constraintTop_toTopOf="parent" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/cl_card_number"
@@ -88,10 +88,10 @@
                 android:layout_margin="10dp"
                 android:background="@drawable/rounded_shape_grey"
                 android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tv_no_card"
-                app:layout_constraintBottom_toBottomOf="parent">
+                app:layout_constraintTop_toBottomOf="@id/tv_no_card">
 
                 <ImageView
                     android:id="@+id/iv_card_number"
@@ -110,10 +110,10 @@
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     android:background="@null"
+                    android:digits="0123456789xX"
                     android:hint="请输入证件号码"
                     android:maxLength="18"
                     android:textSize="14sp"
-                    android:digits="0123456789xX"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/tv_card_number"
                     app:layout_constraintStart_toEndOf="@id/iv_card_number"

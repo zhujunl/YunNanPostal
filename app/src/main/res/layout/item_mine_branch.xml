@@ -18,15 +18,15 @@
         android:background="@drawable/bg_mine_branch"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/tv_branch_no"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:ellipsize="end"
-            android:maxLines="2"
-            android:text="@={item.comcode}" />
+<!--        <TextView-->
+<!--            android:id="@+id/tv_branch_no"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="0dp"-->
+<!--            android:layout_weight="1"-->
+<!--            android:gravity="center"-->
+<!--            android:ellipsize="end"-->
+<!--            android:maxLines="2"-->
+<!--            android:text="@={item.comcode}" />-->
 
         <TextView
             android:id="@+id/tv_branch_name"

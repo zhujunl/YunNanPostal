@@ -11,6 +11,7 @@ import android.widget.FrameLayout;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.miaxis.postal.R;
+import com.miaxis.postal.data.entity.Customer;
 import com.miaxis.postal.data.entity.IDCardRecord;
 import com.miaxis.postal.databinding.FragmentFaceVerifyBinding;
 import com.miaxis.postal.manager.CameraManager;
@@ -35,6 +36,7 @@ public class FaceVerifyFragment extends BaseViewModelFragment<FragmentFaceVerify
     private RoundFrameLayout roundFrameLayout;
 
     private MaterialDialog manualDialog;
+    private Customer customer;
 
     private Handler handler;
     private int delay = 21;
@@ -50,15 +52,19 @@ public class FaceVerifyFragment extends BaseViewModelFragment<FragmentFaceVerify
     }
 
 
-    public static FaceVerifyFragment newInstance(IDCardRecord idCardRecord, boolean isAgreementCustomer) {
+    public static FaceVerifyFragment newInstance(IDCardRecord idCardRecord, boolean isAgreementCustomer, Customer customer) {
         FaceVerifyFragment fragment = new FaceVerifyFragment();
         fragment.setIdCardRecord(idCardRecord);
+        fragment.setCustomer(customer);
         Bundle bundle = new Bundle();
         bundle.putBoolean("agreementCustomer", isAgreementCustomer);
         fragment.setArguments(bundle);
         return fragment;
     }
 
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -108,7 +114,7 @@ public class FaceVerifyFragment extends BaseViewModelFragment<FragmentFaceVerify
         initDialog();
         binding.ivBack.setOnClickListener(v -> onBackPressed());
         binding.tvSwitch.setOnClickListener(new OnLimitClickHelper(view -> {
-            mListener.replaceFragment(FingerVerifyFragment.newInstance(idCardRecord,isAgreementCustomer));
+            mListener.replaceFragment(FingerVerifyFragment.newInstance(idCardRecord,isAgreementCustomer,customer));
         }));
         binding.tvManual.setOnClickListener(new OnLimitClickHelper(view -> {
             if (!manualDialog.isShowing()) {
@@ -222,7 +228,7 @@ public class FaceVerifyFragment extends BaseViewModelFragment<FragmentFaceVerify
                 .positiveText("确认")
                 .onPositive((dialog, which) -> {
                     dialog.dismiss();
-                    mListener.replaceFragment(ManualFragment.newInstance(idCardRecord, isAgreementCustomer));
+                    mListener.replaceFragment(ManualFragment.newInstance(idCardRecord, isAgreementCustomer,customer));
                 })
                 .negativeText("放弃")
                 .onNegative((dialog, which) -> {
@@ -259,7 +265,7 @@ public class FaceVerifyFragment extends BaseViewModelFragment<FragmentFaceVerify
                 handler.postDelayed(() -> {
                     try {
                         if (isAgreementCustomer) {
-                            mListener.replaceFragment(AgreementCustomersFragment.newInstance(mIDCardRecord));
+                            mListener.replaceFragment(AgreementCustomersFragment.newInstance(mIDCardRecord,customer));
                         } else {
                             mListener.replaceFragment(ExpressFragment.newInstance(mIDCardRecord));
                         }
@@ -278,7 +284,7 @@ public class FaceVerifyFragment extends BaseViewModelFragment<FragmentFaceVerify
                         handler.post(() -> {
                             try {
                                 if (isAgreementCustomer) {
-                                    mListener.replaceFragment(AgreementCustomersFragment.newInstance(mIDCardRecord));
+                                    mListener.replaceFragment(AgreementCustomersFragment.newInstance(mIDCardRecord,customer));
                                 } else {
                                     mListener.replaceFragment(ExpressFragment.newInstance(mIDCardRecord));
                                 }

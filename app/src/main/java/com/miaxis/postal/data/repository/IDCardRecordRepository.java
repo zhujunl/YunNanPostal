@@ -5,13 +5,17 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.miaxis.postal.data.dto.TempIdDto;
+import com.miaxis.postal.data.entity.Branch;
+import com.miaxis.postal.data.entity.Courier;
 import com.miaxis.postal.data.entity.IDCardRecord;
 import com.miaxis.postal.data.entity.TempId;
 import com.miaxis.postal.data.exception.MyException;
 import com.miaxis.postal.data.exception.NetResultFailedException;
+import com.miaxis.postal.data.model.BranchModel;
 import com.miaxis.postal.data.model.IDCardRecordModel;
 import com.miaxis.postal.data.net.PostalApi;
 import com.miaxis.postal.data.net.ResponseEntity;
+import com.miaxis.postal.manager.DataCacheManager;
 import com.miaxis.postal.util.DateUtil;
 import com.miaxis.postal.util.FileUtil;
 import com.miaxis.postal.util.ValueUtil;
@@ -41,35 +45,39 @@ public class IDCardRecordRepository {
      **/
 
     public TempId uploadIDCardRecord(IDCardRecord idCardRecord) throws MyException, IOException, NetResultFailedException {
-//        File cardFile = !TextUtils.isEmpty(idCardRecord.getCardPicture()) ? new File(idCardRecord.getCardPicture()) : null;
-//        File faceFile = !TextUtils.isEmpty(idCardRecord.getFacePicture()) ? new File(idCardRecord.getFacePicture()) : null;
+        //        File cardFile = !TextUtils.isEmpty(idCardRecord.getCardPicture()) ? new File(idCardRecord.getCardPicture()) : null;
+        //        File faceFile = !TextUtils.isEmpty(idCardRecord.getFacePicture()) ? new File(idCardRecord.getFacePicture()) : null;
         //拆分成两个接口
-        Log.e("uploadIDCardRecord","idCardRecord:"+idCardRecord);
-        String webCardPath=null;
-        String webFacePath=null;
-        if (TextUtils.isEmpty(idCardRecord.getWebCardPath())||TextUtils.isEmpty(idCardRecord.getWebFacePath())){
-            if(!TextUtils.isEmpty(idCardRecord.getCardPicture())||!TextUtils.isEmpty(idCardRecord.getFacePicture())){
-                List<String> paths=new ArrayList<>();
+        Branch selected = BranchModel.findSelected();
+        if (selected == null) {
+            throw new MyException("未选择品牌");
+        }
+        Log.e("uploadIDCardRecord", "idCardRecord:" + idCardRecord);
+        String webCardPath = null;
+        String webFacePath = null;
+        if (TextUtils.isEmpty(idCardRecord.getWebCardPath()) || TextUtils.isEmpty(idCardRecord.getWebFacePath())) {
+            if (!TextUtils.isEmpty(idCardRecord.getCardPicture()) || !TextUtils.isEmpty(idCardRecord.getFacePicture())) {
+                List<String> paths = new ArrayList<>();
                 paths.add(idCardRecord.getCardPicture());
                 paths.add(idCardRecord.getFacePicture());
-                Log.e("uploadIDCardRecord","paths:"+paths);
+                Log.e("uploadIDCardRecord", "paths:" + paths);
                 List<String> stringList = ExpressRepository.getInstance().saveImage(paths);
-                Log.e("uploadIDCardRecord","stringList:"+stringList);
-                if (stringList!=null&&!stringList.isEmpty()&&stringList.size()>=2){
-                    webCardPath=stringList.get(0);
-                    webFacePath=stringList.get(1);
+                Log.e("uploadIDCardRecord", "stringList:" + stringList);
+                if (stringList != null && !stringList.isEmpty() && stringList.size() >= 2) {
+                    webCardPath = stringList.get(0);
+                    webFacePath = stringList.get(1);
                 }
             }
-        }else{
-            webCardPath=idCardRecord.getWebCardPath();
-            webFacePath=idCardRecord.getWebFacePath();
+        } else {
+            webCardPath = idCardRecord.getWebCardPath();
+            webFacePath = idCardRecord.getWebFacePath();
         }
-        Log.e("uploadIDCardRecord","webCardPath:"+webCardPath);
-        Log.e("uploadIDCardRecord","webFacePath:"+webFacePath);
-        //Courier courier = DataCacheManager.getInstance().getCourier();
-        String orgCode = ValueUtil.readOrgCode();
-        String orgNode = ValueUtil.readOrgNode();
-        Response<ResponseEntity<TempIdDto>> execute = PostalApi.savePersonFromApp(
+        Log.e("uploadIDCardRecord", "webCardPath:" + webCardPath);
+        Log.e("uploadIDCardRecord", "webFacePath:" + webFacePath);
+        Courier courier = DataCacheManager.getInstance().getCourier();
+        String orgCode = selected.orgCode;
+        String orgNode = selected.orgNode;
+        Response<ResponseEntity<TempIdDto>> execute = PostalApi.savePersonFromAppSync1(
                 orgCode,
                 orgNode,
                 idCardRecord.getName(),
@@ -84,13 +92,15 @@ public class IDCardRecordRepository {
                 DateUtil.DATE_FORMAT.format(idCardRecord.getVerifyTime()),
                 idCardRecord.getManualType(),
                 webCardPath,
-                webFacePath).execute();
+                webFacePath,
+                "" + courier.getCourierId()
+        ).execute();
         try {
             ResponseEntity<TempIdDto> body = execute.body();
             if (body != null) {
                 if (TextUtils.equals(body.getCode(), ValueUtil.SUCCESS) && body.getData() != null) {
                     try {
-                        Log.e("uploadIDCardRecord","webCardPath:"+body.getData().transform());
+                        Log.e("uploadIDCardRecord", "webCardPath:" + body.getData().transform());
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -109,12 +119,12 @@ public class IDCardRecordRepository {
     }
 
     public String saveIdCardRecord(IDCardRecord idCardRecord) {
-        Log.i("TAG===","执行");
-        if (idCardRecord.getCardPicture()!=null){
-            FileUtil.deleteFolderFile(idCardRecord.getCardPicture(),false);
+        Log.i("TAG===", "执行");
+        if (idCardRecord.getCardPicture() != null) {
+            FileUtil.deleteFolderFile(idCardRecord.getCardPicture(), false);
         }
-        if (idCardRecord.getFacePicture()!=null){
-            FileUtil.deleteFolderFile(idCardRecord.getFacePicture(),false);
+        if (idCardRecord.getFacePicture() != null) {
+            FileUtil.deleteFolderFile(idCardRecord.getFacePicture(), false);
         }
         if (idCardRecord.getCardBitmap() != null) {
             String cardPath = FileUtil.FACE_STOREHOUSE_PATH + File.separator + "card_" + idCardRecord.getCardNumber() + System.currentTimeMillis() + ".jpg";
@@ -134,7 +144,7 @@ public class IDCardRecordRepository {
 
     //保存身份证头像 人证核验头像
     public List<String> saveFace(String cardNum, Bitmap cardBitmap, Bitmap faceBitmap) {
-        Log.i("TAG===","执行2");
+        Log.i("TAG===", "执行2");
         List<String> path = new ArrayList<>();
         String cardPath = FileUtil.FACE_STOREHOUSE_PATH + File.separator + "card_" + cardNum + System.currentTimeMillis() + ".jpg";
         FileUtil.saveBitmap(cardBitmap, cardPath);

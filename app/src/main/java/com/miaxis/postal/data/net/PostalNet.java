@@ -6,6 +6,7 @@ import com.miaxis.postal.data.dto.SimpleOrderDto;
 import com.miaxis.postal.data.dto.TempIdDto;
 import com.miaxis.postal.data.dto.UpdateDto;
 import com.miaxis.postal.data.entity.Branch;
+import com.miaxis.postal.data.entity.Customer;
 
 import java.util.List;
 
@@ -13,6 +14,7 @@ import okhttp3.MultipartBody;
 import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.GET;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
 import retrofit2.http.Part;
@@ -44,6 +46,18 @@ public interface PostalNet {
     @POST("api/v1/expressman/list")
     Call<ResponseEntity<List<Branch>>> getBranchListSync(
             @Field("phone") String phone
+    );
+
+    @GET("api/v1/expressman/brandList")
+    Call<ResponseEntity<List<Branch>>> getAllBranchListSync();
+
+    //获取协议客户列表
+    @FormUrlEncoded
+    @POST("api/v1/person/getContractPersonList")
+    Call<ResponseEntity<List<Customer>>> getContractPersonList(
+            @Field("expressmanId") String expressmanId,
+            @Field("pageNum") String pageNum,
+            @Field("pageSize") String pageSize
     );
 
     //绑定网点
@@ -103,9 +117,34 @@ public interface PostalNet {
     );
 
     //上传人证核验记录，并获取核验编号
+//    @Multipart
+//    @POST("api/v1/person/savePersonFromApp")
+//    Call<ResponseEntity<TempIdDto>> savePersonFromAppSync(
+//            @Part("orgCode") String orgCode,
+//            @Part("orgNode") String orgNode,
+//            @Part("name") String name,
+//            @Part("nation") String nation,
+//            @Part("birthday") String birthday,
+//            @Part("cardNo") String cardNo,
+//            @Part("cardAddress") String cardAddress,
+//            @Part("sex") String sex,
+//            @Part("signOrg") String signOrg,
+//            @Part("expireTime") String expireTime,
+//            @Part("verifyType") String verifyType,
+//            @Part("checkTime") String checkTime,
+//            @Part("type") String type,
+//            @Part("CardPhoto") String cardPhoto,
+//            @Part("CheckPhoto") String checkPhoto
+//    );
+
+    /**
+     * 上传人证核验记录，并获取核验编号
+     * 20210817
+     * 在老接口基础上增加expressmanId参数
+     */
     @Multipart
-    @POST("api/v1/person/savePersonFromApp")
-    Call<ResponseEntity<TempIdDto>> savePersonFromAppSync(
+    @POST("api/v1/person/savePersonFromApp1")
+    Call<ResponseEntity<TempIdDto>> savePersonFromAppSync1(
             @Part("orgCode") String orgCode,
             @Part("orgNode") String orgNode,
             @Part("name") String name,
@@ -120,14 +159,13 @@ public interface PostalNet {
             @Part("checkTime") String checkTime,
             @Part("type") String type,
             @Part("CardPhoto") String cardPhoto,
-            @Part("CheckPhoto") String checkPhoto
-//            @Part MultipartBody.Part checkFile,
-//            @Part MultipartBody.Part cardFile
+            @Part("CheckPhoto") String checkPhoto,
+            @Part("expressmanId") String expressmanId
     );
 
     //拿到核验编号后，上传订单信息
     @FormUrlEncoded
-    @POST("api/v1/order/saveOrderFromApp")
+    @POST("api/v1/order/saveOrderFromApp1")
     Call<ResponseEntity> saveOrderFromAppSync(
             @Field("orgCode") String orgCode,
             @Field("orgNode") String orgNode,
@@ -153,11 +191,10 @@ public interface PostalNet {
             //@Field("url") List<String> file
             @Field("urls") String files,
             @Field("customerType") int customerType
-
     );
 
     @FormUrlEncoded
-    @POST("api/v1/order/saveOrderFromApp")
+    @POST("api/v1/order/saveOrderFromApp1")
     Call<ResponseEntity> saveOrderFromAppSync(
             @Field("orgCode") String orgCode,
             @Field("orgNode") String orgNode,
@@ -185,10 +222,13 @@ public interface PostalNet {
             @Field("customerName") String customerName,
             @Field("goodsName") String goodsName,
             @Field("goodsNumber") int goodsNumber,
-            @Field("customerType") int  customerType
+            @Field("customerType") int customerType
     );
 
 
+    /**
+     * 上传报警信息
+     */
     @FormUrlEncoded
     @POST("api/v1/warn/saveWarnLog")
     Call<ResponseEntity<Integer>> uploadWarnLog(
@@ -215,6 +255,24 @@ public interface PostalNet {
     @FormUrlEncoded
     @POST("api/v1/order/getOrderByCode")
     Call<ResponseEntity<OrderDto>> getOrderByCode(@Field("orderCode") String orderCode);
+
+
+    /**
+     * 根据订单模糊查询
+     *
+     * @param startTime 开始时间yyyy-MM-dd HH:mm:ss
+     * @param endTime   结束时间yyyy-MM-dd HH:mm:ss
+     */
+    @FormUrlEncoded
+    @POST("api/v1/order/getOrderByCode1")
+    Call<ResponseEntity<List<OrderDto>>> getOrderByCode1(
+            @Field("expressmanId") String expressmanId,
+            @Field("pageNum") String pageNum,
+            @Field("pageSize") String pageSize,
+            @Field("orderCode") String orderCode,
+            @Field("startTime") String startTime,
+            @Field("endTime") String endTime
+    );
 
     @Multipart
     @POST("api/v1/order/updateOrderFromApp")
@@ -251,10 +309,10 @@ public interface PostalNet {
     /**
      * 上传图片
      */
-//    @Multipart
-//    @POST("api/v1/order/saveOrderPhoto")
-//    Call<String> deletePicture(
-//            @Part MultipartBody.Part file
-//    );
+    //    @Multipart
+    //    @POST("api/v1/order/saveOrderPhoto")
+    //    Call<String> deletePicture(
+    //            @Part MultipartBody.Part file
+    //    );
 
 }

@@ -1,16 +1,22 @@
 package com.miaxis.postal.data.model;
 
 import com.miaxis.postal.data.dao.AppDatabase;
+import com.miaxis.postal.data.entity.Branch;
 import com.miaxis.postal.data.entity.Express;
+import com.miaxis.postal.data.exception.MyException;
 import com.miaxis.postal.util.ValueUtil;
 
 import java.util.List;
 
 public class ExpressModel {
 
-    public static void saveExpress(Express express) {
-        String orgCode = ValueUtil.readOrgCode();
-        String orgNode = ValueUtil.readOrgNode();
+    public static void saveExpress(Express express) throws MyException{
+        Branch selected = BranchModel.findSelected();
+        if (selected == null) {
+            throw new MyException("未选择品牌");
+        }
+        String orgCode = selected.orgCode;
+        String orgNode = selected.orgNode;
         express.setOrgCode(orgCode);
         express.setOrgNode(orgNode);
         AppDatabase.getInstance().expressDao().insert(express);

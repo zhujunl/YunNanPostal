@@ -3,41 +3,47 @@ package com.miaxis.postal.view.fragment;
 import android.os.Bundle;
 import android.view.View;
 
-import androidx.annotation.Nullable;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.miaxis.postal.R;
 import com.miaxis.postal.bridge.Status;
+import com.miaxis.postal.data.entity.Customer;
 import com.miaxis.postal.databinding.FragmentCardBinding;
 import com.miaxis.postal.view.base.BaseViewModelFragment;
 import com.miaxis.postal.viewModel.CardViewModel;
 
+import androidx.annotation.Nullable;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+
 public class CardFragment extends BaseViewModelFragment<FragmentCardBinding, CardViewModel> {
 
     private MaterialDialog retryDialog;
-
+    private Customer mCustomer;
     //是否协议客户
-    private  boolean isAgreementCustomer=false;
+    private boolean isAgreementCustomer = false;
 
     public static CardFragment newInstance() {
         return new CardFragment();
     }
 
-    public static CardFragment newInstance(boolean isAgreementCustomer) {
-        CardFragment cardFragment=    new CardFragment();
-        Bundle bundle=new Bundle();
-        bundle.putBoolean("agreementCustomer",isAgreementCustomer);
+    public static CardFragment newInstance(boolean isAgreementCustomer, Customer customer) {
+        CardFragment cardFragment = new CardFragment();
+        Bundle bundle = new Bundle();
+        bundle.putBoolean("agreementCustomer", isAgreementCustomer);
         cardFragment.setArguments(bundle);
+        cardFragment.setCustomer(customer);
         return cardFragment;
     }
 
+    public void setCustomer(Customer customer) {
+        mCustomer = customer;
+    }
+
     @Override
-    public void onCreate(@Nullable  Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments()!=null){
-            isAgreementCustomer=getArguments().getBoolean("agreementCustomer",false);
+        if (getArguments() != null) {
+            isAgreementCustomer = getArguments().getBoolean("agreementCustomer", false);
         }
     }
 
@@ -125,7 +131,7 @@ public class CardFragment extends BaseViewModelFragment<FragmentCardBinding, Car
     };
 
     private Observer<Boolean> readCardFlagObserver = flag -> {
-        mListener.replaceFragment(FaceVerifyFragment.newInstance(viewModel.getIdCardRecord(),isAgreementCustomer));
+        mListener.replaceFragment(FaceVerifyFragment.newInstance(viewModel.getIdCardRecord(), isAgreementCustomer, mCustomer));
     };
 
     private Observer<Boolean> saveFlagObserver = flag -> mListener.backToStack(HomeFragment.class);
