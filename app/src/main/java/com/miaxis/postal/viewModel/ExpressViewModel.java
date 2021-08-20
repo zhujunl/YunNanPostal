@@ -40,7 +40,7 @@ public class ExpressViewModel extends BaseViewModel {
     public static final String RECE_DATA_ACTION = "com.se4500.onDecodeComplete";
 
     public ObservableField<IDCardRecord> idCardRecord = new ObservableField<>();
-    public ObservableField<String> address = new ObservableField<>();
+    public ObservableField<String> address = new ObservableField<>("");
 
     public MutableLiveData<List<Express>> expressList = new MutableLiveData<>(new ArrayList<>());
     public MutableLiveData<Express> newExpress = new SingleLiveEvent<>();
@@ -336,7 +336,8 @@ public class ExpressViewModel extends BaseViewModel {
 
             @Override
             public void onError(String error) {
-                resultMessage.setValue("获取位置失败:" + error);
+                resultMessage.setValue("获取位置失败" );
+                address.set("");
             }
         });
     }

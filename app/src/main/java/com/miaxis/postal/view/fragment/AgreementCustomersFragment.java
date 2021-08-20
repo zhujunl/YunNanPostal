@@ -186,7 +186,10 @@ public class AgreementCustomersFragment extends BaseViewModelFragment<FragmentAg
                 value.setPhotoPathList(objects);
             }
         });
-        binding.editItemName.setFilters(new InputFilter[]{new EmojiExcludeFilter()});
+
+        binding.editClientSName.setFilters(new InputFilter[]{new EmojiExcludeFilter(), new InputFilter.LengthFilter(15)});
+        binding.editClientSPhone.setFilters(new InputFilter[]{new EmojiExcludeFilter(), new InputFilter.LengthFilter(15)});
+        binding.editItemName.setFilters(new InputFilter[]{new EmojiExcludeFilter(), new InputFilter.LengthFilter(15)});
         binding.etAddress.setFilters(new InputFilter[]{new EmojiExcludeFilter()});
     }
 
@@ -225,7 +228,7 @@ public class AgreementCustomersFragment extends BaseViewModelFragment<FragmentAg
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        if (cEditViewAdapter!=null){
+        if (cEditViewAdapter != null) {
             cEditViewAdapter.clear();
         }
         getContext().unregisterReceiver(receiver);

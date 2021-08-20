@@ -110,6 +110,9 @@ public class DownloadThread extends Thread {
             urlConnection.setReadTimeout(this.mReadTimeOut);
             urlConnection.connect();
             if (isInterrupted()) {
+                if (this.mDownloadCallback != null) {
+                    this.mDownloadCallback.downloadStop(this.mDownloadCallback.getTemp(), -1, "取消下载。");
+                }
                 return;
             }
             this.mInputStream = urlConnection.getInputStream();
@@ -136,6 +139,9 @@ public class DownloadThread extends Thread {
                 boolean delete = file.delete();
             }
             if (isInterrupted()) {
+                if (this.mDownloadCallback != null) {
+                    this.mDownloadCallback.downloadStop(this.mDownloadCallback.getTemp(), -1, "取消下载。");
+                }
                 return;
             }
             String tempPath = this.mSavePath + ".temp";
@@ -145,6 +151,9 @@ public class DownloadThread extends Thread {
             int downLoadFileSize = 0;
             do {
                 if (isInterrupted()) {
+                    if (this.mDownloadCallback != null) {
+                        this.mDownloadCallback.downloadStop(this.mDownloadCallback.getTemp(), -1, "取消下载。");
+                    }
                     return;
                 }
                 //循环读取
@@ -160,6 +169,9 @@ public class DownloadThread extends Thread {
                 }
             } while (true);
             if (isInterrupted()) {
+                if (this.mDownloadCallback != null) {
+                    this.mDownloadCallback.downloadStop(this.mDownloadCallback.getTemp(), -1, "取消下载。");
+                }
                 return;
             }
             if (this.mDownloadCallback != null) {
@@ -173,15 +185,6 @@ public class DownloadThread extends Thread {
             }
         } finally {
             close();
-        }
-
-    }
-
-    @Override
-    public void interrupt() {
-        super.interrupt();
-        if (this.mDownloadCallback != null) {
-            this.mDownloadCallback.downloadStop(this.mDownloadCallback.getTemp(), -1, "取消下载。");
         }
     }
 

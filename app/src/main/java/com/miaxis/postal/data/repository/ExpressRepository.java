@@ -55,18 +55,17 @@ public class ExpressRepository {
                     ResponseEntity body = execute.body();
                     if (body != null) {
                         if (StringUtils.isEquals(ValueUtil.SUCCESS, body.getCode())) {
-                            try {
-                                String data = (String) body.getData();
-                                stringList.add(data);
-                                Log.e("ExpressRepository", "" + data);
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
+                            String data = (String) body.getData();
+                            stringList.add(data);
+                            Log.e("ExpressRepository", "" + data);
+                            continue;
                         }
                     }
+                    throw new NetResultFailedException("上传图片失败");
                 } catch (Exception e) {
                     e.printStackTrace();
                     Log.e("ExpressRepository", "Exception:" + e);
+                    throw new NetResultFailedException("上传图片失败，" + e);
                 }
             }
         }

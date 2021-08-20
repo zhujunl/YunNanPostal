@@ -382,7 +382,8 @@ public class AgreementCustomersModel extends BaseViewModel {
 
             @Override
             public void onError(String error) {
-                resultMessage.setValue("获取位置失败:" + error);
+                resultMessage.setValue("获取位置失败");
+                address.setValue("");
             }
         });
     }
