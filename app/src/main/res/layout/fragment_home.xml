@@ -142,7 +142,7 @@
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     android:gravity="center|top"
-                    android:text="散户核验"
+                    android:text="散件核验"
                     android:textColor="@color/main_color"
                     android:textSize="13sp"
                     app:layout_constraintBottom_toBottomOf="parent"
