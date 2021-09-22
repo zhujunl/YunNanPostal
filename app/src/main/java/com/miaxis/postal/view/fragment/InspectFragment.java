@@ -266,8 +266,8 @@ public class InspectFragment extends BaseViewModelFragment<FragmentInspectBindin
 
 
     private View.OnLongClickListener alarmListener = v -> {
-        viewModel.alarm();
-        mListener.backToStack(null);
+        //viewModel.alarm();
+        //mListener.backToStack(null);
         return false;
     };
 

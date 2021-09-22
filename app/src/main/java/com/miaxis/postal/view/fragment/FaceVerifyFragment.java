@@ -215,7 +215,7 @@ public class FaceVerifyFragment extends BaseViewModelFragment<FragmentFaceVerify
     };
 
     private View.OnLongClickListener alarmListener = v -> {
-        viewModel.alarm();
+        //viewModel.alarm();
         return false;
     };
 
