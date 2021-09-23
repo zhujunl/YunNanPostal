@@ -3,6 +3,7 @@ package com.miaxis.postal.data.net;
 import com.miaxis.postal.data.dto.CourierDto;
 import com.miaxis.postal.data.dto.OrderDto;
 import com.miaxis.postal.data.dto.SimpleOrderDto;
+import com.miaxis.postal.data.dto.StatisticalDto;
 import com.miaxis.postal.data.dto.TempIdDto;
 import com.miaxis.postal.data.dto.UpdateDto;
 import com.miaxis.postal.data.entity.Branch;
@@ -37,6 +38,15 @@ public interface PostalNet {
     Call<ResponseEntity<List<SimpleOrderDto>>> getOrderByCodeAndNameSync(
             @Field("expressmanId") long expressmanId,
             @Field("param") String param,
+            @Field("pageNum") int pageNum,
+            @Field("pageSize") int pageSize
+    );
+
+    //获取订单统计列表
+    @FormUrlEncoded
+    @POST("api/v1/order/getStatisticsByDate")
+    Call<ResponseEntity<List<StatisticalDto>>> getStatisticsByDate(
+            @Field("expressmanId") long expressManId,
             @Field("pageNum") int pageNum,
             @Field("pageSize") int pageSize
     );

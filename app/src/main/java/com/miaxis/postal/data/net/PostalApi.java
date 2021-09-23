@@ -6,6 +6,7 @@ import android.util.Log;
 import com.miaxis.postal.data.dto.CourierDto;
 import com.miaxis.postal.data.dto.OrderDto;
 import com.miaxis.postal.data.dto.SimpleOrderDto;
+import com.miaxis.postal.data.dto.StatisticalDto;
 import com.miaxis.postal.data.dto.TempIdDto;
 import com.miaxis.postal.data.dto.UpdateDto;
 import com.miaxis.postal.data.entity.Branch;
@@ -30,6 +31,16 @@ public class PostalApi extends BaseAPI {
 
     public static Call<ResponseEntity<CourierDto>> getExpressmanByPhoneSync(String macAddress) {
         return getPostalNetSync().getExpressmanByPhoneSync(macAddress);
+    }
+
+    public static Call<ResponseEntity<List<StatisticalDto>>> getStatisticsByDate(
+            long expressManId,
+            int pageNum,
+            int pageSize
+    ) {
+        return getPostalNetSync().getStatisticsByDate(expressManId,
+                pageNum,
+                pageSize);
     }
 
     public static Call<ResponseEntity<List<SimpleOrderDto>>> getOrderByCodeAndNameSync(
@@ -118,7 +129,7 @@ public class PostalApi extends BaseAPI {
             String cardPhoto,
             String checkPhoto,
             String expressmanId
-            ) {
+    ) {
         //        MultipartBody.Part checkFileBody = null;
         //        if (checkFile != null) {
         //            RequestBody checkRequestFile = RequestBody.create(MediaType.parse("multipart/form-data"), checkFile);
@@ -144,7 +155,7 @@ public class PostalApi extends BaseAPI {
                 checkTime,
                 type,
                 cardPhoto,
-                checkPhoto,expressmanId
+                checkPhoto, expressmanId
         );
     }
 
@@ -289,12 +300,12 @@ public class PostalApi extends BaseAPI {
     }
 
     public static Call<ResponseEntity<List<OrderDto>>> getOrderByCode1(String expressmanId,
-                                                                    String pageNum,
-                                                                    String pageSize,
-                                                                    String orderCode,
-                                                                    String startTime,
-                                                                    String endTime) {
-        return getPostalNetSync().getOrderByCode1( expressmanId, pageNum, pageSize, orderCode, startTime, endTime);
+                                                                       String pageNum,
+                                                                       String pageSize,
+                                                                       String orderCode,
+                                                                       String startTime,
+                                                                       String endTime) {
+        return getPostalNetSync().getOrderByCode1(expressmanId, pageNum, pageSize, orderCode, startTime, endTime);
     }
 
     public static Call<ResponseEntity> deleteWebPicture(String path) {
