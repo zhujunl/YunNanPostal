@@ -26,6 +26,8 @@ public class StatisticalViewModel extends BaseViewModel {
      */
     public MutableLiveData<List<StatisticalAdapter.StatisticalItem>> itemList = new MutableLiveData<>(new ArrayList<>());
 
+    public MutableLiveData<Boolean> nextPageEnable = new MutableLiveData<>();
+
     public StatisticalViewModel() {
     }
 
@@ -44,7 +46,7 @@ public class StatisticalViewModel extends BaseViewModel {
         waitMessage.setValue("请稍后");
         Disposable subscribe = Observable.create((ObservableOnSubscribe<List<StatisticalAdapter.StatisticalItem>>) emitter -> {
             List<Statistical> statisticsByDate = PostalRepository.getInstance().getStatisticsByDate(pageNum.incrementAndGet(), 10);
-
+            nextPageEnable.postValue(statisticsByDate != null && !statisticsByDate.isEmpty());
             List<StatisticalAdapter.StatisticalItem> value = itemList.getValue();
             if (value == null) {
                 value = new ArrayList<>();

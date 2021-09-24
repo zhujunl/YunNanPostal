@@ -56,11 +56,18 @@ public class StatisticalFragment extends BaseViewModelFragment<FragmentStatistic
                 statisticalAdapter.setItemList(statisticalItems);
             }
         });
+        viewModel.nextPageEnable.observe(this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean aBoolean) {
+                binding.rvItem.setLoadingMoreEnabled(aBoolean);
+            }
+        });
         viewModel.emptyFlag.observe(this, new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean aBoolean) {
                 if (aBoolean != null && aBoolean) {
-                    new AlertDialog.Builder(getContext()).setTitle("提示").setMessage("暂无数据").setPositiveButton("取消", new DialogInterface.OnClickListener() {
+                    new AlertDialog.Builder(getContext()).setTitle("提示").setMessage("暂无数据")
+                            .setPositiveButton("取消", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
