@@ -45,7 +45,7 @@ public abstract class BaseActivity<V extends ViewDataBinding> extends AppCompatA
     public void hideInputMethod() {
         if (getCurrentFocus() != null && getCurrentFocus().getWindowToken() != null){
             InputMethodManager manager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            manager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+            manager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);    
         }
     }
 

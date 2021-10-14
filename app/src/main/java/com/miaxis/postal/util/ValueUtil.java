@@ -26,7 +26,7 @@ public class ValueUtil {
     //    public static final String DEFAULT_BASE_HOST = "http://bnrzhysj.postaldata.top:8800/policebus/";
     public static final float DEFAULT_VERIFY_SCORE = 0.76f;
     public static final float DEFAULT_MASK_VERIFY_SCORE = 0.73f;
-    public static final int DEFAULT_QUALITY_SCORE = 25;
+    public static final int DEFAULT_QUALITY_SCORE = 70;
     public static final int DEFAULT_REGISTER_QUALITY_SCORE = 70;
     public static final int DEFAULT_MASK_SCORE = 40;
     public static final int DEFAULT_HEART_BEAT_INTERVAL = 10 * 60;
