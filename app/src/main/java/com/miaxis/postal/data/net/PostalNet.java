@@ -5,6 +5,7 @@ import com.miaxis.postal.data.dto.OrderDto;
 import com.miaxis.postal.data.dto.SimpleOrderDto;
 import com.miaxis.postal.data.dto.TempIdDto;
 import com.miaxis.postal.data.dto.UpdateDto;
+import com.miaxis.postal.data.entity.AppEntity;
 import com.miaxis.postal.data.entity.Branch;
 import com.miaxis.postal.data.entity.Customer;
 
@@ -314,5 +315,13 @@ public interface PostalNet {
     //    Call<String> deletePicture(
     //            @Part MultipartBody.Part file
     //    );
+
+
+    /**
+     * 加载App安装页面item
+     */
+    @Multipart
+    @GET("/api/v1/company/appList")
+    Call<ResponseEntity<List<AppEntity.DataBean>>> appInstall();
 
 }

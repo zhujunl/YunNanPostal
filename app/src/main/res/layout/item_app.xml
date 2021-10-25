@@ -9,7 +9,7 @@
 
         <variable
             name="item"
-            type="com.miaxis.postal.data.entity.AppItem" />
+            type="com.miaxis.postal.data.entity.AppEntity.DataBean" />
     </data>
 
 
@@ -40,11 +40,11 @@
 
         <TextView
             android:id="@+id/tv_position"
-            android:layout_width="60dp"
+            android:layout_width="50dp"
             android:layout_height="match_parent"
             android:gravity="center"
             android:text="@{item.Position}"
-            android:textSize="18sp"
+            android:textSize="16sp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toLeftOf="@id/v_tip_1"
             tools:text="1" />
@@ -60,16 +60,42 @@
             app:layout_constraintRight_toLeftOf="@id/tv_name" />
 
         <TextView
+            android:id="@+id/tv_company"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:text="@={item.company}"
+            android:layout_marginLeft="40dp"
+            android:textSize="16sp"
+            app:layout_constraintLeft_toRightOf="@id/tv_position"
+            app:layout_constraintRight_toLeftOf="@+id/v_tip_2"
+            tools:text="品牌" />
+
+        <TextView
             android:id="@+id/tv_name"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:gravity="center"
-            android:text="@={item.AppName}"
-            android:textSize="18sp"
+            android:gravity="center_vertical"
+            android:text="@={item.name}"
+            android:layout_marginLeft="80dp"
             app:layout_constraintHorizontal_weight="3"
+            android:textSize="16sp"
             app:layout_constraintLeft_toRightOf="@id/tv_position"
             app:layout_constraintRight_toLeftOf="@+id/v_tip_2"
             tools:text="@string/app_name" />
+
+        <TextView
+            android:id="@+id/tv_appversion"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="@={item.version}"
+            android:textSize="13sp"
+            app:layout_constraintLeft_toRightOf="@id/tv_position"
+            app:layout_constraintRight_toLeftOf="@+id/v_tip_2"
+            tools:text="1.0.1"
+            android:layout_marginLeft="140dp"
+            android:layout_marginTop="10dp"/>
 
         <View
             android:id="@+id/v_tip_2"
@@ -96,7 +122,7 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="@{item.isDownload()?@string/string_install:@string/string_download}"
-                android:textSize="18sp"
+                android:textSize="16sp"
                 tools:text="下载" />
 
             <!--            <TextView-->

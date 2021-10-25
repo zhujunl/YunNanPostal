@@ -57,7 +57,6 @@ android {
         disable 'GoogleAppIndexingWarning'
     }
 
-
 }
 
 dependencies {
@@ -130,4 +129,5 @@ dependencies {
     // (Java only)
     implementation("androidx.work:work-runtime:2.5.0")
 //    implementation 'org.aspectj:aspectjrt:1.9.8.M1'
+
 }

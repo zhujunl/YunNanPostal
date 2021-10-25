@@ -5,6 +5,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.miaxis.postal.R;
+import com.miaxis.postal.data.entity.AppEntity;
 import com.miaxis.postal.data.entity.AppItem;
 import com.miaxis.postal.databinding.ItemAppBinding;
 import com.miaxis.postal.view.base.BaseAdapter;
@@ -14,7 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class AppListAdapter extends BaseAdapter<AppItem, RecyclerView.ViewHolder> {
+public class AppListAdapter extends BaseAdapter<AppEntity.DataBean, RecyclerView.ViewHolder> {
 
     private OnDownloadClickListener mOnDownloadClickListener;
 
@@ -42,9 +43,9 @@ public class AppListAdapter extends BaseAdapter<AppItem, RecyclerView.ViewHolder
     }
 
     private void setBodyItemValues(BodyViewHolder holder, int position) {
-        AppItem appItem = dataList.get(position);
+        AppEntity.DataBean appItem = dataList.get(position);
         if (appItem != null) {
-            appItem.Position = String.valueOf(position + 1);
+            appItem.position = String.valueOf(position + 1);
             holder.bind(appItem, this.mOnDownloadClickListener);
         }
     }
@@ -62,7 +63,7 @@ public class AppListAdapter extends BaseAdapter<AppItem, RecyclerView.ViewHolder
             super(itemView);
         }
 
-        public void bind(AppItem appItem, OnDownloadClickListener onDownloadClickListener) {
+        public void bind(AppEntity.DataBean appItem, OnDownloadClickListener onDownloadClickListener) {
             getBinding().setItem(appItem);
             getBinding().tvOperation.setOnClickListener(this);
             //            getBinding().tvDelete.setOnClickListener(this);
@@ -72,7 +73,7 @@ public class AppListAdapter extends BaseAdapter<AppItem, RecyclerView.ViewHolder
         @Override
         public void onClick(View v) {
             if (this.mOnDownloadClickListener != null) {
-                AppItem item = getBinding().getItem();
+                AppEntity.DataBean item = getBinding().getItem();
                 if (item != null) {
                     if (item.isDownload()) {
                         if (v.getId() == R.id.tv_operation) {
@@ -90,9 +91,9 @@ public class AppListAdapter extends BaseAdapter<AppItem, RecyclerView.ViewHolder
 
     public interface OnDownloadClickListener {
 
-        void onDownloadClick(BodyViewHolder view, AppItem appItem, int position);
+        void onDownloadClick(BodyViewHolder view, AppEntity.DataBean appItem, int position);
 
-        void onInstallClick(BodyViewHolder view, AppItem appItem, int position);
+        void onInstallClick(BodyViewHolder view, AppEntity.DataBean appItem, int position);
 
         //        void onDeleteClick(BodyViewHolder view, AppItem appItem, int position);
 

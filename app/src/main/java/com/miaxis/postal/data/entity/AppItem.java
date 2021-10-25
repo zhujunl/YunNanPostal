@@ -22,7 +22,7 @@ public class AppItem {
         this.AppName = appName;
         this.AppVersion = appVersion;
         this.AppUrl = appUrl;
-        this.AppLocalPath = DownloadPresenter.AppPath(this);
+//        this.AppLocalPath = DownloadPresenter.AppPath(this);
     }
 
     public boolean isDownload() {

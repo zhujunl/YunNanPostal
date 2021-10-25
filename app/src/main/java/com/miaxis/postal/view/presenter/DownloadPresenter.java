@@ -10,6 +10,7 @@ import android.util.Log;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.liulishuo.filedownloader.FileDownloader;
+import com.miaxis.postal.data.entity.AppEntity;
 import com.miaxis.postal.data.entity.AppItem;
 import com.miaxis.postal.manager.ToastManager;
 import com.miaxis.postal.util.FileUtil;
@@ -46,17 +47,17 @@ public class DownloadPresenter {
         void onDownloadResult(boolean result, String message);
     }
 
-    public void showUpdateDialog(@NonNull AppItem appItem) {
+    public void showUpdateDialog(@NonNull AppEntity.DataBean appItem) {
         if (updateDialog != null && updateDialog.isShowing()) {
             updateDialog.dismiss();
         }
         updateDialog = new MaterialDialog.Builder(context)
                 .title("APP下载")
-                .content("确认下载【" + appItem.AppName + "】，版本：" + appItem.AppVersion + " ？" + (NetUtils.getNetStatus(context) == 0 ? ("\n下载类型：【手机流量】") : ""))
+                .content("确认下载【" + appItem.name + "】，版本：" + appItem.version + " ？" + (NetUtils.getNetStatus(context) == 0 ? ("\n下载类型：【手机流量】") : ""))
                 .positiveText("下载")
                 .onPositive((dialog, which) -> {
                     dialog.dismiss();
-                    if (!TextUtils.isEmpty(appItem.AppUrl)) {
+                    if (!TextUtils.isEmpty(appItem.url)) {
                         downloadUrl(appItem);
                     } else {
                         ToastManager.toast("文件下载路径为空", ToastManager.INFO);
@@ -83,16 +84,16 @@ public class DownloadPresenter {
                 .cancelable(false).build();
     }
 
-    public static String AppPath(@NonNull AppItem appItem) {
-        return FileUtil.APP_PATH + File.separator + appItem.AppName + "-" + appItem.AppVersion + ".apk";
+    public static String AppPath(@NonNull AppEntity.DataBean appItem) {
+        return FileUtil.APP_PATH + File.separator + appItem.name + "-" + appItem.version + ".apk";
     }
 
-    public void downloadUrl(@NonNull AppItem appItem) {
+    public void downloadUrl(@NonNull AppEntity.DataBean appItem) {
         initProgressDialog();
         String path = AppPath(appItem);
-        DownloadManager.getInstance().downloadFile(appItem.AppUrl, path, new DownloadCallback<AppItem>(appItem) {
+        DownloadManager.getInstance().downloadFile(appItem.url, path, new DownloadCallback<AppEntity.DataBean>(appItem) {
             @Override
-            public void onDownloadStart(AppItem data) {
+            public void onDownloadStart(AppEntity.DataBean data) {
                 if (mHandler != null) {
                     mHandler.post(new Runnable() {
                         @Override
@@ -106,7 +107,7 @@ public class DownloadPresenter {
             }
 
             @Override
-            public void onDownloadProgress(AppItem data, int total, int progress) {
+            public void onDownloadProgress(AppEntity.DataBean data, int total, int progress) {
                 if (mHandler != null) {
                     mHandler.post(new Runnable() {
                         @Override
@@ -124,7 +125,7 @@ public class DownloadPresenter {
             }
 
             @Override
-            public void onDownloadStop(AppItem data, int error, String msg) {
+            public void onDownloadStop(AppEntity.DataBean data, int error, String msg) {
                 if (mHandler != null) {
                     mHandler.post(new Runnable() {
                         @Override

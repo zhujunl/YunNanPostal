@@ -8,6 +8,7 @@ import com.miaxis.postal.data.dto.OrderDto;
 import com.miaxis.postal.data.dto.SimpleOrderDto;
 import com.miaxis.postal.data.dto.TempIdDto;
 import com.miaxis.postal.data.dto.UpdateDto;
+import com.miaxis.postal.data.entity.AppEntity;
 import com.miaxis.postal.data.entity.Branch;
 import com.miaxis.postal.data.entity.Customer;
 import com.miaxis.postal.util.EncryptUtil;
@@ -332,6 +333,10 @@ public class PostalApi extends BaseAPI {
                 addresseeAddress,
                 addresseePhone,
                 parts);
+    }
+
+    public static Call<ResponseEntity<List<AppEntity.DataBean>>> appInstall() {
+        return getPostalNetSync().appInstall();
     }
 
 }
