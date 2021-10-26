@@ -12,6 +12,7 @@ import com.miaxis.postal.data.bean.Intermediary;
 import com.miaxis.postal.data.bean.MxRGBImage;
 import com.miaxis.postal.data.bean.PhotoFaceFeature;
 import com.miaxis.postal.data.event.DrawRectEvent;
+import com.miaxis.postal.data.event.VerifyEvent;
 import com.miaxis.postal.util.FileUtil;
 
 import org.greenrobot.eventbus.EventBus;
@@ -172,6 +173,7 @@ public class FaceManager {
 
     private void verify(byte[] detectData) {
         try {
+            String message = "";
             long time = System.currentTimeMillis();
             byte[] zoomedRgbData = cameraPreviewConvert(detectData, CameraManager.PRE_WIDTH, CameraManager.PRE_HEIGHT, orientation, ZOOM_WIDTH, ZOOM_HEIGHT);
             if (zoomedRgbData == null) {
@@ -185,7 +187,27 @@ public class FaceManager {
                 sendEvent(new DrawRectEvent(faceNum[0], faceBuffer));
                 MXFaceInfoEx mxFaceInfoEx = sortMXFaceInfoEx(faceBuffer);
                 result = faceQuality(zoomedRgbData, ZOOM_WIDTH, ZOOM_HEIGHT, 1, new MXFaceInfoEx[]{mxFaceInfoEx});
-                if (result) {
+                if (!result) {
+                    message = "提取特征失败";
+                    sendEvent(new VerifyEvent(message));
+                } else {
+                    if (mxFaceInfoEx.eyeDistance < 30) {
+                        message = "请靠近摄像头";
+                    } else if (mxFaceInfoEx.illumination < 50) {
+                        message = "脸部过暗";
+                    } else if (mxFaceInfoEx.illumination > 200) {
+                        message = "脸部过亮";
+                    } else if (mxFaceInfoEx.blur > 30) {
+                        message = "图像模糊";
+                    } else if (mxFaceInfoEx.pitch > 20 || mxFaceInfoEx.yaw > 20 || mxFaceInfoEx.roll > 20) {
+                        message = "请正对摄像头";
+                    } else if (mxFaceInfoEx.quality < ConfigManager.getInstance().getConfig().getRegisterQualityScore()) {
+                        message = "人脸质量过低";
+                    }
+                    if (!TextUtils.isEmpty(message)) {
+                        sendEvent(new VerifyEvent(message));
+                        return;
+                    }
                     Intermediary intermediary = new Intermediary();
                     intermediary.width = ZOOM_WIDTH;
                     intermediary.height = ZOOM_HEIGHT;
