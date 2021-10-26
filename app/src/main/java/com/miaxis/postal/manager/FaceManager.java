@@ -2,10 +2,18 @@ package com.miaxis.postal.manager;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.ImageFormat;
+import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.Rect;
+import android.graphics.YuvImage;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Message;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.util.Log;
 
 import com.miaxis.postal.data.bean.Intermediary;
@@ -21,6 +29,8 @@ import org.zz.api.MXFaceInfoEx;
 import org.zz.jni.mxImageTool;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.nio.charset.StandardCharsets;
 
 public class FaceManager {
 
@@ -183,7 +193,7 @@ public class FaceManager {
             int[] faceNum = new int[]{MAX_FACE_NUM};
             MXFaceInfoEx[] faceBuffer = makeFaceContainer(faceNum[0]);
             boolean result = faceDetect(zoomedRgbData, ZOOM_WIDTH, ZOOM_HEIGHT, faceNum, faceBuffer);
-            if (result) {
+            if (result && faceNum[0] > 0) {
                 sendEvent(new DrawRectEvent(faceNum[0], faceBuffer));
                 MXFaceInfoEx mxFaceInfoEx = sortMXFaceInfoEx(faceBuffer);
                 result = faceQuality(zoomedRgbData, ZOOM_WIDTH, ZOOM_HEIGHT, 1, new MXFaceInfoEx[]{mxFaceInfoEx});
@@ -191,16 +201,16 @@ public class FaceManager {
                     message = "提取特征失败";
                     sendEvent(new VerifyEvent(message));
                 } else {
-                    if (mxFaceInfoEx.eyeDistance < 30) {
-                        message = "请靠近摄像头";
+                    if (Math.abs(mxFaceInfoEx.pitch) > 20 || Math.abs(mxFaceInfoEx.yaw) > 20 || Math.abs(mxFaceInfoEx.roll) > 20) {
+                        message = "请正对摄像头";
                     } else if (mxFaceInfoEx.illumination < 50) {
                         message = "脸部过暗";
                     } else if (mxFaceInfoEx.illumination > 200) {
                         message = "脸部过亮";
                     } else if (mxFaceInfoEx.blur > 30) {
                         message = "图像模糊";
-                    } else if (mxFaceInfoEx.pitch > 20 || mxFaceInfoEx.yaw > 20 || mxFaceInfoEx.roll > 20) {
-                        message = "请正对摄像头";
+                    } else if (mxFaceInfoEx.eyeDistance < 30) {
+                        message = "请靠近摄像头";
                     } else if (mxFaceInfoEx.quality < ConfigManager.getInstance().getConfig().getRegisterQualityScore()) {
                         message = "人脸质量过低";
                     }
@@ -218,11 +228,41 @@ public class FaceManager {
                     Log.e("asd", "检测耗时" + (System.currentTimeMillis() - time) + "-----" + mxFaceInfoEx.quality);
                 }
             } else {
-                sendEvent(new DrawRectEvent(0, null));
+                sendEvent(new VerifyEvent("未检测到人脸"));
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    Bitmap adjustPhotoRotation(Bitmap bitmap, int orientationDegree) {
+        Matrix matrix = new Matrix();
+        matrix.setRotate(orientationDegree, (float) bitmap.getWidth() / 2,
+                (float) bitmap.getHeight() / 2);
+        float targetX, targetY;
+        if (orientationDegree == 90) {
+            targetX = bitmap.getHeight();
+            targetY = 0;
+        } else {
+            targetX = bitmap.getHeight();
+            targetY = bitmap.getWidth();
+        }
+
+        final float[] values = new float[9];
+        matrix.getValues(values);
+
+        float x1 = values[Matrix.MTRANS_X];
+        float y1 = values[Matrix.MTRANS_Y];
+
+        matrix.postTranslate(targetX - x1, targetY - y1);
+
+        Bitmap canvasBitmap = Bitmap.createBitmap(bitmap.getHeight(), bitmap.getWidth(),
+                Bitmap.Config.ARGB_8888);
+
+        Paint paint = new Paint();
+        Canvas canvas = new Canvas(canvasBitmap);
+        canvas.drawBitmap(bitmap, matrix, paint);
+        return canvasBitmap;
     }
 
     private void intermediaryDataLoop() {
