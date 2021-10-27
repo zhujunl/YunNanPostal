@@ -20,6 +20,28 @@ public class ToastManager {
     private static Handler handler = new Handler(Looper.getMainLooper());
 
     public static void toast(String message, String toastMode) {
+//        handler.post(() -> {
+//            if (toast != null) {
+//                toast.cancel();
+//            }
+//            switch (toastMode) {
+//                case SUCCESS:
+////                    toast = Toasty.success(App.getInstance().getApplicationContext(), message, Toast.LENGTH_SHORT, true);
+//                    toast = Toasty.custom(App.getInstance().getApplicationContext(), message, R.drawable.ic_check_white_24dp, R.color.main_color, Toast.LENGTH_SHORT, true, true);
+//                    break;
+//                case ERROR:
+//                    toast = Toasty.error(App.getInstance().getApplicationContext(), message, Toast.LENGTH_SHORT, true);
+//                    break;
+//                case INFO:
+//                    toast = Toasty.info(App.getInstance().getApplicationContext(), message, Toast.LENGTH_SHORT, true);
+//                    break;
+//            }
+//            toast.show();
+//        });
+        toast( message,  toastMode,Toast.LENGTH_SHORT);
+    }
+
+    public static void toast(String message, String toastMode,int duration) {
         handler.post(() -> {
             if (toast != null) {
                 toast.cancel();
@@ -27,13 +49,13 @@ public class ToastManager {
             switch (toastMode) {
                 case SUCCESS:
 //                    toast = Toasty.success(App.getInstance().getApplicationContext(), message, Toast.LENGTH_SHORT, true);
-                    toast = Toasty.custom(App.getInstance().getApplicationContext(), message, R.drawable.ic_check_white_24dp, R.color.main_color, Toast.LENGTH_SHORT, true, true);
+                    toast = Toasty.custom(App.getInstance().getApplicationContext(), message, R.drawable.ic_check_white_24dp, R.color.main_color, duration, true, true);
                     break;
                 case ERROR:
-                    toast = Toasty.error(App.getInstance().getApplicationContext(), message, Toast.LENGTH_SHORT, true);
+                    toast = Toasty.error(App.getInstance().getApplicationContext(), message, duration, true);
                     break;
                 case INFO:
-                    toast = Toasty.info(App.getInstance().getApplicationContext(), message, Toast.LENGTH_SHORT, true);
+                    toast = Toasty.info(App.getInstance().getApplicationContext(), message, duration, true);
                     break;
             }
             toast.show();

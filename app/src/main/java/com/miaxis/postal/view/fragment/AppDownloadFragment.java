@@ -86,7 +86,7 @@ public class AppDownloadFragment extends BaseViewModelFragment<FragmentAppDownlo
                 .onPositive((dialog, which) -> {
                     dialog.dismiss();
                     if (!TextUtils.isEmpty(appItem.url)) {
-                        new DownloadPresenter(getContext()).downloadSuccess(appItem.AppLocalPath);
+                        new DownloadPresenter(getContext()).downloadSuccess(appItem.url);
                     } else {
                         ToastManager.toast("文件路径为空", ToastManager.INFO);
                     }
@@ -137,7 +137,7 @@ public class AppDownloadFragment extends BaseViewModelFragment<FragmentAppDownlo
             @Override
             public void onDownloadResult(boolean result, String message) {
                 if (result) {
-                    appItem.AppLocalPath = DownloadPresenter.AppPath(appItem);
+                    appItem.url = DownloadPresenter.AppPath(appItem);
                     onInstallClick(view, appItem, position);
                 } else {
                     showResultDialog(message);

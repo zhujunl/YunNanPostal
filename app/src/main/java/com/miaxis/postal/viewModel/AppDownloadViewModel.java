@@ -1,6 +1,8 @@
 package com.miaxis.postal.viewModel;
 
 
+import android.util.Log;
+
 import androidx.lifecycle.MutableLiveData;
 
 import com.miaxis.postal.app.App;
@@ -21,7 +23,24 @@ public class AppDownloadViewModel extends BaseViewModel {
     public AppDownloadViewModel() {
 
     }
-    public List<AppEntity.DataBean> getOrderList() {
+
+    public void appinstall() {
+        Observable.create((ObservableOnSubscribe<List<AppEntity.DataBean>>) emitter -> {
+            List<AppEntity.DataBean> appitemlist = AppInstallRepository.getInstance().getAppitem();
+            emitter.onNext(appitemlist);
+        }).subscribeOn(Schedulers.from(App.getInstance().getThreadExecutor()))
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(appitem -> {
+                    Log.d("lz","bbb");
+                    List<AppEntity.DataBean> LocalappInstallList = getItemList();
+                    LocalappInstallList.addAll(appitem);
+                    appInstalllist.setValue(LocalappInstallList);
+                },throwable -> {
+                    appInstalllist.setValue(null);
+                });
+    }
+
+    public List<AppEntity.DataBean> getItemList() {
         List<AppEntity.DataBean> value = appInstalllist.getValue();
         if (value == null) {
             List<AppEntity.DataBean> newArrayList = new ArrayList<>();
@@ -30,21 +49,6 @@ public class AppDownloadViewModel extends BaseViewModel {
         } else {
             return value;
         }
-    }
-
-    public void appinstall() {
-        Observable.create((ObservableOnSubscribe<List<AppEntity.DataBean>>) emitter -> {
-            List<AppEntity.DataBean> simpleOrderList = AppInstallRepository.getInstance().getAppitem();
-            emitter.onNext(simpleOrderList);
-        }).subscribeOn(Schedulers.from(App.getInstance().getThreadExecutor()))
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(appitem -> {
-                    List<AppEntity.DataBean> LocalappInstallList = getOrderList();
-                    LocalappInstallList.addAll(appitem);
-                    appInstalllist.setValue(LocalappInstallList);
-                },throwable -> {
-                    appInstalllist.setValue(null);
-                });
     }
 
     //    public boolean isAppInstalled(Context context, AppItem appItem) {

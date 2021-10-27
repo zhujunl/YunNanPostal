@@ -103,13 +103,12 @@ public class AppEntity {
             Company = company;
             this.name = name;
             this.version = version;
-            this.url = url;
             this.position = position;
-            this.AppLocalPath = DownloadPresenter.AppPath(this);
+            this.url = DownloadPresenter.AppPath(this);
         }
 
         public boolean isDownload() {
-            return new File(this.AppLocalPath).exists();
+            return new File(this.url).exists();
         }
     }
 

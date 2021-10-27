@@ -2,13 +2,16 @@ package com.miaxis.postal.viewModel;
 
 import android.text.TextUtils;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.miaxis.postal.app.App;
 import com.miaxis.postal.bridge.SingleLiveEvent;
 import com.miaxis.postal.data.entity.Courier;
+import com.miaxis.postal.data.entity.DevicesStatusEntity;
 import com.miaxis.postal.data.exception.MyException;
 import com.miaxis.postal.data.exception.NetResultFailedException;
 import com.miaxis.postal.data.model.CourierModel;
+import com.miaxis.postal.data.repository.DeviceStatusRepository;
 import com.miaxis.postal.data.repository.LoginRepository;
 import com.miaxis.postal.manager.DataCacheManager;
 import com.miaxis.postal.manager.ToastManager;
@@ -16,6 +19,7 @@ import com.miaxis.postal.util.EncryptUtil;
 
 import androidx.databinding.ObservableField;
 import androidx.lifecycle.MutableLiveData;
+
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -25,7 +29,7 @@ import io.reactivex.schedulers.Schedulers;
 public class LoginViewModel extends BaseViewModel {
 
     public MutableLiveData<Courier> courierLiveData = new MutableLiveData<>();
-
+    public MutableLiveData<DevicesStatusEntity.DataDTO> deviceslist = new MutableLiveData<DevicesStatusEntity.DataDTO>();
     public MutableLiveData<Boolean> loginResult = new SingleLiveEvent<>();
 
     public ObservableField<String> username = new ObservableField<>("");
@@ -48,6 +52,27 @@ public class LoginViewModel extends BaseViewModel {
                     username.set(courier.getPhone());
                 }, throwable -> {
                     Log.e("asd", "本地无缓存数据");
+                });
+    }
+
+    public void getDevices(String macAddress){
+        Observable.create((ObservableOnSubscribe<DevicesStatusEntity.DataDTO>) emitter -> {
+            DevicesStatusEntity.DataDTO devicesStatusEntity = DeviceStatusRepository.getInstance().getStatus(macAddress);
+            emitter.onNext(devicesStatusEntity);
+        }).subscribeOn(Schedulers.from(App.getInstance().getThreadExecutor()))
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(status -> {
+                    deviceslist.setValue(status);
+                    Log.d("lz","status:"+status.getStatus());
+                    //如果不是禁用状态则正常登录
+                    if (status.getStatus().equals("00601")){
+                        getCourier();
+                    }else {
+                        ToastManager.toast("设备已被禁用:"+status.getDisableRemark(), ToastManager.INFO,Toast.LENGTH_LONG);
+                        waitMessage.setValue(null);
+                    }
+                }, throwable -> {
+                    deviceslist.setValue(null);
                 });
     }
 

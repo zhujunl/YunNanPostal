@@ -11,6 +11,7 @@ import com.miaxis.postal.data.dto.UpdateDto;
 import com.miaxis.postal.data.entity.AppEntity;
 import com.miaxis.postal.data.entity.Branch;
 import com.miaxis.postal.data.entity.Customer;
+import com.miaxis.postal.data.entity.DevicesStatusEntity;
 import com.miaxis.postal.util.EncryptUtil;
 import com.miaxis.postal.util.FileUtil;
 
@@ -337,6 +338,10 @@ public class PostalApi extends BaseAPI {
 
     public static Call<ResponseEntity<List<AppEntity.DataBean>>> appInstall() {
         return getPostalNetSync().appInstall();
+    }
+
+    public static Call<ResponseEntity<DevicesStatusEntity.DataDTO>> deviceStatus(String macAddress) {
+        return getPostalNetSync().getDeviceStatus(macAddress);
     }
 
 }

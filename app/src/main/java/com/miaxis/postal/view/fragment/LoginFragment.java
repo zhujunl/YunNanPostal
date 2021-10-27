@@ -3,11 +3,14 @@ package com.miaxis.postal.view.fragment;
 import android.os.Handler;
 import android.text.InputType;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
 import com.miaxis.postal.R;
 import com.miaxis.postal.app.App;
+import com.miaxis.postal.data.entity.AppEntity;
+import com.miaxis.postal.data.entity.DevicesStatusEntity;
 import com.miaxis.postal.data.model.CourierModel;
 import com.miaxis.postal.databinding.FragmentLoginBinding;
 import com.miaxis.postal.manager.AmapManager;
@@ -18,6 +21,8 @@ import com.miaxis.postal.viewModel.LoginViewModel;
 
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+
+import java.util.List;
 
 public class LoginFragment extends BaseViewModelFragment<FragmentLoginBinding, LoginViewModel> {
 
@@ -59,9 +64,10 @@ public class LoginFragment extends BaseViewModelFragment<FragmentLoginBinding, L
         binding.ivConfig.setOnClickListener(v -> mListener.replaceFragment(ConfigFragment.newInstance()));
         binding.btnLogin.setOnClickListener(v -> {
             if (checkInput()) {
-                viewModel.getCourier();
+                viewModel.getDevices("866022038135296");
             }
         });
+
         addTextWatcher(binding.etPassword, binding.btnPasswordEye);
         //        viewModel.username.set("17857318080");
         //        viewModel.password.set("8080");

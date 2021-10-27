@@ -8,6 +8,7 @@ import com.miaxis.postal.data.dto.UpdateDto;
 import com.miaxis.postal.data.entity.AppEntity;
 import com.miaxis.postal.data.entity.Branch;
 import com.miaxis.postal.data.entity.Customer;
+import com.miaxis.postal.data.entity.DevicesStatusEntity;
 
 import java.util.List;
 
@@ -21,6 +22,11 @@ import retrofit2.http.POST;
 import retrofit2.http.Part;
 
 public interface PostalNet {
+
+    //查询设备状态
+    @FormUrlEncoded
+    @POST("api/v1/device/getDeviceStatus1")
+    Call<ResponseEntity<DevicesStatusEntity.DataDTO>> getDeviceStatus(@Field("macAddress") String macAddress);
 
     //获取设备状态
     @FormUrlEncoded
@@ -320,8 +326,7 @@ public interface PostalNet {
     /**
      * 加载App安装页面item
      */
-    @Multipart
-    @GET("/api/v1/company/appList")
+    @POST("api/v1/company/appList")
     Call<ResponseEntity<List<AppEntity.DataBean>>> appInstall();
 
 }

@@ -1,12 +1,16 @@
 package com.miaxis.postal.view.fragment;
 
+import android.app.FragmentManager;
+import android.content.Intent;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.miaxis.postal.R;
 import com.miaxis.postal.app.App;
 import com.miaxis.postal.data.entity.Branch;
+import com.miaxis.postal.data.entity.DevicesStatusEntity;
 import com.miaxis.postal.data.repository.LoginRepository;
 import com.miaxis.postal.databinding.FragmentHomeBinding;
 import com.miaxis.postal.manager.AmapManager;
@@ -19,11 +23,13 @@ import com.miaxis.postal.view.base.BaseViewModelFragment;
 import com.miaxis.postal.view.dialog.CardModeSelectDialogFragment;
 import com.miaxis.postal.view.dialog.EditPasswordDialogFragment;
 import com.miaxis.postal.viewModel.HomeViewModel;
+import com.miaxis.postal.viewModel.LoginViewModel;
 
 import java.util.List;
 import java.util.Objects;
 
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.SimpleItemAnimator;
@@ -32,6 +38,34 @@ public class HomeFragment extends BaseViewModelFragment<FragmentHomeBinding, Hom
 
     private BranchAdapter branchAdapter;
     private final Handler mHandler = new Handler();
+
+    private Handler handler = new Handler();
+    private Runnable task =new Runnable() {
+        public void run() {
+            // TODOAuto-generated method stub
+            handler.postDelayed(this,30*1000);//设置延迟时间
+            //需要执行的代码
+            //获取设备状态,判断设备状态是启用还是禁用
+            LoginViewModel loginViewModel = new LoginViewModel();
+            loginViewModel.getDevices("866022038135296");
+            loginViewModel.deviceslist.observe(getActivity(), new Observer<DevicesStatusEntity.DataDTO>() {
+                @Override
+                public void onChanged(DevicesStatusEntity.DataDTO dataDTO) {
+                    //如果是启用状态不做任何操作
+                    if (dataDTO.getStatus().equals("00601")){
+
+                    }else {
+                        //如果从启用状态切换到了禁用状态强制退出登录跳到登录页面
+                        getActivity().getSupportFragmentManager()
+                                .beginTransaction()
+                                .replace(R.id.home, new LoginFragment(), null)
+                                .addToBackStack(null)
+                                .commit();
+                    }
+                }
+            });
+        }
+    };
 
     public static HomeFragment newInstance() {
         return new HomeFragment();
@@ -58,6 +92,8 @@ public class HomeFragment extends BaseViewModelFragment<FragmentHomeBinding, Hom
 
     @Override
     protected void initData() {
+        //进入延时状态,一小时访问一次接口
+        handler.postDelayed(task,30000);//延迟调用
     }
 
     @Override
