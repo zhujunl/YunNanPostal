@@ -67,7 +67,6 @@ public class LoginFragment extends BaseViewModelFragment<FragmentLoginBinding, L
         binding.btnLogin.setOnClickListener(v -> {
             if (checkInput()) {
                 Config config = ConfigManager.getInstance().getConfig();
-//                viewModel.getDevices(config.getDeviceIMEI());
                 viewModel.getCourier(config.getDeviceIMEI());
             }
         });

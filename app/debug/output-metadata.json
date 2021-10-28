@@ -1,0 +1,18 @@
+{
+  "version": 2,
+  "artifactType": {
+    "type": "APK",
+    "kind": "Directory"
+  },
+  "applicationId": "com.miaxis.postal",
+  "variantName": "debug",
+  "elements": [
+    {
+      "type": "SINGLE",
+      "filters": [],
+      "versionCode": 27,
+      "versionName": "1.0.27_ST",
+      "outputFile": "app-debug.apk"
+    }
+  ]
+}

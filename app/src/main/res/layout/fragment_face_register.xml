@@ -17,7 +17,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".view.fragment.FaceRegisterFragment">
+        tools:context=".view.fragment.FaceRegisterFragment"
+        android:id="@+id/face_register">
 
         <ImageView
             android:id="@+id/iv_back"

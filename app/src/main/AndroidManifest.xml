@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.miaxis.postal">
+    package="com.miaxis.postal" >
 
     <uses-feature android:name="android.hardware.usb.host" />
     <uses-feature android:name="android.hardware.camera" />
@@ -24,36 +24,32 @@
         android:name=".app.App"
         android:icon="@mipmap/ic_logo_postal"
         android:label="@string/app_name"
+        android:largeHeap="true"
         android:roundIcon="@mipmap/ic_logo_postal"
         android:supportsRtl="true"
-        android:largeHeap="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme" >
 
         <meta-data
             android:name="design_width_in_dp"
-            android:value="412"/>
-
+            android:value="412" />
         <meta-data
             android:name="design_height_in_dp"
-            android:value="732"/>
-
-<!--        <meta-data-->
-<!--            android:name="com.miaxis.postal.bridge.MyGlideAppModule"-->
-<!--            android:value="GlideModule" />-->
-
+            android:value="732" /> <!-- <meta-data -->
+        <!-- android:name="com.miaxis.postal.bridge.MyGlideAppModule" -->
+        <!-- android:value="GlideModule" /> -->
         <meta-data
             android:name="com.amap.api.v2.apikey"
             android:value="4fdf93a2fea5199ad93a40ec22f29a6b" />
 
-        <service
-            android:name="com.amap.api.location.APSService"/>
+        <service android:name="com.amap.api.location.APSService" />
 
         <receiver
             android:name=".bridge.BootReceiver"
             android:enabled="true"
-            android:exported="true">
+            android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </receiver>
@@ -62,16 +58,17 @@
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"
             android:exported="false"
-            android:grantUriPermissions="true">
+            android:grantUriPermissions="true" >
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <activity android:name=".view.activity.MainActivity"
+        <activity
+            android:name=".view.activity.MainActivity"
             android:launchMode="singleInstance"
-            android:windowSoftInputMode="adjustPan"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -79,12 +76,11 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name=".bridge.BootBroadcastReceiver">
+        <receiver android:name=".bridge.BootBroadcastReceiver" >
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
-
     </application>
 
 </manifest>

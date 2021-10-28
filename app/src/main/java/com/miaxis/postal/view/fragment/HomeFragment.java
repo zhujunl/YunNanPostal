@@ -11,6 +11,7 @@ import com.miaxis.postal.R;
 import com.miaxis.postal.app.App;
 import com.miaxis.postal.data.entity.Branch;
 import com.miaxis.postal.data.entity.Config;
+import com.miaxis.postal.data.entity.Courier;
 import com.miaxis.postal.data.entity.DevicesStatusEntity;
 import com.miaxis.postal.data.repository.LoginRepository;
 import com.miaxis.postal.databinding.FragmentHomeBinding;
@@ -42,35 +43,6 @@ public class HomeFragment extends BaseViewModelFragment<FragmentHomeBinding, Hom
     private BranchAdapter branchAdapter;
     private final Handler mHandler = new Handler();
 
-//    private Handler handler = new Handler();
-//    private Runnable task =new Runnable() {
-//        public void run() {
-//            // TODOAuto-generated method stub
-//            handler.postDelayed(this,30*1000);//设置延迟时间
-//            //需要执行的代码
-//            //获取设备状态,判断设备状态是启用还是禁用
-//            LoginViewModel loginViewModel = new LoginViewModel();
-//            Config config = ConfigManager.getInstance().getConfig();
-//            loginViewModel.getDevices(config.getDeviceIMEI());
-//            loginViewModel.deviceslist.observe(getActivity(), new Observer<DevicesStatusEntity.DataDTO>() {
-//                @Override
-//                public void onChanged(DevicesStatusEntity.DataDTO dataDTO) {
-//                    //如果是启用状态不做任何操作
-//                    if (dataDTO.getStatus().equals(ValueUtil.DEVICE_ENABLE)){
-//
-//                    }else {
-//                        //如果从启用状态切换到了禁用状态强制退出登录跳到登录页面
-//                        getActivity().getSupportFragmentManager()
-//                                .beginTransaction()
-//                                .replace(R.id.home, new LoginFragment(), null)
-//                                .addToBackStack(null)
-//                                .commit();
-//                    }
-//                }
-//            });
-//        }
-//    };
-
     public static HomeFragment newInstance() {
         return new HomeFragment();
     }
@@ -78,6 +50,36 @@ public class HomeFragment extends BaseViewModelFragment<FragmentHomeBinding, Hom
     public HomeFragment() {
         // Required empty public constructor
     }
+
+    private Handler deviceHandler = new Handler();
+    private Runnable task =new Runnable() {
+        public void run() {
+            // TODOAuto-generated method stub
+            deviceHandler.postDelayed(this,10*1000);//设置延迟时间
+            //需要执行的代码
+            //获取设备状态,判断设备状态是启用还是禁用
+            LoginViewModel loginViewModel = new LoginViewModel();
+            Config config = ConfigManager.getInstance().getConfig();
+            loginViewModel.getDevices(config.getDeviceIMEI());
+            loginViewModel.deviceslist.observe(getActivity(), new Observer<DevicesStatusEntity.DataDTO>() {
+                @Override
+                public void onChanged(DevicesStatusEntity.DataDTO dataDTO) {
+                    //如果是启用状态不做任何操作
+                    if (dataDTO.getStatus().equals(ValueUtil.DEVICE_ENABLE)){
+
+                    }else {
+                        //如果从启用状态切换到了禁用状态强制退出登录跳到登录页面
+                        getActivity().getSupportFragmentManager()
+                                .beginTransaction()
+                                .replace(R.id.home, new LoginFragment(), null)
+                                .addToBackStack(null)
+                                .commit();
+                    }
+                }
+            });
+
+        }
+    };
 
     @Override
     protected int setContentView() {
@@ -97,7 +99,7 @@ public class HomeFragment extends BaseViewModelFragment<FragmentHomeBinding, Hom
     @Override
     protected void initData() {
         //进入延时状态,一小时访问一次接口
-//        handler.postDelayed(task,30000);//延迟调用
+        deviceHandler.postDelayed(task,3600000);//延迟调用
     }
 
     @Override

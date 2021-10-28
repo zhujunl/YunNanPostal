@@ -14,7 +14,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".view.fragment.InspectFragment">
+        tools:context=".view.fragment.InspectFragment"
+        android:id="@+id/inspect">
 
         <TextView
             android:layout_width="0dp"

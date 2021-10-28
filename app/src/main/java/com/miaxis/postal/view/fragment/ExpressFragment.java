@@ -2,6 +2,7 @@ package com.miaxis.postal.view.fragment;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.os.Handler;
 import android.text.InputFilter;
 import android.text.TextUtils;
 import android.util.Log;
@@ -10,18 +11,23 @@ import android.view.View;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.miaxis.postal.R;
 import com.miaxis.postal.app.App;
+import com.miaxis.postal.data.entity.Config;
+import com.miaxis.postal.data.entity.DevicesStatusEntity;
 import com.miaxis.postal.data.entity.Express;
 import com.miaxis.postal.data.entity.IDCardRecord;
 import com.miaxis.postal.data.event.ExpressEditEvent;
 import com.miaxis.postal.databinding.FragmentExpressBinding;
+import com.miaxis.postal.manager.ConfigManager;
 import com.miaxis.postal.manager.ScanManager;
 import com.miaxis.postal.manager.ToastManager;
 import com.miaxis.postal.util.EmojiExcludeFilter;
+import com.miaxis.postal.util.ValueUtil;
 import com.miaxis.postal.view.adapter.ExpressAdapter;
 import com.miaxis.postal.view.adapter.SpacesItemDecoration;
 import com.miaxis.postal.view.auxiliary.OnLimitClickHelper;
 import com.miaxis.postal.view.base.BaseViewModelFragment;
 import com.miaxis.postal.viewModel.ExpressViewModel;
+import com.miaxis.postal.viewModel.LoginViewModel;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -49,6 +55,8 @@ public class ExpressFragment extends BaseViewModelFragment<FragmentExpressBindin
 
     private boolean draft = false;
 
+
+
     public static ExpressFragment newInstance(IDCardRecord idCardRecord) {
         Log.e("ExpressFragment", "newInstance:" + idCardRecord);
         ExpressFragment fragment = new ExpressFragment();
@@ -67,6 +75,35 @@ public class ExpressFragment extends BaseViewModelFragment<FragmentExpressBindin
         return fragment;
     }
 
+    private Handler deviceHandler = new Handler();
+    private Runnable task =new Runnable() {
+        public void run() {
+            // TODOAuto-generated method stub
+            deviceHandler.postDelayed(this,10*1000);//设置延迟时间
+            //需要执行的代码
+            //获取设备状态,判断设备状态是启用还是禁用
+            LoginViewModel loginViewModel = new LoginViewModel();
+            Config config = ConfigManager.getInstance().getConfig();
+            loginViewModel.getDevices(config.getDeviceIMEI());
+            loginViewModel.deviceslist.observe(getActivity(), new Observer<DevicesStatusEntity.DataDTO>() {
+                @Override
+                public void onChanged(DevicesStatusEntity.DataDTO dataDTO) {
+                    //如果是启用状态不做任何操作
+                    if (dataDTO.getStatus().equals(ValueUtil.DEVICE_ENABLE)){
+
+                    }else {
+                        //如果从启用状态切换到了禁用状态强制退出登录跳到登录页面
+                        getActivity().getSupportFragmentManager()
+                                .beginTransaction()
+                                .replace(R.id.express, new LoginFragment(), null)
+                                .addToBackStack(null)
+                                .commit();
+                    }
+                }
+            });
+
+        }
+    };
 
     public ExpressFragment() {
         // Required empty public constructor
@@ -90,6 +127,8 @@ public class ExpressFragment extends BaseViewModelFragment<FragmentExpressBindin
     @Override
     protected void initData() {
         viewModel.idCardRecord.set(idCardRecord);
+        //进入延时状态,一小时访问一次接口
+        deviceHandler.postDelayed(task,3600000);//延迟调用
     }
 
     @Override

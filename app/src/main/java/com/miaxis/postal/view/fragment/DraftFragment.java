@@ -1,14 +1,21 @@
 package com.miaxis.postal.view.fragment;
 
+import android.os.Handler;
+
 import com.miaxis.postal.BR;
 import com.miaxis.postal.R;
+import com.miaxis.postal.data.entity.Config;
+import com.miaxis.postal.data.entity.DevicesStatusEntity;
 import com.miaxis.postal.data.entity.Draft;
 import com.miaxis.postal.data.entity.DraftMessage;
 import com.miaxis.postal.data.entity.Express;
 import com.miaxis.postal.databinding.FragmentDraftBinding;
+import com.miaxis.postal.manager.ConfigManager;
+import com.miaxis.postal.util.ValueUtil;
 import com.miaxis.postal.view.adapter.DraftAdapter;
 import com.miaxis.postal.view.base.BaseViewModelFragment;
 import com.miaxis.postal.viewModel.DraftViewModel;
+import com.miaxis.postal.viewModel.LoginViewModel;
 
 import java.util.List;
 
@@ -27,6 +34,36 @@ public class DraftFragment extends BaseViewModelFragment<FragmentDraftBinding, D
     private String filter = "";
     private int page = 1;
     private int localCount = 0;
+
+    private Handler deviceHandler = new Handler();
+    private Runnable task =new Runnable() {
+        public void run() {
+            // TODOAuto-generated method stub
+            deviceHandler.postDelayed(this,10*1000);//设置延迟时间
+            //需要执行的代码
+            //获取设备状态,判断设备状态是启用还是禁用
+            LoginViewModel loginViewModel = new LoginViewModel();
+            Config config = ConfigManager.getInstance().getConfig();
+            loginViewModel.getDevices(config.getDeviceIMEI());
+            loginViewModel.deviceslist.observe(getActivity(), new Observer<DevicesStatusEntity.DataDTO>() {
+                @Override
+                public void onChanged(DevicesStatusEntity.DataDTO dataDTO) {
+                    //如果是启用状态不做任何操作
+                    if (dataDTO.getStatus().equals(ValueUtil.DEVICE_ENABLE)){
+
+                    }else {
+                        //如果从启用状态切换到了禁用状态强制退出登录跳到登录页面
+                        getActivity().getSupportFragmentManager()
+                                .beginTransaction()
+                                .replace(R.id.draft, new LoginFragment(), null)
+                                .addToBackStack(null)
+                                .commit();
+                    }
+                }
+            });
+
+        }
+    };
 
     public static DraftFragment newInstance() {
         return new DraftFragment();
@@ -56,6 +93,9 @@ public class DraftFragment extends BaseViewModelFragment<FragmentDraftBinding, D
         viewModel.refreshing.observe(this, refreshingObserver);
         viewModel.draftList.observe(this, draftListObserver);
         viewModel.draftMessageSearch.observe(this, draftMessageSearchObserver);
+
+        //进入延时状态,一小时访问一次接口
+        deviceHandler.postDelayed(task,3600000);//延迟调用
     }
 
     @Override

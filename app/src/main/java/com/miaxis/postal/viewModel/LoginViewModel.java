@@ -56,8 +56,25 @@ public class LoginViewModel extends BaseViewModel {
                 });
     }
 
-    public void getDevices(){
-
+    public void getDevices(String macAddress){
+        Observable.create((ObservableOnSubscribe<DevicesStatusEntity.DataDTO>) emitter -> {
+            DevicesStatusEntity.DataDTO devicesStatusEntity = DeviceStatusRepository.getInstance().getStatus(macAddress);
+            emitter.onNext(devicesStatusEntity);
+        }).subscribeOn(Schedulers.from(App.getInstance().getThreadExecutor()))
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(status -> {
+                    deviceslist.setValue(status);
+                    Log.d("lz","status:"+status.getStatus());
+                    //如果不是禁用状态则正常登录
+                    if (status.getStatus().equals(ValueUtil.DEVICE_ENABLE)){
+                        getCourier(macAddress);
+                    }else {
+                        ToastManager.toast("设备已被禁用:"+status.getDisableRemark(), ToastManager.INFO,Toast.LENGTH_LONG);
+                        waitMessage.setValue(null);
+                    }
+                }, throwable -> {
+                    deviceslist.setValue(null);
+                });
     }
 
     public void getCourier(String macAddress) {

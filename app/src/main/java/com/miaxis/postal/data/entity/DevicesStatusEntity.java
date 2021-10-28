@@ -31,27 +31,10 @@ public class DevicesStatusEntity {
     }
 
     public static class DataDTO {
-        private int id;
         private String macAddress;
-        private String lat;
-        private String lng;
-        private String orgCode;
-        private String orgNode;
         private String status;
         private String disableRemark;
-        private String createTime;
-        private String updateTime;
-        private String heartBeatTime;
-        private String isLogin;
-        private String systemOrgCode;
-
-        public int getId() {
-            return id;
-        }
-
-        public void setId(int id) {
-            this.id = id;
-        }
+        private String enableRemark;
 
         public String getMacAddress() {
             return macAddress;
@@ -59,38 +42,6 @@ public class DevicesStatusEntity {
 
         public void setMacAddress(String macAddress) {
             this.macAddress = macAddress;
-        }
-
-        public String getLat() {
-            return lat;
-        }
-
-        public void setLat(String lat) {
-            this.lat = lat;
-        }
-
-        public String getLng() {
-            return lng;
-        }
-
-        public void setLng(String lng) {
-            this.lng = lng;
-        }
-
-        public String getOrgCode() {
-            return orgCode;
-        }
-
-        public void setOrgCode(String orgCode) {
-            this.orgCode = orgCode;
-        }
-
-        public String getOrgNode() {
-            return orgNode;
-        }
-
-        public void setOrgNode(String orgNode) {
-            this.orgNode = orgNode;
         }
 
         public String getStatus() {
@@ -109,44 +60,12 @@ public class DevicesStatusEntity {
             this.disableRemark = disableRemark;
         }
 
-        public String getCreateTime() {
-            return createTime;
+        public String getEnableRemark() {
+            return enableRemark;
         }
 
-        public void setCreateTime(String createTime) {
-            this.createTime = createTime;
-        }
-
-        public String getUpdateTime() {
-            return updateTime;
-        }
-
-        public void setUpdateTime(String updateTime) {
-            this.updateTime = updateTime;
-        }
-
-        public String getHeartBeatTime() {
-            return heartBeatTime;
-        }
-
-        public void setHeartBeatTime(String heartBeatTime) {
-            this.heartBeatTime = heartBeatTime;
-        }
-
-        public String getIsLogin() {
-            return isLogin;
-        }
-
-        public void setIsLogin(String isLogin) {
-            this.isLogin = isLogin;
-        }
-
-        public String getSystemOrgCode() {
-            return systemOrgCode;
-        }
-
-        public void setSystemOrgCode(String systemOrgCode) {
-            this.systemOrgCode = systemOrgCode;
+        public void setEnableRemark(String enableRemark) {
+            this.enableRemark = enableRemark;
         }
     }
 }

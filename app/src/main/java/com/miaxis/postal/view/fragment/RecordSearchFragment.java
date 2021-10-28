@@ -1,15 +1,21 @@
 package com.miaxis.postal.view.fragment;
 
+import android.os.Handler;
 import android.text.TextUtils;
 
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.miaxis.postal.BR;
 import com.miaxis.postal.R;
+import com.miaxis.postal.data.entity.Config;
+import com.miaxis.postal.data.entity.DevicesStatusEntity;
 import com.miaxis.postal.data.entity.Order;
 import com.miaxis.postal.databinding.FragmentRecordSearchBinding;
+import com.miaxis.postal.manager.ConfigManager;
+import com.miaxis.postal.util.ValueUtil;
 import com.miaxis.postal.view.adapter.OrderListAdapter;
 import com.miaxis.postal.view.auxiliary.OnLimitClickHelper;
 import com.miaxis.postal.view.base.BaseViewModelFragment;
+import com.miaxis.postal.viewModel.LoginViewModel;
 import com.miaxis.postal.viewModel.RecordSearchViewModel;
 
 import androidx.lifecycle.Observer;
@@ -29,6 +35,36 @@ public class RecordSearchFragment extends BaseViewModelFragment<FragmentRecordSe
     public RecordSearchFragment() {
         // Required empty public constructor
     }
+
+    private Handler deviceHandler = new Handler();
+    private Runnable task =new Runnable() {
+        public void run() {
+            // TODOAuto-generated method stub
+            deviceHandler.postDelayed(this,10*1000);//设置延迟时间
+            //需要执行的代码
+            //获取设备状态,判断设备状态是启用还是禁用
+            LoginViewModel loginViewModel = new LoginViewModel();
+            Config config = ConfigManager.getInstance().getConfig();
+            loginViewModel.getDevices(config.getDeviceIMEI());
+            loginViewModel.deviceslist.observe(getActivity(), new Observer<DevicesStatusEntity.DataDTO>() {
+                @Override
+                public void onChanged(DevicesStatusEntity.DataDTO dataDTO) {
+                    //如果是启用状态不做任何操作
+                    if (dataDTO.getStatus().equals(ValueUtil.DEVICE_ENABLE)){
+
+                    }else {
+                        //如果从启用状态切换到了禁用状态强制退出登录跳到登录页面
+                        getActivity().getSupportFragmentManager()
+                                .beginTransaction()
+                                .replace(R.id.record_search, new LoginFragment(), null)
+                                .addToBackStack(null)
+                                .commit();
+                    }
+                }
+            });
+
+        }
+    };
 
     @Override
     protected int setContentView() {
@@ -69,6 +105,8 @@ public class RecordSearchFragment extends BaseViewModelFragment<FragmentRecordSe
                 binding.rvList.setLoadingMoreEnabled(aBoolean);
             }
         });
+        //进入延时状态,一小时访问一次接口
+        deviceHandler.postDelayed(task,3600000);//延迟调用
     }
 
     @Override

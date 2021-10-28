@@ -14,7 +14,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".view.fragment.RecordTabFragment">
+        tools:context=".view.fragment.RecordTabFragment"
+        android:id="@+id/record_tab">
 
         <TextView
             android:layout_width="0dp"

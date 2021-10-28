@@ -17,7 +17,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".view.fragment.CameraFragment">
+        tools:context=".view.fragment.CameraFragment"
+        android:id="@+id/camera_devices">
 
         <FrameLayout
             android:id="@+id/fl_camera"
