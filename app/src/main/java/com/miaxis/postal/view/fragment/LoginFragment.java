@@ -10,10 +10,12 @@ import android.widget.ImageButton;
 import com.miaxis.postal.R;
 import com.miaxis.postal.app.App;
 import com.miaxis.postal.data.entity.AppEntity;
+import com.miaxis.postal.data.entity.Config;
 import com.miaxis.postal.data.entity.DevicesStatusEntity;
 import com.miaxis.postal.data.model.CourierModel;
 import com.miaxis.postal.databinding.FragmentLoginBinding;
 import com.miaxis.postal.manager.AmapManager;
+import com.miaxis.postal.manager.ConfigManager;
 import com.miaxis.postal.manager.ToastManager;
 import com.miaxis.postal.util.ValueUtil;
 import com.miaxis.postal.view.base.BaseViewModelFragment;
@@ -64,7 +66,9 @@ public class LoginFragment extends BaseViewModelFragment<FragmentLoginBinding, L
         binding.ivConfig.setOnClickListener(v -> mListener.replaceFragment(ConfigFragment.newInstance()));
         binding.btnLogin.setOnClickListener(v -> {
             if (checkInput()) {
-                viewModel.getDevices("866022038135296");
+                Config config = ConfigManager.getInstance().getConfig();
+//                viewModel.getDevices(config.getDeviceIMEI());
+                viewModel.getCourier(config.getDeviceIMEI());
             }
         });
 

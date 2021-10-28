@@ -8,8 +8,8 @@ android {
         applicationId "com.miaxis.postal"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 24
-        versionName "1.0.24_ST"
+        versionCode 27
+        versionName "1.0.27_ST"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         javaCompileOptions {
             annotationProcessorOptions {

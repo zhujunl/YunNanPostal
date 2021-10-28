@@ -16,6 +16,7 @@ import com.miaxis.postal.data.repository.LoginRepository;
 import com.miaxis.postal.manager.DataCacheManager;
 import com.miaxis.postal.manager.ToastManager;
 import com.miaxis.postal.util.EncryptUtil;
+import com.miaxis.postal.util.ValueUtil;
 
 import androidx.databinding.ObservableField;
 import androidx.lifecycle.MutableLiveData;
@@ -55,28 +56,11 @@ public class LoginViewModel extends BaseViewModel {
                 });
     }
 
-    public void getDevices(String macAddress){
-        Observable.create((ObservableOnSubscribe<DevicesStatusEntity.DataDTO>) emitter -> {
-            DevicesStatusEntity.DataDTO devicesStatusEntity = DeviceStatusRepository.getInstance().getStatus(macAddress);
-            emitter.onNext(devicesStatusEntity);
-        }).subscribeOn(Schedulers.from(App.getInstance().getThreadExecutor()))
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(status -> {
-                    deviceslist.setValue(status);
-                    Log.d("lz","status:"+status.getStatus());
-                    //如果不是禁用状态则正常登录
-                    if (status.getStatus().equals("00601")){
-                        getCourier();
-                    }else {
-                        ToastManager.toast("设备已被禁用:"+status.getDisableRemark(), ToastManager.INFO,Toast.LENGTH_LONG);
-                        waitMessage.setValue(null);
-                    }
-                }, throwable -> {
-                    deviceslist.setValue(null);
-                });
+    public void getDevices(){
+
     }
 
-    public void getCourier() {
+    public void getCourier(String macAddress) {
         waitMessage.setValue("登录中，请稍后");
         Disposable subscribe = Observable.create((ObservableOnSubscribe<Courier>) emitter -> {
             Courier courier = LoginRepository.getInstance().getCourierByPhoneSync(username.get());
@@ -86,9 +70,26 @@ public class LoginViewModel extends BaseViewModel {
                 .doOnNext(CourierModel::saveCourier)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(courier -> {
-                    waitMessage.setValue("");
-                    courierLiveData.setValue(courier);
-                    startLogin(courier);
+                    Observable.create((ObservableOnSubscribe<DevicesStatusEntity.DataDTO>) emitter -> {
+                        DevicesStatusEntity.DataDTO devicesStatusEntity = DeviceStatusRepository.getInstance().getStatus(macAddress);
+                        emitter.onNext(devicesStatusEntity);
+                    }).subscribeOn(Schedulers.from(App.getInstance().getThreadExecutor()))
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(status -> {
+                                deviceslist.setValue(status);
+                                Log.d("lz","status:"+status.getStatus());
+                                //如果不是禁用状态则正常登录
+                                if (status.getStatus().equals(ValueUtil.DEVICE_ENABLE)){
+                                    waitMessage.setValue("");
+                                    courierLiveData.setValue(courier);
+                                    startLogin(courier);
+                                }else {
+                                    ToastManager.toast("设备已被禁用:"+status.getDisableRemark(), ToastManager.INFO,Toast.LENGTH_LONG);
+                                    waitMessage.setValue(null);
+                                }
+                            }, throwable -> {
+                                deviceslist.setValue(null);
+                            });
                 }, throwable -> {
                     waitMessage.setValue("");
                     if (throwable instanceof NetResultFailedException) {
