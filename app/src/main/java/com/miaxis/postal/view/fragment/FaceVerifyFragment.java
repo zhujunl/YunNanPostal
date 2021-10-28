@@ -13,6 +13,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.miaxis.postal.R;
 import com.miaxis.postal.data.entity.Customer;
 import com.miaxis.postal.data.entity.IDCardRecord;
+import com.miaxis.postal.data.event.VerifyEvent;
 import com.miaxis.postal.databinding.FragmentFaceVerifyBinding;
 import com.miaxis.postal.manager.CameraManager;
 import com.miaxis.postal.manager.TTSManager;
@@ -27,6 +28,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 public class FaceVerifyFragment extends BaseViewModelFragment<FragmentFaceVerifyBinding, FaceVerifyViewModel> {
 
@@ -72,6 +77,7 @@ public class FaceVerifyFragment extends BaseViewModelFragment<FragmentFaceVerify
         if (getArguments() != null) {
             isAgreementCustomer = getArguments().getBoolean("agreementCustomer", false);
         }
+        EventBus.getDefault().register(this);
     }
 
 
@@ -123,6 +129,11 @@ public class FaceVerifyFragment extends BaseViewModelFragment<FragmentFaceVerify
         }));
         binding.fabAlarm.setOnLongClickListener(alarmListener);
         handler.post(countDownRunnable);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onVerifyEvent(VerifyEvent verifyEvent) {
+        binding.tvHint.setText(verifyEvent.getMessage());
     }
 
     @Override
@@ -215,7 +226,7 @@ public class FaceVerifyFragment extends BaseViewModelFragment<FragmentFaceVerify
     };
 
     private View.OnLongClickListener alarmListener = v -> {
-        viewModel.alarm();
+        //viewModel.alarm();
         return false;
     };
 
@@ -309,4 +320,10 @@ public class FaceVerifyFragment extends BaseViewModelFragment<FragmentFaceVerify
         this.idCardRecord = idCardRecord;
     }
 
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+    }
 }

@@ -352,7 +352,7 @@ public class AgreementCustomersFragment extends BaseViewModelFragment<FragmentAg
     });
 
     private View.OnLongClickListener alarmListener = v -> {
-        viewModel.alarm();
+        //viewModel.alarm();
         return false;
     };
 

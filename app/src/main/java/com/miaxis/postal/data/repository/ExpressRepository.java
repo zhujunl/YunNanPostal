@@ -149,6 +149,13 @@ public class ExpressRepository {
                     chekStatus,
                     photos).execute();
         } else {
+            if (TextUtils.isEmpty(express.getGoodsNumber())) {
+                try {
+                    deleteExpress(express);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
             execute = PostalApi.saveOrderFromAppSync(
                     express.getOrgCode(),
                     express.getOrgNode(),
@@ -181,7 +188,7 @@ public class ExpressRepository {
         try {
             Call<ResponseEntity> responseEntityCall = PostalApi.deleteWebPicture(path);
             Response<ResponseEntity> execute = responseEntityCall.execute();
-            //            ResponseEntity body = execute.body();
+            //ResponseEntity body = execute.body();
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -93,6 +93,8 @@ public class FaceVerifyViewModel extends BaseViewModel {
                 });
     }
 
+
+
     public void stopFaceVerify() {
         FaceManager.getInstance().stopLoop();
         FaceManager.getInstance().setFeatureListener(null);

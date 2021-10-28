@@ -127,6 +127,9 @@ public class HomeFragment extends BaseViewModelFragment<FragmentHomeBinding, Hom
         binding.clMine.setOnClickListener(v -> {
             mListener.replaceFragment(MineBranchFragment.newInstance());
         });
+        binding.clStatistical.setOnClickListener(v -> {
+            mListener.replaceFragment(StatisticalFragment.newInstance());
+        });
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         binding.rvBranches.setLayoutManager(linearLayoutManager);
         branchAdapter = new BranchAdapter(getContext());

@@ -236,7 +236,7 @@ public class FingerVerifyFragment extends BaseViewModelFragment<FragmentFingerVe
     private Observer<Boolean> saveFlagObserver = flag -> mListener.backToStack(HomeFragment.class);
 
     private View.OnLongClickListener alarmListener = v -> {
-        viewModel.alarm();
+        //viewModel.alarm();
         return false;
     };
 

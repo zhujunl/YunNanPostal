@@ -137,7 +137,7 @@ public class CardFragment extends BaseViewModelFragment<FragmentCardBinding, Car
     private Observer<Boolean> saveFlagObserver = flag -> mListener.backToStack(HomeFragment.class);
 
     private View.OnLongClickListener alarmListener = v -> {
-        viewModel.alarm();
+        //viewModel.alarm();
         return false;
     };
 

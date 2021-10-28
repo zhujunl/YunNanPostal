@@ -121,7 +121,7 @@ public class ManualFragment extends BaseViewModelFragment<FragmentManualBinding,
             }
         }));
         binding.fabAlarm.setOnLongClickListener(v -> {
-            viewModel.alarm();
+            //viewModel.alarm();
             return false;
         });
         EventBus.getDefault().register(this);

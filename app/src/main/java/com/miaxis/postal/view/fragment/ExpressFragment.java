@@ -328,7 +328,7 @@ public class ExpressFragment extends BaseViewModelFragment<FragmentExpressBindin
     });
 
     private View.OnLongClickListener alarmListener = v -> {
-        viewModel.alarm();
+        //viewModel.alarm();
         return false;
     };
 
