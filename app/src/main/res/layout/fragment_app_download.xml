@@ -26,8 +26,8 @@
             android:text="邮政业APP安装"
             android:textSize="20sp"
             appItem:layout_constraintBottom_toBottomOf="@id/iv_back"
-            appItem:layout_constraintEnd_toEndOf="parent"
-            appItem:layout_constraintStart_toStartOf="parent"
+            appItem:layout_constraintEnd_toStartOf="@id/iv_refresh"
+            appItem:layout_constraintStart_toEndOf="@id/iv_back"
             appItem:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
@@ -41,6 +41,17 @@
             appItem:layout_constraintStart_toStartOf="parent"
             appItem:layout_constraintTop_toTopOf="parent" />
 
+        <ImageView
+            android:id="@+id/iv_refresh"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/custom_toolbar_height"
+            android:adjustViewBounds="true"
+            android:padding="13dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_refresh"
+            appItem:layout_constraintRight_toRightOf="parent"
+            appItem:layout_constraintTop_toTopOf="parent" />
+
         <View
             android:id="@+id/v_line"
             android:layout_width="0dp"
@@ -49,7 +60,6 @@
             appItem:layout_constraintEnd_toEndOf="parent"
             appItem:layout_constraintStart_toStartOf="parent"
             appItem:layout_constraintTop_toBottomOf="@id/iv_back" />
-
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_apps"

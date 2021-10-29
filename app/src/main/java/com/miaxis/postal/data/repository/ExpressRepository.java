@@ -8,6 +8,7 @@ import com.miaxis.postal.data.entity.Express;
 import com.miaxis.postal.data.entity.TempId;
 import com.miaxis.postal.data.exception.MyException;
 import com.miaxis.postal.data.exception.NetResultFailedException;
+import com.miaxis.postal.data.exception.OrderNumberRepeatException;
 import com.miaxis.postal.data.model.ExpressModel;
 import com.miaxis.postal.data.net.PostalApi;
 import com.miaxis.postal.data.net.ResponseEntity;
@@ -44,7 +45,7 @@ public class ExpressRepository {
      * ================================ 静态内部类单例 ================================
      **/
 
-    public void uploadLocalExpress(Express express, TempId tempId, Integer warnLogId, String sendName, int chekStatus) throws IOException, MyException, NetResultFailedException {
+    public void uploadLocalExpress(Express express, TempId tempId, Integer warnLogId, String sendName, int chekStatus) throws IOException, MyException, NetResultFailedException ,OrderNumberRepeatException{
         //上传订单图片 判断是否一致
         List<String> stringList = new ArrayList<>();
         if (!ListUtils.isNullOrEmpty(express.getPhotoPathList())) {
@@ -101,7 +102,9 @@ public class ExpressRepository {
         try {
             ResponseEntity body = execute.body();
             if (body != null) {
-                if (!TextUtils.equals(body.getCode(), ValueUtil.SUCCESS)) {
+                if (!TextUtils.equals(body.getCode(), ValueUtil.SUCCESS) && "保存订单失败,订单编号已存在".equals(body.getMessage())) {
+                    throw new OrderNumberRepeatException("服务端返回，" + body.getMessage());
+                } else if (!TextUtils.equals(body.getCode(), ValueUtil.SUCCESS)) {
                     throw new NetResultFailedException("服务端返回，" + body.getMessage());
                 }
             } else {
@@ -112,7 +115,7 @@ public class ExpressRepository {
                 Log.e("uploadLocalExpress", "errorBody:" + string);
                 throw new MyException("服务端返回，空数据，code:" + code + " error:" + string);
             }
-        } catch (NetResultFailedException e) {
+        } catch (NetResultFailedException | OrderNumberRepeatException e) {
             throw e;
         } catch (Exception e) {
             e.printStackTrace();

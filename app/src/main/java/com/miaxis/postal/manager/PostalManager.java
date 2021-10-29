@@ -19,6 +19,7 @@ import com.miaxis.postal.data.entity.TempId;
 import com.miaxis.postal.data.entity.WarnLog;
 import com.miaxis.postal.data.exception.MyException;
 import com.miaxis.postal.data.exception.NetResultFailedException;
+import com.miaxis.postal.data.exception.OrderNumberRepeatException;
 import com.miaxis.postal.data.repository.ExpressRepository;
 import com.miaxis.postal.data.repository.IDCardRecordRepository;
 import com.miaxis.postal.data.repository.IDCardRepository;
@@ -153,11 +154,11 @@ public class PostalManager {
                     }
                 }
                 for (Express express : expressList) {
-                    if (tempId == null) {
-                        processException(express, new NetResultFailedException("请求服务器错误"));
-                        throw new MyException("服务器请求错误");
-                    }
                     try {
+                        if (tempId == null) {
+                            processException(express, new NetResultFailedException("请求服务器错误"));
+                            throw new MyException("服务器请求错误");
+                        }
                         //是否是草稿 草稿不进行上传
                         if (!express.isDraft()) {
                             expressRepository.uploadLocalExpress(express, tempId, warnId, idCardRecord.getName(), idCardRecord.getChekStatus());
@@ -169,6 +170,9 @@ public class PostalManager {
                         e.printStackTrace();
                         Log.e(TAG, "PostalWarnRecord Exception:" + e.getMessage());
                         processException(express, e);
+                        if (e instanceof OrderNumberRepeatException && express.getBarCode() != null && express.getBarCode().startsWith(App.getInstance().BarHeader)) {
+                            express.setBarCode(App.getInstance().getRandomBarCode());
+                        }
                     }
                 }
                 if (draftCount == draftAllCount) {
@@ -205,11 +209,12 @@ public class PostalManager {
             }
         }
         for (Express express : expressList) {
-            if (tempId == null) {
-                processException(express, new NetResultFailedException("请求服务器错误"));
-                throw new MyException("服务器请求错误");
-            }
-            try {//是否草稿
+            try {
+                if (tempId == null) {
+                    processException(express, new NetResultFailedException("请求服务器错误"));
+                    throw new MyException("服务器请求错误");
+                }
+                //是否草稿
                 if (!express.isDraft()) {
                     expressRepository.uploadLocalExpress(express, tempId, null, idCardRecord.getName(), idCardRecord.getChekStatus());
                     Log.e(TAG, "数据发送 PostalNormalRecord:true");
@@ -218,8 +223,12 @@ public class PostalManager {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                Log.e("asd", "PostalNormalRecord Exception:" + e.getMessage());
+                Log.e("asd", "PostalNormalRecord Exception:" + e);
                 processException(express, e);
+                if (e instanceof OrderNumberRepeatException && express.getBarCode() != null && express.getBarCode().startsWith(App.getInstance().BarHeader)) {
+                    express.setBarCode(App.getInstance().getRandomBarCode());
+                    expressRepository.updateExpress(express);
+                }
             }
         }
         //如果当前执行完后

@@ -1,6 +1,7 @@
 package com.miaxis.postal.view.fragment;
 
 import android.text.TextUtils;
+import android.view.View;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.liulishuo.filedownloader.FileDownloader;
@@ -14,7 +15,6 @@ import com.miaxis.postal.view.presenter.DownloadPresenter;
 import com.miaxis.postal.view.presenter.download.DownloadManager;
 import com.miaxis.postal.viewModel.AppDownloadViewModel;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import androidx.lifecycle.Observer;
@@ -48,7 +48,7 @@ public class AppDownloadFragment extends BaseViewModelFragment<FragmentAppDownlo
         return com.miaxis.postal.BR.viewModel;
     }
 
-//    private final String BaseDownloadUrl = "http://14.205.75.23:8888/";
+    //    private final String BaseDownloadUrl = "http://14.205.75.23:8888/";
 
     @Override
     protected void initView() {
@@ -58,16 +58,21 @@ public class AppDownloadFragment extends BaseViewModelFragment<FragmentAppDownlo
         appListAdapter.setOnDownloadClickListener(this);
         binding.rvApps.setLayoutManager(linearLayoutManager);
         binding.rvApps.setAdapter(appListAdapter);
+        binding.ivRefresh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                viewModel.getAppList();
+            }
+        });
 
-
-        viewModel.appInstalllist.observe(this, new Observer<List<AppEntity.DataBean>>() {
+        viewModel.appInstallList.observe(this, new Observer<List<AppEntity.DataBean>>() {
             @Override
             public void onChanged(List<AppEntity.DataBean> appEntities) {
                 appListAdapter.setDataList(appEntities);
             }
         });
-//        appInstallPresenter = new AppInstallPresenter(getContext());
-        viewModel.appinstall();
+        //        appInstallPresenter = new AppInstallPresenter(getContext());
+        viewModel.getAppList();
 
     }
 

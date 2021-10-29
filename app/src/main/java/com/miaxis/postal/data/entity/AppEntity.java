@@ -35,6 +35,14 @@ public class AppEntity {
         this.data = data;
     }
 
+    @Override
+    public String toString() {
+        return "AppEntity{" +
+                "code='" + code + '\'' +
+                ", message='" + message + '\'' +
+                ", data=" + data +
+                '}';
+    }
 
     /**
      * Company:品牌
@@ -43,7 +51,7 @@ public class AppEntity {
      * url:下载地址
      */
     public static class DataBean{
-        public String Company;
+        public String orgName;
         public String name;
         public String version;
         public String url;
@@ -58,12 +66,12 @@ public class AppEntity {
             AppLocalPath = appLocalPath;
         }
 
-        public String getCompany() {
-            return Company;
+        public String getOrgName() {
+            return orgName;
         }
 
-        public void setCompany(String company) {
-            Company = company;
+        public void setOrgName(String orgName) {
+            this.orgName = orgName;
         }
 
         public String getName() {
@@ -75,7 +83,7 @@ public class AppEntity {
         }
 
         public String getVersion() {
-            return version;
+            return "V "+version;
         }
 
         public void setVersion(String version) {
@@ -99,8 +107,8 @@ public class AppEntity {
             this.position = position;
         }
 
-        public DataBean(String company, String name, String version, String url, String position) {
-            Company = company;
+        public DataBean(String orgName, String name, String version, String url, String position) {
+            this.orgName = orgName;
             this.name = name;
             this.version = version;
             this.position = position;
@@ -109,6 +117,18 @@ public class AppEntity {
 
         public boolean isDownload() {
             return new File(this.url).exists();
+        }
+
+        @Override
+        public String toString() {
+            return "DataBean{" +
+                    "orgName='" + orgName + '\'' +
+                    ", name='" + name + '\'' +
+                    ", version='" + version + '\'' +
+                    ", url='" + url + '\'' +
+                    ", AppLocalPath='" + AppLocalPath + '\'' +
+                    ", position='" + position + '\'' +
+                    '}';
         }
     }
 

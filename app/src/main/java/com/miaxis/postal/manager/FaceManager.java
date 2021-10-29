@@ -2,18 +2,13 @@ package com.miaxis.postal.manager;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.ImageFormat;
 import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.graphics.Rect;
-import android.graphics.YuvImage;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Message;
 import android.text.TextUtils;
-import android.util.Base64;
 import android.util.Log;
 
 import com.miaxis.postal.data.bean.Intermediary;
@@ -22,6 +17,7 @@ import com.miaxis.postal.data.bean.PhotoFaceFeature;
 import com.miaxis.postal.data.event.DrawRectEvent;
 import com.miaxis.postal.data.event.VerifyEvent;
 import com.miaxis.postal.util.FileUtil;
+import com.miaxis.postal.util.ValueUtil;
 
 import org.greenrobot.eventbus.EventBus;
 import org.zz.api.MXFaceAPI;
@@ -29,8 +25,6 @@ import org.zz.api.MXFaceInfoEx;
 import org.zz.jni.mxImageTool;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.nio.charset.StandardCharsets;
 
 public class FaceManager {
 
@@ -211,7 +205,7 @@ public class FaceManager {
                         message = "图像模糊";
                     } else if (mxFaceInfoEx.eyeDistance < 30) {
                         message = "请靠近摄像头";
-                    } else if (mxFaceInfoEx.quality < ConfigManager.getInstance().getConfig().getRegisterQualityScore()) {
+                    } else if (mxFaceInfoEx.quality < ValueUtil.DEFAULT_QUALITY_SCORE) {
                         message = "人脸质量过低";
                     }
                     if (!TextUtils.isEmpty(message)) {

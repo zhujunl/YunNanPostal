@@ -3,15 +3,16 @@ package com.miaxis.postal.viewModel;
 import android.text.TextUtils;
 import android.util.Base64;
 
-import androidx.databinding.ObservableField;
-import androidx.lifecycle.MutableLiveData;
-
 import com.miaxis.postal.bridge.SingleLiveEvent;
 import com.miaxis.postal.data.entity.Config;
 import com.miaxis.postal.data.entity.Courier;
 import com.miaxis.postal.manager.CameraManager;
 import com.miaxis.postal.manager.ConfigManager;
 import com.miaxis.postal.manager.FaceManager;
+import com.miaxis.postal.util.ValueUtil;
+
+import androidx.databinding.ObservableField;
+import androidx.lifecycle.MutableLiveData;
 
 public class FaceLoginViewModel extends BaseViewModel {
 
@@ -47,7 +48,7 @@ public class FaceLoginViewModel extends BaseViewModel {
                     score = FaceManager.getInstance().matchFeature(feature, Base64.decode(courier.getFaceFeature(), Base64.NO_WRAP));
                 }
                 Config config = ConfigManager.getInstance().getConfig();
-                if (mask ? score >= config.getVerifyMaskScore() : score >= config.getVerifyScore()) {
+                if (mask ? score >= ValueUtil.DEFAULT_MASK_VERIFY_SCORE : score >= ValueUtil.DEFAULT_VERIFY_SCORE) {
                     verifyFlag.postValue(Boolean.TRUE);
                     stopFaceVerify();
                     return;

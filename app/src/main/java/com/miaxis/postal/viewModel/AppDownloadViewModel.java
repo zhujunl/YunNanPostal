@@ -3,8 +3,6 @@ package com.miaxis.postal.viewModel;
 
 import android.util.Log;
 
-import androidx.lifecycle.MutableLiveData;
-
 import com.miaxis.postal.app.App;
 import com.miaxis.postal.data.entity.AppEntity;
 import com.miaxis.postal.data.repository.AppInstallRepository;
@@ -12,39 +10,44 @@ import com.miaxis.postal.data.repository.AppInstallRepository;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.lifecycle.MutableLiveData;
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
 public class AppDownloadViewModel extends BaseViewModel {
-    public MutableLiveData<List<AppEntity.DataBean>> appInstalllist = new MutableLiveData<>(new ArrayList<>());
+    public MutableLiveData<List<AppEntity.DataBean>> appInstallList = new MutableLiveData<>(new ArrayList<>());
 
     public AppDownloadViewModel() {
 
     }
 
-    public void appinstall() {
+    public void getAppList() {
+        waitMessage.setValue("正在请求中，请稍后");
         Observable.create((ObservableOnSubscribe<List<AppEntity.DataBean>>) emitter -> {
-            List<AppEntity.DataBean> appitemlist = AppInstallRepository.getInstance().getAppitem();
-            emitter.onNext(appitemlist);
+            List<AppEntity.DataBean> appItemList = AppInstallRepository.getInstance().getAppitem();
+            emitter.onNext(appItemList);
         }).subscribeOn(Schedulers.from(App.getInstance().getThreadExecutor()))
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(appitem -> {
-                    Log.d("lz","bbb");
-                    List<AppEntity.DataBean> LocalappInstallList = getItemList();
-                    LocalappInstallList.addAll(appitem);
-                    appInstalllist.setValue(LocalappInstallList);
-                },throwable -> {
-                    appInstalllist.setValue(null);
+                .subscribe(appItem -> {
+                    waitMessage.setValue(null);
+                    Log.d("lz", "bbb");
+//                    List<AppEntity.DataBean> LocalAppInstallList = getItemList();
+//                    LocalAppInstallList.addAll(appItem);
+                    appInstallList.setValue(appItem);
+                }, throwable -> {
+                    waitMessage.setValue(null);
+                    resultMessage.setValue("" + throwable);
+                    appInstallList.setValue(null);
                 });
     }
 
     public List<AppEntity.DataBean> getItemList() {
-        List<AppEntity.DataBean> value = appInstalllist.getValue();
+        List<AppEntity.DataBean> value = appInstallList.getValue();
         if (value == null) {
             List<AppEntity.DataBean> newArrayList = new ArrayList<>();
-            appInstalllist.setValue(newArrayList);
+            appInstallList.setValue(newArrayList);
             return newArrayList;
         } else {
             return value;

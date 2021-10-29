@@ -4,11 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
 
-import androidx.databinding.ObservableField;
-import androidx.lifecycle.MutableLiveData;
-
 import com.amap.api.location.AMapLocation;
-import com.bumptech.glide.load.model.StringLoader;
 import com.miaxis.postal.app.App;
 import com.miaxis.postal.bridge.SingleLiveEvent;
 import com.miaxis.postal.data.bean.PhotoFaceFeature;
@@ -17,7 +13,6 @@ import com.miaxis.postal.data.entity.Courier;
 import com.miaxis.postal.data.entity.IDCardRecord;
 import com.miaxis.postal.data.entity.WarnLog;
 import com.miaxis.postal.data.exception.MyException;
-import com.miaxis.postal.data.repository.ExpressRepository;
 import com.miaxis.postal.data.repository.IDCardRecordRepository;
 import com.miaxis.postal.data.repository.IDCardRepository;
 import com.miaxis.postal.data.repository.WarnLogRepository;
@@ -29,12 +24,12 @@ import com.miaxis.postal.manager.FaceManager;
 import com.miaxis.postal.manager.PostalManager;
 import com.miaxis.postal.manager.TTSManager;
 import com.miaxis.postal.manager.ToastManager;
-import com.miaxis.postal.util.FileUtil;
+import com.miaxis.postal.util.ValueUtil;
 
-import java.io.File;
 import java.util.Date;
-import java.util.List;
 
+import androidx.databinding.ObservableField;
+import androidx.lifecycle.MutableLiveData;
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -111,13 +106,14 @@ public class FaceVerifyViewModel extends BaseViewModel {
                 }
                 int verify;
                 Config config = ConfigManager.getInstance().getConfig();
-                if (mask ? score >= config.getVerifyMaskScore() : score >= config.getVerifyScore()) {
+                if (mask ? score >= ValueUtil.DEFAULT_MASK_VERIFY_SCORE : score >= ValueUtil.DEFAULT_VERIFY_SCORE) {
                     verify = 1;
                     TTSManager.getInstance().playVoiceMessageFlush("核验通过");
                     hint.set("人证核验成功");
                     verifyFailedFlag.postValue(Boolean.TRUE);
                 } else {
                     verify = 2;
+                    Log.e("比对", "比对失败: "+score);
                     hint.set("识别不通过");
                     verifyFailedFlag.postValue(Boolean.FALSE);
                 }
