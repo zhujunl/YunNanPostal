@@ -55,37 +55,6 @@ public class RecordUpdateFragment extends BaseViewModelFragment<FragmentRecordUp
         // Required empty public constructor
     }
 
-    private Handler deviceHandler = new Handler();
-    private Runnable task =new Runnable() {
-        public void run() {
-            // TODOAuto-generated method stub
-            deviceHandler.postDelayed(this,10*1000);//设置延迟时间
-            //需要执行的代码
-            //获取设备状态,判断设备状态是启用还是禁用
-            LoginViewModel loginViewModel = new LoginViewModel();
-            Config config = ConfigManager.getInstance().getConfig();
-            loginViewModel.getDevices(config.getDeviceIMEI());
-            loginViewModel.deviceslist.observe(getActivity(), new Observer<DevicesStatusEntity.DataDTO>() {
-                @Override
-                public void onChanged(DevicesStatusEntity.DataDTO dataDTO) {
-                    //如果是启用状态不做任何操作
-                    if (dataDTO.getStatus().equals(ValueUtil.DEVICE_ENABLE)){
-
-                    }else {
-                        //如果从启用状态切换到了禁用状态强制退出登录跳到登录页面
-                        getActivity().getSupportFragmentManager()
-                                .beginTransaction()
-                                .replace(R.id.record_update, new LoginFragment(), null)
-                                .addToBackStack(null)
-                                .commit();
-                    }
-                }
-            });
-
-        }
-    };
-
-
     @Override
     protected int setContentView() {
         return R.layout.fragment_record_update;
@@ -105,8 +74,6 @@ public class RecordUpdateFragment extends BaseViewModelFragment<FragmentRecordUp
     protected void initData() {
         viewModel.orderCodeImageUpdate.observe(this, orderCodeImageUpdateObserver);
         viewModel.updateResult.observe(this, updateResultObserver);
-        //进入延时状态,一小时访问一次接口
-        deviceHandler.postDelayed(task,3600000);//延迟调用
     }
 
     @Override
