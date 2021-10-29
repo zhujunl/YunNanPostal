@@ -64,6 +64,13 @@ public class SPUtils {
         mEditor.putInt(key, value);
         return mEditor.commit();
     }
+    public boolean write(String key, boolean value) {
+        if (mEditor == null) {
+            return false;
+        }
+        mEditor.putBoolean(key, value);
+        return mEditor.commit();
+    }
 
     public boolean write(String key, Set<String> value) {
         if (mEditor == null) {
@@ -92,6 +99,13 @@ public class SPUtils {
             return def;
         }
         return mClientAccount.getFloat(key, def);
+    }
+
+    public boolean read(String key, boolean def) {
+        if (mClientAccount == null) {
+            return false;
+        }
+        return mClientAccount.getBoolean(key, def);
     }
 
     public int read(String key, int def) {

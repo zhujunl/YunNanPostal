@@ -5,7 +5,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.miaxis.postal.R;
@@ -214,24 +216,18 @@ public class HomeFragment extends BaseViewModelFragment<FragmentHomeBinding, Hom
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        LoginViewModel loginViewModel = new LoginViewModel();
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        LoginViewModel loginViewModel =new ViewModelProvider(this, getViewModelProviderFactory()).get(LoginViewModel.class);
         Config config = ConfigManager.getInstance().getConfig();
         loginViewModel.getDevices(config.getDeviceIMEI());
         loginViewModel.deviceslist.observe(getActivity(), new Observer<DevicesStatusEntity.DataDTO>() {
             @Override
             public void onChanged(DevicesStatusEntity.DataDTO dataDTO) {
                 //如果是启用状态不做任何操作
-                if (dataDTO.getStatus().equals(ValueUtil.DEVICE_ENABLE)){
-
-                }else {
+                if (!dataDTO.getStatus().equals(ValueUtil.DEVICE_ENABLE)){
                     //如果从启用状态切换到了禁用状态强制退出登录跳到登录页面
-                    getActivity().getSupportFragmentManager()
-                            .beginTransaction()
-                            .replace(R.id.home, new LoginFragment(), null)
-                            .addToBackStack(null)
-                            .commit();
+                    mListener.replaceFragment(LoginFragment.newInstance());
                 }
             }
         });

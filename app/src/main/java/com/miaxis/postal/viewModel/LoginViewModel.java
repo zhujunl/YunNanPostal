@@ -16,6 +16,7 @@ import com.miaxis.postal.data.repository.LoginRepository;
 import com.miaxis.postal.manager.DataCacheManager;
 import com.miaxis.postal.manager.ToastManager;
 import com.miaxis.postal.util.EncryptUtil;
+import com.miaxis.postal.util.SPUtils;
 import com.miaxis.postal.util.ValueUtil;
 
 import androidx.databinding.ObservableField;
@@ -66,10 +67,18 @@ public class LoginViewModel extends BaseViewModel {
                     deviceslist.setValue(status);
                     Log.d("lz","status:"+status.getStatus());
                     //如果不是禁用状态则正常登录
+                    boolean devices_enable = SPUtils.getInstance().read("devices_enable", false);
                     if (status.getStatus().equals(ValueUtil.DEVICE_ENABLE)){
+                        if (!devices_enable){
+                            ToastManager.toast("设备已被启用:"+status.getEnableRemark(), ToastManager.INFO,Toast.LENGTH_LONG);
+                            SPUtils.getInstance().write("devices_enable",true);
+                        }
                         getCourier(macAddress);
                     }else {
-                        ToastManager.toast("设备已被禁用:"+status.getDisableRemark(), ToastManager.INFO,Toast.LENGTH_LONG);
+                        if (devices_enable){
+                            ToastManager.toast("设备已被禁用:"+status.getDisableRemark(), ToastManager.INFO,Toast.LENGTH_LONG);
+                            SPUtils.getInstance().write("devices_enable",false);
+                        }
                         waitMessage.setValue(null);
                     }
                 }, throwable -> {
@@ -96,12 +105,20 @@ public class LoginViewModel extends BaseViewModel {
                                 deviceslist.setValue(status);
                                 Log.d("lz","status:"+status.getStatus());
                                 //如果不是禁用状态则正常登录
+                                boolean devices_enable = SPUtils.getInstance().read("devices_enable", false);
                                 if (status.getStatus().equals(ValueUtil.DEVICE_ENABLE)){
+                                    if (!devices_enable){
+                                        ToastManager.toast("设备已被启用:"+status.getEnableRemark(), ToastManager.INFO,Toast.LENGTH_LONG);
+                                        SPUtils.getInstance().write("devices_enable",true);
+                                    }
                                     waitMessage.setValue("");
                                     courierLiveData.setValue(courier);
                                     startLogin(courier);
                                 }else {
-                                    ToastManager.toast("设备已被禁用:"+status.getDisableRemark(), ToastManager.INFO,Toast.LENGTH_LONG);
+                                    if (devices_enable){
+                                        ToastManager.toast("设备已被禁用:"+status.getDisableRemark(), ToastManager.INFO,Toast.LENGTH_LONG);
+                                        SPUtils.getInstance().write("devices_enable",false);
+                                    }
                                     waitMessage.setValue(null);
                                 }
                             }, throwable -> {
