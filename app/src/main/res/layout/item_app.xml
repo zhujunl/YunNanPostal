@@ -110,7 +110,7 @@
 
         <LinearLayout
             android:id="@+id/ll_operation"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             app:layout_constraintHorizontal_weight="1"
             app:layout_constraintLeft_toRightOf="@id/v_tip_2"
@@ -122,6 +122,8 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center"
+                android:paddingStart="15dp"
+                android:paddingEnd="15dp"
                 android:text="@{item.isDownload()?@string/string_install:@string/string_download}"
                 android:textSize="16sp"
                 tools:text="下载" />

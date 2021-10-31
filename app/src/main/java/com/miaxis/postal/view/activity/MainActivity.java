@@ -6,23 +6,33 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.wifi.WifiManager;
+import android.os.Bundle;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.miaxis.postal.R;
+import com.miaxis.postal.data.entity.Config;
+import com.miaxis.postal.data.entity.DevicesStatusEntity;
 import com.miaxis.postal.databinding.ActivityMainBinding;
 import com.miaxis.postal.manager.CardManager;
+import com.miaxis.postal.manager.ConfigManager;
 import com.miaxis.postal.manager.PostalManager;
 import com.miaxis.postal.util.ClearRecordFileWorker;
 import com.miaxis.postal.util.NetUtils;
+import com.miaxis.postal.util.ValueUtil;
 import com.miaxis.postal.view.base.BaseActivity;
 import com.miaxis.postal.view.base.BaseViewModelFragment;
 import com.miaxis.postal.view.base.OnFragmentInteractionListener;
+import com.miaxis.postal.view.fragment.LoginFragment;
 import com.miaxis.postal.view.fragment.PreludeFragment;
 import com.miaxis.postal.view.presenter.UpdatePresenter;
+import com.miaxis.postal.viewModel.LoginViewModel;
 
 import java.util.concurrent.TimeUnit;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
 
@@ -32,7 +42,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
     private MaterialDialog resultDialog;
     private MaterialDialog quitDialog;
     private BroadcastReceiver netReceiver;
-
+    private LoginViewModel loginViewModel;
     private String root;
     private UpdatePresenter updatePresenter;
 
@@ -44,6 +54,27 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> implements O
     @Override
     protected void initData() {
         // ScanManager.getInstance().powerOff();
+        loginViewModel = ViewModelProvider.AndroidViewModelFactory.getInstance(getApplication()).create(LoginViewModel.class);
+        //LoginViewModel loginViewModel =new ViewModelProvider(this, getViewModelProviderFactory()).get(LoginViewModel.class);
+        loginViewModel.devicesStatus.observe(this, new Observer<DevicesStatusEntity.DataDTO>() {
+            @Override
+            public void onChanged(DevicesStatusEntity.DataDTO dataDTO) {
+                //如果是启用状态不做任何操作
+                if (dataDTO != null && !dataDTO.getStatus().equals(ValueUtil.DEVICE_ENABLE)) {
+                    //如果从启用状态切换到了禁用状态强制退出登录跳到登录页面
+                    replaceFragment(LoginFragment.newInstance());
+                }
+            }
+        });
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Config config = ConfigManager.getInstance().getConfig();
+        if (config != null && loginViewModel != null) {
+            loginViewModel.getDevices(config.getDeviceIMEI());
+        }
     }
 
     @Override

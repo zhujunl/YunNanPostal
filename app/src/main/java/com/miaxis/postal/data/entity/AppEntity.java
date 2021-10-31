@@ -9,7 +9,7 @@ public class AppEntity {
 
     private String code;
     private String message;
-    private List<DataBean>data;
+    private List<DataBean> data;
 
     public String getCode() {
         return code;
@@ -50,20 +50,15 @@ public class AppEntity {
      * version:版本号
      * url:下载地址
      */
-    public static class DataBean{
+    public static class DataBean {
         public String orgName;
         public String name;
         public String version;
         public String url;
-        public String AppLocalPath;
         public String position;
 
         public String getAppLocalPath() {
-            return AppLocalPath;
-        }
-
-        public void setAppLocalPath(String appLocalPath) {
-            AppLocalPath = appLocalPath;
+            return DownloadPresenter.AppPath(this);
         }
 
         public String getOrgName() {
@@ -83,7 +78,7 @@ public class AppEntity {
         }
 
         public String getVersion() {
-            return "V "+version;
+            return "V " + version;
         }
 
         public void setVersion(String version) {
@@ -112,11 +107,11 @@ public class AppEntity {
             this.name = name;
             this.version = version;
             this.position = position;
-            this.url = DownloadPresenter.AppPath(this);
+            this.url = url;
         }
 
         public boolean isDownload() {
-            return new File(this.url).exists();
+            return new File(getAppLocalPath()).exists();
         }
 
         @Override
@@ -126,7 +121,7 @@ public class AppEntity {
                     ", name='" + name + '\'' +
                     ", version='" + version + '\'' +
                     ", url='" + url + '\'' +
-                    ", AppLocalPath='" + AppLocalPath + '\'' +
+                    ", AppLocalPath='" + getAppLocalPath() + '\'' +
                     ", position='" + position + '\'' +
                     '}';
         }

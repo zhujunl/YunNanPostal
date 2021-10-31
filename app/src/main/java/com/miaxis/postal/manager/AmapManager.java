@@ -10,11 +10,8 @@ import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
 import com.miaxis.postal.app.App;
 import com.miaxis.postal.data.entity.Config;
-import com.miaxis.postal.data.exception.MyException;
-import com.miaxis.postal.data.exception.NetResultFailedException;
 import com.miaxis.postal.data.repository.DeviceRepository;
 
-import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -77,7 +74,7 @@ public class AmapManager implements AMapLocationListener {
         void onError(String error);
     }
 
-    private long getPositionTime = 1000 * (60 * 5 - 20);
+    private final long getPositionTime = 1000 * (60 * 4);
     //    private long getPositionTime = 1000 * (20);
     private Timer timer;
 
@@ -114,13 +111,17 @@ public class AmapManager implements AMapLocationListener {
 
     public void stopLocation() {
         try {
-            if (aMapLocationClient != null) {
-                aMapLocationClient.stopLocation();
-                aMapLocationClient.unRegisterLocationListener(this);
-            }
             if (timer != null) {
                 timer.cancel();
                 timer = null;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            if (aMapLocationClient != null) {
+                aMapLocationClient.stopLocation();
+                aMapLocationClient.unRegisterLocationListener(this);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -147,7 +148,7 @@ public class AmapManager implements AMapLocationListener {
                 if (config != null && !TextUtils.isEmpty(config.getDeviceIMEI())) {
                     DeviceRepository.getInstance().deviceHeartBeat(config.getDeviceIMEI(), aMapLocation.getLatitude(), aMapLocation.getLongitude());
                 }
-            } catch (IOException | MyException | NetResultFailedException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         });

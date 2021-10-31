@@ -1,6 +1,5 @@
 package com.miaxis.postal.view.fragment;
 
-import android.text.TextUtils;
 import android.view.View;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -90,8 +89,9 @@ public class AppDownloadFragment extends BaseViewModelFragment<FragmentAppDownlo
                 .positiveText("安装")
                 .onPositive((dialog, which) -> {
                     dialog.dismiss();
-                    if (!TextUtils.isEmpty(appItem.url)) {
-                        new DownloadPresenter(getContext()).downloadSuccess(appItem.url);
+                    if (appItem.isDownload()) {
+                        ToastManager.toast("即将开始安装，请稍候", ToastManager.INFO);
+                        new DownloadPresenter(getContext()).downloadSuccess(appItem.getAppLocalPath());
                     } else {
                         ToastManager.toast("文件路径为空", ToastManager.INFO);
                     }
@@ -142,7 +142,6 @@ public class AppDownloadFragment extends BaseViewModelFragment<FragmentAppDownlo
             @Override
             public void onDownloadResult(boolean result, String message) {
                 if (result) {
-                    appItem.url = DownloadPresenter.AppPath(appItem);
                     onInstallClick(view, appItem, position);
                 } else {
                     showResultDialog(message);

@@ -31,7 +31,7 @@ import io.reactivex.schedulers.Schedulers;
 public class LoginViewModel extends BaseViewModel {
 
     public MutableLiveData<Courier> courierLiveData = new MutableLiveData<>();
-    public MutableLiveData<DevicesStatusEntity.DataDTO> deviceslist = new MutableLiveData<DevicesStatusEntity.DataDTO>();
+    public MutableLiveData<DevicesStatusEntity.DataDTO> devicesStatus = new MutableLiveData<>();
     public MutableLiveData<Boolean> loginResult = new SingleLiveEvent<>();
 
     public ObservableField<String> username = new ObservableField<>("");
@@ -57,32 +57,30 @@ public class LoginViewModel extends BaseViewModel {
                 });
     }
 
-    public void getDevices(String macAddress){
+    public void getDevices(String macAddress) {
         Observable.create((ObservableOnSubscribe<DevicesStatusEntity.DataDTO>) emitter -> {
             DevicesStatusEntity.DataDTO devicesStatusEntity = DeviceStatusRepository.getInstance().getStatus(macAddress);
             emitter.onNext(devicesStatusEntity);
         }).subscribeOn(Schedulers.from(App.getInstance().getThreadExecutor()))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(status -> {
-                    deviceslist.setValue(status);
-                    Log.d("lz","status:"+status.getStatus());
+                    devicesStatus.setValue(status);
                     //如果不是禁用状态则正常登录
                     boolean devices_enable = SPUtils.getInstance().read("devices_enable", false);
-                    if (status.getStatus().equals(ValueUtil.DEVICE_ENABLE)){
-                        if (!devices_enable){
-                            ToastManager.toast("设备已被启用:"+status.getEnableRemark(), ToastManager.INFO,Toast.LENGTH_LONG);
-                            SPUtils.getInstance().write("devices_enable",true);
+                    if (status.getStatus().equals(ValueUtil.DEVICE_ENABLE)) {
+                        if (!devices_enable) {
+                            ToastManager.toast("设备已被启用:" + status.getEnableRemark(), ToastManager.INFO, Toast.LENGTH_LONG);
+                            SPUtils.getInstance().write("devices_enable", true);
                         }
                         getCourier(macAddress);
-                    }else {
-                        if (devices_enable){
-                            ToastManager.toast("设备已被禁用:"+status.getDisableRemark(), ToastManager.INFO,Toast.LENGTH_LONG);
-                            SPUtils.getInstance().write("devices_enable",false);
+                    } else {
+                        if (devices_enable) {
+                            ToastManager.toast("设备已被禁用:" + status.getDisableRemark(), ToastManager.INFO, Toast.LENGTH_LONG);
+                            SPUtils.getInstance().write("devices_enable", false);
                         }
-                        waitMessage.setValue(null);
                     }
                 }, throwable -> {
-                    deviceslist.setValue(null);
+                    devicesStatus.setValue(null);
                 });
     }
 
@@ -102,27 +100,25 @@ public class LoginViewModel extends BaseViewModel {
                     }).subscribeOn(Schedulers.from(App.getInstance().getThreadExecutor()))
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe(status -> {
-                                deviceslist.setValue(status);
-                                Log.d("lz","status:"+status.getStatus());
+                                devicesStatus.setValue(status);
                                 //如果不是禁用状态则正常登录
-                                boolean devices_enable = SPUtils.getInstance().read("devices_enable", false);
-                                if (status.getStatus().equals(ValueUtil.DEVICE_ENABLE)){
-                                    if (!devices_enable){
-                                        ToastManager.toast("设备已被启用:"+status.getEnableRemark(), ToastManager.INFO,Toast.LENGTH_LONG);
-                                        SPUtils.getInstance().write("devices_enable",true);
+                                if (status.getStatus().equals(ValueUtil.DEVICE_ENABLE)) {
+                                    boolean devices_enable = SPUtils.getInstance().read("devices_enable", false);
+                                    if (!devices_enable) {
+                                        ToastManager.toast("设备已被启用:" + status.getEnableRemark(), ToastManager.INFO, Toast.LENGTH_LONG);
+                                        SPUtils.getInstance().write("devices_enable", true);
                                     }
                                     waitMessage.setValue("");
                                     courierLiveData.setValue(courier);
                                     startLogin(courier);
-                                }else {
-                                    if (devices_enable){
-                                        ToastManager.toast("设备已被禁用:"+status.getDisableRemark(), ToastManager.INFO,Toast.LENGTH_LONG);
-                                        SPUtils.getInstance().write("devices_enable",false);
-                                    }
+                                } else {
+                                    ToastManager.toast("设备已被禁用:" + status.getDisableRemark(), ToastManager.INFO, Toast.LENGTH_LONG);
+                                    SPUtils.getInstance().write("devices_enable", false);
                                     waitMessage.setValue(null);
                                 }
                             }, throwable -> {
-                                deviceslist.setValue(null);
+                                waitMessage.setValue("");
+                                devicesStatus.setValue(null);
                             });
                 }, throwable -> {
                     waitMessage.setValue("");

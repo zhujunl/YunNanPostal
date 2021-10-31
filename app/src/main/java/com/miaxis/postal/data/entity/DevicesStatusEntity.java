@@ -67,5 +67,24 @@ public class DevicesStatusEntity {
         public void setEnableRemark(String enableRemark) {
             this.enableRemark = enableRemark;
         }
+
+        @Override
+        public String toString() {
+            return "DataDTO{" +
+                    "macAddress='" + macAddress + '\'' +
+                    ", status='" + status + '\'' +
+                    ", disableRemark='" + disableRemark + '\'' +
+                    ", enableRemark='" + enableRemark + '\'' +
+                    '}';
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "DevicesStatusEntity{" +
+                "code='" + code + '\'' +
+                ", message='" + message + '\'' +
+                ", data=" + data +
+                '}';
     }
 }
