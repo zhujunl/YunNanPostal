@@ -10,8 +10,8 @@ import android.util.Log;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.liulishuo.filedownloader.FileDownloader;
+import com.miaxis.postal.app.App;
 import com.miaxis.postal.data.entity.AppEntity;
-import com.miaxis.postal.data.entity.AppItem;
 import com.miaxis.postal.manager.ToastManager;
 import com.miaxis.postal.util.FileUtil;
 import com.miaxis.postal.util.NetUtils;
@@ -85,7 +85,7 @@ public class DownloadPresenter {
     }
 
     public static String AppPath(@NonNull AppEntity.DataBean appItem) {
-        return FileUtil.APP_PATH + File.separator + appItem.name + "-" + appItem.version + ".apk";
+        return FileUtil.getAppCacheRootDir(App.getInstance()) + File.separator + appItem.name + "-" + appItem.version + ".apk";
     }
 
     public void downloadUrl(@NonNull AppEntity.DataBean appItem) {

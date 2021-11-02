@@ -40,6 +40,13 @@ public class FileUtil {
     public static final String ORDER_STOREHOUSE_PATH = MAIN_PATH + File.separator + "orderStorehouse";
     public static final String LOCAL_STOREHOUSE_PATH = MAIN_PATH + File.separator + "localStorehouse";
 
+    public static String getAppCacheRootDir(Context context) {
+        if (context == null) {
+            return APP_PATH;
+        }
+        return context.getExternalCacheDir().getAbsolutePath();
+    }
+
     public static void initDirectory() {
         File path = new File(FileUtil.PATH);
         if (!path.exists()) {
@@ -241,7 +248,7 @@ public class FileUtil {
                 if (parentFile != null) {
                     boolean mkdirs = parentFile.mkdirs();
                 }
-            }else {
+            } else {
                 boolean delete = filePic.delete();
             }
             FileOutputStream fos = new FileOutputStream(filePic);

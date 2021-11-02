@@ -1,8 +1,6 @@
 package com.miaxis.postal.viewModel;
 
 
-import android.util.Log;
-
 import com.miaxis.postal.app.App;
 import com.miaxis.postal.data.entity.AppEntity;
 import com.miaxis.postal.data.repository.AppInstallRepository;
@@ -32,13 +30,12 @@ public class AppDownloadViewModel extends BaseViewModel {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(appItem -> {
                     waitMessage.setValue(null);
-                    Log.d("lz", "bbb");
 //                    List<AppEntity.DataBean> LocalAppInstallList = getItemList();
 //                    LocalAppInstallList.addAll(appItem);
                     appInstallList.setValue(appItem);
                 }, throwable -> {
                     waitMessage.setValue(null);
-                    resultMessage.setValue("" + throwable);
+                    resultMessage.setValue("" + throwable.getMessage());
                     appInstallList.setValue(null);
                 });
     }

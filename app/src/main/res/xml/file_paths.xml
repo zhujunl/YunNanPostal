@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resource xmlns:android="http://schemas.android.com/apk/res/android">
     <external-path name="postal" path="/miaxis/postal" />
+    <external-path
+        name="external_path"
+        path="." />
 </resource>

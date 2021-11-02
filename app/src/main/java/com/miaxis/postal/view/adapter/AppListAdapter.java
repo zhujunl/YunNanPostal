@@ -6,7 +6,6 @@ import android.view.ViewGroup;
 
 import com.miaxis.postal.R;
 import com.miaxis.postal.data.entity.AppEntity;
-import com.miaxis.postal.data.entity.AppItem;
 import com.miaxis.postal.databinding.ItemAppBinding;
 import com.miaxis.postal.view.base.BaseAdapter;
 import com.miaxis.postal.view.base.BaseViewHolder;

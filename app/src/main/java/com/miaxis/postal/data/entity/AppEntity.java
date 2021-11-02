@@ -78,7 +78,7 @@ public class AppEntity {
         }
 
         public String getVersion() {
-            return "V " + version;
+            return "版本 " + version;
         }
 
         public void setVersion(String version) {

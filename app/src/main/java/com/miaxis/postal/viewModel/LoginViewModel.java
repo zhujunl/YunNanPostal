@@ -67,15 +67,16 @@ public class LoginViewModel extends BaseViewModel {
                     devicesStatus.setValue(status);
                     //如果不是禁用状态则正常登录
                     boolean devices_enable = SPUtils.getInstance().read("devices_enable", false);
-                    if (status.getStatus().equals(ValueUtil.DEVICE_ENABLE)) {
+                    if (status != null && status.getStatus().equals(ValueUtil.DEVICE_ENABLE)) {
                         if (!devices_enable) {
-                            ToastManager.toast("设备已被启用:" + status.getEnableRemark(), ToastManager.INFO, Toast.LENGTH_LONG);
+                            String message = TextUtils.isEmpty(status.getEnableRemark()) ? "设备已被启用" : ("设备已被启用:" + status.getEnableRemark());
+                            ToastManager.toast(message, ToastManager.INFO, Toast.LENGTH_LONG);
                             SPUtils.getInstance().write("devices_enable", true);
                         }
-                        getCourier(macAddress);
                     } else {
                         if (devices_enable) {
-                            ToastManager.toast("设备已被禁用:" + status.getDisableRemark(), ToastManager.INFO, Toast.LENGTH_LONG);
+                            String message = TextUtils.isEmpty(status.getDisableRemark()) ? "设备已被禁用" : ("设备已被禁用:" + status.getDisableRemark());
+                            ToastManager.toast(message, ToastManager.INFO, Toast.LENGTH_LONG);
                             SPUtils.getInstance().write("devices_enable", false);
                         }
                     }
@@ -102,17 +103,19 @@ public class LoginViewModel extends BaseViewModel {
                             .subscribe(status -> {
                                 devicesStatus.setValue(status);
                                 //如果不是禁用状态则正常登录
-                                if (status.getStatus().equals(ValueUtil.DEVICE_ENABLE)) {
+                                if (status != null && status.getStatus().equals(ValueUtil.DEVICE_ENABLE)) {
                                     boolean devices_enable = SPUtils.getInstance().read("devices_enable", false);
                                     if (!devices_enable) {
-                                        ToastManager.toast("设备已被启用:" + status.getEnableRemark(), ToastManager.INFO, Toast.LENGTH_LONG);
+                                        String message = TextUtils.isEmpty(status.getEnableRemark()) ? "设备已被启用" : ("设备已被启用:" + status.getEnableRemark());
+                                        ToastManager.toast(message, ToastManager.INFO, Toast.LENGTH_LONG);
                                         SPUtils.getInstance().write("devices_enable", true);
                                     }
                                     waitMessage.setValue("");
                                     courierLiveData.setValue(courier);
                                     startLogin(courier);
                                 } else {
-                                    ToastManager.toast("设备已被禁用:" + status.getDisableRemark(), ToastManager.INFO, Toast.LENGTH_LONG);
+                                    String message = TextUtils.isEmpty(status.getDisableRemark()) ? "设备已被禁用" : ("设备已被禁用:" + status.getDisableRemark());
+                                    ToastManager.toast(message, ToastManager.INFO, Toast.LENGTH_LONG);
                                     SPUtils.getInstance().write("devices_enable", false);
                                     waitMessage.setValue(null);
                                 }
