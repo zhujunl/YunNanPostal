@@ -9,8 +9,8 @@ android {
         minSdkVersion 21
         targetSdkVersion 29
 
-        versionCode 27
-        versionName "1.0.27_ST"
+        versionCode 28
+        versionName "1.0.28_ST"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         javaCompileOptions {
