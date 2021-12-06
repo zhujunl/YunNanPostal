@@ -179,6 +179,7 @@ public class FingerVerifyFragment extends BaseViewModelFragment<FragmentFingerVe
     };
 
     private boolean needFingerResult = true;
+    private int count=0;//错误次数
     private Observer<Boolean> fingerResultFlagObserver = flag -> {
         Log.e("fingerResult", "1");
         if (!needFingerResult) {
@@ -211,25 +212,40 @@ public class FingerVerifyFragment extends BaseViewModelFragment<FragmentFingerVe
             }, 1000);
         } else {
             MaterialDialog.Builder builder = manualDialog2.getBuilder();
-            builder.onPositive(new MaterialDialog.SingleButtonCallback() {
-                @Override
-                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                    dialog.dismiss();
-                    needFingerResult = false;
-                    handler.post(() -> {
-                        try {
-                            idCardRecord.setChekStatus(2);
-                            if (isAgreementCustomer) {
-                                mListener.replaceFragment(AgreementCustomersFragment.newInstance(idCardRecord,mCustomer));
-                            } else {
-                                mListener.replaceFragment(ExpressFragment.newInstance(idCardRecord));
+            if(count<ValueUtil.ERROR_COUNT){
+                count++;
+                builder.content("指纹核验不通过，重新指纹核验或放弃。");
+                builder.positiveText("放弃").onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        dialog.dismiss();
+                        onBackPressed();
+                    }
+                });
+            }else {
+                builder.content("指纹核验不通过，重新指纹核验或直接进入下一步。");
+                builder.positiveText("下一步").onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        dialog.dismiss();
+                        count=0;
+                        needFingerResult = false;
+                        handler.post(() -> {
+                            try {
+                                idCardRecord.setChekStatus(2);
+                                if (isAgreementCustomer) {
+                                    mListener.replaceFragment(AgreementCustomersFragment.newInstance(idCardRecord,mCustomer));
+                                } else {
+                                    mListener.replaceFragment(ExpressFragment.newInstance(idCardRecord));
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
                             }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    });
-                }
-            }).onNegative((dialog, which) -> {
+                        });
+                    }
+                });
+            }
+            builder.onNegative((dialog, which) -> {
                 dialog.dismiss();
                 delay = 21;
                 handler.post(countDownRunnable);
@@ -247,16 +263,19 @@ public class FingerVerifyFragment extends BaseViewModelFragment<FragmentFingerVe
 
     private void initDialog() {
         manualDialog = new MaterialDialog.Builder(getContext())
-                .title("人工干预")
-                .content("是否进行人工干预？")
-                .positiveText("确认")
-                .onPositive((dialog, which) -> {
-                    dialog.dismiss();
-                    idCardRecord.setChekStatus(0);
-                    mListener.replaceFragment(ManualFragment.newInstance(idCardRecord));
-                })
-                .negativeText("放弃")
+                .title("核对超时")
+                .content("是否重新核对？")
+                .negativeText("重新核对")
                 .onNegative((dialog, which) -> {
+                    dialog.dismiss();
+                    delay=21;
+                    handler.post(countDownRunnable);
+                    needFingerResult = true;
+//                    idCardRecord.setChekStatus(0);
+//                    mListener.replaceFragment(ManualFragment.newInstance(idCardRecord));
+                })
+                .positiveText("放弃")
+                .onPositive((dialog, which) -> {
                     dialog.dismiss();
                     onBackPressed();
                 })
@@ -266,9 +285,8 @@ public class FingerVerifyFragment extends BaseViewModelFragment<FragmentFingerVe
 
         manualDialog2 = new MaterialDialog.Builder(getContext())
                 .title("错误")
-                .content("指纹核验不通过，重新指纹核验或直接进入下一步。")
-                .positiveText("下一步")
                 .negativeText("重新核验")
+                .positiveText("下一步")
                 .autoDismiss(false)
                 .cancelable(false)
                 .build();

@@ -38,6 +38,8 @@ public class ValueUtil {
     public static final int LOGIN_MODE_FACE = 2;//1:仅指纹，2:仅人脸
     public static final int DEFAULT_LOGIN_MODE = LOGIN_MODE_FINGER;
 
+    public static final int ERROR_COUNT=Integer.MAX_VALUE;//核对失败的次数
+
     public static final String SUCCESS = "200";
     public static final String DEVICE_ENABLE = "00601";
     public static final String DEVICE_UNABLE = "00602";

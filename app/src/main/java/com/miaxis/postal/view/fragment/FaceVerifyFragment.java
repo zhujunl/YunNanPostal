@@ -183,7 +183,7 @@ public class FaceVerifyFragment extends BaseViewModelFragment<FragmentFaceVerify
     private Observer<Boolean> saveFlagObserver = flag -> mListener.backToStack(HomeFragment.class);
 
     private Observer<Boolean> verifyFailedObserver = flag -> {
-        binding.tvManual.setVisibility(View.VISIBLE);
+        binding.tvManual.setVisibility(View.INVISIBLE);
     };
 
     private ViewTreeObserver.OnGlobalLayoutListener globalListener = new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -239,15 +239,18 @@ public class FaceVerifyFragment extends BaseViewModelFragment<FragmentFaceVerify
 
     private void initDialog() {
         manualDialog = new MaterialDialog.Builder(getContext())
-                .title("人工干预")
-                .content("是否进行人工干预？")
-                .positiveText("确认")
-                .onPositive((dialog, which) -> {
-                    dialog.dismiss();
-                    mListener.replaceFragment(ManualFragment.newInstance(idCardRecord, isAgreementCustomer,customer));
-                })
-                .negativeText("放弃")
+                .title("核对超时")
+                .content("是否重新核对？")
+                .negativeText("重新核对")
                 .onNegative((dialog, which) -> {
+                    dialog.dismiss();
+                    delay=21;
+                    //mListener.replaceFragment(ManualFragment.newInstance(idCardRecord, isAgreementCustomer,customer));
+                    handler.post(countDownRunnable);
+                    viewModel.startFaceVerify(idCardRecord);
+                })
+                .positiveText("放弃")
+                .onPositive((dialog, which) -> {
                     dialog.dismiss();
                     onBackPressed();
                 })
@@ -258,14 +261,14 @@ public class FaceVerifyFragment extends BaseViewModelFragment<FragmentFaceVerify
 
         manualDialog2 = new MaterialDialog.Builder(getContext())
                 .title("错误")
-                .content("人证核验不通过，重新人证核验或直接进入下一步。")
-                .positiveText("下一步")
                 .negativeText("重新核验")
+                .positiveText("下一步")
                 .autoDismiss(false)
                 .cancelable(false)
                 .build();
     }
 
+    private int count=0;//错误次数
     private Observer<IDCardRecord> verifyFlagObserver = mIDCardRecord -> {
         if (mIDCardRecord != null) {
             if (pass = mIDCardRecord.getChekStatus() == 1) {
@@ -291,25 +294,40 @@ public class FaceVerifyFragment extends BaseViewModelFragment<FragmentFaceVerify
                 }, 1000);
             } else {
                 MaterialDialog.Builder builder = manualDialog2.getBuilder();
-                builder.onPositive(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        dialog.dismiss();
-                        mIDCardRecord.setVerifyType("1");
-                        mIDCardRecord.setManualType("0");
-                        handler.post(() -> {
-                            try {
-                                if (isAgreementCustomer) {
-                                    mListener.replaceFragment(AgreementCustomersFragment.newInstance(mIDCardRecord,customer));
-                                } else {
-                                    mListener.replaceFragment(ExpressFragment.newInstance(mIDCardRecord));
+                if (count<ValueUtil.ERROR_COUNT){
+                    count++;
+                    builder.content("人证核验不通过，重新人证核验。");
+                    builder.positiveText("放弃").onPositive(new MaterialDialog.SingleButtonCallback(){
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            dialog.dismiss();
+                            onBackPressed();
+                        }
+                    });
+                }else {
+                    builder.content("人证核验不通过，重新人证核验或直接进入下一步。");
+                    builder.positiveText("下一步").onPositive(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            dialog.dismiss();
+                            mIDCardRecord.setVerifyType("1");
+                            mIDCardRecord.setManualType("0");
+                            handler.post(() -> {
+                                try {
+                                    if (isAgreementCustomer) {
+                                        mListener.replaceFragment(AgreementCustomersFragment.newInstance(mIDCardRecord,customer));
+                                    } else {
+                                        mListener.replaceFragment(ExpressFragment.newInstance(mIDCardRecord));
+                                    }
+                                } catch (Exception e) {
+                                    e.printStackTrace();
                                 }
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        });
-                    }
-                }).onNegative((dialog, which) -> {
+                            });
+                            count=0;
+                        }
+                    });
+                }
+                builder.onNegative((dialog, which) -> {
                     dialog.dismiss();
                     delay = 21;
                     handler.post(countDownRunnable);

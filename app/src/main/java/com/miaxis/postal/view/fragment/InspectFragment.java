@@ -196,7 +196,8 @@ public class InspectFragment extends BaseViewModelFragment<FragmentInspectBindin
                     .negativeText("取消")
                     .show();
         } else {
-            EventBus.getDefault().postSticky(new ExpressEditEvent(ExpressEditEvent.MODE_MODIFY, viewModel.express.get(), name, phone, goodName, goodCounts, sendAddress));
+            //
+            // EventBus.getDefault().postSticky(new ExpressEditEvent(ExpressEditEvent.MODE_MODIFY, viewModel.express.get(), name, phone, goodName, goodCounts, sendAddress));
             mListener.backToStack(null);
         }
     }
