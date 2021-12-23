@@ -39,7 +39,7 @@
         <!-- android:value="GlideModule" /> -->
         <meta-data
             android:name="com.amap.api.v2.apikey"
-            android:value="4fdf93a2fea5199ad93a40ec22f29a6b" />
+            android:value="50005f8a0a6fee96bcc768555d23a701" />
 
         <service android:name="com.amap.api.location.APSService" />
 

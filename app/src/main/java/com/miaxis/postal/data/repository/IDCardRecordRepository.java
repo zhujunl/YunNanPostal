@@ -160,7 +160,7 @@ public class IDCardRecordRepository {
         IDCardRecordModel.saveIDCardRecord(idCardRecord);
     }
 
-    public IDCardRecord findOldestIDCardRecord() {
+    public List<IDCardRecord> findOldestIDCardRecord() {
         return IDCardRecordModel.findOldestIDCardRecord();
     }
 

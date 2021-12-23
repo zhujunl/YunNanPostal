@@ -37,35 +37,42 @@ public class AmapManager implements AMapLocationListener {
     private AMapLocation aMapLocation;
 
     public void getOneLocation(OnOneLocationListener listener) {
-        AMapLocationClient aMapLocationClient = new AMapLocationClient(application);
-        aMapLocationClient.setLocationListener(new AMapLocationListener() {
-            @Override
-            public void onLocationChanged(AMapLocation location) {
-                Log.e("Location", "" + location);
-                if (location.getErrorCode() == 0) {
-                    String address = location.getAddress();
-                    aMapLocationClient.stopLocation();
-                    listener.onOneLocation(address);
-                    // aMapLocation = location;
-                    //heatBeat(location);
-                } else {
-                    listener.onError(location.getErrorInfo());
+        try {
+            AMapLocationClient.updatePrivacyShow(application,true,true);
+            AMapLocationClient.updatePrivacyAgree(application,true);
+            AMapLocationClient aMapLocationClient = new AMapLocationClient(application);
+            aMapLocationClient.setLocationListener(new AMapLocationListener() {
+                @Override
+                public void onLocationChanged(AMapLocation location) {
+                    Log.e("Location", "" + location);
+                    if (location.getErrorCode() == 0) {
+                        String address = location.getAddress();
+                        aMapLocationClient.stopLocation();
+                        listener.onOneLocation(address);
+                        // aMapLocation = location;
+                        //heatBeat(location);
+                    } else {
+                        listener.onError(location.getErrorInfo());
+                    }
+                    try {
+                        aMapLocationClient.stopLocation();
+                        aMapLocationClient.unRegisterLocationListener(this);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
-                try {
-                    aMapLocationClient.stopLocation();
-                    aMapLocationClient.unRegisterLocationListener(this);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        AMapLocationClientOption option = new AMapLocationClientOption();
-        option.setOnceLocation(true);
-        option.setNeedAddress(true);
-        option.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);
-        option.setOnceLocationLatest(true);
-        aMapLocationClient.setLocationOption(option);
-        aMapLocationClient.startLocation();
+            });
+            AMapLocationClientOption option = new AMapLocationClientOption();
+            option.setOnceLocation(true);
+            option.setNeedAddress(true);
+            option.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);
+            option.setOnceLocationLatest(true);
+            aMapLocationClient.setLocationOption(option);
+            aMapLocationClient.startLocation();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
     }
 
     public interface OnOneLocationListener {
@@ -82,31 +89,38 @@ public class AmapManager implements AMapLocationListener {
      * 开始定位
      */
     public void startLocation(Application application) {
-        this.application = application;
-        stopLocation();
-        aMapLocationClient = new AMapLocationClient(application);
-        aMapLocationClient.setLocationListener(this);
-        AMapLocationClientOption aMapLocationClientOption = new AMapLocationClientOption();
-        aMapLocationClientOption.setInterval(1000 * 60);
-        aMapLocationClientOption.setHttpTimeOut(1000 * 10);
-        aMapLocationClientOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Battery_Saving);
-        aMapLocationClient.setLocationOption(aMapLocationClientOption);
-        aMapLocationClient.startLocation();
-        Log.e("deviceHeart", "start");
-        timer = new Timer();
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                Log.e("deviceHeart", "---------------");
-                if (aMapLocationClient != null) {
-                    AMapLocation lastKnownLocation = aMapLocationClient.getLastKnownLocation();
-                    if (lastKnownLocation != null && lastKnownLocation.getErrorCode() == 0) {
-                        aMapLocation = lastKnownLocation;
-                        heatBeat(lastKnownLocation);
+        try {
+            this.application = application;
+            stopLocation();
+            AMapLocationClient.updatePrivacyShow(application,true,true);
+            AMapLocationClient.updatePrivacyAgree(application,true);
+            aMapLocationClient = new AMapLocationClient(application);
+            aMapLocationClient.setLocationListener(this);
+            AMapLocationClientOption aMapLocationClientOption = new AMapLocationClientOption();
+            aMapLocationClientOption.setInterval(1000 * 60);
+            aMapLocationClientOption.setHttpTimeOut(1000 * 10);
+            aMapLocationClientOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Battery_Saving);
+            aMapLocationClient.setLocationOption(aMapLocationClientOption);
+            aMapLocationClient.startLocation();
+            Log.e("deviceHeart", "start");
+            timer = new Timer();
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    Log.e("deviceHeart", "---------------");
+                    if (aMapLocationClient != null) {
+                        AMapLocation lastKnownLocation = aMapLocationClient.getLastKnownLocation();
+                        if (lastKnownLocation != null && lastKnownLocation.getErrorCode() == 0) {
+                            aMapLocation = lastKnownLocation;
+                            heatBeat(lastKnownLocation);
+                        }
                     }
                 }
-            }
-        }, 100, getPositionTime);
+            }, 100, getPositionTime);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
     }
 
     public void stopLocation() {

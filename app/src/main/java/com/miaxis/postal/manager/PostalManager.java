@@ -186,56 +186,59 @@ public class PostalManager {
     }
 
     private synchronized void postalNormalRecord() throws MyException {
-        IDCardRecord idCardRecord = idCardRecordRepository.findOldestIDCardRecord();
-        if (idCardRecord == null) {
-            throw new MyException("未找到待上传日志");
-        }
-        //是否草稿
-        if (idCardRecord.isDraft()) {
-            return;
-        }
-        TempId tempId = null;
-        try {
-            tempId = getIdCardRecordTempId(idCardRecord);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        List<Express> expressList = expressRepository.loadExpressByVerifyId(idCardRecord.getVerifyId());
-        int draftCount = 0;
-        int draftAllCount = 0;
-        for (Express express : expressList) {
-            if (!express.isDraft()) {
-                draftAllCount++;
+        List<IDCardRecord> idCardRecordList = idCardRecordRepository.findOldestIDCardRecord();
+        for (IDCardRecord idCardRecord:idCardRecordList){
+            if (idCardRecord == null) {
+                throw new MyException("未找到待上传日志");
             }
-        }
-        for (Express express : expressList) {
+            //是否草稿
+            if (idCardRecord.isDraft()) {
+                return;
+            }
+            TempId tempId = null;
             try {
-                if (tempId == null) {
-                    processException(express, new NetResultFailedException("请求服务器错误"));
-                    throw new MyException("服务器请求错误");
-                }
-                //是否草稿
-                if (!express.isDraft()) {
-                    expressRepository.uploadLocalExpress(express, tempId, null, idCardRecord.getName(), idCardRecord.getChekStatus());
-                    Log.e(TAG, "数据发送 PostalNormalRecord:true");
-                    expressRepository.deleteExpress(express);
-                    draftCount++;
-                }
+                tempId = getIdCardRecordTempId(idCardRecord);
             } catch (Exception e) {
                 e.printStackTrace();
-                Log.e("asd", "PostalNormalRecord Exception:" + e);
-                processException(express, e);
-                if (e instanceof OrderNumberRepeatException && express.getBarCode() != null && express.getBarCode().startsWith(App.getInstance().BarHeader)) {
-                    express.setBarCode(App.getInstance().getRandomBarCode());
-                    expressRepository.updateExpress(express);
+            }
+            List<Express> expressList = expressRepository.loadExpressByVerifyId(idCardRecord.getVerifyId());
+            int draftCount = 0;
+            int draftAllCount = 0;
+            for (Express express : expressList) {
+                if (!express.isDraft()) {
+                    draftAllCount++;
                 }
             }
+            for (Express express : expressList) {
+                try {
+                    if (tempId == null) {
+                        processException(express, new NetResultFailedException("请求服务器错误"));
+                        throw new MyException("服务器请求错误");
+                    }
+                    //是否草稿
+                    if (!express.isDraft()) {
+                        Log.d(TAG,"idcardVerify==="+idCardRecord.getVerifyId());
+                        Log.d(TAG,"express==="+express.getBarCode());
+                        expressRepository.uploadLocalExpress(express, tempId, null, idCardRecord.getName(), idCardRecord.getChekStatus());
+                        Log.e(TAG, "数据发送 PostalNormalRecord:true");
+                        expressRepository.deleteExpress(express);
+                        draftCount++;
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Log.e("asd", "PostalNormalRecord Exception:" + e);
+                    processException(express, e);
+                    if (e instanceof OrderNumberRepeatException && express.getBarCode() != null && express.getBarCode().startsWith(App.getInstance().BarHeader)) {
+                        express.setBarCode(App.getInstance().getRandomBarCode());
+                        expressRepository.updateExpress(express);
+                    }
+                }
+            }
+            //如果当前执行完后
+            if (draftCount == draftAllCount) {
+                idCardRecordRepository.deleteIDCardRecord(idCardRecord);
+            }
         }
-        //如果当前执行完后
-        if (draftCount == draftAllCount) {
-            idCardRecordRepository.deleteIDCardRecord(idCardRecord);
-        }
-
     }
 
     //抛出异常后就无法执行下面的请求了 所以去掉

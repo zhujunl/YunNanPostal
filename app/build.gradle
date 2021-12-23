@@ -121,8 +121,8 @@ dependencies {
     //AutoSize
     implementation 'me.jessyan:autosize:1.1.2'
     //Libs
-    implementation files('src/main/libs/scandecode.jar')
-    implementation files('src/main/libs/AMap_Location_V4.8.0_20191210.jar')
+ //   implementation files('src/main/libs/scandecode.jar')
+    implementation files('src/main/libs/AMap_Location_V5.6.1_20211115.jar')
     implementation files('src/main/libs/MxMscFingerApi.jar')
     implementation files('src/main/libs/IDCardComDriver.jar')
     implementation files('src/main/libs/zxing.jar')

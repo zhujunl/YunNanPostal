@@ -62,10 +62,14 @@ public class ExpressRepository {
                             continue;
                         }
                     }
+                    express.setUploadError("上传图片失败"+body.getMessage());
+                    updateExpress(express);
                     throw new NetResultFailedException("上传图片失败");
                 } catch (Exception e) {
                     e.printStackTrace();
                     Log.e("ExpressRepository", "Exception:" + e);
+                    express.setUploadError("上传图片失败"+ e);
+                    updateExpress(express);
                     throw new NetResultFailedException("上传图片失败，" + e);
                 }
             }
