@@ -49,6 +49,8 @@ public class FaceVerifyViewModel extends BaseViewModel {
 
     public ObservableField<String> cardFingerprint = new ObservableField<>();
 
+    public ObservableField<Boolean> cardisFinger=new ObservableField<>();
+
     private PhotoFaceFeature cardFeature;
 
     public String readCardNum="";

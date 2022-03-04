@@ -55,6 +55,8 @@ public class FaceVerifyFragment extends BaseViewModelFragment<FragmentFaceVerify
 
     private boolean isAgreementCustomer = false;
 
+    private boolean isFinger=false;
+
     public static FaceVerifyFragment newInstance(IDCardRecord idCardRecord) {
         FaceVerifyFragment fragment = new FaceVerifyFragment();
         fragment.setIdCardRecord(idCardRecord);
@@ -66,6 +68,7 @@ public class FaceVerifyFragment extends BaseViewModelFragment<FragmentFaceVerify
         FaceVerifyFragment fragment = new FaceVerifyFragment();
         fragment.setIdCardRecord(idCardRecord);
         fragment.setCustomer(customer);
+        fragment.setIsFinger(idCardRecord.getIsfinger());
         Bundle bundle = new Bundle();
         bundle.putBoolean("agreementCustomer", isAgreementCustomer);
         fragment.setArguments(bundle);
@@ -74,6 +77,10 @@ public class FaceVerifyFragment extends BaseViewModelFragment<FragmentFaceVerify
 
     public void setCustomer(Customer customer) {
         this.customer = customer;
+    }
+
+    public void setIsFinger(Boolean isFinger){
+        this.isFinger=isFinger;
     }
 
     @Override
@@ -112,6 +119,7 @@ public class FaceVerifyFragment extends BaseViewModelFragment<FragmentFaceVerify
         if (viewModel.idCardRecordLiveData.getValue() != null ) {
             viewModel.cardFingerprint.set(viewModel.idCardRecordLiveData.getValue().getFingerprint0());
         }
+        viewModel.cardisFinger.set(isFinger);
         viewModel.idCardRecordLiveData.observe(this, idCardRecordObserver);
         viewModel.verifyFlag.observe(this, verifyFlagObserver);
         viewModel.verifyFailedFlag.observe(this, verifyFailedObserver);

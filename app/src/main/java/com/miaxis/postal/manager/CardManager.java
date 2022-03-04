@@ -233,6 +233,7 @@ public class CardManager {
             idCardRecord.setFingerprintPosition0(ValueUtil.fingerPositionCovert(bFingerData0[5]));
             idCardRecord.setFingerprint1(Base64.encodeToString(bFingerData1, Base64.NO_WRAP));
             idCardRecord.setFingerprintPosition1(ValueUtil.fingerPositionCovert(bFingerData1[5]));
+            idCardRecord.setIsfinger(bFingerData0[5] != 0 || bFingerData1[5] != 0);
         }
     }
 

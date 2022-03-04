@@ -151,6 +151,8 @@ public class IDCardRecord {
     @Ignore
     private String fingerprintPosition1;
 
+    private Boolean isfinger;
+
     public IDCardRecord() {
     }
 
@@ -192,6 +194,7 @@ public class IDCardRecord {
         setFingerprintPosition1(builder.fingerprintPosition1);
         setWebCardPath(builder.webCardPath);
         setWebFacePath(builder.webFacePath);
+        setIsfinger(builder.isfinger);
         setType(builder.type);
     }
 
@@ -499,6 +502,14 @@ public class IDCardRecord {
         this.webFacePath = webFacePath;
     }
 
+    public Boolean getIsfinger() {
+        return isfinger;
+    }
+
+    public void setIsfinger(Boolean isfinger) {
+        this.isfinger = isfinger;
+    }
+
     @Override
     public String toString() {
         return "IDCardRecord{" +
@@ -540,6 +551,7 @@ public class IDCardRecord {
                 ", fingerprintPosition0='" + fingerprintPosition0 + '\'' +
                 ", fingerprint1='" + fingerprint1 + '\'' +
                 ", fingerprintPosition1='" + fingerprintPosition1 + '\'' +
+                ", isfinger=" + isfinger +
                 '}';
     }
 
@@ -582,6 +594,7 @@ public class IDCardRecord {
         private String webCardPath;
         private String webFacePath;
         private  int type;
+        private Boolean isfinger;
 
         public Builder() {
         }
@@ -776,6 +789,10 @@ public class IDCardRecord {
             return this;
         }
 
+        public Builder isfinger(Boolean val){
+            isfinger=val;
+            return this;
+        }
         public IDCardRecord build() {
             return new IDCardRecord(this);
         }

@@ -190,6 +190,7 @@ public class IDCardUtils {
         hashtable.put("71", "台湾");
         hashtable.put("81", "香港");
         hashtable.put("82", "澳门");
+        hashtable.put("83", "台湾");
         hashtable.put("91", "国外");
         return hashtable;
     }
